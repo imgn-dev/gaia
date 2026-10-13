@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.base;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.errorprone.annotations.FormatMethod;
 import com.google.errorprone.annotations.FormatString;
 import java.util.Locale;
@@ -37,6 +39,7 @@ public final class Throwables {
      * @return a new exception, for the caller to throw
      */
     public static IllegalArgumentException illegalArgument(Throwable cause, @Nullable Object message) {
+        requireNonNull(cause, "cause");
         return new IllegalArgumentException(String.valueOf(message), cause);
     }
 
@@ -52,6 +55,9 @@ public final class Throwables {
     @FormatMethod
     public static IllegalArgumentException illegalArgument(
             Throwable cause, @FormatString String messageFormat, @Nullable Object... params) {
+        requireNonNull(cause, "cause");
+        requireNonNull(messageFormat, "messageFormat");
+        requireNonNull(params, "params");
         return new IllegalArgumentException(String.format(Locale.ROOT, messageFormat, params), cause);
     }
 
@@ -63,6 +69,7 @@ public final class Throwables {
      * @return a new exception, for the caller to throw
      */
     public static IllegalStateException illegalState(Throwable cause, @Nullable Object message) {
+        requireNonNull(cause, "cause");
         return new IllegalStateException(String.valueOf(message), cause);
     }
 
@@ -78,6 +85,9 @@ public final class Throwables {
     @FormatMethod
     public static IllegalStateException illegalState(
             Throwable cause, @FormatString String messageFormat, @Nullable Object... params) {
+        requireNonNull(cause, "cause");
+        requireNonNull(messageFormat, "messageFormat");
+        requireNonNull(params, "params");
         return new IllegalStateException(String.format(Locale.ROOT, messageFormat, params), cause);
     }
 }

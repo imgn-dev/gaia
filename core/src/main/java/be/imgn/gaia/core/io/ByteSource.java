@@ -80,6 +80,7 @@ public interface ByteSource {
      * @return a source of the content at {@code url}
      */
     static ByteSource of(URL url) {
+        Objects.requireNonNull(url, "url");
         return url::openStream;
     }
 
@@ -91,6 +92,7 @@ public interface ByteSource {
      * @throws IllegalArgumentException if {@code uri} is not absolute, or has a scheme no URL protocol handler supports
      */
     static ByteSource of(URI uri) {
+        Objects.requireNonNull(uri, "uri");
         try {
             return of(uri.toURL());
         } catch (MalformedURLException e) {
@@ -106,7 +108,7 @@ public interface ByteSource {
      * @return a source of the content of {@code sources}, in order
      */
     static ByteSource concat(ByteSource... sources) {
-        return new ConcatenatedByteSource(Arrays.asList(sources));
+        return new ConcatenatedByteSource(Arrays.asList(Objects.requireNonNull(sources, "sources")));
     }
 
     /**

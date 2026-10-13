@@ -1,5 +1,8 @@
 package be.imgn.gaia.core.io;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
+import be.imgn.gaia.core.io.internal.OpenOptions;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +44,7 @@ public interface ByteSink {
      */
     static ByteSink of(Path file, OpenOption... options) {
         Objects.requireNonNull(file, "file");
-        var copy = options.clone();
+        var copy = OpenOptions.copyOf(options);
         return () -> Files.newOutputStream(file, copy);
     }
 
@@ -98,9 +101,11 @@ public interface ByteSink {
      *
      * @param charset the charset to encode the characters in
      * @return a sink of characters
+     * @throws IllegalArgumentException if {@code charset} does not support encoding
      */
     default CharSink asCharSink(Charset charset) {
         Objects.requireNonNull(charset, "charset");
+        checkArgument(charset.canEncode(), "%s does not support encoding", charset);
         return () -> new OutputStreamWriter(openStream(), charset.newEncoder());
     }
 }

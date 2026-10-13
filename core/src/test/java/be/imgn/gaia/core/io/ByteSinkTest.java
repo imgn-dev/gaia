@@ -2,6 +2,7 @@ package be.imgn.gaia.core.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -9,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.file.Files;
@@ -96,6 +98,13 @@ class ByteSinkTest {
         var sink = new TrackedSink().asCharSink(StandardCharsets.ISO_8859_1);
 
         assertThatExceptionOfType(UnmappableCharacterException.class).isThrownBy(() -> sink.write("a✓b"));
+    }
+
+    @Test
+    void rejectsACharsetThatCannotEncode() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> new TrackedSink().asCharSink(Charset.forName("ISO-2022-CN")))
+                .withMessage("ISO-2022-CN does not support encoding");
     }
 
     // Keeps what is written to it, and counts the streams it closes.

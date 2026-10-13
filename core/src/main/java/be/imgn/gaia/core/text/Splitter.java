@@ -66,6 +66,7 @@ public final class Splitter {
      * @throws IllegalArgumentException if {@code separator} is empty
      */
     public static Splitter on(String separator) {
+        Objects.requireNonNull(separator, "separator");
         if (separator.isEmpty()) {
             throw new IllegalArgumentException("The separator must not be empty");
         }
@@ -81,6 +82,7 @@ public final class Splitter {
      * @throws IllegalArgumentException if {@code separator} matches the empty string
      */
     public static Splitter on(Pattern separator) {
+        Objects.requireNonNull(separator, "separator");
         if (separator.matcher("").matches()) {
             throw new IllegalArgumentException("The separator must not match the empty string: " + separator);
         }
@@ -96,6 +98,7 @@ public final class Splitter {
      * @throws IllegalArgumentException if {@code separator} matches the empty string
      */
     public static Splitter onPattern(String separator) {
+        Objects.requireNonNull(separator, "separator");
         return on(Pattern.compile(separator));
     }
 
@@ -159,6 +162,7 @@ public final class Splitter {
      * @return the parts, in order, as an unmodifiable list
      */
     public List<String> split(CharSequence text) {
+        Objects.requireNonNull(text, "text");
         return splitToStream(text).toList();
     }
 
@@ -169,6 +173,7 @@ public final class Splitter {
      * @return the parts, in order
      */
     public Stream<String> splitToStream(CharSequence text) {
+        Objects.requireNonNull(text, "text");
         Iterator<String> parts = new Parts(text.toString());
         return StreamSupport.stream(
                 Spliterators.spliteratorUnknownSize(parts, Spliterator.ORDERED | Spliterator.NONNULL), false);

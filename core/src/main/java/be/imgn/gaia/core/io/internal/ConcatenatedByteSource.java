@@ -22,7 +22,9 @@ public final class ConcatenatedByteSource implements ByteSource {
      */
     public ConcatenatedByteSource(Iterable<? extends ByteSource> sources) {
         var list = new ArrayList<ByteSource>();
-        sources.forEach(list::add);
+        for (ByteSource source : Objects.requireNonNull(sources, "sources")) {
+            list.add(Objects.requireNonNull(source, "sources contains null"));
+        }
         this.sources = List.copyOf(list);
     }
 

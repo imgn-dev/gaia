@@ -4,6 +4,7 @@ import be.imgn.gaia.core.text.Splitter;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -23,7 +24,7 @@ public interface Environment {
      * @return the JVM's environment
      */
     static Environment system() {
-        return name -> Optional.ofNullable(System.getenv(name));
+        return name -> Optional.ofNullable(System.getenv(Objects.requireNonNull(name, "name")));
     }
 
     /**
@@ -31,11 +32,10 @@ public interface Environment {
      *
      * @param variables the variables, by name; copied
      * @return an environment holding exactly {@code variables}
-     * @throws NullPointerException if a name or value is {@code null}
      */
     static Environment of(Map<String, String> variables) {
-        Map<String, String> copy = Map.copyOf(variables);
-        return name -> Optional.ofNullable(copy.get(name));
+        Map<String, String> copy = NamedValues.copyOf(variables, "variables");
+        return name -> Optional.ofNullable(copy.get(Objects.requireNonNull(name, "name")));
     }
 
     /**

@@ -50,7 +50,6 @@ public final class Sets {
      * @param <E> the element type
      * @param e1 the single element
      * @return a set containing the given element
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object)
      */
     public static <E> Set<E> set(E e1) {
@@ -65,7 +64,6 @@ public final class Sets {
      * @param e2 the second element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object)
      */
     public static <E> Set<E> set(E e1, E e2) {
@@ -81,7 +79,6 @@ public final class Sets {
      * @param e3 the third element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object)
      */
     public static <E> Set<E> set(E e1, E e2, E e3) {
@@ -98,7 +95,6 @@ public final class Sets {
      * @param e4 the fourth element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object, Object)
      */
     public static <E> Set<E> set(E e1, E e2, E e3, E e4) {
@@ -116,7 +112,6 @@ public final class Sets {
      * @param e5 the fifth element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object, Object, Object)
      */
     public static <E> Set<E> set(E e1, E e2, E e3, E e4, E e5) {
@@ -135,7 +130,6 @@ public final class Sets {
      * @param e6 the sixth element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object, Object, Object, Object)
      */
     public static <E> Set<E> set(E e1, E e2, E e3, E e4, E e5, E e6) {
@@ -155,7 +149,6 @@ public final class Sets {
      * @param e7 the seventh element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object, Object, Object, Object, Object)
      */
     public static <E> Set<E> set(E e1, E e2, E e3, E e4, E e5, E e6, E e7) {
@@ -176,7 +169,6 @@ public final class Sets {
      * @param e8 the eighth element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object, Object, Object, Object, Object, Object)
      */
     // Mirrors Set.of, which goes up to ten elements.
@@ -200,7 +192,6 @@ public final class Sets {
      * @param e9 the ninth element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object, Object, Object, Object, Object, Object, Object)
      */
     // Mirrors Set.of, which goes up to ten elements.
@@ -225,7 +216,6 @@ public final class Sets {
      * @param e10 the tenth element
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}
      * @see Set#of(Object, Object, Object, Object, Object, Object, Object, Object, Object, Object)
      */
     // Mirrors Set.of, which goes up to ten elements.
@@ -240,7 +230,6 @@ public final class Sets {
      * @param elements the elements
      * @return a set containing the given elements
      * @throws IllegalArgumentException if there are any duplicate elements
-     * @throws NullPointerException if an element is {@code null}, or if the array is {@code null}
      * @see Set#of(Object[])
      */
     // Safe: the array is only read, by a copying factory, and never stored or exposed.
@@ -258,7 +247,6 @@ public final class Sets {
      * @param <E> the element type
      * @param collection the collection whose elements to copy
      * @return a set containing the elements of {@code collection}
-     * @throws NullPointerException if {@code collection} is {@code null} or contains {@code null}
      * @see Set#copyOf(Collection)
      */
     public static <E> Set<E> setCopy(Collection<? extends E> collection) {
@@ -272,7 +260,6 @@ public final class Sets {
      *
      * @param <E> the element type
      * @return a collector into an ordered, unmodifiable set
-     * @throws NullPointerException when collecting, if an element is {@code null}
      */
     public static <E> Collector<E, ?, Set<E>> toSet() {
         return Collector.<E, LinkedHashSet<E>, Set<E>>of(

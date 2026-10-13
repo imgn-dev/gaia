@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.system;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import be.imgn.gaia.core.text.Splitter;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -7,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -34,7 +37,7 @@ public interface SystemProperties {
      * @return the JVM's system properties
      */
     static SystemProperties system() {
-        return name -> Optional.ofNullable(System.getProperty(name));
+        return name -> Optional.ofNullable(System.getProperty(checkName(name)));
     }
 
     /**
@@ -42,11 +45,10 @@ public interface SystemProperties {
      *
      * @param properties the properties, by name; copied
      * @return system properties holding exactly {@code properties}
-     * @throws NullPointerException if a name or value is {@code null}
      */
     static SystemProperties of(Map<String, String> properties) {
-        Map<String, String> copy = Map.copyOf(properties);
-        return name -> Optional.ofNullable(copy.get(name));
+        Map<String, String> copy = NamedValues.copyOf(properties, "properties");
+        return name -> Optional.ofNullable(copy.get(checkName(name)));
     }
 
     /**
@@ -54,6 +56,7 @@ public interface SystemProperties {
      *
      * @param name the name of the property, such as {@code "user.home"}
      * @return the value, or empty if the property is not set
+     * @throws IllegalArgumentException if {@code name} is empty
      */
     Optional<String> get(String name);
 
@@ -62,6 +65,7 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws IllegalArgumentException if the property is not a valid version
      */
     default Runtime.Version javaVersion() {
         return Runtime.Version.parse(required("java.version"));
@@ -72,6 +76,7 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws java.time.format.DateTimeParseException if the property is not a valid date
      */
     default LocalDate javaVersionDate() {
         return LocalDate.parse(required("java.version.date"));
@@ -92,6 +97,7 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws IllegalArgumentException if the property is not a valid URI
      */
     default URI javaVendorUrl() {
         return URI.create(required("java.vendor.url"));
@@ -122,6 +128,7 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws NumberFormatException if the property is not an integer
      */
     default int javaVmSpecificationVersion() {
         return Integer.parseInt(required("java.vm.specification.version"));
@@ -152,6 +159,7 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws IllegalArgumentException if the property is not a valid version
      */
     default Runtime.Version javaVmVersion() {
         return Runtime.Version.parse(required("java.vm.version"));
@@ -183,6 +191,7 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws NumberFormatException if the property is not an integer
      */
     default int javaSpecificationVersion() {
         return Integer.parseInt(required("java.specification.version"));
@@ -193,6 +202,7 @@ public interface SystemProperties {
      * maintenance release: the {@code java.specification.maintenance.version} property.
      *
      * @return the value, or empty if it is not set
+     * @throws NumberFormatException if the property is set but is not an integer
      */
     default OptionalInt javaSpecificationMaintenanceVersion() {
         return get("java.specification.maintenance.version")
@@ -236,7 +246,8 @@ public interface SystemProperties {
      * Returns the class path, split on the path separator: the {@code java.class.path} property.
      *
      * @return the value
-     * @throws NoSuchElementException if the property is not set
+     * @throws NoSuchElementException if the property or the {@code path.separator} property is not set
+     * @throws IllegalArgumentException if the {@code path.separator} property is empty
      */
     default List<String> javaClassPath() {
         return paths(required("java.class.path"));
@@ -247,7 +258,8 @@ public interface SystemProperties {
      * property.
      *
      * @return the value
-     * @throws NoSuchElementException if the property is not set
+     * @throws NoSuchElementException if the property or the {@code path.separator} property is not set
+     * @throws IllegalArgumentException if the {@code path.separator} property is empty
      */
     default List<String> javaLibraryPath() {
         return paths(required("java.library.path"));
@@ -359,6 +371,8 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws java.nio.charset.IllegalCharsetNameException if the property is not a legal charset name
+     * @throws java.nio.charset.UnsupportedCharsetException if this JVM does not support the charset the property names
      */
     default Charset nativeEncoding() {
         return Charset.forName(required("native.encoding"));
@@ -369,6 +383,8 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws java.nio.charset.IllegalCharsetNameException if the property is not a legal charset name
+     * @throws java.nio.charset.UnsupportedCharsetException if this JVM does not support the charset the property names
      */
     default Charset stdoutEncoding() {
         return Charset.forName(required("stdout.encoding"));
@@ -379,6 +395,8 @@ public interface SystemProperties {
      *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws java.nio.charset.IllegalCharsetNameException if the property is not a legal charset name
+     * @throws java.nio.charset.UnsupportedCharsetException if this JVM does not support the charset the property names
      */
     default Charset stderrEncoding() {
         return Charset.forName(required("stderr.encoding"));
@@ -391,6 +409,8 @@ public interface SystemProperties {
      * <p>Supported by the JDK, not required by the Java SE specification.
      *
      * @return the value
+     * @throws NoSuchElementException if the property is set but the {@code path.separator} property is not
+     * @throws IllegalArgumentException if the property is set but the {@code path.separator} property is empty
      */
     default List<String> jdkModulePath() {
         return get("jdk.module.path").map(this::paths).orElse(List.of());
@@ -403,6 +423,8 @@ public interface SystemProperties {
      * <p>Supported by the JDK, not required by the Java SE specification.
      *
      * @return the value
+     * @throws NoSuchElementException if the property is set but the {@code path.separator} property is not
+     * @throws IllegalArgumentException if the property is set but the {@code path.separator} property is empty
      */
     default List<String> jdkModuleUpgradePath() {
         return get("jdk.module.upgrade.path").map(this::paths).orElse(List.of());
@@ -442,6 +464,12 @@ public interface SystemProperties {
      */
     default Optional<String> fileEncoding() {
         return get("file.encoding");
+    }
+
+    private static String checkName(String name) {
+        Objects.requireNonNull(name, "name");
+        checkArgument(!name.isEmpty(), "The name of a system property must not be empty");
+        return name;
     }
 
     private String required(String name) {

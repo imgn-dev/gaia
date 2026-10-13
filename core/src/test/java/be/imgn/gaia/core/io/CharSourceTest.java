@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
@@ -262,6 +263,13 @@ class CharSourceTest {
         source.asByteSource(StandardCharsets.UTF_8).read();
 
         assertThat(source.closed).isEqualTo(1);
+    }
+
+    @Test
+    void rejectsACharsetThatCannotEncode() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> CharSource.wrap("text").asByteSource(Charset.forName("ISO-2022-CN")))
+                .withMessage("ISO-2022-CN does not support encoding");
     }
 
     // Counts the streams it opens and closes.

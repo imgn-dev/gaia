@@ -3,12 +3,14 @@ package be.imgn.gaia.core.io;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIOException;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystemException;
 import java.nio.file.FileSystems;
@@ -194,5 +196,15 @@ class AtomicFilesTest {
 
         assertThat(link).isSymbolicLink();
         assertThat(target).hasContent("new");
+    }
+
+    @Test
+    void rejectsACharsetThatCannotEncode() {
+        var file = directory.resolve("text");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> AtomicFiles.writeString(file, "text", Charset.forName("ISO-2022-CN")))
+                .withMessage("ISO-2022-CN does not support encoding");
+        assertThat(file).doesNotExist();
     }
 }

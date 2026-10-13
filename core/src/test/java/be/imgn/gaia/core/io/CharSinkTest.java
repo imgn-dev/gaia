@@ -2,6 +2,7 @@ package be.imgn.gaia.core.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.io.BufferedWriter;
 import java.io.FilterWriter;
@@ -10,6 +11,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -169,6 +171,13 @@ class CharSinkTest {
 
         assertThatExceptionOfType(MalformedInputException.class).isThrownBy(() -> sink.write(new byte[] {bytes[0]}));
         assertThat(tracked.closed).isEqualTo(1);
+    }
+
+    @Test
+    void rejectsACharsetThatCannotEncode() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> CharSink.of(directory.resolve("text"), Charset.forName("ISO-2022-CN")))
+                .withMessage("ISO-2022-CN does not support encoding");
     }
 
     // Keeps what is written to it, and counts the streams it closes.

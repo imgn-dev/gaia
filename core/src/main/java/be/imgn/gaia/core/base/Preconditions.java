@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.base;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.errorprone.annotations.FormatMethod;
 import com.google.errorprone.annotations.FormatString;
 import java.util.Locale;
@@ -61,6 +63,8 @@ public final class Preconditions {
     @FormatMethod
     public static void checkArgument(
             boolean expression, @FormatString String messageFormat, @Nullable Object... params) {
+        requireNonNull(messageFormat, "messageFormat");
+        requireNonNull(params, "params");
         if (!expression) {
             throw new IllegalArgumentException(String.format(Locale.ROOT, messageFormat, params));
         }
@@ -103,6 +107,8 @@ public final class Preconditions {
      */
     @FormatMethod
     public static void checkState(boolean expression, @FormatString String messageFormat, @Nullable Object... params) {
+        requireNonNull(messageFormat, "messageFormat");
+        requireNonNull(params, "params");
         if (!expression) {
             throw new IllegalStateException(String.format(Locale.ROOT, messageFormat, params));
         }

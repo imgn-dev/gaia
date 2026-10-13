@@ -85,6 +85,16 @@ class SystemPropertiesTest {
         }
     }
 
+    @Test
+    void rejectsAnEmptyName() {
+        assertThatThrownBy(() -> properties.get(""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The name of a system property must not be empty");
+        assertThatThrownBy(() -> SystemProperties.of(Map.of()).get(""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The name of a system property must not be empty");
+    }
+
     @Nested
     class Fixed {
 

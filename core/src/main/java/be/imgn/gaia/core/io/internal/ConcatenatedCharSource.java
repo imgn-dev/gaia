@@ -22,7 +22,9 @@ public final class ConcatenatedCharSource implements CharSource {
      */
     public ConcatenatedCharSource(Iterable<? extends CharSource> sources) {
         var list = new ArrayList<CharSource>();
-        sources.forEach(list::add);
+        for (CharSource source : Objects.requireNonNull(sources, "sources")) {
+            list.add(Objects.requireNonNull(source, "sources contains null"));
+        }
         this.sources = List.copyOf(list);
     }
 

@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.io;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import be.imgn.gaia.core.io.internal.CharSequenceSource;
 import be.imgn.gaia.core.io.internal.ConcatenatedCharSource;
 import be.imgn.gaia.core.io.internal.EncodingInputStream;
@@ -114,7 +116,7 @@ public interface CharSource {
      * @return a source of the content of {@code sources}, in order
      */
     static CharSource concat(CharSource... sources) {
-        return new ConcatenatedCharSource(Arrays.asList(sources));
+        return new ConcatenatedCharSource(Arrays.asList(Objects.requireNonNull(sources, "sources")));
     }
 
     /**
@@ -301,9 +303,11 @@ public interface CharSource {
      *
      * @param charset the charset to encode the characters in
      * @return a source of the encoded bytes
+     * @throws IllegalArgumentException if {@code charset} does not support encoding
      */
     default ByteSource asByteSource(Charset charset) {
         Objects.requireNonNull(charset, "charset");
+        checkArgument(charset.canEncode(), "%s does not support encoding", charset);
         return () -> new EncodingInputStream(openStream(), charset.newEncoder());
     }
 }

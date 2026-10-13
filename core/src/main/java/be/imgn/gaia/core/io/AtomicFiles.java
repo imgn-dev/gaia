@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.io;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import java.io.BufferedOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -60,6 +62,7 @@ public final class AtomicFiles {
      * @throws IOException if the file cannot be written, which leaves it as it was
      */
     public static void write(Path file, byte[] bytes) throws IOException {
+        Objects.requireNonNull(file, "file");
         Objects.requireNonNull(bytes, "bytes");
         write(file, out -> out.write(bytes));
     }
@@ -105,6 +108,8 @@ public final class AtomicFiles {
      * @throws java.nio.charset.CharacterCodingException if the text contains a malformed surrogate pair
      */
     public static void writeString(Path file, CharSequence text) throws IOException {
+        Objects.requireNonNull(file, "file");
+        Objects.requireNonNull(text, "text");
         writeString(file, text, StandardCharsets.UTF_8);
     }
 
@@ -115,12 +120,15 @@ public final class AtomicFiles {
      * @param text the new content of the file
      * @param charset the charset to encode the text in
      * @throws IOException if the file cannot be written, which leaves it as it was
+     * @throws IllegalArgumentException if {@code charset} does not support encoding
      * @throws java.nio.charset.CharacterCodingException if the text contains a character the charset cannot encode, or
      *     a malformed surrogate pair
      */
     public static void writeString(Path file, CharSequence text, Charset charset) throws IOException {
+        Objects.requireNonNull(file, "file");
         Objects.requireNonNull(text, "text");
         Objects.requireNonNull(charset, "charset");
+        checkArgument(charset.canEncode(), "%s does not support encoding", charset);
         ByteBuffer bytes = charset.newEncoder().encode(CharBuffer.wrap(text));
         write(file, out -> out.write(bytes.array(), bytes.arrayOffset() + bytes.position(), bytes.remaining()));
     }

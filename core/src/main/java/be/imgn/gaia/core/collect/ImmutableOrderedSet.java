@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.collect;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -41,6 +43,12 @@ final class ImmutableOrderedSet<E> extends AbstractSet<E> implements Serializabl
     @SafeVarargs
     @SuppressWarnings("varargs")
     static <E> Set<E> of(E... input) {
+        requireNonNull(input, "elements");
+        for (var i = 0; i < input.length; i++) {
+            if (input[i] == null) {
+                throw new NullPointerException("elements[" + i + "]");
+            }
+        }
         List<E> elements = List.of(input);
         Set<E> lookup = Set.copyOf(elements);
         if (lookup.size() != elements.size()) {
@@ -50,13 +58,18 @@ final class ImmutableOrderedSet<E> extends AbstractSet<E> implements Serializabl
     }
 
     static <E> Set<E> copyOf(Collection<? extends E> collection) {
+        requireNonNull(collection, "collection");
         if (collection instanceof ImmutableOrderedSet<?>) {
             // Safe: the set is unmodifiable, so it can only ever be read as a Set<E>.
             @SuppressWarnings("unchecked")
             Set<E> same = (Set<E>) collection;
             return same;
         }
-        List<E> elements = List.copyOf(new LinkedHashSet<E>(List.<E>copyOf(collection)));
+        var distinct = new LinkedHashSet<E>();
+        for (E element : collection) {
+            distinct.add(requireNonNull(element, "collection contains null"));
+        }
+        List<E> elements = List.copyOf(distinct);
         return create(elements, Set.copyOf(elements));
     }
 

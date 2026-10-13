@@ -23,7 +23,6 @@ public final class MoreCollectors {
      * @return a collector of the only element
      * @throws NoSuchElementException when collecting, if the stream is empty
      * @throws IllegalArgumentException when collecting, if the stream has more than one element
-     * @throws NullPointerException when collecting, if an element is {@code null}
      */
     public static <T> Collector<T, ?, T> onlyElement() {
         return Collectors.collectingAndThen(toOptional(), MoreCollectors::present);
@@ -39,7 +38,6 @@ public final class MoreCollectors {
      * @param <T> the element type
      * @return a collector of the only element, or of an empty {@link Optional} for an empty stream
      * @throws IllegalArgumentException when collecting, if the stream has more than one element
-     * @throws NullPointerException when collecting, if an element is {@code null}
      */
     public static <T> Collector<T, ?, Optional<T>> toOptional() {
         return Collector.<T, OnlyElement<T>, Optional<T>>of(

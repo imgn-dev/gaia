@@ -27,7 +27,7 @@ public final class PathSource implements ByteSource {
      */
     public PathSource(Path file, OpenOption... options) {
         this.file = Objects.requireNonNull(file, "file");
-        this.options = options.clone();
+        this.options = OpenOptions.copyOf(options);
         this.linkOptions = Arrays.asList(this.options).contains(LinkOption.NOFOLLOW_LINKS)
                 ? new LinkOption[] {LinkOption.NOFOLLOW_LINKS}
                 : new LinkOption[0];

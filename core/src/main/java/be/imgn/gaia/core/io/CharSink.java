@@ -39,6 +39,7 @@ public interface CharSink {
      * @param charset the charset to encode the text in
      * @param options how to open the file, as for {@link java.nio.file.Files#newOutputStream(Path, OpenOption...)}
      * @return a sink that writes {@code file}
+     * @throws IllegalArgumentException if {@code charset} does not support encoding
      * @see ByteSink#asCharSink(Charset)
      */
     static CharSink of(Path file, Charset charset, OpenOption... options) {
@@ -85,6 +86,7 @@ public interface CharSink {
      * @see System#lineSeparator()
      */
     default void writeLines(Iterable<? extends CharSequence> lines) throws IOException {
+        Objects.requireNonNull(lines, "lines");
         writeLines(lines, System.lineSeparator());
     }
 
@@ -96,37 +98,49 @@ public interface CharSink {
      * @throws IOException if this sink cannot be written
      */
     default void writeLines(Iterable<? extends CharSequence> lines, String separator) throws IOException {
+        Objects.requireNonNull(lines, "lines");
+        Objects.requireNonNull(separator, "separator");
+        // Checked before the sink is opened, which would already replace the content of a file.
+        for (CharSequence line : lines) {
+            Objects.requireNonNull(line, "lines contains null");
+        }
         writeLines(lines.iterator(), separator);
     }
 
     /**
      * Writes the lines of a stream to this sink, each followed by the line separator of the system. The stream is
-     * consumed but left open.
+     * consumed but left open. Its lines are checked as they are written, so a null line leaves the lines before it
+     * written.
      *
      * @param lines the lines to write
      * @throws IOException if this sink cannot be written
      * @see System#lineSeparator()
      */
     default void writeLines(Stream<? extends CharSequence> lines) throws IOException {
+        Objects.requireNonNull(lines, "lines");
         writeLines(lines, System.lineSeparator());
     }
 
     /**
      * Writes the lines of a stream to this sink, each followed by a separator. The stream is consumed but left open.
+     * Its lines are checked as they are written, so a null line leaves the lines before it written.
      *
      * @param lines the lines to write
      * @param separator the separator to write after each line
      * @throws IOException if this sink cannot be written
      */
     default void writeLines(Stream<? extends CharSequence> lines, String separator) throws IOException {
+        Objects.requireNonNull(lines, "lines");
+        Objects.requireNonNull(separator, "separator");
         writeLines(lines.iterator(), separator);
     }
 
+    // A stream can only be read once, so its lines are checked as they are written.
     private void writeLines(Iterator<? extends CharSequence> lines, String separator) throws IOException {
-        Objects.requireNonNull(separator, "separator");
         try (var out = openBufferedStream()) {
             while (lines.hasNext()) {
-                out.append(lines.next()).append(separator);
+                out.append(Objects.requireNonNull(lines.next(), "lines contains null"))
+                        .append(separator);
             }
         }
     }

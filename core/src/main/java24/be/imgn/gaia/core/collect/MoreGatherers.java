@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.collect;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.stream.Gatherer;
 import java.util.stream.Gatherers;
 
@@ -29,6 +31,7 @@ public final class MoreGatherers {
      * @return a gatherer of the instances of {@code type}
      */
     public static <R> Gatherer<Object, ?, R> instanceOf(Class<R> type) {
+        requireNonNull(type, "type");
         return Gatherer.of(Gatherer.Integrator.ofGreedy(
                 (state, element, downstream) -> !type.isInstance(element) || downstream.push(type.cast(element))));
     }
