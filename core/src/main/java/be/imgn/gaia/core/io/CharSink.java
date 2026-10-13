@@ -1,0 +1,160 @@
+package be.imgn.gaia.core.io;
+
+import be.imgn.gaia.core.io.internal.DecodingOutputStream;
+import be.imgn.gaia.core.io.internal.Streams;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+/**
+ * A writable destination of characters, such as a text file, that opens a new stream each time it is written.
+ *
+ * <p>Unlike a {@link Writer}, a sink is not an open resource: it can be kept, passed around and written any number of
+ * times, and each write method opens a stream and closes it before returning. Only {@link #openStream()} and
+ * {@link #openBufferedStream()} leave a stream for the caller to close.
+ *
+ * <p>The only abstract method is {@link #openStream()}, so a lambda makes a sink:
+ *
+ * <pre>{@code
+ * CharSink sink = () -> new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
+ * CharSink.of(file, StandardCharsets.UTF_8).writeLines(lines);
+ * }</pre>
+ *
+ * @since 0.1.1
+ */
+@FunctionalInterface
+public interface CharSink {
+
+    /**
+     * Returns a sink that writes a text file. By default, each write creates the file or replaces its content, but it
+     * is not atomic: see {@link AtomicFiles} for that.
+     *
+     * @param file the file to write
+     * @param charset the charset to encode the text in
+     * @param options how to open the file, as for {@link java.nio.file.Files#newOutputStream(Path, OpenOption...)}
+     * @return a sink that writes {@code file}
+     * @see ByteSink#asCharSink(Charset)
+     */
+    static CharSink of(Path file, Charset charset, OpenOption... options) {
+        return ByteSink.of(file, options).asCharSink(charset);
+    }
+
+    /**
+     * Opens a new stream to write the characters of this sink. The caller must close it.
+     *
+     * @return a new stream
+     * @throws IOException if the stream cannot be opened
+     */
+    Writer openStream() throws IOException;
+
+    /**
+     * Opens a new buffered stream to write the characters of this sink. The caller must close it.
+     *
+     * @return a new buffered stream
+     * @throws IOException if the stream cannot be opened
+     */
+    default Writer openBufferedStream() throws IOException {
+        var out = openStream();
+        return out instanceof BufferedWriter ? out : new BufferedWriter(out);
+    }
+
+    /**
+     * Writes characters to this sink.
+     *
+     * @param chars the characters to write
+     * @throws IOException if this sink cannot be written
+     */
+    default void write(CharSequence chars) throws IOException {
+        Objects.requireNonNull(chars, "chars");
+        try (var out = openStream()) {
+            out.append(chars);
+        }
+    }
+
+    /**
+     * Writes lines to this sink, each followed by the line separator of the system.
+     *
+     * @param lines the lines to write
+     * @throws IOException if this sink cannot be written
+     * @see System#lineSeparator()
+     */
+    default void writeLines(Iterable<? extends CharSequence> lines) throws IOException {
+        writeLines(lines, System.lineSeparator());
+    }
+
+    /**
+     * Writes lines to this sink, each followed by a separator.
+     *
+     * @param lines the lines to write
+     * @param separator the separator to write after each line
+     * @throws IOException if this sink cannot be written
+     */
+    default void writeLines(Iterable<? extends CharSequence> lines, String separator) throws IOException {
+        writeLines(lines.iterator(), separator);
+    }
+
+    /**
+     * Writes the lines of a stream to this sink, each followed by the line separator of the system. The stream is
+     * consumed but left open.
+     *
+     * @param lines the lines to write
+     * @throws IOException if this sink cannot be written
+     * @see System#lineSeparator()
+     */
+    default void writeLines(Stream<? extends CharSequence> lines) throws IOException {
+        writeLines(lines, System.lineSeparator());
+    }
+
+    /**
+     * Writes the lines of a stream to this sink, each followed by a separator. The stream is consumed but left open.
+     *
+     * @param lines the lines to write
+     * @param separator the separator to write after each line
+     * @throws IOException if this sink cannot be written
+     */
+    default void writeLines(Stream<? extends CharSequence> lines, String separator) throws IOException {
+        writeLines(lines.iterator(), separator);
+    }
+
+    private void writeLines(Iterator<? extends CharSequence> lines, String separator) throws IOException {
+        Objects.requireNonNull(separator, "separator");
+        try (var out = openBufferedStream()) {
+            while (lines.hasNext()) {
+                out.append(lines.next()).append(separator);
+            }
+        }
+    }
+
+    /**
+     * Writes the characters of a readable to this sink, up to its end. The readable is left open.
+     *
+     * @param readable the readable to read
+     * @return the number of characters written
+     * @throws IOException if {@code readable} cannot be read or this sink cannot be written
+     */
+    default long writeFrom(Readable readable) throws IOException {
+        Objects.requireNonNull(readable, "readable");
+        try (var out = openStream()) {
+            return Streams.copy(readable, out);
+        }
+    }
+
+    /**
+     * Returns a sink that writes bytes to this one, decoded from a charset. Writing to it fails with a
+     * {@link java.nio.charset.CharacterCodingException} on bytes that are not valid in {@code charset}, rather than
+     * replace them. Bytes that end in the middle of a character are reported when the stream is closed.
+     *
+     * @param charset the charset the bytes are encoded in
+     * @return a sink of bytes
+     */
+    default ByteSink asByteSink(Charset charset) {
+        Objects.requireNonNull(charset, "charset");
+        return () -> new DecodingOutputStream(openStream(), charset.newDecoder());
+    }
+}

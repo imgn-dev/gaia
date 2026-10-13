@@ -28,6 +28,11 @@ The libraries require Java 21 or later and are released together under one versi
 - **`io.AtomicFiles`**: writes a file so that readers, or the next run after a crash, see either its old content or
   its new one, never a part of it: `write(file, bytes)`, `writeString(file, text)`, or
   `write(file, out -> ImageIO.write(image, "png", out))`. The file keeps its permissions.
+- **`io.ByteSource`, `io.CharSource`, `io.ByteSink` and `io.CharSink`**: files, URLs, arrays or strings to read
+  or write as a whole, each read or write opening and closing its own stream:
+  `CharSource.of(file, UTF_8).readLines()`, `ByteSource.of(uri).slice(0, 4).read()`,
+  `CharSink.of(file, UTF_8).writeLines(lines)`. Each is a functional interface, so a lambda that opens a stream
+  makes one.
 - **`system.SystemProperties` and `system.Environment`**: system properties and environment variables, read from
   the running JVM or from fixed values in tests. `SystemProperties` has a typed method for each standard Java
   property, such as `userHome()` or `javaVersion()`.
