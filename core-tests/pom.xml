@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.imgn.gaia</groupId>
+    <artifactId>gaia-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>gaia-core-tests</artifactId>
+
+  <name>Gaia Core Tests</name>
+  <description>Tests of gaia-core written against gaia-core-testing, the way users write theirs. Not published.</description>
+
+  <properties>
+    <!-- Tests only: never installed, deployed or listed in the BOM. -->
+    <maven.install.skip>true</maven.install.skip>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <!-- No jar to sign: its sources are tests only. -->
+    <gpg.skip>true</gpg.skip>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-core</artifactId>
+      <version>${revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-core-testing</artifactId>
+      <version>${revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Keeps the (empty) jar out of the Central bundle under -Prelease. -->
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <configuration>
+            <excludeArtifacts>
+              <excludeArtifact>${project.artifactId}</excludeArtifact>
+            </excludeArtifacts>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <!-- No main sources means no target/classes, which javac's "path" lint
+           reports as a bad class path element, fatal under -Werror. Only that
+           category is turned off, and only for this module's test compile. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <testCompilerArgument>-Xlint:-path</testCompilerArgument>
+        </configuration>
+      </plugin>
+      <!-- The parent only activates Checkstyle when src/main/java exists, and
+           this module has test sources only. src/test/java24 holds the tests
+           of gaia-core's Java 24 classes (see the java-24-tests profile);
+           formatting and Checkstyle cover it on every JDK. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <testSourceDirectories>
+            <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+            <testSourceDirectory>${project.basedir}/src/test/java24</testSourceDirectory>
+          </testSourceDirectories>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <configuration>
+          <java>
+            <includes>
+              <include>src/test/java/**/*.java</include>
+              <include>src/test/java24/**/*.java</include>
+            </includes>
+          </java>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- The tests of gaia-core's Java 24 classes, which only a JDK 24+ can
+         compile and run. They see gaia-core as its packaged multi-release jar,
+         like users do. -->
+    <profile>
+      <id>java-24-tests</id>
+      <activation>
+        <jdk>[24,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <!-- One pass over both test roots: the module descriptor in
+                   src/test/java covers the Java 24 tests too. Tests are never
+                   shipped, so compiling all of them for Java 24 here costs
+                   nothing. -->
+              <execution>
+                <id>default-testCompile</id>
+                <configuration>
+                  <testRelease>24</testRelease>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/test/java</compileSourceRoot>
+                    <compileSourceRoot>${project.basedir}/src/test/java24</compileSourceRoot>
+                  </compileSourceRoots>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

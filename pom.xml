@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- child.project.url.inherit.append.path: the attribute is not inherited from
+     be.imgn.parent:parent once <url> is redefined here, so it is repeated;
+     otherwise Maven appends each module's artifactId to the gaia URL. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+         child.project.url.inherit.append.path="false">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.imgn.parent</groupId>
+    <artifactId>parent</artifactId>
+    <version>2026-10-07</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>be.imgn.gaia</groupId>
+  <artifactId>gaia-parent</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+
+  <name>Gaia Parent</name>
+  <description>Build configuration shared by the gaia libraries.</description>
+  <!-- The parent's url and scm do not append child paths, so without these every
+       gaia module would point at imgn-parent. -->
+  <url>https://github.com/imgn-dev/gaia</url>
+
+  <scm child.scm.connection.inherit.append.path="false"
+       child.scm.developerConnection.inherit.append.path="false"
+       child.scm.url.inherit.append.path="false">
+    <connection>scm:git:https://github.com/imgn-dev/gaia.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/imgn-dev/gaia.git</developerConnection>
+    <url>https://github.com/imgn-dev/gaia</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <modules>
+    <!-- Published: each one is also listed in bom/pom.xml. -->
+    <module>bom</module>
+    <module>core</module>
+    <module>core-testing</module>
+    <module>platform</module>
+    <module>platform-testing</module>
+    <module>processing</module>
+    <module>processing-testing</module>
+    <!-- Not published: tests that exercise X through X-testing. -->
+    <module>core-tests</module>
+    <module>platform-tests</module>
+    <module>processing-tests</module>
+  </modules>
+
+  <properties>
+    <!-- ${revision}, the one gaia version, is set in .mvn/maven.config rather
+         than here: gaia-bom has no parent, so a property defined in this POM
+         would not reach it. A release overrides it: -Drevision=1.2.3. -->
+
+    <!-- The parent's reactorModuleConvergence rejects any reactor module
+         without a parent, and gaia-bom must have none (see bom/pom.xml). Only
+         this rule is skipped; every other parent rule stays on. Every library
+         module still gets its version from the same ${revision}. -->
+    <enforcer.skipRules>reactorModuleConvergence</enforcer.skipRules>
+
+    <!-- The baseline every gaia library runs on. The parent wires this into the
+         compiler's and javadoc's release and into requireJavaVersion. -->
+    <java.release>21</java.release>
+
+    <!-- Reproducible builds: bump on each release. -->
+    <project.build.outputTimestamp>2026-10-12T00:00:00Z</project.build.outputTimestamp>
+
+    <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
+    <build-helper-maven-plugin.version>3.6.2</build-helper-maven-plugin.version>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>${flatten-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${build-helper-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!-- Replaces ${revision} in the installed and deployed POMs. This
+           configuration is for gaia-parent itself, which is published as a
+           parent: only the CI-friendly properties are resolved and everything
+           else, build configuration included, is kept. Library modules switch
+           to the flatten-library-poms profile below. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+          <updatePomFile>true</updatePomFile>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- Adds to the parent's release profile, which is activated by the same
+         -Prelease. gaia-core is a multi-release jar whose Java 24 classes a
+         JDK older than 24 silently leaves out (see core/pom.xml), so a release
+         built there would be incomplete. -->
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-release-jdk</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireJavaVersion>
+                      <version>[24,)</version>
+                      <message>Build releases on JDK 24 or later, or gaia-core lacks its Java 24 classes.</message>
+                    </requireJavaVersion>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Library POMs keep their parent chain (gaia-parent and
+         be.imgn.parent:parent are both on Central), with ${revision} resolved.
+         Their dependencies are flattened: written with concrete versions, and
+         without the test-scoped ones, which mean nothing to a user. Activated
+         the way the parent activates Checkstyle, by the presence of Java
+         sources, so it never applies to gaia-parent. (resolveCiFriendliesOnly
+         cannot be combined with flattened dependencies: flatten 1.8.0 fails
+         with a NullPointerException in CiModelInterpolator.) -->
+    <profile>
+      <id>flatten-library-poms</id>
+      <activation>
+        <file>
+          <exists>${basedir}/src/main/java</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>flatten-maven-plugin</artifactId>
+            <configuration>
+              <flattenMode>defaults</flattenMode>
+              <pomElements>
+                <parent>interpolate</parent>
+                <name>interpolate</name>
+                <description>interpolate</description>
+                <dependencies>flatten</dependencies>
+              </pomElements>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- CI also builds on JDK 21, the baseline. There, Error Prone refuses to
+         start without this javac flag, which the parent (written for JDK 25)
+         does not pass. Appended to the parent's compilerArgs, not replacing
+         them, and only when the build itself runs on JDK 21. -->
+    <profile>
+      <id>error-prone-on-jdk-21</id>
+      <activation>
+        <jdk>21</jdk>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                <compilerArgs combine.children="append">
+                  <arg>-XDaddTypeAnnotationsToSymbol=true</arg>
+                </compilerArgs>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

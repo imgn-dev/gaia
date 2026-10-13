@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- No parent on purpose. An imported BOM contributes its *effective*
+     dependencyManagement, inherited entries included, so inheriting from
+     gaia-parent would push be.imgn.parent:parent's JUnit, AssertJ and JSpecify
+     pins into every user's build. Everything a parent would give, Central
+     metadata and the release profile, is therefore spelled out here. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>be.imgn.gaia</groupId>
+  <artifactId>gaia-bom</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+
+  <name>Gaia BOM</name>
+  <description>Bill of materials for the gaia libraries: import it to align every gaia module on one version.</description>
+  <url>https://github.com/imgn-dev/gaia</url>
+  <inceptionYear>2026</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>imgn-dev</id>
+      <name>The IMGN developers</name>
+      <url>https://github.com/imgn-dev</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/imgn-dev/gaia.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/imgn-dev/gaia.git</developerConnection>
+    <url>https://github.com/imgn-dev/gaia</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <properties>
+    <!-- ${revision} comes from ../.mvn/maven.config, shared with gaia-parent. -->
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.outputTimestamp>2026-10-12T00:00:00Z</project.build.outputTimestamp>
+
+    <!-- The same versions be.imgn.parent:parent 2026-10-07 pins. Keep them in
+         step when the parent is bumped: central-publishing-maven-plugin in
+         particular refuses a reactor that mixes two of its versions. -->
+    <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
+    <maven-install-plugin.version>3.2.0</maven-install-plugin.version>
+    <maven-deploy-plugin.version>3.2.0</maven-deploy-plugin.version>
+    <maven-site-plugin.version>3.22.0</maven-site-plugin.version>
+    <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+    <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+    <!-- Same as gaia-parent. -->
+    <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
+  </properties>
+
+  <!-- Only gaia artifacts. Every published module is listed; the unpublished
+       *-tests modules are not. -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>be.imgn.gaia</groupId>
+        <artifactId>gaia-core</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.imgn.gaia</groupId>
+        <artifactId>gaia-core-testing</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.imgn.gaia</groupId>
+        <artifactId>gaia-platform</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.imgn.gaia</groupId>
+        <artifactId>gaia-platform-testing</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.imgn.gaia</groupId>
+        <artifactId>gaia-processing</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.imgn.gaia</groupId>
+        <artifactId>gaia-processing-testing</artifactId>
+        <version>${revision}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven-install-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
+          <configuration>
+            <gpgArguments>
+              <arg>--pinentry-mode</arg>
+              <arg>loopback</arg>
+            </gpgArguments>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${central-publishing-maven-plugin.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <publishingServerId>central</publishingServerId>
+            <autoPublish>false</autoPublish>
+            <waitUntil>validated</waitUntil>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>${flatten-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!-- bom mode keeps dependencyManagement and drops build and profiles.
+           It keeps dependencyManagement as written, though, so it is
+           interpolated explicitly: otherwise ${revision} reaches the published
+           POM unresolved. Properties are dropped: they are build settings, of
+           no use to an importing project. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <flattenMode>bom</flattenMode>
+          <updatePomFile>true</updatePomFile>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+          <pomElements>
+            <dependencyManagement>interpolate</dependencyManagement>
+            <properties>remove</properties>
+          </pomElements>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- Mirrors the parent's release profile, minus sources and javadoc, which
+         a pom-packaged artifact does not have. Activated by the same -Prelease
+         as the rest of the reactor, so the BOM ships in the same deployment. -->
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

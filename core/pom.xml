@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.imgn.gaia</groupId>
+    <artifactId>gaia-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>gaia-core</artifactId>
+
+  <name>Gaia Core</name>
+  <description>JDK extensions with no dependencies besides JSpecify.</description>
+
+  <dependencies>
+    <!-- The only dependency gaia-core may have. Compile scope, not optional:
+         the @Nullable/@NullMarked annotations are part of the published API,
+         so users' nullness tooling must see them. -->
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- src/main/java24 holds the classes of the multi-release jar's
+           META-INF/versions/24 (see the java-24-classes profile). Formatting
+           and Checkstyle cover it on every JDK, even one that cannot compile
+           it. -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <configuration>
+          <java>
+            <includes>
+              <include>src/main/java/**/*.java</include>
+              <include>src/main/java24/**/*.java</include>
+              <include>src/test/java/**/*.java</include>
+            </includes>
+          </java>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <sourceDirectories>
+            <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+            <sourceDirectory>${project.basedir}/src/main/java24</sourceDirectory>
+          </sourceDirectories>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- gaia-core is a multi-release jar: the classes of src/main/java24 need
+         Java 24 APIs, such as Gatherer, and are compiled into
+         META-INF/versions/24, where only a Java 24+ runtime looks. A JDK older
+         than 24 cannot compile them and builds the jar without them, so a
+         release must be built on JDK 24+; gaia-parent's release profile
+         enforces it. Their tests are in core-tests, which runs them against
+         the packaged jar. -->
+    <profile>
+      <id>java-24-classes</id>
+      <activation>
+        <jdk>[24,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <!-- src/main/java24 is a project source root below, for the
+                   sources and javadoc jars; the Java 21 compilation must still
+                   skip it. -->
+              <execution>
+                <id>default-compile</id>
+                <configuration>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java</compileSourceRoot>
+                  </compileSourceRoots>
+                </configuration>
+              </execution>
+              <execution>
+                <id>compile-java-24</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <release>24</release>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java24</compileSourceRoot>
+                  </compileSourceRoots>
+                  <multiReleaseOutput>true</multiReleaseOutput>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <Multi-Release>true</Multi-Release>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </plugin>
+          <!-- Puts the Java 24 sources in the sources jar and the javadoc. -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>add-java-24-sources</id>
+                <goals>
+                  <goal>add-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${project.basedir}/src/main/java24</source>
+                  </sources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+        <pluginManagement>
+          <plugins>
+            <!-- The javadoc covers the Java 24 classes too, so it is built
+                 against Java 24. -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <configuration>
+                <release>24</release>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
