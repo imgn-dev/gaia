@@ -18,6 +18,9 @@ The libraries require Java 21 or later and are released together under one versi
 
 ### `gaia-core`
 
+- **`base.Preconditions`**: `checkArgument` and `checkState` throw `IllegalArgumentException` or
+  `IllegalStateException` when a check fails, with an optional message or `String.format` message format:
+  `checkArgument(count >= 0, "count must not be negative: %d", count)`.
 - **`collect.Sets`**: unmodifiable sets that keep the order their elements are given in. `set(...)` and
   `setCopy(...)` behave like `Set.of` and `Set.copyOf`, and the `toSet()` collector like
   `Collectors.toUnmodifiableSet()`, except for iteration order.

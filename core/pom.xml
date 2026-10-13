@@ -14,15 +14,21 @@
   <artifactId>gaia-core</artifactId>
 
   <name>Gaia Core</name>
-  <description>JDK extensions with no dependencies besides JSpecify.</description>
+  <description>JDK extensions with no dependencies besides JSpecify and the Error Prone annotations.</description>
 
   <dependencies>
-    <!-- The only dependency gaia-core may have. Compile scope, not optional:
-         the @Nullable/@NullMarked annotations are part of the published API,
-         so users' nullness tooling must see them. -->
+    <!-- The only dependencies gaia-core may have: annotations that are part
+         of its published API. Compile scope, not optional, so users' tooling
+         sees them: @Nullable/@NullMarked for nullness checkers, and
+         @FormatMethod/@FormatString for Error Prone to check the message
+         formats passed to Preconditions. -->
     <dependency>
       <groupId>org.jspecify</groupId>
       <artifactId>jspecify</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.errorprone</groupId>
+      <artifactId>error_prone_annotations</artifactId>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
