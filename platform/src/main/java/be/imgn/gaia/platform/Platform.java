@@ -81,6 +81,63 @@ public interface Platform {
     Directories directories();
 
     /**
+     * Returns the directories of an application, named by its name alone.
+     *
+     * <ul>
+     *   <li>Linux, Unix: {@code ~/.config/app}, {@code ~/.local/share/app}, {@code ~/.local/state/app},
+     *       {@code ~/.cache/app} and {@code $XDG_RUNTIME_DIR/app}, under the {@linkplain #directories() base
+     *       directories}, where {@code app} is the name in lower case with spaces replaced by {@code -}
+     *   <li>macOS: {@code config}, {@code data} and {@code state} in {@code ~/Library/Application Support/App}, and
+     *       {@code ~/Library/Caches/App}
+     *   <li>Windows: {@code config} and {@code data} in {@code %APPDATA%\App}, {@code state} and {@code cache} in
+     *       {@code %LOCALAPPDATA%\App}
+     * </ul>
+     *
+     * @param application the name of the application, such as {@code Quuz}
+     * @return the directories of the application
+     * @throws IllegalArgumentException if the name is blank, {@code .} or {@code ..}, or contains {@code /}, {@code \}
+     *     or {@code :}
+     * @since 0.1.1
+     */
+    default ApplicationDirectories applicationDirectories(String application) {
+        return ApplicationDirectories.of(this, null, null, application);
+    }
+
+    /**
+     * Returns the directories of an application, named by its vendor and its name. Only Windows uses the vendor, as a
+     * directory above the application's: {@code %APPDATA%\Vendor\App} and {@code %LOCALAPPDATA%\Vendor\App}. Otherwise,
+     * the directories are those of {@link #applicationDirectories(String)}.
+     *
+     * @param vendor the name of the organization or person that makes the application, such as {@code bar}
+     * @param application the name of the application, such as {@code Quuz}
+     * @return the directories of the application
+     * @throws IllegalArgumentException if a name is blank, {@code .} or {@code ..}, or contains {@code /}, {@code \} or
+     *     {@code :}
+     * @since 0.1.1
+     */
+    default ApplicationDirectories applicationDirectories(String vendor, String application) {
+        return ApplicationDirectories.of(this, null, vendor, application);
+    }
+
+    /**
+     * Returns the directories of an application, named by its vendor's qualifier, its vendor and its name. Only macOS
+     * uses the qualifier: its directories are named after the bundle-style identifier {@code qualifier.vendor.App},
+     * such as {@code ~/Library/Application Support/foo.bar.Quuz}, with spaces replaced by {@code -}. Otherwise, the
+     * directories are those of {@link #applicationDirectories(String, String)}.
+     *
+     * @param qualifier the top-level domain of the vendor, such as {@code foo}
+     * @param vendor the name of the organization or person that makes the application, such as {@code bar}
+     * @param application the name of the application, such as {@code Quuz}
+     * @return the directories of the application
+     * @throws IllegalArgumentException if a name is blank, {@code .} or {@code ..}, or contains {@code /}, {@code \} or
+     *     {@code :}
+     * @since 0.1.1
+     */
+    default ApplicationDirectories applicationDirectories(String qualifier, String vendor, String application) {
+        return ApplicationDirectories.of(this, qualifier, vendor, application);
+    }
+
+    /**
      * Detects a {@link Platform} from its sources. Each source defaults to the running JVM's:
      * {@link SystemProperties#system()}, {@link Environment#system()} and {@link FileSystems#getDefault()}.
      *

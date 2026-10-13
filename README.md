@@ -25,6 +25,9 @@ The libraries require Java 21 or later and are released together under one versi
   zero or one element.
 - **`collect.MoreGatherers`** (Java 24+): `instanceOf(type)` keeps the elements of a type, cast to it:
   `stream.gather(MoreGatherers.instanceOf(Circle.class))`.
+- **`io.AtomicFiles`**: writes a file so that readers, or the next run after a crash, see either its old content or
+  its new one, never a part of it: `write(file, bytes)`, `writeString(file, text)`, or
+  `write(file, out -> ImageIO.write(image, "png", out))`. The file keeps its permissions.
 - **`system.SystemProperties` and `system.Environment`**: system properties and environment variables, read from
   the running JVM or from fixed values in tests. `SystemProperties` has a typed method for each standard Java
   property, such as `userHome()` or `javaVersion()`.
@@ -46,6 +49,10 @@ The libraries require Java 21 or later and are released together under one versi
 - **`Directories`**: where applications store their data, configuration, state and cache files, following the XDG
   Base Directory Specification on Linux and other Unix-like systems, and the standard locations on macOS and
   Windows.
+- **`ApplicationDirectories`**: one application's own configuration, data, state, cache and runtime directories,
+  kept apart on every operating system: `platform.applicationDirectories("Quuz")`, or with the vendor
+  (`"bar", "Quuz"`), which Windows nests the application under, and a qualifier (`"foo", "bar", "Quuz"`), which
+  names the macOS directories `foo.bar.Quuz`.
 
 ### `gaia-processing`
 

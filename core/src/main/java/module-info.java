@@ -8,6 +8,7 @@ module be.imgn.gaia.core {
     requires transitive org.jspecify;
 
     exports be.imgn.gaia.core.collect;
+    exports be.imgn.gaia.core.io;
     exports be.imgn.gaia.core.system;
     exports be.imgn.gaia.core.text;
     exports be.imgn.gaia.core.time;
