@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.testing;
 
 import be.imgn.gaia.processing.testing.internal.RunningCompilation;
+import java.util.Objects;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -29,6 +30,9 @@ import org.junit.jupiter.api.extension.ParameterResolver;
  * of the class, and so is the one of a class annotated with {@link SharedCompilation}. While the test runs, javac waits
  * inside an annotation processor, so the elements and types stay valid; they must not be kept beyond the test. The
  * compilation sees the JDK, and the class path and module path of the running JVM.
+ *
+ * <p>A compilation that fails to finish, or reports an error, throws an {@link IllegalStateException} when it ends,
+ * which JUnit reports as a failure of the test or class that started it.
  */
 public final class CompilationExtension implements BeforeAllCallback, ParameterResolver {
 
@@ -38,21 +42,50 @@ public final class CompilationExtension implements BeforeAllCallback, ParameterR
     /** Creates the extension; JUnit does, through {@code @ExtendWith}. */
     public CompilationExtension() {}
 
+    /**
+     * Starts the compilation the tests of the class share, if the class is annotated with {@link SharedCompilation}.
+     *
+     * @param context the context of the test class
+     * @throws IllegalStateException if javac fails, finishes without processing, or does not reach its last processing
+     *     round within a minute
+     */
     @Override
     public void beforeAll(ExtensionContext context) {
+        Objects.requireNonNull(context, "context");
         if (context.getRequiredTestClass().isAnnotationPresent(SharedCompilation.class)) {
             compilation(context);
         }
     }
 
+    /**
+     * Returns whether a parameter asks for the {@link Elements} or the {@link Types} of the compilation.
+     *
+     * @param parameterContext the context of the parameter
+     * @param extensionContext the context of the test
+     * @return {@code true} for a parameter of type {@code Elements} or {@code Types}
+     */
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+        Objects.requireNonNull(parameterContext, "parameterContext");
+        Objects.requireNonNull(extensionContext, "extensionContext");
         Class<?> type = parameterContext.getParameter().getType();
         return type == Elements.class || type == Types.class;
     }
 
+    /**
+     * Returns the {@link Elements} or the {@link Types} of the compilation, starting it if this context or an enclosing
+     * one has none yet.
+     *
+     * @param parameterContext the context of the parameter
+     * @param extensionContext the context of the test
+     * @return the {@code Elements} or the {@code Types} of the compilation
+     * @throws IllegalStateException if javac fails, finishes without processing, or does not reach its last processing
+     *     round within a minute
+     */
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+        Objects.requireNonNull(parameterContext, "parameterContext");
+        Objects.requireNonNull(extensionContext, "extensionContext");
         RunningCompilation compilation = compilation(extensionContext);
         Class<?> type = parameterContext.getParameter().getType();
         return type == Elements.class ? compilation.elements() : compilation.types();

@@ -5,6 +5,7 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import javax.annotation.processing.Processor;
 import org.assertj.core.api.AbstractAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * AssertJ assertions on an annotation processor class.
@@ -15,17 +16,17 @@ import org.assertj.core.api.AbstractAssert;
  */
 public final class ProcessorAssert extends AbstractAssert<ProcessorAssert, Class<? extends Processor>> {
 
-    private ProcessorAssert(Class<? extends Processor> actual) {
+    private ProcessorAssert(@Nullable Class<? extends Processor> actual) {
         super(actual, ProcessorAssert.class);
     }
 
     /**
      * Returns assertions on a processor class.
      *
-     * @param actual the processor class
+     * @param actual the processor class; like any AssertJ assertion, every assertion fails if it is {@code null}
      * @return the assertions
      */
-    public static ProcessorAssert assertThat(Class<? extends Processor> actual) {
+    public static ProcessorAssert assertThat(@Nullable Class<? extends Processor> actual) {
         return new ProcessorAssert(actual);
     }
 

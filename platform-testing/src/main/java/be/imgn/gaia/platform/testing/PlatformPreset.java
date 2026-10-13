@@ -1,5 +1,7 @@
 package be.imgn.gaia.platform.testing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import be.imgn.gaia.core.system.Environment;
 import be.imgn.gaia.core.system.SystemProperties;
 import be.imgn.gaia.platform.Platform;
@@ -177,9 +179,13 @@ public final class PlatformPreset {
          * @param name the name of the property
          * @param value the value of the property
          * @return this builder
+         * @throws IllegalArgumentException if {@code name} is empty, which no JVM accepts as a property name
          */
         public Builder systemProperty(String name, String value) {
-            systemProperties.put(Objects.requireNonNull(name, "name"), Objects.requireNonNull(value, "value"));
+            Objects.requireNonNull(name, "name");
+            Objects.requireNonNull(value, "value");
+            checkArgument(!name.isEmpty(), "The name of a system property must not be empty");
+            systemProperties.put(name, value);
             return this;
         }
 
@@ -274,9 +280,7 @@ public final class PlatformPreset {
 
         private static String nonBlank(String value, String name) {
             Objects.requireNonNull(value, name);
-            if (value.isBlank()) {
-                throw new IllegalArgumentException(name + " must not be blank");
-            }
+            checkArgument(!value.isBlank(), "%s must not be blank", name);
             return value;
         }
 

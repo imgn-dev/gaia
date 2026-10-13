@@ -95,8 +95,9 @@ public interface Platform {
      *
      * @param application the name of the application, such as {@code Quuz}
      * @return the directories of the application
-     * @throws IllegalArgumentException if the name is blank, {@code .} or {@code ..}, or contains {@code /}, {@code \}
-     *     or {@code :}
+     * @throws IllegalArgumentException if the name is blank, {@code .} or {@code ..}, starts or ends with whitespace,
+     *     or contains a control character or any of {@code / \ : < > " | ? *}, which some platform forbids in a file
+     *     name
      * @since 0.1.1
      */
     default ApplicationDirectories applicationDirectories(String application) {
@@ -111,11 +112,12 @@ public interface Platform {
      * @param vendor the name of the organization or person that makes the application, such as {@code bar}
      * @param application the name of the application, such as {@code Quuz}
      * @return the directories of the application
-     * @throws IllegalArgumentException if a name is blank, {@code .} or {@code ..}, or contains {@code /}, {@code \} or
-     *     {@code :}
+     * @throws IllegalArgumentException if a name is blank, {@code .} or {@code ..}, starts or ends with whitespace, or
+     *     contains a control character or any of {@code / \ : < > " | ? *}, which some platform forbids in a file name
      * @since 0.1.1
      */
     default ApplicationDirectories applicationDirectories(String vendor, String application) {
+        Objects.requireNonNull(vendor, "vendor");
         return ApplicationDirectories.of(this, null, vendor, application);
     }
 
@@ -129,11 +131,13 @@ public interface Platform {
      * @param vendor the name of the organization or person that makes the application, such as {@code bar}
      * @param application the name of the application, such as {@code Quuz}
      * @return the directories of the application
-     * @throws IllegalArgumentException if a name is blank, {@code .} or {@code ..}, or contains {@code /}, {@code \} or
-     *     {@code :}
+     * @throws IllegalArgumentException if a name is blank, {@code .} or {@code ..}, starts or ends with whitespace, or
+     *     contains a control character or any of {@code / \ : < > " | ? *}, which some platform forbids in a file name
      * @since 0.1.1
      */
     default ApplicationDirectories applicationDirectories(String qualifier, String vendor, String application) {
+        Objects.requireNonNull(qualifier, "qualifier");
+        Objects.requireNonNull(vendor, "vendor");
         return ApplicationDirectories.of(this, qualifier, vendor, application);
     }
 
@@ -191,6 +195,8 @@ public interface Platform {
          *
          * @return the platform
          * @throws java.util.NoSuchElementException if {@code os.name} or {@code user.home} is not set
+         * @throws java.nio.file.InvalidPathException if {@code user.home}, or an environment variable the platform
+         *     reads a directory from, is not a valid path on the file system
          */
         public Platform detect() {
             return Platforms.detect(systemProperties, environment, fileSystem);

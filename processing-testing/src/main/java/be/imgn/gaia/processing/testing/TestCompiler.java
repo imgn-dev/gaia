@@ -8,9 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.DiagnosticCollector;
@@ -64,11 +66,18 @@ public final class TestCompiler {
     /**
      * Returns an in-memory compilation unit.
      *
-     * @param qualifiedName the fully qualified name of the top-level type the source declares
+     * @param qualifiedName the fully qualified name of the top-level type the source declares; or {@code module-info}
+     *     for a module declaration; or {@code package-info} after the name of the package, if any, for a package
+     *     declaration
      * @param text the source text
      * @return the compilation unit, named {@code mem:///<package path>/<simple name>.java}
+     * @throws IllegalArgumentException if {@code qualifiedName} is not a qualified name, {@code module-info} or
+     *     {@code package-info}
      */
     public static JavaFileObject source(String qualifiedName, String text) {
+        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        Objects.requireNonNull(text, "text");
+        Checks.checkSourceName(qualifiedName);
         URI uri = URI.create("mem:///" + qualifiedName.replace('.', '/') + JavaFileObject.Kind.SOURCE.extension);
         return new SimpleJavaFileObject(uri, JavaFileObject.Kind.SOURCE) {
             @Override
@@ -86,7 +95,8 @@ public final class TestCompiler {
      * @return a compiler running {@code processors}
      */
     public TestCompiler withProcessors(Processor... processors) {
-        return new TestCompiler(List.of(processors), options);
+        Objects.requireNonNull(processors, "processors");
+        return new TestCompiler(Checks.copyOfNonNull(Arrays.asList(processors), "processors"), options);
     }
 
     /**
@@ -97,11 +107,15 @@ public final class TestCompiler {
      * the {@code processing} lint warns whenever a processor does not claim its annotations, which well-behaved
      * processors never do.
      *
+     * <p>javac checks the options when {@link #compile(List)} runs: telling an option from the argument of another
+     * takes its file manager.
+     *
      * @param options the javac options
      * @return a compiler passing {@code options}
      */
     public TestCompiler withOptions(String... options) {
-        return new TestCompiler(processors, List.of(options));
+        Objects.requireNonNull(options, "options");
+        return new TestCompiler(processors, Checks.copyOfNonNull(Arrays.asList(options), "options"));
     }
 
     /**
@@ -109,11 +123,17 @@ public final class TestCompiler {
      *
      * @param sources the compilation units, such as the ones {@link #source(String, String)} returns
      * @return the outcome; a compilation error is reported in it, not thrown
-     * @throws IllegalStateException if the running Java has no system compiler
+     * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, or if
+     *     javac rejects an option: unknown, without its argument, or with an invalid value
+     * @throws IllegalStateException if the running Java has no system compiler, or if javac finds options that cannot
+     *     be used together
+     * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
+     *     cause of the one thrown
      * @throws UncheckedIOException if the temporary output directories cannot be written, read or deleted
      */
     public Compilation compile(JavaFileObject... sources) {
-        return compile(List.of(sources));
+        Objects.requireNonNull(sources, "sources");
+        return compile(Arrays.asList(sources));
     }
 
     /**
@@ -121,10 +141,24 @@ public final class TestCompiler {
      *
      * @param sources the compilation units, such as the ones {@link #source(String, String)} returns
      * @return the outcome; a compilation error is reported in it, not thrown
-     * @throws IllegalStateException if the running Java has no system compiler
+     * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, or if
+     *     javac rejects an option: unknown, without its argument, or with an invalid value
+     * @throws IllegalStateException if the running Java has no system compiler, or if javac finds options that cannot
+     *     be used together
+     * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
+     *     cause of the one thrown
      * @throws UncheckedIOException if the temporary output directories cannot be written, read or deleted
      */
     public Compilation compile(List<? extends JavaFileObject> sources) {
+        List<JavaFileObject> units = Checks.copyOfNonNull(sources, "sources");
+        if (units.isEmpty()) {
+            throw new IllegalArgumentException("No source to compile");
+        }
+        for (JavaFileObject unit : units) {
+            if (unit.getKind() != JavaFileObject.Kind.SOURCE) {
+                throw new IllegalArgumentException("Not a source file: " + unit.getName());
+            }
+        }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             throw new IllegalStateException("No system Java compiler: run the tests on a JDK, not a JRE");
@@ -137,7 +171,7 @@ public final class TestCompiler {
             fileManager.setLocationFromPaths(StandardLocation.CLASS_OUTPUT, List.of(classOutput));
             fileManager.setLocationFromPaths(StandardLocation.SOURCE_OUTPUT, List.of(sourceOutput));
             JavaCompiler.CompilationTask task =
-                    compiler.getTask(null, fileManager, diagnostics, javacOptions(sources), null, sources);
+                    compiler.getTask(null, fileManager, diagnostics, javacOptions(units), null, units);
             task.setProcessors(processors);
             boolean success = task.call();
             List<JavaFileObject> generated = new ArrayList<>();

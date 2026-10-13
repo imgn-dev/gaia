@@ -5,9 +5,22 @@ import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import be.imgn.gaia.processing.testing.Compilation;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
+import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.Test;
 
@@ -175,5 +188,144 @@ class TestCompilerTest {
                                 javac().withProcessors(new InfoProcessor()).compile(FOO))
                         .generatedNoSourceFiles())
                 .withMessageContaining("/SOURCE_OUTPUT/example/FooInfo.java");
+    }
+
+    @Test
+    void acceptsTypeModuleAndPackageDeclarations() {
+        assertThatNoException().isThrownBy(() -> source("Foo", "class Foo {}"));
+        assertThatNoException().isThrownBy(() -> source("example.Foo$Bar", ""));
+        assertThatNoException().isThrownBy(() -> source("module-info", "module example {}"));
+        assertThatNoException().isThrownBy(() -> source("package-info", ""));
+        assertThatNoException().isThrownBy(() -> source("example.package-info", "package example;"));
+    }
+
+    @Test
+    void rejectsWhatIsNotTheNameOfACompilationUnit() {
+        for (String name : List.of(
+                "",
+                "example.",
+                ".Foo",
+                "example..Foo",
+                "example/Foo",
+                "example.class",
+                "1Foo",
+                "Foo Bar",
+                "Foo\u0000",
+                "example.module-info",
+                "module-info.Foo",
+                "package-info.Foo",
+                ".package-info")) {
+            assertThatIllegalArgumentException()
+                    .as(name)
+                    .isThrownBy(() -> source(name, ""))
+                    .withMessageContaining(name);
+        }
+    }
+
+    @Test
+    void rejectsNoSource() {
+        assertThatIllegalArgumentException().isThrownBy(() -> javac().compile()).withMessageContaining("No source");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> javac().compile(List.of()))
+                .withMessageContaining("No source");
+    }
+
+    @Test
+    void rejectsAFileThatIsNotASource() {
+        JavaFileObject classFile =
+                new SimpleJavaFileObject(URI.create("mem:///example/Foo.class"), JavaFileObject.Kind.CLASS) {};
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> javac().compile(FOO, classFile))
+                .withMessageContaining("/example/Foo.class");
+    }
+
+    @Test
+    void rejectsAnUnknownOption() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> javac().withOptions("--no-such-option").compile(FOO))
+                .withMessageContaining("--no-such-option");
+    }
+
+    @Test
+    void rejectsOptionsThatCannotBeUsedTogether() {
+        assertThatIllegalStateException()
+                .isThrownBy(() ->
+                        javac().withOptions("--source", "21", "--target", "17").compile(FOO));
+    }
+
+    @Test
+    void wrapsWhatAProcessorThrows() {
+        assertThatThrownBy(() -> javac().withProcessors(new FailingProcessor()).compile(FOO))
+                .isExactlyInstanceOf(RuntimeException.class)
+                .cause()
+                .isExactlyInstanceOf(IllegalStateException.class)
+                .hasMessage("Failing on purpose");
+    }
+
+    @Test
+    void rejectsANegativeErrorCount() {
+        Compilation compilation = javac().compile(FOO);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(compilation).hadErrorCount(-1))
+                .withMessageContaining("-1");
+    }
+
+    @Test
+    void rejectsALocationBeforeTheFirstLineOrColumn() {
+        Compilation compilation = javac().compile(TYPO);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(compilation)
+                        .hadErrorContaining("incompatible types")
+                        .onLine(0))
+                .withMessageContaining("0");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(compilation)
+                        .hadErrorContaining("incompatible types")
+                        .atColumn(0))
+                .withMessageContaining("0");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(compilation)
+                        .hadErrorContaining("incompatible types")
+                        .inFile(""));
+    }
+
+    @Test
+    void rejectsWhatCannotNameAGeneratedFile() {
+        Compilation compilation = javac().withProcessors(new InfoProcessor()).compile(FOO);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> compilation.generatedSourceFile("example/FooInfo"));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> compilation.generatedFile(StandardLocation.CLASS_OUTPUT, "/example/Foo.class"));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> compilation.generatedFile(StandardLocation.CLASS_OUTPUT, ""));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(compilation).generatedSourceFile("example/FooInfo"));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(compilation).generatedFile(StandardLocation.CLASS_OUTPUT, "/example"));
+    }
+
+    @Test
+    void failsEveryAssertionOnANullCompilation() {
+        assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat((Compilation) null).succeeded());
+        assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat((Compilation) null).hadErrorContaining("error"));
+    }
+
+    @SupportedAnnotationTypes("*")
+    private static final class FailingProcessor extends AbstractProcessor {
+
+        @Override
+        public SourceVersion getSupportedSourceVersion() {
+            return SourceVersion.latestSupported();
+        }
+
+        @Override
+        public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+            throw new IllegalStateException("Failing on purpose");
+        }
     }
 }

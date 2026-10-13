@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.ProcessorAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import javax.annotation.processing.Processor;
 import org.junit.jupiter.api.Test;
 
 class ProcessorAssertTest {
@@ -18,5 +19,13 @@ class ProcessorAssertTest {
                 .isThrownBy(() -> assertThat(InfoProcessor.class).isRegistered())
                 .withMessageContaining("Expected be.imgn.gaia.processing.tests.InfoProcessor to be registered")
                 .withMessageContaining("be.imgn.gaia.processing.tests.RegisteredProcessor");
+    }
+
+    @Test
+    void failsOnANullProcessorClass() {
+        Class<? extends Processor> processor = null;
+
+        assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat(processor).isRegistered());
     }
 }

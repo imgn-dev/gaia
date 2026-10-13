@@ -1,5 +1,7 @@
 package be.imgn.gaia.platform.testing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import be.imgn.gaia.platform.Directories;
 import be.imgn.gaia.platform.Platform;
 import java.nio.file.FileSystem;
@@ -82,6 +84,7 @@ public final class FakePlatform implements Platform {
 
         private Builder(OperatingSystem operatingSystem, Path root) {
             this.operatingSystem = Objects.requireNonNull(operatingSystem, "operatingSystem");
+            Objects.requireNonNull(root, "root");
             directories = FakeDirectories.newBuilder(root).build();
             fileSystem = root.getFileSystem();
         }
@@ -106,10 +109,10 @@ public final class FakePlatform implements Platform {
             all.addAll(directories.dataDirs());
             all.addAll(directories.configDirs());
             for (Path directory : all) {
-                if (!directory.getFileSystem().equals(fileSystem)) {
-                    throw new IllegalArgumentException(
-                            "The directories must be on the file system of the root: " + directory);
-                }
+                checkArgument(
+                        directory.getFileSystem().equals(fileSystem),
+                        "The directories must be on the file system of the root: %s",
+                        directory);
             }
             this.directories = directories;
             return this;

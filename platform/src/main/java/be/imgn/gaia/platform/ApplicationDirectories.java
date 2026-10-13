@@ -1,5 +1,7 @@
 package be.imgn.gaia.platform;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Objects;
@@ -16,6 +18,8 @@ import org.jspecify.annotations.Nullable;
  * @since 0.1.1
  */
 public final class ApplicationDirectories {
+
+    private static final String FORBIDDEN_CHARACTERS = "/\\:<>\"|?*";
 
     private final Path config;
     private final Path data;
@@ -51,14 +55,22 @@ public final class ApplicationDirectories {
         return xdg(directories, application);
     }
 
+    // A name must be valid on every platform, not only on the one the JVM runs on. Windows is the strictest: it forbids
+    // control characters, a trailing space and FORBIDDEN_CHARACTERS in a file name.
     private static void checkName(String name, String role) {
         Objects.requireNonNull(name, role);
-        if (name.isBlank() || ".".equals(name) || "..".equals(name)) {
-            throw new IllegalArgumentException("The " + role + " must be a name, not '" + name + "'");
-        }
-        if (name.contains("/") || name.contains("\\") || name.contains(":")) {
-            throw new IllegalArgumentException("The " + role + " must not contain '/', '\\' or ':': " + name);
-        }
+        checkArgument(
+                !name.isBlank() && !".".equals(name) && !"..".equals(name),
+                "The %s must be a name, not '%s'",
+                role,
+                name);
+        checkArgument(name.strip().equals(name), "The %s must not start or end with whitespace: '%s'", role, name);
+        checkArgument(
+                name.chars().noneMatch(c -> Character.isISOControl(c) || FORBIDDEN_CHARACTERS.indexOf(c) >= 0),
+                "The %s must not contain a control character or any of %s: %s",
+                role,
+                FORBIDDEN_CHARACTERS,
+                name);
     }
 
     // Roaming data follows the user across machines; state and cache stay on this one.

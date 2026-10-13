@@ -348,6 +348,19 @@ class FakeDirectoriesTest {
         assertThat(builder.build().dataDirs()).containsExactly(root.resolve("data-dir"));
     }
 
+    @Test
+    void namesTheIndexOfARejectedDirectoryInAList() {
+        FakeDirectories.Builder builder = FakeDirectories.newBuilder(root);
+        List<Path> invalid = List.of(root.resolve("valid"), Path.of("relative"));
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> builder.dataDirs(invalid))
+                .withMessageStartingWith("dataDirs[1] ");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> builder.configDirs(invalid))
+                .withMessageStartingWith("configDirs[1] ");
+    }
+
     /** Each directory of a {@link FakeDirectories}, to set and get it in parameterized tests. */
     enum Directory {
         HOME("home"),

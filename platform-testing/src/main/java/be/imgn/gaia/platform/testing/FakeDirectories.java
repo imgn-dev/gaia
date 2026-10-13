@@ -1,5 +1,7 @@
 package be.imgn.gaia.platform.testing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import be.imgn.gaia.platform.Directories;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -132,9 +134,7 @@ public final class FakeDirectories implements Directories {
 
         private Builder(Path root) {
             Objects.requireNonNull(root, "root");
-            if (!root.isAbsolute()) {
-                throw new IllegalArgumentException("The root must be an absolute path: " + root);
-            }
+            checkArgument(root.isAbsolute(), "The root must be an absolute path: %s", root);
             this.root = root;
             home = root.resolve("home");
             dataHome = root.resolve("data-home");
@@ -292,20 +292,23 @@ public final class FakeDirectories implements Directories {
 
         private Path checked(Path path, String name) {
             Objects.requireNonNull(path, name);
-            if (!path.isAbsolute()) {
-                throw new IllegalArgumentException(name + " must be an absolute path: " + path);
-            }
-            if (!path.getFileSystem().equals(root.getFileSystem())) {
-                throw new IllegalArgumentException(
-                        name + " must be on the file system of the root " + root + ": " + path);
-            }
+            checkArgument(path.isAbsolute(), "%s must be an absolute path: %s", name, path);
+            checkArgument(
+                    path.getFileSystem().equals(root.getFileSystem()),
+                    "%s must be on the file system of the root %s: %s",
+                    name,
+                    root,
+                    path);
             return path;
         }
 
         private List<Path> checked(List<Path> paths, String name) {
-            List<Path> copy = List.copyOf(paths);
-            copy.forEach(path -> checked(path, name));
-            return copy;
+            Objects.requireNonNull(paths, name);
+            List<Path> copy = new ArrayList<>(paths.size());
+            for (Path path : paths) {
+                copy.add(checked(path, name + "[" + copy.size() + "]"));
+            }
+            return List.copyOf(copy);
         }
     }
 }

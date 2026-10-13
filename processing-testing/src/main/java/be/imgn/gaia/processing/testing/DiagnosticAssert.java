@@ -2,6 +2,7 @@ package be.imgn.gaia.processing.testing;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic;
@@ -49,8 +50,13 @@ public final class DiagnosticAssert
      *
      * @param path the path of the file, separated by {@code /}, such as {@code example/Foo.java}
      * @return assertions on the diagnostics in that file
+     * @throws IllegalArgumentException if {@code path} is empty
      */
     public DiagnosticAssert inFile(String path) {
+        Objects.requireNonNull(path, "path");
+        if (path.isEmpty()) {
+            throw new IllegalArgumentException("The path must not be empty");
+        }
         return narrow(diagnostic -> isIn(diagnostic, path), "in " + path);
     }
 
@@ -59,8 +65,12 @@ public final class DiagnosticAssert
      *
      * @param line the line number, starting at 1
      * @return assertions on the diagnostics on that line
+     * @throws IllegalArgumentException if {@code line} is less than 1
      */
     public DiagnosticAssert onLine(long line) {
+        if (line < 1) {
+            throw new IllegalArgumentException("Lines start at 1: " + line);
+        }
         return narrow(diagnostic -> diagnostic.getLineNumber() == line, "on line " + line);
     }
 
@@ -69,8 +79,12 @@ public final class DiagnosticAssert
      *
      * @param column the column number, starting at 1
      * @return assertions on the diagnostics at that column
+     * @throws IllegalArgumentException if {@code column} is less than 1
      */
     public DiagnosticAssert atColumn(long column) {
+        if (column < 1) {
+            throw new IllegalArgumentException("Columns start at 1: " + column);
+        }
         return narrow(diagnostic -> diagnostic.getColumnNumber() == column, "at column " + column);
     }
 

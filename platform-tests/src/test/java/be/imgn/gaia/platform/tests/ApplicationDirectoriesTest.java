@@ -171,4 +171,24 @@ class ApplicationDirectoriesTest {
         assertThatIllegalArgumentException().isThrownBy(() -> platform.applicationDirectories(name, "Quuz"));
         assertThatIllegalArgumentException().isThrownBy(() -> platform.applicationDirectories(name, "bar", "Quuz"));
     }
+
+    // Each name is valid on the file systems of some platforms, but not on all.
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"a\u0000b", "a\tb", "a\nb", "a\u007fb", "a<b", "a>b", "a\"b", "a|b", "a?b", "a*b", " a", "a "})
+    void rejectsWhatSomePlatformForbidsOnEveryPlatform(String name) {
+        for (OperatingSystem operatingSystem : OperatingSystem.values()) {
+            Platform platform = FakePlatform.newBuilder(operatingSystem, root).build();
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> platform.applicationDirectories(name))
+                    .withMessageContaining("application");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> platform.applicationDirectories(name, "Quuz"))
+                    .withMessageContaining("vendor");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> platform.applicationDirectories(name, "bar", "Quuz"))
+                    .withMessageContaining("qualifier");
+        }
+    }
 }

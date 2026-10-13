@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic;
@@ -14,6 +15,7 @@ import javax.tools.StandardLocation;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractStringAssert;
 import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.Nullable;
 
 /**
  * AssertJ assertions on a {@link Compilation}. Every failure message lists all the diagnostics, so a failed test shows
@@ -27,17 +29,17 @@ import org.assertj.core.api.Assertions;
  */
 public final class CompilationAssert extends AbstractAssert<CompilationAssert, Compilation> {
 
-    private CompilationAssert(Compilation actual) {
+    private CompilationAssert(@Nullable Compilation actual) {
         super(actual, CompilationAssert.class);
     }
 
     /**
      * Returns assertions on a compilation.
      *
-     * @param actual the compilation
+     * @param actual the compilation; like any AssertJ assertion, every assertion fails if it is {@code null}
      * @return the assertions
      */
-    public static CompilationAssert assertThat(Compilation actual) {
+    public static CompilationAssert assertThat(@Nullable Compilation actual) {
         return new CompilationAssert(actual);
     }
 
@@ -76,8 +78,12 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      *
      * @param expected the number of errors
      * @return these assertions
+     * @throws IllegalArgumentException if {@code expected} is negative
      */
     public CompilationAssert hadErrorCount(int expected) {
+        if (expected < 0) {
+            throw new IllegalArgumentException("The number of errors must not be negative: " + expected);
+        }
         isNotNull();
         if (actual.errors().size() != expected) {
             failWithMessage(
@@ -94,6 +100,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @return assertions on the matching errors, such as their location
      */
     public DiagnosticAssert hadErrorContaining(String expected) {
+        Objects.requireNonNull(expected, "expected");
         return hadDiagnosticContaining(EnumSet.of(Diagnostic.Kind.ERROR), "error", expected);
     }
 
@@ -104,6 +111,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @return assertions on the matching warnings, such as their location
      */
     public DiagnosticAssert hadWarningContaining(String expected) {
+        Objects.requireNonNull(expected, "expected");
         return hadDiagnosticContaining(
                 EnumSet.of(Diagnostic.Kind.WARNING, Diagnostic.Kind.MANDATORY_WARNING), "warning", expected);
     }
@@ -115,6 +123,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @return assertions on the matching notes, such as their location
      */
     public DiagnosticAssert hadNoteContaining(String expected) {
+        Objects.requireNonNull(expected, "expected");
         return hadDiagnosticContaining(EnumSet.of(Diagnostic.Kind.NOTE), "note", expected);
     }
 
@@ -152,11 +161,16 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
     /**
      * Verifies that the source of a type was generated, and returns assertions on its text.
      *
-     * @param qualifiedName the fully qualified name of the generated top-level type
+     * @param qualifiedName the fully qualified name of the generated top-level type, or {@code package-info} after the
+     *     name of the package, if any
      * @return assertions on the generated source text
+     * @throws IllegalArgumentException if {@code qualifiedName} is not a qualified name, {@code module-info} or
+     *     {@code package-info}
      * @throws UncheckedIOException if the generated source cannot be read
      */
     public AbstractStringAssert<?> generatedSourceFile(String qualifiedName) {
+        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        Checks.checkSourceName(qualifiedName);
         return generatedFile(StandardLocation.SOURCE_OUTPUT, qualifiedName.replace('.', '/') + ".java");
     }
 
@@ -169,9 +183,13 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @param relativePath the path of the file relative to the location, separated by {@code /}, such as
      *     {@code META-INF/services/javax.annotation.processing.Processor}
      * @return assertions on the generated text
+     * @throws IllegalArgumentException if {@code relativePath} is empty or starts with {@code /}
      * @throws UncheckedIOException if the generated file cannot be read
      */
     public AbstractStringAssert<?> generatedFile(JavaFileManager.Location location, String relativePath) {
+        Objects.requireNonNull(location, "location");
+        Objects.requireNonNull(relativePath, "relativePath");
+        Checks.checkRelativePath(relativePath);
         isNotNull();
         String name = "/" + location.getName() + "/" + relativePath;
         JavaFileObject file = actual.generatedFile(location, relativePath)

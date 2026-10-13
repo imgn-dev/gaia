@@ -394,6 +394,15 @@ class PlatformPresetTest {
         assertThat(builder.build().systemProperties().userHome()).isEqualTo("/home/test");
     }
 
+    @Test
+    void rejectsAnEmptySystemPropertyName() {
+        PlatformPreset.Builder builder = PlatformPreset.newBuilder(OperatingSystem.LINUX);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> builder.systemProperty("", "value"))
+                .withMessageContaining("empty");
+    }
+
     // Passing null is the point.
     @Test
     @SuppressWarnings("NullAway")

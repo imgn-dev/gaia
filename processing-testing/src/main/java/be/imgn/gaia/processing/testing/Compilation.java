@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.testing;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager;
@@ -28,8 +29,8 @@ public record Compilation(
      * @param generatedFiles every generated file
      */
     public Compilation {
-        diagnostics = List.copyOf(diagnostics);
-        generatedFiles = List.copyOf(generatedFiles);
+        diagnostics = Checks.copyOfNonNull(diagnostics, "diagnostics");
+        generatedFiles = Checks.copyOfNonNull(generatedFiles, "generatedFiles");
     }
 
     /**
@@ -39,6 +40,7 @@ public record Compilation(
      * @return the diagnostics of {@code kind}, in reporting order
      */
     public List<Diagnostic<? extends JavaFileObject>> diagnostics(Diagnostic.Kind kind) {
+        Objects.requireNonNull(kind, "kind");
         return diagnostics.stream()
                 .filter(diagnostic -> diagnostic.getKind() == kind)
                 .toList();
@@ -67,10 +69,15 @@ public record Compilation(
     /**
      * Returns the generated source of a type.
      *
-     * @param qualifiedName the fully qualified name of the top-level type
+     * @param qualifiedName the fully qualified name of the top-level type, or {@code package-info} after the name of
+     *     the package, if any
      * @return the source file, or empty if none was generated
+     * @throws IllegalArgumentException if {@code qualifiedName} is not a qualified name, {@code module-info} or
+     *     {@code package-info}
      */
     public Optional<JavaFileObject> generatedSourceFile(String qualifiedName) {
+        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        Checks.checkSourceName(qualifiedName);
         return generatedFile(StandardLocation.SOURCE_OUTPUT, qualifiedName.replace('.', '/') + ".java");
     }
 
@@ -80,8 +87,12 @@ public record Compilation(
      * @param location the location the file was generated in, such as {@link StandardLocation#CLASS_OUTPUT}
      * @param relativePath the path of the file relative to the location, separated by {@code /}
      * @return the file, or empty if none was generated there
+     * @throws IllegalArgumentException if {@code relativePath} is empty or starts with {@code /}
      */
     public Optional<JavaFileObject> generatedFile(JavaFileManager.Location location, String relativePath) {
+        Objects.requireNonNull(location, "location");
+        Objects.requireNonNull(relativePath, "relativePath");
+        Checks.checkRelativePath(relativePath);
         String name = "/" + location.getName() + "/" + relativePath;
         return generatedFiles.stream()
                 .filter(file -> file.getName().equals(name))
