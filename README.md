@@ -21,6 +21,9 @@ The libraries require Java 21 or later and are released together under one versi
 - **`base.Preconditions`**: `checkArgument` and `checkState` throw `IllegalArgumentException` or
   `IllegalStateException` when a check fails, with an optional message or `String.format` message format:
   `checkArgument(count >= 0, "count must not be negative: %d", count)`.
+- **`base.Throwables`**: `illegalArgument` and `illegalState` create an `IllegalArgumentException` or
+  `IllegalStateException` from the exception that caused it, with a message or a `String.format` message format:
+  `throw Throwables.illegalArgument(e, "Not a port: %s", text)`.
 - **`collect.Sets`**: unmodifiable sets that keep the order their elements are given in. `set(...)` and
   `setCopy(...)` behave like `Set.of` and `Set.copyOf`, and the `toSet()` collector like
   `Collectors.toUnmodifiableSet()`, except for iteration order.
