@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.source;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 
@@ -22,10 +23,10 @@ public record WildcardTypeName(
      *     {@code ? extends Object} is {@code ?}
      * @param lowerBound the bound of {@code ? super}, if any
      * @param annotations the type annotations
-     * @throws IllegalArgumentException if there are both bounds, or a bound is primitive
+     * @throws IllegalArgumentException if there are both bounds, or a bound is primitive or a wildcard
      */
     public WildcardTypeName {
-        annotations = List.copyOf(annotations);
+        annotations = Checks.elements(annotations, "annotations");
         if (ClassName.OBJECT.equals(upperBound)) {
             upperBound = null;
         }
@@ -34,6 +35,9 @@ public record WildcardTypeName(
         }
         if (upperBound instanceof PrimitiveTypeName || lowerBound instanceof PrimitiveTypeName) {
             throw new IllegalArgumentException("A wildcard bound cannot be primitive");
+        }
+        if (upperBound instanceof WildcardTypeName || lowerBound instanceof WildcardTypeName) {
+            throw new IllegalArgumentException("A wildcard bound cannot be a wildcard");
         }
     }
 
@@ -51,10 +55,10 @@ public record WildcardTypeName(
      *
      * @param bound the upper bound
      * @return the wildcard
-     * @throws IllegalArgumentException if the bound is primitive
+     * @throws IllegalArgumentException if the bound is primitive or a wildcard
      */
     public static WildcardTypeName subtypeOf(TypeName bound) {
-        return new WildcardTypeName(bound, null, List.of());
+        return new WildcardTypeName(Objects.requireNonNull(bound, "bound"), null, List.of());
     }
 
     /**
@@ -62,15 +66,15 @@ public record WildcardTypeName(
      *
      * @param bound the lower bound
      * @return the wildcard
-     * @throws IllegalArgumentException if the bound is primitive
+     * @throws IllegalArgumentException if the bound is primitive or a wildcard
      */
     public static WildcardTypeName supertypeOf(TypeName bound) {
-        return new WildcardTypeName(null, bound, List.of());
+        return new WildcardTypeName(null, Objects.requireNonNull(bound, "bound"), List.of());
     }
 
     @Override
     public WildcardTypeName annotated(Annotation... more) {
-        return annotated(List.of(more));
+        return annotated(Checks.elements(more, "more"));
     }
 
     @Override
@@ -78,7 +82,8 @@ public record WildcardTypeName(
         return new WildcardTypeName(
                 upperBound,
                 lowerBound,
-                Stream.concat(annotations.stream(), more.stream()).toList());
+                Stream.concat(annotations.stream(), Checks.elements(more, "more").stream())
+                        .toList());
     }
 
     @Override

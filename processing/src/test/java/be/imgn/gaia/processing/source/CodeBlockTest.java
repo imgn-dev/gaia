@@ -113,6 +113,29 @@ class CodeBlockTest {
                     .isThrownBy(() ->
                             CodeBlock.of("$N", Type.newAnonymousClassBuilder("").build()));
         }
+
+        @Test
+        void commentsOfSeveralLines() {
+            CodeBlock.Builder builder = CodeBlock.newBuilder();
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> builder.addComment("first\nsecond"))
+                    .withMessageContaining("line break");
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.addComment("first\rsecond"));
+            assertThat(builder.isEmpty()).isTrue();
+        }
+
+        @Test
+        void badCodeWithoutAddingAnyOfIt() {
+            CodeBlock.Builder builder = CodeBlock.newBuilder();
+
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.addStatement("$T", "not a type"));
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.beginControlFlow("if ($L)"));
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.nextControlFlow("else if ($L)"));
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.endControlFlow("while ($L)"));
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.addNamed("$x:L", Map.of("X", 1)));
+            assertThat(builder.isEmpty()).isTrue();
+        }
     }
 
     @Nested

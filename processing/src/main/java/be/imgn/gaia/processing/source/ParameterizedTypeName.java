@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.source;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 
@@ -29,8 +30,9 @@ public record ParameterizedTypeName(
      *     type argument and no owner type, or a type argument is primitive
      */
     public ParameterizedTypeName {
-        typeArguments = List.copyOf(typeArguments);
-        annotations = List.copyOf(annotations);
+        Objects.requireNonNull(rawType, "rawType");
+        typeArguments = Checks.elements(typeArguments, "typeArguments");
+        annotations = Checks.elements(annotations, "annotations");
         if (!rawType.annotations().isEmpty()) {
             throw new IllegalArgumentException("Annotate the parameterized type rather than its raw type: " + rawType);
         }
@@ -56,7 +58,8 @@ public record ParameterizedTypeName(
      * @throws IllegalArgumentException if there is no type argument, or one is primitive
      */
     public static ParameterizedTypeName of(ClassName rawType, TypeName... typeArguments) {
-        return of(rawType, List.of(typeArguments));
+        Objects.requireNonNull(rawType, "rawType");
+        return of(rawType, Checks.elements(typeArguments, "typeArguments"));
     }
 
     /**
@@ -69,8 +72,12 @@ public record ParameterizedTypeName(
      * @throws IllegalArgumentException if there is no type argument, or one is primitive
      */
     public static ParameterizedTypeName of(ClassName rawType, List<? extends TypeName> typeArguments) {
+        Objects.requireNonNull(rawType, "rawType");
         return new ParameterizedTypeName(
-                null, rawType.withoutAnnotations(), List.copyOf(typeArguments), rawType.annotations());
+                null,
+                rawType.withoutAnnotations(),
+                Checks.elements(typeArguments, "typeArguments"),
+                rawType.annotations());
     }
 
     private static void checkOwner(TypeName ownerType, ClassName rawType) {
@@ -95,12 +102,14 @@ public record ParameterizedTypeName(
      * @throws IllegalArgumentException if the simple name is not valid, or a type argument is primitive
      */
     public ParameterizedTypeName nested(String simpleName, TypeName... typeArguments) {
-        return new ParameterizedTypeName(this, rawType.nested(simpleName), List.of(typeArguments), List.of());
+        Objects.requireNonNull(simpleName, "simpleName");
+        List<TypeName> arguments = Checks.elements(typeArguments, "typeArguments");
+        return new ParameterizedTypeName(this, rawType.nested(simpleName), arguments, List.of());
     }
 
     @Override
     public ParameterizedTypeName annotated(Annotation... more) {
-        return annotated(List.of(more));
+        return annotated(Checks.elements(more, "more"));
     }
 
     @Override
@@ -109,7 +118,8 @@ public record ParameterizedTypeName(
                 ownerType,
                 rawType,
                 typeArguments,
-                Stream.concat(annotations.stream(), more.stream()).toList());
+                Stream.concat(annotations.stream(), Checks.elements(more, "more").stream())
+                        .toList());
     }
 
     @Override

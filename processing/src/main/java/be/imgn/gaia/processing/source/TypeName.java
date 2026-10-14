@@ -2,6 +2,7 @@ package be.imgn.gaia.processing.source;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -27,6 +28,7 @@ public sealed interface TypeName
      * @throws IllegalArgumentException if the class is local or anonymous, and has no canonical name
      */
     static TypeName of(Class<?> type) {
+        Objects.requireNonNull(type, "type");
         if (type.isArray()) {
             return ArrayTypeName.of(of(type.getComponentType()));
         }
@@ -41,9 +43,12 @@ public sealed interface TypeName
      *
      * @param type the type
      * @return its name
-     * @throws IllegalArgumentException if the type has no name, such as an executable or a package
+     * @throws IllegalArgumentException if the type has no name, such as an executable, a package or a local or
+     *     anonymous class; or it is an error type whose name cannot be guessed as {@link ClassName#bestGuess(String)}
+     *     guesses it
      */
     static TypeName of(TypeMirror type) {
+        Objects.requireNonNull(type, "type");
         TypeName name = switch (type.getKind()) {
             case BOOLEAN, BYTE, SHORT, INT, LONG, CHAR, FLOAT, DOUBLE, VOID ->
                 PrimitiveTypeName.of(type.getKind().name().toLowerCase(Locale.ROOT));
@@ -116,7 +121,7 @@ public sealed interface TypeName
      * @return the annotated name
      */
     default TypeName annotated(Annotation... annotations) {
-        return annotated(List.of(annotations));
+        return annotated(Checks.elements(annotations, "annotations"));
     }
 
     /**

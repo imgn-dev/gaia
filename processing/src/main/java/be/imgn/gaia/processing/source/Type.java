@@ -1,5 +1,8 @@
 package be.imgn.gaia.processing.source;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static be.imgn.gaia.core.base.Preconditions.checkState;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -10,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
@@ -95,6 +99,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newClassBuilder(String name) {
+        Objects.requireNonNull(name, "name");
         return new Builder(Kind.CLASS, checkName(name));
     }
 
@@ -105,6 +110,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newClassBuilder(ClassName name) {
+        Objects.requireNonNull(name, "name");
         return newClassBuilder(name.simpleName());
     }
 
@@ -116,6 +122,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newInterfaceBuilder(String name) {
+        Objects.requireNonNull(name, "name");
         return new Builder(Kind.INTERFACE, checkName(name));
     }
 
@@ -126,6 +133,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newInterfaceBuilder(ClassName name) {
+        Objects.requireNonNull(name, "name");
         return newInterfaceBuilder(name.simpleName());
     }
 
@@ -137,6 +145,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newEnumBuilder(String name) {
+        Objects.requireNonNull(name, "name");
         return new Builder(Kind.ENUM, checkName(name));
     }
 
@@ -147,6 +156,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newEnumBuilder(ClassName name) {
+        Objects.requireNonNull(name, "name");
         return newEnumBuilder(name.simpleName());
     }
 
@@ -158,6 +168,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newRecordBuilder(String name) {
+        Objects.requireNonNull(name, "name");
         return new Builder(Kind.RECORD, checkName(name));
     }
 
@@ -168,6 +179,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newRecordBuilder(ClassName name) {
+        Objects.requireNonNull(name, "name");
         return newRecordBuilder(name.simpleName());
     }
 
@@ -179,6 +191,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newAnnotationBuilder(String name) {
+        Objects.requireNonNull(name, "name");
         return new Builder(Kind.ANNOTATION, checkName(name));
     }
 
@@ -189,6 +202,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newAnnotationBuilder(ClassName name) {
+        Objects.requireNonNull(name, "name");
         return newAnnotationBuilder(name.simpleName());
     }
 
@@ -200,11 +214,16 @@ public final class Type {
      * @param format the arguments of the superclass constructor, with placeholders; empty for none
      * @param args the arguments of the placeholders
      * @return a new builder
-     * @throws IllegalArgumentException if the format and the arguments do not match
+     * @throws IllegalArgumentException if the format and the arguments do not match, or the arguments are not
+     *     {@linkplain CodeBlock balanced}
      */
     public static Builder newAnonymousClassBuilder(String format, @Nullable Object... args) {
+        Objects.requireNonNull(format, "format");
+        Objects.requireNonNull(args, "args");
+        CodeBlock arguments =
+                CodeBlock.requireBalanced(CodeBlock.of(format, args), "The arguments of an anonymous class");
         Builder builder = new Builder(Kind.CLASS, null);
-        builder.anonymousArguments = CodeBlock.of(format, args);
+        builder.anonymousArguments = arguments;
         return builder;
     }
 
@@ -471,6 +490,19 @@ public final class Type {
     /** A builder of {@link Type}s. */
     public static final class Builder {
 
+        private static final Set<Modifier> CLASS_MODIFIERS = EnumSet.of(
+                Modifier.PUBLIC,
+                Modifier.PROTECTED,
+                Modifier.PRIVATE,
+                Modifier.ABSTRACT,
+                Modifier.STATIC,
+                Modifier.FINAL,
+                Modifier.SEALED,
+                Modifier.NON_SEALED,
+                Modifier.STRICTFP);
+        private static final Set<Modifier> INTERFACE_METHOD_FORBIDDEN =
+                EnumSet.of(Modifier.PROTECTED, Modifier.FINAL, Modifier.SYNCHRONIZED, Modifier.NATIVE);
+
         private final Kind kind;
         private final @Nullable String name;
         private CodeBlock anonymousArguments = CodeBlock.empty();
@@ -519,15 +551,47 @@ public final class Type {
             supertypes.forEach(supertype -> nestedNames(supertype, names));
         }
 
+        // The modifiers the JLS allows on a declaration of the kind, wherever it is declared.
+        private static Set<Modifier> allowedModifiers(Kind kind) {
+            Set<Modifier> excluded = switch (kind) {
+                case CLASS -> Set.of();
+                case INTERFACE -> Set.of(Modifier.FINAL);
+                // An enum may be given final, which it is anyway: final is left out where it is written.
+                case ENUM -> Set.of(Modifier.ABSTRACT, Modifier.SEALED, Modifier.NON_SEALED);
+                case RECORD -> Set.of(Modifier.ABSTRACT, Modifier.SEALED, Modifier.NON_SEALED);
+                case ANNOTATION -> Set.of(Modifier.FINAL, Modifier.SEALED, Modifier.NON_SEALED);
+            };
+            Set<Modifier> allowed = EnumSet.copyOf(CLASS_MODIFIERS);
+            allowed.removeAll(excluded);
+            return allowed;
+        }
+
+        private String what() {
+            return switch (kind) {
+                case CLASS -> "A class";
+                case INTERFACE -> "An interface";
+                case ENUM -> "An enum";
+                case RECORD -> "A record";
+                case ANNOTATION -> "An annotation type";
+            };
+        }
+
+        private String describe() {
+            return name == null ? "an anonymous class" : name;
+        }
+
         /**
          * Adds modifiers, such as {@code public}, {@code sealed} or {@code non-sealed}.
          *
          * @param more the modifiers
          * @return this builder
+         * @throws IllegalArgumentException if a modifier is not allowed on this kind of type, such as {@code final} on
+         *     an interface; is repeated; or conflicts with another one, such as {@code public} with {@code private} or
+         *     {@code sealed} with {@code final}
+         * @throws IllegalStateException if this is an anonymous class and there are modifiers
          */
         public Builder addModifiers(Modifier... more) {
-            modifiers.addAll(List.of(more));
-            return this;
+            return addCheckedModifiers(Modifiers.added(more, "more", what()));
         }
 
         /**
@@ -535,9 +599,23 @@ public final class Type {
          *
          * @param more the modifiers
          * @return this builder
+         * @throws IllegalArgumentException if a modifier is not allowed on this kind of type, such as {@code final} on
+         *     an interface; is repeated; or conflicts with another one, such as {@code public} with {@code private} or
+         *     {@code sealed} with {@code final}
+         * @throws IllegalStateException if this is an anonymous class and there are modifiers
          */
         public Builder addModifiers(Iterable<Modifier> more) {
-            more.forEach(modifiers::add);
+            return addCheckedModifiers(Modifiers.added(more, "more", what()));
+        }
+
+        private Builder addCheckedModifiers(Set<Modifier> added) {
+            checkState(added.isEmpty() || name != null, "An anonymous class has no modifiers");
+            Modifiers.requireOnly(added, allowedModifiers(kind), what());
+            Set<Modifier> all = Modifiers.union(modifiers, added);
+            Modifiers.requireAtMostOne(all, Modifiers.ACCESS, what());
+            Modifiers.requireAtMostOne(all, EnumSet.of(Modifier.SEALED, Modifier.NON_SEALED, Modifier.FINAL), what());
+            Modifiers.requireNoneWith(all, Modifier.ABSTRACT, Set.of(Modifier.FINAL), what());
+            modifiers.addAll(added);
             return this;
         }
 
@@ -548,7 +626,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addAnnotation(Annotation annotation) {
-            annotations.add(annotation);
+            annotations.add(Objects.requireNonNull(annotation, "annotation"));
             return this;
         }
 
@@ -557,8 +635,10 @@ public final class Type {
          *
          * @param annotation the annotation type
          * @return this builder
+         * @throws IllegalArgumentException if the class is not an annotation type
          */
         public Builder addAnnotation(Class<? extends java.lang.annotation.Annotation> annotation) {
+            Objects.requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -569,6 +649,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addAnnotation(ClassName annotation) {
+            Objects.requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -579,7 +660,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addAnnotations(Iterable<Annotation> more) {
-            more.forEach(annotations::add);
+            annotations.addAll(Checks.elements(more, "more"));
             return this;
         }
 
@@ -592,6 +673,8 @@ public final class Type {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addJavadoc(String format, @Nullable Object... args) {
+            Objects.requireNonNull(format, "format");
+            Objects.requireNonNull(args, "args");
             javadoc.add(format, args);
             return this;
         }
@@ -601,10 +684,11 @@ public final class Type {
          *
          * @param typeVariable the type variable, with its bounds
          * @return this builder
+         * @throws IllegalStateException if this is an enum, an annotation type or an anonymous class
          */
         public Builder addTypeVariable(TypeVariableName typeVariable) {
-            typeVariables.add(typeVariable);
-            return this;
+            Objects.requireNonNull(typeVariable, "typeVariable");
+            return addTypeVariables(List.of(typeVariable));
         }
 
         /**
@@ -612,9 +696,16 @@ public final class Type {
          *
          * @param more the type variables, with their bounds
          * @return this builder
+         * @throws IllegalStateException if this is an enum, an annotation type or an anonymous class, and there are
+         *     type variables
          */
         public Builder addTypeVariables(Iterable<TypeVariableName> more) {
-            more.forEach(typeVariables::add);
+            List<TypeVariableName> added = Checks.elements(more, "more");
+            if (!added.isEmpty()) {
+                checkState(name != null, "An anonymous class has no type variables");
+                checkState(kind != Kind.ENUM && kind != Kind.ANNOTATION, "%s has no type variables", what());
+            }
+            typeVariables.addAll(added);
             return this;
         }
 
@@ -625,15 +716,20 @@ public final class Type {
          * @param type the superclass
          * @return this builder
          * @throws IllegalArgumentException if the type is not a class or a parameterized type
-         * @throws IllegalStateException if the superclass is already set
+         * @throws IllegalStateException if this is not a class, the superclass is already set, or this is an anonymous
+         *     class that implements an interface
          */
         public Builder superclass(TypeName type) {
-            if (!(type instanceof ClassName || type instanceof ParameterizedTypeName)) {
-                throw new IllegalArgumentException("A superclass is a class or a parameterized type: " + type);
-            }
-            if (superclass != null) {
-                throw new IllegalStateException("The superclass is already set: " + superclass);
-            }
+            Objects.requireNonNull(type, "type");
+            checkArgument(
+                    type instanceof ClassName || type instanceof ParameterizedTypeName,
+                    "A superclass is a class or a parameterized type: %s",
+                    type);
+            checkState(kind == Kind.CLASS, "Only a class has a superclass");
+            checkState(superclass == null, "The superclass is already set: %s", superclass);
+            checkState(
+                    name != null || superinterfaces.isEmpty(),
+                    "An anonymous class extends a class or implements an interface, not both");
             superclass = type;
             return this;
         }
@@ -643,10 +739,24 @@ public final class Type {
          *
          * @param type the superclass
          * @return this builder
-         * @throws IllegalArgumentException if the type is not a class
-         * @throws IllegalStateException if the superclass is already set
+         * @throws IllegalArgumentException if the class cannot be extended: if it is an interface, an enum, a record,
+         *     final, primitive, an array, {@code Enum} or {@code Record}; or it is local or anonymous
+         * @throws IllegalStateException if this is not a class, the superclass is already set, or this is an anonymous
+         *     class that implements an interface
          */
         public Builder superclass(Class<?> type) {
+            Objects.requireNonNull(type, "type");
+            checkArgument(
+                    !type.isInterface()
+                            && !type.isEnum()
+                            && !type.isRecord()
+                            && !type.isPrimitive()
+                            && !type.isArray()
+                            && !java.lang.reflect.Modifier.isFinal(type.getModifiers())
+                            && type != Enum.class
+                            && type != Record.class,
+                    "Not a class that can be extended: %s",
+                    type);
             superclass(TypeName.of(type));
             nestedNames(type, alwaysQualifiedNames);
             return this;
@@ -657,10 +767,24 @@ public final class Type {
          *
          * @param type the superclass
          * @return this builder
-         * @throws IllegalArgumentException if the type is not a declared type
-         * @throws IllegalStateException if the superclass is already set
+         * @throws IllegalArgumentException if the type is not a declared type, or is one that cannot be extended: an
+         *     interface, an enum, a record, a final class, {@code Enum} or {@code Record}; or it has no name, as
+         *     {@link TypeName#of(TypeMirror)} names it
+         * @throws IllegalStateException if this is not a class, the superclass is already set, or this is an anonymous
+         *     class that implements an interface
          */
         public Builder superclass(TypeMirror type) {
+            Objects.requireNonNull(type, "type");
+            if (type.getKind() == TypeKind.DECLARED) {
+                TypeElement element = (TypeElement) ((DeclaredType) type).asElement();
+                checkArgument(
+                        element.getKind() == ElementKind.CLASS
+                                && !element.getModifiers().contains(Modifier.FINAL)
+                                && !element.getQualifiedName().contentEquals("java.lang.Enum")
+                                && !element.getQualifiedName().contentEquals("java.lang.Record"),
+                        "Not a class that can be extended: %s",
+                        type);
+            }
             superclass(TypeName.of(type));
             if (type.getKind() == TypeKind.DECLARED) {
                 nestedNames((TypeElement) ((DeclaredType) type).asElement(), alwaysQualifiedNames);
@@ -674,10 +798,13 @@ public final class Type {
          *
          * @param type the interface
          * @return this builder
+         * @throws IllegalArgumentException if the type is not a class or a parameterized type
+         * @throws IllegalStateException if this is an annotation type, or an anonymous class that extends a class or
+         *     implements an interface already
          */
         public Builder addSuperinterface(TypeName type) {
-            superinterfaces.add(type);
-            return this;
+            Objects.requireNonNull(type, "type");
+            return addSuperinterfaces(List.of(type));
         }
 
         /**
@@ -686,8 +813,13 @@ public final class Type {
          *
          * @param type the interface
          * @return this builder
+         * @throws IllegalArgumentException if the class is not an interface, or is local or anonymous
+         * @throws IllegalStateException if this is an annotation type, or an anonymous class that extends a class or
+         *     implements an interface already
          */
         public Builder addSuperinterface(Class<?> type) {
+            Objects.requireNonNull(type, "type");
+            checkArgument(type.isInterface(), "Not an interface: %s", type);
             addSuperinterface(TypeName.of(type));
             nestedNames(type, alwaysQualifiedNames);
             return this;
@@ -699,8 +831,20 @@ public final class Type {
          *
          * @param type the interface
          * @return this builder
+         * @throws IllegalArgumentException if the type is not a declared type, or is one that is not an interface; or
+         *     it has no name, as {@link TypeName#of(TypeMirror)} names it
+         * @throws IllegalStateException if this is an annotation type, or an anonymous class that extends a class or
+         *     implements an interface already
          */
         public Builder addSuperinterface(TypeMirror type) {
+            Objects.requireNonNull(type, "type");
+            if (type.getKind() == TypeKind.DECLARED) {
+                ElementKind elementKind = ((DeclaredType) type).asElement().getKind();
+                checkArgument(
+                        elementKind == ElementKind.INTERFACE || elementKind == ElementKind.ANNOTATION_TYPE,
+                        "Not an interface: %s",
+                        type);
+            }
             addSuperinterface(TypeName.of(type));
             if (type.getKind() == TypeKind.DECLARED) {
                 nestedNames((TypeElement) ((DeclaredType) type).asElement(), alwaysQualifiedNames);
@@ -713,9 +857,30 @@ public final class Type {
          *
          * @param more the interfaces
          * @return this builder
+         * @throws IllegalArgumentException if a type is not a class or a parameterized type
+         * @throws IllegalStateException if there are interfaces and this is an annotation type, or an anonymous class
+         *     that would extend a class and implement an interface, or implement more than one
          */
         public Builder addSuperinterfaces(Iterable<? extends TypeName> more) {
-            more.forEach(superinterfaces::add);
+            List<TypeName> added = Checks.elements(more, "more");
+            for (TypeName type : added) {
+                checkArgument(
+                        type instanceof ClassName || type instanceof ParameterizedTypeName,
+                        "A superinterface is a class or a parameterized type: %s",
+                        type);
+            }
+            if (!added.isEmpty()) {
+                checkState(kind != Kind.ANNOTATION, "An annotation type extends nothing");
+                if (name == null) {
+                    checkState(
+                            superclass == null,
+                            "An anonymous class extends a class or implements an interface, not both");
+                    checkState(
+                            superinterfaces.size() + added.size() <= 1,
+                            "An anonymous class implements one interface at most");
+                }
+            }
+            superinterfaces.addAll(added);
             return this;
         }
 
@@ -724,10 +889,12 @@ public final class Type {
          *
          * @param type the subclass
          * @return this builder
+         * @throws IllegalArgumentException if the type is not a class, or has type annotations
+         * @throws IllegalStateException if this is not a class or an interface, or is an anonymous class
          */
         public Builder addPermittedSubclass(TypeName type) {
-            permittedSubclasses.add(type);
-            return this;
+            Objects.requireNonNull(type, "type");
+            return addPermittedSubclasses(List.of(type));
         }
 
         /**
@@ -735,9 +902,25 @@ public final class Type {
          *
          * @param more the subclasses
          * @return this builder
+         * @throws IllegalArgumentException if a type is not a class, or has type annotations
+         * @throws IllegalStateException if there are subclasses and this is not a class or an interface, or is an
+         *     anonymous class
          */
         public Builder addPermittedSubclasses(Iterable<? extends TypeName> more) {
-            more.forEach(permittedSubclasses::add);
+            List<TypeName> added = Checks.elements(more, "more");
+            for (TypeName type : added) {
+                checkArgument(
+                        type instanceof ClassName && !type.isAnnotated(),
+                        "A permitted subclass is a class, without type annotations: %s",
+                        type);
+            }
+            if (!added.isEmpty()) {
+                checkState(name != null, "An anonymous class has no permitted subclasses");
+                checkState(
+                        kind == Kind.CLASS || kind == Kind.INTERFACE,
+                        "Only a class or an interface permits subclasses");
+            }
+            permittedSubclasses.addAll(added);
             return this;
         }
 
@@ -750,7 +933,7 @@ public final class Type {
          * @return this builder
          */
         public Builder avoidClashesWithNestedClasses(TypeElement type) {
-            nestedNames(type, alwaysQualifiedNames);
+            nestedNames(Objects.requireNonNull(type, "type"), alwaysQualifiedNames);
             return this;
         }
 
@@ -762,7 +945,7 @@ public final class Type {
          * @return this builder
          */
         public Builder avoidClashesWithNestedClasses(Class<?> type) {
-            nestedNames(type, alwaysQualifiedNames);
+            nestedNames(Objects.requireNonNull(type, "type"), alwaysQualifiedNames);
             return this;
         }
 
@@ -773,7 +956,7 @@ public final class Type {
          * @return this builder
          */
         public Builder alwaysQualify(String... simpleNames) {
-            alwaysQualifiedNames.addAll(List.of(simpleNames));
+            alwaysQualifiedNames.addAll(Checks.elements(simpleNames, "simpleNames"));
             return this;
         }
 
@@ -782,9 +965,12 @@ public final class Type {
          *
          * @param constant the name of the constant
          * @return this builder
-         * @throws IllegalArgumentException if the name is not a valid identifier
+         * @throws IllegalArgumentException if the name is not a valid identifier, or the enum has a constant of that
+         *     name already
+         * @throws IllegalStateException if this is not an enum
          */
         public Builder addEnumConstant(String constant) {
+            Objects.requireNonNull(constant, "constant");
             return addEnumConstant(constant, newAnonymousClassBuilder("").build());
         }
 
@@ -793,15 +979,27 @@ public final class Type {
          * class.
          *
          * @param constant the name of the constant
-         * @param body an anonymous class: its arguments go to the enum constructor, its members to the constant
+         * @param body an anonymous class without supertypes: its arguments go to the enum constructor, its members to
+         *     the constant
          * @return this builder
-         * @throws IllegalArgumentException if the name is not a valid identifier, or the body is not an anonymous class
+         * @throws IllegalArgumentException if the name is not a valid identifier, the enum has a constant of that name
+         *     already, or the body is not an anonymous class or has a superclass or an interface
+         * @throws IllegalStateException if this is not an enum
          */
         public Builder addEnumConstant(String constant, Type body) {
-            checkName(constant);
-            if (!body.isAnonymous()) {
-                throw new IllegalArgumentException("The body of an enum constant must be an anonymous class");
-            }
+            Objects.requireNonNull(constant, "constant");
+            Objects.requireNonNull(body, "body");
+            checkArgument(
+                    SourceVersion.isIdentifier(constant) && !SourceVersion.isKeyword(constant),
+                    "Not an enum constant name: %s",
+                    constant);
+            checkArgument(body.isAnonymous(), "The body of an enum constant must be an anonymous class");
+            checkArgument(
+                    body.superclass() == null && body.superinterfaces().isEmpty(),
+                    "The body of an enum constant has no superclass or interface: %s",
+                    constant);
+            checkState(kind == Kind.ENUM, "Only an enum has constants");
+            checkArgument(!enumConstants.containsKey(constant), "Duplicate enum constant: %s", constant);
             enumConstants.put(constant, body);
             return this;
         }
@@ -809,12 +1007,14 @@ public final class Type {
         /**
          * Adds a component to a record.
          *
-         * @param component the component; its annotations apply to the component
+         * @param component the component, without modifiers; its annotations apply to the component
          * @return this builder
+         * @throws IllegalArgumentException if the component has modifiers or is a receiver parameter
+         * @throws IllegalStateException if this is not a record
          */
         public Builder addRecordComponent(Parameter component) {
-            recordComponents.add(component);
-            return this;
+            Objects.requireNonNull(component, "component");
+            return addRecordComponents(List.of(component));
         }
 
         /**
@@ -823,9 +1023,13 @@ public final class Type {
          * @param type the type
          * @param name the name
          * @return this builder
-         * @throws IllegalArgumentException if the name is not a valid identifier
+         * @throws IllegalArgumentException if the name is not a valid identifier, or the type is {@code void} or a
+         *     wildcard
+         * @throws IllegalStateException if this is not a record
          */
         public Builder addRecordComponent(TypeName type, String name) {
+            Objects.requireNonNull(type, "type");
+            Objects.requireNonNull(name, "name");
             return addRecordComponent(Parameter.of(type, name));
         }
 
@@ -835,20 +1039,32 @@ public final class Type {
          * @param type the type
          * @param name the name
          * @return this builder
-         * @throws IllegalArgumentException if the name is not a valid identifier
+         * @throws IllegalArgumentException if the class is {@code void}, local or anonymous, or the name is not a valid
+         *     identifier
+         * @throws IllegalStateException if this is not a record
          */
         public Builder addRecordComponent(Class<?> type, String name) {
+            Objects.requireNonNull(type, "type");
+            Objects.requireNonNull(name, "name");
             return addRecordComponent(TypeName.of(type), name);
         }
 
         /**
          * Adds components to a record.
          *
-         * @param more the components
+         * @param more the components, without modifiers
          * @return this builder
+         * @throws IllegalArgumentException if a component has modifiers or is a receiver parameter
+         * @throws IllegalStateException if there are components and this is not a record
          */
         public Builder addRecordComponents(Iterable<Parameter> more) {
-            more.forEach(recordComponents::add);
+            List<Parameter> added = Checks.elements(more, "more");
+            for (Parameter component : added) {
+                checkArgument(!component.isReceiver(), "A record component is not a receiver parameter: %s", component);
+                checkArgument(component.modifiers().isEmpty(), "A record component has no modifiers: %s", component);
+            }
+            checkState(added.isEmpty() || kind == Kind.RECORD, "Only a record has components");
+            recordComponents.addAll(added);
             return this;
         }
 
@@ -857,8 +1073,10 @@ public final class Type {
          *
          * @param isVarargs whether the last component is variable arity
          * @return this builder
+         * @throws IllegalStateException if this is not a record and {@code isVarargs} is {@code true}
          */
         public Builder varargs(boolean isVarargs) {
+            checkState(!isVarargs || kind == Kind.RECORD, "Only a record is varargs");
             varargs = isVarargs;
             return this;
         }
@@ -870,7 +1088,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addField(Field field) {
-            fields.add(field);
+            fields.add(Objects.requireNonNull(field, "field"));
             return this;
         }
 
@@ -881,10 +1099,13 @@ public final class Type {
          * @param name the name
          * @param modifiers the modifiers
          * @return this builder
-         * @throws IllegalArgumentException if the name is not a valid identifier, or a modifier is not allowed on a
-         *     field
+         * @throws IllegalArgumentException if the name is not a valid identifier, the type is {@code void} or a
+         *     wildcard, or a modifier is not allowed on a field, is repeated, or conflicts with another one
          */
         public Builder addField(TypeName type, String name, Modifier... modifiers) {
+            Objects.requireNonNull(type, "type");
+            Objects.requireNonNull(name, "name");
+            Objects.requireNonNull(modifiers, "modifiers");
             return addField(Field.of(type, name, modifiers));
         }
 
@@ -895,10 +1116,13 @@ public final class Type {
          * @param name the name
          * @param modifiers the modifiers
          * @return this builder
-         * @throws IllegalArgumentException if the name is not a valid identifier, or a modifier is not allowed on a
-         *     field
+         * @throws IllegalArgumentException if the class is {@code void}, local or anonymous; the name is not a valid
+         *     identifier; or a modifier is not allowed on a field, is repeated, or conflicts with another one
          */
         public Builder addField(Class<?> type, String name, Modifier... modifiers) {
+            Objects.requireNonNull(type, "type");
+            Objects.requireNonNull(name, "name");
+            Objects.requireNonNull(modifiers, "modifiers");
             return addField(TypeName.of(type), name, modifiers);
         }
 
@@ -909,7 +1133,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addFields(Iterable<Field> more) {
-            more.forEach(fields::add);
+            fields.addAll(Checks.elements(more, "more"));
             return this;
         }
 
@@ -918,8 +1142,11 @@ public final class Type {
          *
          * @param code the code
          * @return this builder
+         * @throws IllegalStateException if this is an interface or an annotation type
          */
         public Builder addStaticBlock(CodeBlock code) {
+            Objects.requireNonNull(code, "code");
+            checkState(!kind.isInterface(), "An interface has no static initializer");
             staticBlock.add(code);
             return this;
         }
@@ -929,8 +1156,12 @@ public final class Type {
          *
          * @param code the code
          * @return this builder
+         * @throws IllegalStateException if this is an interface, an annotation type or a record
          */
         public Builder addInitializerBlock(CodeBlock code) {
+            Objects.requireNonNull(code, "code");
+            checkState(!kind.isInterface(), "An interface has no instance initializer");
+            checkState(kind != Kind.RECORD, "A record has no instance initializer");
             initializerBlock.add(code);
             return this;
         }
@@ -940,10 +1171,14 @@ public final class Type {
          *
          * @param method the method
          * @return this builder
+         * @throws IllegalStateException if the method does not fit the kind of type: a constructor in an interface, an
+         *     annotation type or an anonymous class; a compact constructor outside a record; a default method outside
+         *     an interface; a default value outside an annotation type; or, in an interface, a method with code that is
+         *     not default, static or private, or a method that is protected, final, synchronized or native
          */
         public Builder addMethod(Method method) {
-            methods.add(method);
-            return this;
+            Objects.requireNonNull(method, "method");
+            return addMethods(List.of(method));
         }
 
         /**
@@ -951,10 +1186,35 @@ public final class Type {
          *
          * @param more the methods
          * @return this builder
+         * @throws IllegalStateException if a method does not fit the kind of type, as {@link #addMethod(Method)} tells
          */
         public Builder addMethods(Iterable<Method> more) {
-            more.forEach(methods::add);
+            List<Method> added = Checks.elements(more, "more");
+            added.forEach(this::checkMethod);
+            methods.addAll(added);
             return this;
+        }
+
+        private void checkMethod(Method method) {
+            checkState(
+                    kind == Kind.RECORD || !method.isCompactConstructor(), "Only a record has a compact constructor");
+            checkState(!method.isConstructor() || !kind.isInterface(), "%s has no constructor", what());
+            checkState(!method.isConstructor() || name != null, "An anonymous class has no constructor");
+            if (kind.isInterface()) {
+                checkState(
+                        fitsInterface(method),
+                        "A method of an interface with code must be default, static or private: %s",
+                        method.name());
+                checkState(
+                        method.modifiers().stream().noneMatch(INTERFACE_METHOD_FORBIDDEN::contains),
+                        "A method of an interface cannot be protected, final, synchronized or native: %s",
+                        method.name());
+            } else {
+                checkState(!has(method, Modifier.DEFAULT), "Only a method of an interface is default");
+            }
+            checkState(
+                    kind == Kind.ANNOTATION || method.defaultValue().isEmpty(),
+                    "Only a member of an annotation type has a default value");
         }
 
         /**
@@ -965,11 +1225,8 @@ public final class Type {
          * @throws IllegalArgumentException if the type is anonymous
          */
         public Builder addType(Type type) {
-            if (type.isAnonymous()) {
-                throw new IllegalArgumentException("A nested type must have a name");
-            }
-            types.add(type);
-            return this;
+            Objects.requireNonNull(type, "type");
+            return addTypes(List.of(type));
         }
 
         /**
@@ -980,7 +1237,11 @@ public final class Type {
          * @throws IllegalArgumentException if a type is anonymous
          */
         public Builder addTypes(Iterable<Type> more) {
-            more.forEach(this::addType);
+            List<Type> added = Checks.elements(more, "more");
+            for (Type type : added) {
+                checkArgument(!type.isAnonymous(), "A nested type must have a name");
+            }
+            types.addAll(added);
             return this;
         }
 
@@ -988,89 +1249,44 @@ public final class Type {
          * Builds the type.
          *
          * @return the type
-         * @throws IllegalStateException if a member does not fit the kind of type: a superclass outside a class, enum
-         *     constants outside an enum, components or varargs outside a record, a compact constructor outside a
-         *     record, permitted subclasses on an enum, record or annotation type, an instance initializer in an
-         *     interface, a default method outside an interface, a default value outside an annotation type, an abstract
-         *     method in a class that is not abstract, or a modifier or type variable on an anonymous class
+         * @throws IllegalStateException if it is a varargs record whose last component is not an array; it permits
+         *     subclasses but is not sealed; it is a named class that is not abstract but has an abstract method; or its
+         *     Javadoc, static initializer or instance initializer is not {@linkplain CodeBlock balanced}. The message
+         *     names the type.
          */
         public Type build() {
-            checkKind();
-            checkMethods();
-            checkAnonymous();
-            return new Type(this);
-        }
-
-        private void checkKind() {
-            require(superclass == null || kind == Kind.CLASS, "Only a class has a superclass");
-            require(enumConstants.isEmpty() || kind == Kind.ENUM, "Only an enum has constants");
-            require(recordComponents.isEmpty() || kind == Kind.RECORD, "Only a record has components");
-            require(
+            checkState(
                     !varargs
-                            || (kind == Kind.RECORD
-                                    && !recordComponents.isEmpty()
+                            || (!recordComponents.isEmpty()
                                     && recordComponents.getLast().type() instanceof ArrayTypeName),
-                    "Only a record whose last component is an array is varargs");
-            require(
-                    permittedSubclasses.isEmpty() || kind == Kind.CLASS || kind == Kind.INTERFACE,
-                    "Only a class or an interface permits subclasses");
-            require(!kind.isInterface() || initializerBlock.isEmpty(), "An interface has no instance initializer");
-            require(kind != Kind.ANNOTATION || superinterfaces.isEmpty(), "An annotation type extends nothing");
-        }
-
-        private void checkMethods() {
-            require(
-                    kind == Kind.RECORD || methods.stream().noneMatch(Method::isCompactConstructor),
-                    "Only a record has a compact constructor");
-            require(
-                    !kind.isInterface() || methods.stream().allMatch(Builder::fitsInterface),
-                    "A method of an interface with code must be default, static or private, and a private one cannot"
-                            + " be public, abstract or default");
-            require(
-                    kind.isInterface() || methods.stream().noneMatch(method -> has(method, Modifier.DEFAULT)),
-                    "Only a method of an interface is default");
-            require(
-                    kind == Kind.ANNOTATION
-                            || methods.stream()
-                                    .allMatch(method -> method.defaultValue().isEmpty()),
-                    "Only a member of an annotation type has a default value");
-            require(
+                    "The record %s is varargs but its last component is not an array",
+                    describe());
+            checkState(
+                    permittedSubclasses.isEmpty() || modifiers.contains(Modifier.SEALED),
+                    "%s permits subclasses but is not sealed",
+                    describe());
+            checkState(
                     kind != Kind.CLASS
                             || name == null
                             || modifiers.contains(Modifier.ABSTRACT)
                             || methods.stream().noneMatch(method -> has(method, Modifier.ABSTRACT)),
-                    "Only an abstract class has abstract methods: " + name);
+                    "Only an abstract class has abstract methods: %s",
+                    describe());
+            CodeBlock.checkBalanced(javadoc.build(), "The Javadoc of " + describe());
+            CodeBlock.checkBalanced(staticBlock.build(), "The static initializer of " + describe());
+            CodeBlock.checkBalanced(initializerBlock.build(), "The instance initializer of " + describe());
+            return new Type(this);
         }
 
         private static boolean has(Method method, Modifier modifier) {
             return method.modifiers().contains(modifier);
         }
 
-        private void checkAnonymous() {
-            if (name == null) {
-                require(
-                        modifiers.isEmpty() && typeVariables.isEmpty() && permittedSubclasses.isEmpty(),
-                        "An anonymous class has no modifiers, type variables or permitted subclasses");
-                require(
-                        superclass == null || superinterfaces.isEmpty(),
-                        "An anonymous class extends a class or implements an interface, not both");
-                require(superinterfaces.size() <= 1, "An anonymous class implements one interface at most");
-            }
-        }
-
         private static boolean fitsInterface(Method method) {
-            if (has(method, Modifier.PRIVATE)) {
-                return !has(method, Modifier.PUBLIC)
-                        && !has(method, Modifier.ABSTRACT)
-                        && !has(method, Modifier.DEFAULT);
-            }
-            return method.code().isEmpty() || has(method, Modifier.DEFAULT) || has(method, Modifier.STATIC);
-        }
-
-        private static void require(boolean condition, String message) {
-            if (!condition) {
-                throw new IllegalStateException(message);
-            }
+            return method.code().isEmpty()
+                    || has(method, Modifier.DEFAULT)
+                    || has(method, Modifier.STATIC)
+                    || has(method, Modifier.PRIVATE);
         }
     }
 }

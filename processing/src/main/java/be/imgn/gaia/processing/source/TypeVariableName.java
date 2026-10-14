@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.source;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeParameterElement;
@@ -25,17 +26,24 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      * @param name the name of the variable
      * @param bounds the upper bounds, empty for {@code Object}
      * @param annotations the type annotations
-     * @throws IllegalArgumentException if the name is not a valid identifier, or a bound is primitive
+     * @throws IllegalArgumentException if the name is not a valid identifier; a bound is primitive, an array or a
+     *     wildcard; or a type variable is a bound with other bounds
      */
     public TypeVariableName {
-        bounds = List.copyOf(bounds);
-        annotations = List.copyOf(annotations);
+        Objects.requireNonNull(name, "name");
+        bounds = Checks.elements(bounds, "bounds");
+        annotations = Checks.elements(annotations, "annotations");
         if (!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) {
             throw new IllegalArgumentException("Not a type variable name: " + name);
         }
         for (TypeName bound : bounds) {
-            if (bound instanceof PrimitiveTypeName) {
-                throw new IllegalArgumentException("A bound cannot be primitive: " + bound);
+            if (bound instanceof PrimitiveTypeName
+                    || bound instanceof ArrayTypeName
+                    || bound instanceof WildcardTypeName) {
+                throw new IllegalArgumentException("A bound cannot be primitive, an array or a wildcard: " + bound);
+            }
+            if (bound instanceof TypeVariableName && bounds.size() > 1) {
+                throw new IllegalArgumentException("A type variable bound cannot have other bounds: " + bounds);
             }
         }
     }
@@ -46,10 +54,12 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      * @param name the name of the variable
      * @param bounds the upper bounds
      * @return the name
-     * @throws IllegalArgumentException if the name is not a valid identifier, or a bound is primitive
+     * @throws IllegalArgumentException if the name is not a valid identifier; a bound is primitive, an array or a
+     *     wildcard; or a type variable is a bound with other bounds
      */
     public static TypeVariableName of(String name, TypeName... bounds) {
-        return new TypeVariableName(name, List.of(bounds), List.of());
+        Objects.requireNonNull(name, "name");
+        return new TypeVariableName(name, Checks.elements(bounds, "bounds"), List.of());
     }
 
     /**
@@ -57,8 +67,10 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      *
      * @param parameter the type parameter
      * @return the name
+     * @throws IllegalArgumentException if a bound has no name, as {@link TypeName#of(TypeMirror)} names it
      */
     public static TypeVariableName of(TypeParameterElement parameter) {
+        Objects.requireNonNull(parameter, "parameter");
         List<TypeName> bounds = parameter.getBounds().stream()
                 .filter(bound -> bound.getKind() != TypeKind.DECLARED
                         || !TypeName.of(bound).equals(ClassName.OBJECT))
@@ -73,8 +85,11 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      *
      * @param variable the type variable
      * @return the name
+     * @throws IllegalArgumentException if a bound has no name, as {@link TypeName#of(TypeMirror)} names it, or cannot
+     *     be the bound of a declared type variable, such as the array bound of a captured wildcard
      */
     public static TypeVariableName of(TypeVariable variable) {
+        Objects.requireNonNull(variable, "variable");
         TypeMirror upperBound = variable.getUpperBound();
         List<TypeName> bounds = upperBound.getKind() == TypeKind.INTERSECTION
                 ? ((IntersectionType) upperBound)
@@ -88,13 +103,16 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
 
     @Override
     public TypeVariableName annotated(Annotation... more) {
-        return annotated(List.of(more));
+        return annotated(Checks.elements(more, "more"));
     }
 
     @Override
     public TypeVariableName annotated(List<Annotation> more) {
         return new TypeVariableName(
-                name, bounds, Stream.concat(annotations.stream(), more.stream()).toList());
+                name,
+                bounds,
+                Stream.concat(annotations.stream(), Checks.elements(more, "more").stream())
+                        .toList());
     }
 
     @Override

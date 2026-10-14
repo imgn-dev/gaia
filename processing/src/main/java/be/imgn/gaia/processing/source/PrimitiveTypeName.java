@@ -51,10 +51,11 @@ public record PrimitiveTypeName(String keyword, List<Annotation> annotations) im
      * @throws IllegalArgumentException if the keyword is not a primitive type or {@code void}
      */
     public PrimitiveTypeName {
+        Objects.requireNonNull(keyword, "keyword");
+        annotations = Checks.elements(annotations, "annotations");
         if (boxName(keyword) == null) {
             throw new IllegalArgumentException("Not a primitive type: " + keyword);
         }
-        annotations = List.copyOf(annotations);
     }
 
     /**
@@ -65,6 +66,7 @@ public record PrimitiveTypeName(String keyword, List<Annotation> annotations) im
      * @throws IllegalArgumentException if the keyword is not a primitive type or {@code void}
      */
     public static PrimitiveTypeName of(String keyword) {
+        Objects.requireNonNull(keyword, "keyword");
         return new PrimitiveTypeName(keyword, List.of());
     }
 
@@ -97,13 +99,15 @@ public record PrimitiveTypeName(String keyword, List<Annotation> annotations) im
 
     @Override
     public PrimitiveTypeName annotated(Annotation... more) {
-        return annotated(List.of(more));
+        return annotated(Checks.elements(more, "more"));
     }
 
     @Override
     public PrimitiveTypeName annotated(List<Annotation> more) {
         return new PrimitiveTypeName(
-                keyword, Stream.concat(annotations.stream(), more.stream()).toList());
+                keyword,
+                Stream.concat(annotations.stream(), Checks.elements(more, "more").stream())
+                        .toList());
     }
 
     @Override

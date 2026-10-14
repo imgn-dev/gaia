@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.source;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
@@ -47,9 +48,13 @@ public final class Field {
      * @param name the name
      * @param modifiers the modifiers
      * @return the field
-     * @throws IllegalArgumentException if the name is not a valid identifier, or a modifier is not allowed on a field
+     * @throws IllegalArgumentException if the name is not a valid identifier, the type is {@code void} or a wildcard,
+     *     or a modifier is not allowed on a field, is repeated, or conflicts with another one
      */
     public static Field of(TypeName type, String name, Modifier... modifiers) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(name, "name");
+        Objects.requireNonNull(modifiers, "modifiers");
         return newBuilder(type, name, modifiers).build();
     }
 
@@ -60,9 +65,13 @@ public final class Field {
      * @param name the name
      * @param modifiers the modifiers
      * @return a new builder
-     * @throws IllegalArgumentException if the name is not a valid identifier, or a modifier is not allowed on a field
+     * @throws IllegalArgumentException if the name is not a valid identifier, the type is {@code void} or a wildcard,
+     *     or a modifier is not allowed on a field, is repeated, or conflicts with another one
      */
     public static Builder newBuilder(TypeName type, String name, Modifier... modifiers) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(name, "name");
+        Checks.elements(modifiers, "modifiers");
         return new Builder(type, name).addModifiers(modifiers);
     }
 
@@ -73,9 +82,13 @@ public final class Field {
      * @param name the name
      * @param modifiers the modifiers
      * @return a new builder
-     * @throws IllegalArgumentException if the name is not a valid identifier, or a modifier is not allowed on a field
+     * @throws IllegalArgumentException if the class is {@code void}, local or anonymous; the name is not a valid
+     *     identifier; or a modifier is not allowed on a field, is repeated, or conflicts with another one
      */
     public static Builder newBuilder(Class<?> type, String name, Modifier... modifiers) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(name, "name");
+        Objects.requireNonNull(modifiers, "modifiers");
         return newBuilder(TypeName.of(type), name, modifiers);
     }
 
@@ -173,11 +186,16 @@ public final class Field {
         private CodeBlock initializer = CodeBlock.empty();
 
         private Builder(TypeName type, String name) {
+            Objects.requireNonNull(type, "type");
+            Objects.requireNonNull(name, "name");
             if (!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) {
                 throw new IllegalArgumentException("Not a field name: " + name);
             }
             if (type.equals(PrimitiveTypeName.VOID)) {
                 throw new IllegalArgumentException("A field cannot be void: " + name);
+            }
+            if (type instanceof WildcardTypeName) {
+                throw new IllegalArgumentException("A field cannot be a wildcard: " + name);
             }
             this.type = type;
             this.name = name;
@@ -188,11 +206,15 @@ public final class Field {
          *
          * @param more the modifiers
          * @return this builder
-         * @throws IllegalArgumentException if a modifier is not allowed on a field
+         * @throws IllegalArgumentException if a modifier is not allowed on a field, is repeated, or conflicts with
+         *     another one, such as {@code public} with {@code private} or {@code final} with {@code volatile}
          */
         public Builder addModifiers(Modifier... more) {
-            Set<Modifier> added = Set.of(more);
+            Set<Modifier> added = Modifiers.added(more, "more", "A field");
             Modifiers.requireOnly(added, ALLOWED, "A field");
+            Set<Modifier> all = Modifiers.union(modifiers, added);
+            Modifiers.requireAtMostOne(all, Modifiers.ACCESS, "A field");
+            Modifiers.requireAtMostOne(all, EnumSet.of(Modifier.FINAL, Modifier.VOLATILE), "A field");
             modifiers.addAll(added);
             return this;
         }
@@ -204,7 +226,7 @@ public final class Field {
          * @return this builder
          */
         public Builder addAnnotation(Annotation annotation) {
-            annotations.add(annotation);
+            annotations.add(Objects.requireNonNull(annotation, "annotation"));
             return this;
         }
 
@@ -213,8 +235,10 @@ public final class Field {
          *
          * @param annotation the annotation type
          * @return this builder
+         * @throws IllegalArgumentException if the class is not an annotation type
          */
         public Builder addAnnotation(Class<? extends java.lang.annotation.Annotation> annotation) {
+            Objects.requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -225,6 +249,7 @@ public final class Field {
          * @return this builder
          */
         public Builder addAnnotation(ClassName annotation) {
+            Objects.requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -235,7 +260,7 @@ public final class Field {
          * @return this builder
          */
         public Builder addAnnotations(Iterable<Annotation> more) {
-            more.forEach(annotations::add);
+            annotations.addAll(Checks.elements(more, "more"));
             return this;
         }
 
@@ -248,6 +273,8 @@ public final class Field {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addJavadoc(String format, @Nullable Object... args) {
+            Objects.requireNonNull(format, "format");
+            Objects.requireNonNull(args, "args");
             javadoc.add(format, args);
             return this;
         }
@@ -258,10 +285,13 @@ public final class Field {
          * @param format the expression after {@code =}, with placeholders
          * @param args the arguments of the placeholders
          * @return this builder
-         * @throws IllegalArgumentException if the format and the arguments do not match
+         * @throws IllegalArgumentException if the format and the arguments do not match, or the initializer is not
+         *     {@linkplain CodeBlock balanced}
          * @throws IllegalStateException if the initializer is already set
          */
         public Builder initializer(String format, @Nullable Object... args) {
+            Objects.requireNonNull(format, "format");
+            Objects.requireNonNull(args, "args");
             return initializer(CodeBlock.of(format, args));
         }
 
@@ -270,9 +300,12 @@ public final class Field {
          *
          * @param expression the expression after {@code =}
          * @return this builder
+         * @throws IllegalArgumentException if the expression is not {@linkplain CodeBlock balanced}
          * @throws IllegalStateException if the initializer is already set
          */
         public Builder initializer(CodeBlock expression) {
+            Objects.requireNonNull(expression, "expression");
+            CodeBlock.requireBalanced(expression, "The initializer of " + name);
             if (!initializer.isEmpty()) {
                 throw new IllegalStateException("The initializer of " + name + " is already set: " + initializer);
             }
@@ -284,8 +317,10 @@ public final class Field {
          * Builds the field.
          *
          * @return the field
+         * @throws IllegalStateException if the Javadoc is not {@linkplain CodeBlock balanced}
          */
         public Field build() {
+            CodeBlock.checkBalanced(javadoc.build(), "The Javadoc of " + name);
             return new Field(this);
         }
     }

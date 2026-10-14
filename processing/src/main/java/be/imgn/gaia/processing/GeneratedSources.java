@@ -89,8 +89,6 @@ public final class GeneratedSources {
      *     delete it when they change; the first one also decides whether {@code @Generated} is visible
      * @return {@code true} if the file was written, {@code false} if it had already been created, by this processor or
      *     another one
-     * @throws IllegalStateException if a code block of the file unindents more than it indents, or indents more than it
-     *     unindents, as {@link JavaFile#toString()} says
      * @throws UncheckedIOException if the file cannot be written
      */
     public boolean write(JavaFile file, Element... originatingElements) {

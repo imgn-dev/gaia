@@ -332,5 +332,36 @@ class TypeNameTest {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> new ParameterizedTypeName(ArrayTypeName.of(OUTER), inner, List.of(), List.of()));
         }
+
+        @Test
+        void wildcardsWhereATypeIsExpected() {
+            WildcardTypeName wildcard = WildcardTypeName.unbounded();
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> ArrayTypeName.of(wildcard))
+                    .withMessageContaining("wildcard elements");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> WildcardTypeName.subtypeOf(wildcard))
+                    .withMessageContaining("cannot be a wildcard");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> WildcardTypeName.supertypeOf(wildcard))
+                    .withMessageContaining("cannot be a wildcard");
+            assertThatIllegalArgumentException().isThrownBy(() -> TypeVariableName.of("T", wildcard));
+        }
+
+        @Test
+        void boundsThatATypeVariableCannotHave() {
+            ArrayTypeName strings = ArrayTypeName.of(ClassName.of(String.class));
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> TypeVariableName.of("T", strings))
+                    .withMessageContaining("an array");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> TypeVariableName.of("U", TypeVariableName.of("T"), ClassName.of(Runnable.class)))
+                    .withMessageContaining("other bounds");
+            assertThat(TypeVariableName.of("U", TypeVariableName.of("T")).bounds())
+                    .containsExactly(TypeVariableName.of("T"));
+            assertThat(WildcardTypeName.subtypeOf(strings)).hasToString("? extends java.lang.String[]");
+        }
     }
 }

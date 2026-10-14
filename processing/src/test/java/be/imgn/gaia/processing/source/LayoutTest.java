@@ -170,39 +170,24 @@ class LayoutTest {
     class Indentation {
 
         @Test
-        void rejectAFileWhoseCodeUnindentsMoreThanItIndents() {
-            JavaFile file = JavaFile.newBuilder(
-                            "com.example",
-                            withMethod(Method.newBuilder("run")
-                                    .addCode("$<oops();\n")
-                                    .build()))
-                    .build();
+        void rejectAMethodWhoseCodeUnindentsMoreThanItIndents() {
+            Method.Builder method = Method.newBuilder("run").addCode("$<oops();\n");
 
-            assertThatIllegalStateException().isThrownBy(file::toString).withMessageContaining("unindents");
+            assertThatIllegalStateException().isThrownBy(method::build).withMessageContaining("unindents");
         }
 
         @Test
-        void rejectAFileWhoseControlFlowIsNotClosed() {
-            JavaFile file = JavaFile.newBuilder(
-                            "com.example",
-                            withMethod(Method.newBuilder("run")
-                                    .beginControlFlow("if (ready)")
-                                    .build()))
-                    .build();
+        void rejectAMethodWhoseControlFlowIsNotClosed() {
+            Method.Builder method = Method.newBuilder("run").beginControlFlow("if (ready)");
 
-            assertThatIllegalStateException().isThrownBy(file::toString).withMessageContaining("indents");
+            assertThatIllegalStateException().isThrownBy(method::build).withMessageContaining("indents");
         }
 
         @Test
-        void rejectAFileWhoseStatementsAreNotEnded() {
-            JavaFile file = JavaFile.newBuilder(
-                            "com.example",
-                            withMethod(Method.newBuilder("run")
-                                    .addCode("$[run();\n")
-                                    .build()))
-                    .build();
+        void rejectAMethodWhoseStatementsAreNotEnded() {
+            Method.Builder method = Method.newBuilder("run").addCode("$[run();\n");
 
-            assertThatIllegalStateException().isThrownBy(file::toString).withMessageContaining("$]");
+            assertThatIllegalStateException().isThrownBy(method::build).withMessageContaining("$]");
         }
 
         @Test

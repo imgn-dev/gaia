@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.source;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.SourceVersion;
 
@@ -45,6 +46,7 @@ public final class NameAllocator {
      * @return the identifier, such as {@code first_name}
      */
     public static String toJavaIdentifier(String suggestion) {
+        Objects.requireNonNull(suggestion, "suggestion");
         StringBuilder identifier = new StringBuilder();
         suggestion.codePoints().forEach(codePoint -> {
             if (identifier.isEmpty()
@@ -68,6 +70,7 @@ public final class NameAllocator {
      * @return a valid identifier, different from the keywords and every name handed out so far
      */
     public String newName(String suggestion) {
+        Objects.requireNonNull(suggestion, "suggestion");
         String name = toJavaIdentifier(suggestion);
         while (SourceVersion.isKeyword(name) || allocated.contains(name)) {
             name += "_";
@@ -85,6 +88,8 @@ public final class NameAllocator {
      * @throws IllegalArgumentException if the tag already has a name
      */
     public String newName(String suggestion, Object tag) {
+        Objects.requireNonNull(suggestion, "suggestion");
+        Objects.requireNonNull(tag, "tag");
         String existing = byTag.get(tag);
         if (existing != null) {
             throw new IllegalArgumentException(
@@ -103,6 +108,7 @@ public final class NameAllocator {
      * @throws IllegalArgumentException if no name was handed out for the tag
      */
     public String get(Object tag) {
+        Objects.requireNonNull(tag, "tag");
         String name = byTag.get(tag);
         if (name == null) {
             throw new IllegalArgumentException("No name for the tag " + tag);

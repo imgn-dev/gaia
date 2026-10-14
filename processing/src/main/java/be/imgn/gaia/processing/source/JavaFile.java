@@ -1,12 +1,16 @@
 package be.imgn.gaia.processing.source;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import org.jspecify.annotations.Nullable;
@@ -52,18 +56,25 @@ public final class JavaFile {
      * @param packageName the package, empty for the unnamed package
      * @param type the top-level type
      * @return a new builder
-     * @throws IllegalArgumentException if the package name is not valid, or the type is anonymous
+     * @throws IllegalArgumentException if the package name is not valid, or the type is anonymous or has a modifier
+     *     only a member type can have: {@code protected}, {@code private} or {@code static}
      */
     public static Builder newBuilder(String packageName, Type type) {
+        Objects.requireNonNull(packageName, "packageName");
+        Objects.requireNonNull(type, "type");
         if (!packageName.isEmpty() && !SourceVersion.isName(packageName)) {
             throw new IllegalArgumentException("Not a package name: " + packageName);
         }
-        return new Builder(packageName, checkNamed(type));
+        return new Builder(packageName, checkTopLevel(type));
     }
 
-    private static Type checkNamed(Type type) {
+    private static Type checkTopLevel(Type type) {
         if (type.isAnonymous()) {
             throw new IllegalArgumentException("The type of a file must have a name");
+        }
+        for (Modifier modifier : List.of(Modifier.PROTECTED, Modifier.PRIVATE, Modifier.STATIC)) {
+            checkArgument(
+                    !type.modifiers().contains(modifier), "A top-level type cannot be %s: %s", modifier, type.name());
         }
         return type;
     }
@@ -137,6 +148,7 @@ public final class JavaFile {
      * @throws IOException if {@code out} fails
      */
     public void writeTo(Appendable out) throws IOException {
+        Objects.requireNonNull(out, "out");
         out.append(toString());
     }
 
@@ -176,7 +188,6 @@ public final class JavaFile {
      * Returns the source code of the file.
      *
      * @return the source code
-     * @throws IllegalStateException if a code block unindents more than it indents, or indents more than it unindents
      */
     @Override
     public String toString() {
@@ -203,10 +214,12 @@ public final class JavaFile {
          *
          * @param type the top-level type
          * @return this builder
-         * @throws IllegalArgumentException if the type is anonymous
+         * @throws IllegalArgumentException if the type is anonymous or has a modifier only a member type can have:
+         *     {@code protected}, {@code private} or {@code static}
          */
         public Builder type(Type type) {
-            this.type = checkNamed(type);
+            Objects.requireNonNull(type, "type");
+            this.type = checkTopLevel(type);
             return this;
         }
 
@@ -219,6 +232,8 @@ public final class JavaFile {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addFileComment(String format, @Nullable Object... args) {
+            Objects.requireNonNull(format, "format");
+            Objects.requireNonNull(args, "args");
             fileComment.add(format, args);
             return this;
         }
@@ -232,10 +247,14 @@ public final class JavaFile {
          * @throws IllegalArgumentException if a member name is not a valid identifier or {@code *}
          */
         public Builder addStaticImport(ClassName type, String... members) {
-            for (String member : members) {
-                if (!"*".equals(member) && !SourceVersion.isIdentifier(member)) {
+            Objects.requireNonNull(type, "type");
+            List<String> added = Checks.elements(members, "members");
+            for (String member : added) {
+                if (!"*".equals(member) && (!SourceVersion.isIdentifier(member) || SourceVersion.isKeyword(member))) {
                     throw new IllegalArgumentException("Not a member name: " + member);
                 }
+            }
+            for (String member : added) {
                 staticImports.add(type.withoutAnnotations().canonicalName() + "." + member);
             }
             return this;
@@ -251,6 +270,7 @@ public final class JavaFile {
          *     identifier or {@code *}
          */
         public Builder addStaticImport(Class<?> type, String... members) {
+            Objects.requireNonNull(type, "type");
             return addStaticImport(ClassName.of(type), members);
         }
 
@@ -259,8 +279,10 @@ public final class JavaFile {
          *
          * @param constant the constant
          * @return this builder
+         * @throws IllegalArgumentException if the enum is local
          */
         public Builder addStaticImport(Enum<?> constant) {
+            Objects.requireNonNull(constant, "constant");
             return addStaticImport(ClassName.of(constant.getDeclaringClass()), constant.name());
         }
 
@@ -272,7 +294,7 @@ public final class JavaFile {
          * @return this builder
          */
         public Builder alwaysQualify(String... simpleNames) {
-            alwaysQualifiedNames.addAll(List.of(simpleNames));
+            alwaysQualifiedNames.addAll(Checks.elements(simpleNames, "simpleNames"));
             return this;
         }
 
@@ -284,6 +306,7 @@ public final class JavaFile {
          * @throws IllegalArgumentException if the indentation is not made of spaces and tabs
          */
         public Builder indent(String unit) {
+            Objects.requireNonNull(unit, "unit");
             if (!unit.chars().allMatch(c -> c == ' ' || c == '\t')) {
                 throw new IllegalArgumentException("An indentation is made of spaces and tabs");
             }
@@ -295,8 +318,10 @@ public final class JavaFile {
          * Builds the file.
          *
          * @return the file
+         * @throws IllegalStateException if the file comment is not {@linkplain CodeBlock balanced}
          */
         public JavaFile build() {
+            CodeBlock.checkBalanced(fileComment.build(), "The file comment");
             return new JavaFile(this);
         }
     }

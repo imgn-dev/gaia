@@ -1,10 +1,14 @@
 package be.imgn.gaia.processing.source;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static be.imgn.gaia.core.base.Preconditions.checkState;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collector;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -33,6 +37,14 @@ import org.jspecify.annotations.Nullable;
  * or by position with {@code $1T}, {@code $2N} and so on, but not both in one format; or by name with {@code $type:T},
  * from a map given to {@link Builder#addNamed(String, Map)}.
  *
+ * <p>A format and its arguments do not match when a placeholder is not one of these, has no argument, or has an
+ * argument it cannot write, such as a {@code $T} argument that is not a type or is a local or anonymous class, which
+ * has no name; when an argument is not used; or when a format takes its arguments both in order and by position.
+ *
+ * <p>A code block may be a fragment that indents or starts a statement for another one to close. One that stands on its
+ * own, such as the body of a method, the initializer of a field or Javadoc, must be balanced: it must not unindent or
+ * end a statement more than it indents or starts one, and must close all it opens.
+ *
  * <p>Code blocks are values: two blocks with the same text and arguments are equal.
  */
 public final class CodeBlock {
@@ -54,6 +66,8 @@ public final class CodeBlock {
      * @throws IllegalArgumentException if the format and the arguments do not match
      */
     public static CodeBlock of(String format, @Nullable Object... args) {
+        Objects.requireNonNull(format, "format");
+        Objects.requireNonNull(args, "args");
         return newBuilder().add(format, args).build();
     }
 
@@ -74,7 +88,8 @@ public final class CodeBlock {
      * @return the joined code block
      */
     public static CodeBlock join(Iterable<CodeBlock> blocks, String separator) {
-        return join(blocks, separator, "", "");
+        List<CodeBlock> checked = Checks.elements(blocks, "blocks");
+        return join(checked, Objects.requireNonNull(separator, "separator"), "", "");
     }
 
     private static CodeBlock join(Iterable<CodeBlock> blocks, String separator, String prefix, String suffix) {
@@ -97,7 +112,7 @@ public final class CodeBlock {
      * @return the collector
      */
     public static Collector<CodeBlock, ?, CodeBlock> joining(String separator) {
-        return joining(separator, "", "");
+        return joining(Objects.requireNonNull(separator, "separator"), "", "");
     }
 
     /**
@@ -110,9 +125,12 @@ public final class CodeBlock {
      * @return the collector
      */
     public static Collector<CodeBlock, ?, CodeBlock> joining(String separator, String prefix, String suffix) {
+        Objects.requireNonNull(separator, "separator");
+        Objects.requireNonNull(prefix, "prefix");
+        Objects.requireNonNull(suffix, "suffix");
         return Collector.<CodeBlock, List<CodeBlock>, CodeBlock>of(
                 ArrayList::new,
-                List::add,
+                (blocks, block) -> blocks.add(Objects.requireNonNull(block, "element")),
                 (left, right) -> {
                     left.addAll(right);
                     return left;
@@ -153,6 +171,56 @@ public final class CodeBlock {
         return parts;
     }
 
+    // A code block that stands on its own is checked where it is given, so that writing it cannot fail.
+    static CodeBlock requireBalanced(CodeBlock block, String what) {
+        String problem = block.imbalance();
+        checkArgument(problem == null, "%s %s", what, problem);
+        return block;
+    }
+
+    static void checkBalanced(CodeBlock block, String what) {
+        String problem = block.imbalance();
+        checkState(problem == null, "%s %s", what, problem);
+    }
+
+    // What is wrong with this block where it stands on its own, as CodeWriter writes it; null if nothing is.
+    private @Nullable String imbalance() {
+        int[] depths = new int[2];
+        String problem = imbalance(this, depths);
+        if (problem != null) {
+            return problem;
+        }
+        if (depths[0] > 0) {
+            return "indents more than it unindents: a $> or a control flow is not closed";
+        }
+        if (depths[1] > 0) {
+            return "starts a statement with $[ that it does not end with $]";
+        }
+        return null;
+    }
+
+    // depths holds the indentation and the statement depth, which code blocks written with $L share.
+    private static @Nullable String imbalance(CodeBlock block, int[] depths) {
+        for (Part part : block.parts) {
+            String problem = null;
+            if (part instanceof Indent indent) {
+                depths[0] += indent.delta();
+                problem = depths[0] < 0 ? "unindents more than it indents: a $< or a control flow is not opened" : null;
+            } else if (part instanceof Statement statement) {
+                depths[1] += statement.start() ? 1 : -1;
+                problem = depths[1] < 0 ? "ends a statement with $] that it did not start with $[" : null;
+            } else if (part instanceof Argument argument
+                    && argument.kind() == 'L'
+                    && argument.value() instanceof CodeBlock nested) {
+                problem = imbalance(nested, depths);
+            }
+            if (problem != null) {
+                return problem;
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(@Nullable Object other) {
         return other instanceof CodeBlock block && parts.equals(block.parts);
@@ -184,7 +252,7 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder add(String format, @Nullable Object... args) {
-            parts.addAll(new Parser(format, args.clone(), null).parse());
+            parts.addAll(parse(format, args));
             return this;
         }
 
@@ -195,6 +263,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder add(CodeBlock block) {
+            Objects.requireNonNull(block, "block");
             parts.addAll(block.parts);
             return this;
         }
@@ -216,7 +285,10 @@ public final class CodeBlock {
          *     placeholder without a name
          */
         public Builder addNamed(String format, Map<String, ?> arguments) {
+            Objects.requireNonNull(format, "format");
+            Objects.requireNonNull(arguments, "arguments");
             for (String name : arguments.keySet()) {
+                Objects.requireNonNull(name, "arguments key");
                 if (!isArgumentName(name)) {
                     throw new IllegalArgumentException(
                             "An argument name starts with a lower-case letter, followed by letters, digits and"
@@ -236,8 +308,9 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addStatement(String format, @Nullable Object... args) {
+            List<Part> statement = parse(format, args);
             parts.add(new Statement(true));
-            add(format, args);
+            parts.addAll(statement);
             parts.add(new Text(";\n"));
             parts.add(new Statement(false));
             return this;
@@ -250,6 +323,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder addStatement(CodeBlock statement) {
+            Objects.requireNonNull(statement, "statement");
             parts.add(new Statement(true));
             add(statement);
             parts.add(new Text(";\n"));
@@ -262,8 +336,14 @@ public final class CodeBlock {
          *
          * @param comment the comment, without {@code //}
          * @return this builder
+         * @throws IllegalArgumentException if the comment has a line break
          */
         public Builder addComment(String comment) {
+            Objects.requireNonNull(comment, "comment");
+            checkArgument(
+                    comment.indexOf('\n') < 0 && comment.indexOf('\r') < 0,
+                    "A line comment cannot have a line break: %s",
+                    comment);
             parts.add(new Text("// " + comment + "\n"));
             return this;
         }
@@ -277,6 +357,8 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder beginControlFlow(String controlFlow, @Nullable Object... args) {
+            Objects.requireNonNull(controlFlow, "controlFlow");
+            Objects.requireNonNull(args, "args");
             return beginControlFlow(CodeBlock.of(controlFlow, args));
         }
 
@@ -287,6 +369,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder beginControlFlow(CodeBlock controlFlow) {
+            Objects.requireNonNull(controlFlow, "controlFlow");
             add(controlFlow);
             parts.add(new Text(" {\n"));
             return indent();
@@ -301,6 +384,8 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder nextControlFlow(String controlFlow, @Nullable Object... args) {
+            Objects.requireNonNull(controlFlow, "controlFlow");
+            Objects.requireNonNull(args, "args");
             return nextControlFlow(CodeBlock.of(controlFlow, args));
         }
 
@@ -311,6 +396,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder nextControlFlow(CodeBlock controlFlow) {
+            Objects.requireNonNull(controlFlow, "controlFlow");
             unindent();
             parts.add(new Text("} "));
             add(controlFlow);
@@ -338,6 +424,8 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder endControlFlow(String controlFlow, @Nullable Object... args) {
+            Objects.requireNonNull(controlFlow, "controlFlow");
+            Objects.requireNonNull(args, "args");
             return endControlFlow(CodeBlock.of(controlFlow, args));
         }
 
@@ -348,6 +436,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder endControlFlow(CodeBlock controlFlow) {
+            Objects.requireNonNull(controlFlow, "controlFlow");
             unindent();
             parts.add(new Text("} "));
             add(controlFlow);
@@ -401,6 +490,12 @@ public final class CodeBlock {
          */
         public CodeBlock build() {
             return parts.isEmpty() ? EMPTY : new CodeBlock(parts);
+        }
+
+        private static List<Part> parse(String format, @Nullable Object[] args) {
+            Objects.requireNonNull(format, "format");
+            Objects.requireNonNull(args, "args");
+            return new Parser(format, args.clone(), null).parse();
         }
 
         private Builder text(String text) {

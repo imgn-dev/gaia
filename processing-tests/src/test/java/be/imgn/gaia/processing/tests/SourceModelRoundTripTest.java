@@ -32,6 +32,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
@@ -448,6 +449,44 @@ class SourceModelRoundTripTest {
                         message -> assertThat(message).startsWith("open: Cannot override a method of the final type"))
                 .anySatisfy(message -> assertThat(message).startsWith("close: Cannot override a final method"))
                 .anySatisfy(message -> assertThat(message).startsWith("constructor: Only a method can be overridden"));
+    }
+
+    @Test
+    void refusesSupertypesOfTheWrongKind() {
+        List<String> messages = new ArrayList<>();
+        Compilation compilation = process(
+                (context, type) -> {
+                    TypeMirror runnable = context.elements()
+                            .getTypeElement("java.lang.Runnable")
+                            .asType();
+                    TypeMirror string = context.elements()
+                            .getTypeElement("java.lang.String")
+                            .asType();
+                    List<Runnable> attempts = List.of(
+                            () -> Type.newClassBuilder("C").superclass(runnable),
+                            () -> Type.newClassBuilder("C").superclass(string),
+                            () -> Type.newClassBuilder("C").addSuperinterface(type.asType()));
+                    for (Runnable attempt : attempts) {
+                        try {
+                            attempt.run();
+                        } catch (IllegalArgumentException e) {
+                            messages.add(e.getMessage());
+                        }
+                    }
+                },
+                source("example.Seed", """
+                        package example;
+
+                        @Mark
+                        class Seed {}
+                        """));
+
+        assertThat(compilation).succeeded();
+        assertThat(messages)
+                .containsExactly(
+                        "Not a class that can be extended: java.lang.Runnable",
+                        "Not a class that can be extended: java.lang.String",
+                        "Not an interface: example.Seed");
     }
 
     @Test

@@ -309,16 +309,13 @@ class DeclarationValidationTest {
         }
 
         @Test
-        void rejectsPrivateInterfaceMethodsThatAreAlsoPublicAbstractOrDefault() {
+        void rejectsPrivateMethodsThatAreAlsoPublicAbstractOrDefault() {
             for (Modifier modifier : List.of(Modifier.PUBLIC, Modifier.ABSTRACT, Modifier.DEFAULT)) {
-                Method method = Method.newBuilder("helper")
-                        .addModifiers(Modifier.PRIVATE, modifier)
-                        .build();
+                Method.Builder method = Method.newBuilder("helper").addModifiers(Modifier.PRIVATE);
 
-                assertThatIllegalStateException()
+                assertThatIllegalArgumentException()
                         .as(modifier.toString())
-                        .isThrownBy(() ->
-                                Type.newInterfaceBuilder("I").addMethod(method).build());
+                        .isThrownBy(() -> method.addModifiers(modifier));
             }
         }
 
@@ -379,6 +376,423 @@ class DeclarationValidationTest {
                     .containsExactly(ClassName.of(IOException.class), ClassName.of(InterruptedException.class));
         }
     }
+
+    @Nested
+    class ModifierRules {
+
+        @Test
+        void rejectsRepeatedModifiersOfFieldsAndParameters() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Field.of(PrimitiveTypeName.INT, "x", Modifier.PRIVATE, Modifier.PRIVATE))
+                    .withMessage("A field cannot have private twice");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Parameter.of(PrimitiveTypeName.INT, "x", Modifier.FINAL, Modifier.FINAL))
+                    .withMessage("A parameter cannot have final twice");
+        }
+
+        @Test
+        void rejectsConflictingModifiersOfFields() {
+            Field.Builder field = Field.newBuilder(int.class, "x", Modifier.PUBLIC, Modifier.FINAL);
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> field.addModifiers(Modifier.PRIVATE))
+                    .withMessage("A field cannot be both public and private");
+            assertThatIllegalArgumentException().isThrownBy(() -> field.addModifiers(Modifier.VOLATILE));
+            assertThat(field.build().modifiers()).containsExactly(Modifier.PUBLIC, Modifier.FINAL);
+        }
+
+        @Test
+        void rejectsModifiersThatNoMethodOrConstructorCanHave() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Method.newBuilder("m").addModifiers(Modifier.TRANSIENT))
+                    .withMessageStartingWith("A method cannot be transient");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Method.newConstructorBuilder().addModifiers(Modifier.STATIC))
+                    .withMessageStartingWith("A constructor cannot be static");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Method.newCompactConstructorBuilder().addModifiers(Modifier.FINAL));
+            assertThat(Method.newConstructorBuilder()
+                            .addModifiers(Modifier.PRIVATE)
+                            .build()
+                            .modifiers())
+                    .containsExactly(Modifier.PRIVATE);
+        }
+
+        @Test
+        void rejectsConflictingModifiersOfMethods() {
+            List<List<Modifier>> conflicts = List.of(
+                    List.of(Modifier.PUBLIC, Modifier.PROTECTED),
+                    List.of(Modifier.ABSTRACT, Modifier.FINAL),
+                    List.of(Modifier.ABSTRACT, Modifier.STATIC),
+                    List.of(Modifier.ABSTRACT, Modifier.SYNCHRONIZED),
+                    List.of(Modifier.DEFAULT, Modifier.STATIC),
+                    List.of(Modifier.DEFAULT, Modifier.FINAL),
+                    List.of(Modifier.NATIVE, Modifier.STRICTFP));
+            for (List<Modifier> conflict : conflicts) {
+                Method.Builder method = Method.newBuilder("m").addModifiers(conflict.getFirst());
+
+                assertThatIllegalArgumentException()
+                        .as(conflict.toString())
+                        .isThrownBy(() -> method.addModifiers(conflict.getLast()))
+                        .withMessageContaining("cannot be both");
+            }
+            assertThat(Method.newBuilder("m")
+                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL, Modifier.SYNCHRONIZED)
+                            .build()
+                            .modifiers())
+                    .hasSize(4);
+        }
+
+        @Test
+        void rejectsModifiersThatTheKindOfTypeCannotHave() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newInterfaceBuilder("I").addModifiers(Modifier.FINAL))
+                    .withMessageStartingWith("An interface cannot be final");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newEnumBuilder("E").addModifiers(Modifier.ABSTRACT));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newRecordBuilder("R").addModifiers(Modifier.SEALED));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newAnnotationBuilder("A").addModifiers(Modifier.NON_SEALED));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newClassBuilder("C").addModifiers(Modifier.SYNCHRONIZED));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newClassBuilder("C").addModifiers(Modifier.DEFAULT));
+        }
+
+        @Test
+        void rejectsConflictingModifiersOfTypes() {
+            Type.Builder type = Type.newClassBuilder("C").addModifiers(Modifier.PUBLIC, Modifier.SEALED);
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addModifiers(Modifier.FINAL))
+                    .withMessage("A class cannot be both sealed and final");
+            assertThatIllegalArgumentException().isThrownBy(() -> type.addModifiers(Modifier.NON_SEALED));
+            assertThatIllegalArgumentException().isThrownBy(() -> type.addModifiers(Modifier.PRIVATE));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newClassBuilder("C").addModifiers(Modifier.ABSTRACT, Modifier.FINAL));
+            assertThat(type.build().modifiers()).containsExactly(Modifier.PUBLIC, Modifier.SEALED);
+        }
+    }
+
+    @Nested
+    class MemberRules {
+
+        @Test
+        void rejectsMembersThatDoNotFitTheKindWhenTheyAreAdded() {
+            Type.Builder type = Type.newClassBuilder("C");
+            Type.Builder anInterface = Type.newInterfaceBuilder("I");
+
+            assertThatIllegalStateException().isThrownBy(() -> type.addEnumConstant("A"));
+            assertThatIllegalStateException().isThrownBy(() -> type.addRecordComponent(int.class, "x"));
+            assertThatIllegalStateException().isThrownBy(() -> type.varargs(true));
+            assertThatIllegalStateException().isThrownBy(() -> anInterface.superclass(Object.class));
+            assertThatIllegalStateException().isThrownBy(() -> anInterface.addStaticBlock(CodeBlock.of("x();\n")));
+            assertThatIllegalStateException().isThrownBy(() -> anInterface.addInitializerBlock(CodeBlock.of("x();\n")));
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newRecordBuilder("R").addInitializerBlock(CodeBlock.of("x();\n")))
+                    .withMessage("A record has no instance initializer");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newEnumBuilder("E").addTypeVariable(TypeVariableName.of("T")))
+                    .withMessage("An enum has no type variables");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newAnnotationBuilder("A").addTypeVariable(TypeVariableName.of("T")));
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newRecordBuilder("R").addPermittedSubclass(ClassName.of("a", "B")));
+            assertThat(type.build()).isEqualTo(Type.newClassBuilder("C").build());
+        }
+
+        @Test
+        void rejectsConstructorsWhereThereAreNone() {
+            Method constructor = Method.newConstructorBuilder().build();
+
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newInterfaceBuilder("I").addMethod(constructor))
+                    .withMessage("An interface has no constructor");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newAnnotationBuilder("A").addMethod(constructor))
+                    .withMessage("An annotation type has no constructor");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newAnonymousClassBuilder("").addMethod(constructor))
+                    .withMessage("An anonymous class has no constructor");
+        }
+
+        @Test
+        void rejectsInterfaceMethodsThatAreProtectedFinalSynchronizedOrNative() {
+            for (Modifier modifier :
+                    List.of(Modifier.PROTECTED, Modifier.FINAL, Modifier.SYNCHRONIZED, Modifier.NATIVE)) {
+                Method method = Method.newBuilder("m").addModifiers(modifier).build();
+
+                assertThatIllegalStateException()
+                        .as(modifier.toString())
+                        .isThrownBy(() -> Type.newInterfaceBuilder("I").addMethod(method));
+            }
+        }
+
+        @Test
+        void rejectsDuplicateAndMalformedEnumConstants() {
+            Type.Builder type = Type.newEnumBuilder("E").addEnumConstant("A");
+            Type withSupertype = Type.newAnonymousClassBuilder("")
+                    .addSuperinterface(Runnable.class)
+                    .build();
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addEnumConstant("A"))
+                    .withMessage("Duplicate enum constant: A");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addEnumConstant("1"))
+                    .withMessage("Not an enum constant name: 1");
+            assertThatIllegalArgumentException().isThrownBy(() -> type.addEnumConstant("B", withSupertype));
+            assertThat(type.build().enumConstants()).containsOnlyKeys("A");
+        }
+
+        @Test
+        void rejectsRecordComponentsWithModifiersOrThatAreReceivers() {
+            Type.Builder type = Type.newRecordBuilder("R");
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addRecordComponent(Parameter.of(int.class, "x", Modifier.FINAL)))
+                    .withMessageStartingWith("A record component has no modifiers");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addRecordComponent(Parameter.of(ClassName.of("a", "R"), "this")));
+            assertThat(type.build().recordComponents()).isEmpty();
+        }
+
+        @Test
+        void rejectsSuperclassesThatCannotBeExtended() {
+            for (Class<?> type :
+                    List.of(Runnable.class, Thread.State.class, Point.class, String.class, Enum.class, int[].class)) {
+                assertThatIllegalArgumentException()
+                        .as(type.toString())
+                        .isThrownBy(() -> Type.newClassBuilder("C").superclass(type))
+                        .withMessageStartingWith("Not a class that can be extended");
+            }
+            assertThat(Type.newClassBuilder("C")
+                            .superclass(Number.class)
+                            .build()
+                            .superclass())
+                    .isEqualTo(ClassName.of(Number.class));
+        }
+
+        @Test
+        void rejectsSuperinterfacesThatAreNotInterfaces() {
+            Type.Builder type = Type.newClassBuilder("C");
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addSuperinterface(Object.class))
+                    .withMessageStartingWith("Not an interface");
+            assertThatIllegalArgumentException().isThrownBy(() -> type.addSuperinterface(TypeVariableName.of("T")));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addSuperinterfaces(
+                            List.of(ClassName.of(Runnable.class), ArrayTypeName.of(ClassName.of(Runnable.class)))));
+            assertThat(type.build().superinterfaces()).isEmpty();
+        }
+
+        @Test
+        void rejectsPermittedSubclassesThatAreNotPlainClassNames() {
+            Type.Builder type = Type.newInterfaceBuilder("I").addModifiers(Modifier.SEALED);
+            ClassName sub = ClassName.of("com.example", "Sub");
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addPermittedSubclass(sub.parameterized(ClassName.OBJECT)));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> type.addPermittedSubclass(sub.annotated(Annotation.of(Deprecated.class))));
+        }
+
+        @Test
+        void rejectsPermittedSubclassesOfATypeThatIsNotSealed() {
+            Type.Builder type = Type.newClassBuilder("C").addPermittedSubclass(ClassName.of("com.example", "Sub"));
+
+            assertThatIllegalStateException()
+                    .isThrownBy(type::build)
+                    .withMessage("C permits subclasses but is not sealed");
+        }
+
+        @Test
+        void addsNothingFromABulkAddThatFails() {
+            Type.Builder type = Type.newClassBuilder("C");
+            Type named = Type.newClassBuilder("Nested").build();
+            Type anonymous = Type.newAnonymousClassBuilder("").build();
+
+            assertThatIllegalArgumentException().isThrownBy(() -> type.addTypes(List.of(named, anonymous)));
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newAnonymousClassBuilder("")
+                            .addSuperinterfaces(List.of(ClassName.of(Runnable.class), ClassName.of(Cloneable.class))));
+            assertThat(type.build().types()).isEmpty();
+        }
+
+        @Test
+        void namesTheTypeInTheMessagesOfBuild() {
+            Method abstractMethod =
+                    Method.newBuilder("run").addModifiers(Modifier.ABSTRACT).build();
+
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newClassBuilder("Task")
+                            .addMethod(abstractMethod)
+                            .build())
+                    .withMessage("Only an abstract class has abstract methods: Task");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newRecordBuilder("Values")
+                            .addRecordComponent(int.class, "x")
+                            .varargs(true)
+                            .build())
+                    .withMessage("The record Values is varargs but its last component is not an array");
+        }
+    }
+
+    @Nested
+    class MethodRules {
+
+        @Test
+        void rejectsCodeInAbstractOrNativeMethodsWhenItIsAdded() {
+            Method.Builder abstractMethod = Method.newBuilder("run").addModifiers(Modifier.ABSTRACT);
+            Method.Builder withCode = Method.newBuilder("run").addStatement("work()");
+
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> abstractMethod.addStatement("work()"))
+                    .withMessage("A method that is abstract has no code: run");
+            assertThatIllegalStateException().isThrownBy(() -> withCode.addModifiers(Modifier.NATIVE));
+            assertThat(abstractMethod.build().code().isEmpty()).isTrue();
+        }
+
+        @Test
+        void rejectsMisplacedReceiverParametersWhenTheyAreAdded() {
+            Parameter receiver = Parameter.of(ClassName.of("com.example", "C"), "this");
+            Method.Builder withParameter = Method.newBuilder("run").addParameter(int.class, "x");
+            Method.Builder withReceiver = Method.newBuilder("run").addParameter(receiver);
+
+            assertThatIllegalStateException().isThrownBy(() -> withParameter.addParameter(receiver));
+            assertThatIllegalStateException().isThrownBy(() -> withReceiver.addModifiers(Modifier.STATIC));
+            assertThat(withReceiver.addParameter(int.class, "x").build().parameters())
+                    .hasSize(2);
+        }
+
+        @Test
+        void rejectsWhatACompactConstructorCannotHave() {
+            Method.Builder constructor = Method.newCompactConstructorBuilder();
+
+            assertThatIllegalStateException().isThrownBy(() -> constructor.addTypeVariable(TypeVariableName.of("T")));
+            assertThatIllegalStateException().isThrownBy(() -> constructor.addException(Exception.class));
+            assertThatIllegalStateException().isThrownBy(() -> constructor.addParameter(int.class, "x"));
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Method.newConstructorBuilder().defaultValue("1"))
+                    .withMessage("A constructor has no default value");
+        }
+
+        @Test
+        void rejectsExceptionsThatAreNotClassesOrTypeVariables() {
+            Method.Builder method = Method.newBuilder("run");
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(
+                            () -> method.addException(ClassName.of(List.class).parameterized(ClassName.OBJECT)));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> method.addExceptions(List.of(
+                            ClassName.of(IOException.class), ArrayTypeName.of(ClassName.of(IOException.class)))));
+            assertThat(method.addException(TypeVariableName.of("E")).build().exceptions())
+                    .containsExactly(TypeVariableName.of("E"));
+        }
+
+        @Test
+        void rejectsWildcardsAsTheTypesOfDeclarations() {
+            WildcardTypeName wildcard = WildcardTypeName.unbounded();
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Method.newBuilder("m").returns(wildcard));
+            assertThatIllegalArgumentException().isThrownBy(() -> Field.of(wildcard, "x"));
+            assertThatIllegalArgumentException().isThrownBy(() -> Parameter.of(wildcard, "x"));
+        }
+    }
+
+    @Nested
+    class Balance {
+
+        @Test
+        void rejectsUnbalancedCodeWhereItIsGivenWhole() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Field.newBuilder(int.class, "x").initializer("$>1"))
+                    .withMessage("The initializer of x indents more than it unindents: a $> or a control flow is"
+                            + " not closed");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Method.newBuilder("value").defaultValue("$]1"))
+                    .withMessageContaining("$]");
+            assertThatIllegalArgumentException().isThrownBy(() -> Type.newAnonymousClassBuilder("$>"));
+        }
+
+        @Test
+        void rejectsUnbalancedCodeOfABuilderWhenItIsBuilt() {
+            assertThatIllegalStateException()
+                    .isThrownBy(() ->
+                            Field.newBuilder(int.class, "x").addJavadoc("$>").build())
+                    .withMessageStartingWith("The Javadoc of x");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Parameter.newBuilder(int.class, "x")
+                            .addJavadoc("$<")
+                            .build())
+                    .withMessageStartingWith("The Javadoc of x");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newClassBuilder("C")
+                            .addStaticBlock(CodeBlock.of("$>"))
+                            .build())
+                    .withMessageStartingWith("The static initializer of C");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Type.newClassBuilder("C").addJavadoc("$[").build())
+                    .withMessageStartingWith("The Javadoc of C");
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> JavaFile.newBuilder(
+                                    "a", Type.newClassBuilder("C").build())
+                            .addFileComment("$<")
+                            .build())
+                    .withMessageStartingWith("The file comment");
+        }
+
+        @Test
+        void countsCodeBlocksWrittenWithL() {
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Method.newBuilder("run")
+                            .addStatement("run($L)", CodeBlock.of("$>"))
+                            .build());
+            assertThat(Method.newBuilder("run")
+                            .addCode(CodeBlock.of("if (ready) {\n$>"))
+                            .addCode("$L", CodeBlock.of("run();\n$<}\n"))
+                            .build()
+                            .code())
+                    .hasToString("if (ready) {\n    run();\n}\n");
+        }
+    }
+
+    @Nested
+    class Files {
+
+        @Test
+        void rejectsTopLevelTypesWithTheModifiersOfMemberTypes() {
+            for (Modifier modifier : List.of(Modifier.PROTECTED, Modifier.PRIVATE, Modifier.STATIC)) {
+                Type type = Type.newClassBuilder("C").addModifiers(modifier).build();
+
+                assertThatIllegalArgumentException()
+                        .as(modifier.toString())
+                        .isThrownBy(() -> JavaFile.newBuilder("a", type))
+                        .withMessage("A top-level type cannot be " + modifier + ": C");
+                assertThatIllegalArgumentException()
+                        .isThrownBy(() -> JavaFile.newBuilder(
+                                        "a", Type.newClassBuilder("D").build())
+                                .type(type));
+            }
+        }
+
+        @Test
+        void rejectsKeywordsAsStaticImportsWithoutAddingAny() {
+            JavaFile.Builder file =
+                    JavaFile.newBuilder("a", Type.newClassBuilder("C").build());
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> file.addStaticImport(ClassName.of(Math.class), "max", "class"))
+                    .withMessage("Not a member name: class");
+            assertThat(file.build().staticImports()).isEmpty();
+        }
+    }
+
+    private record Point(int x) {}
 
     @Nested
     class Values {

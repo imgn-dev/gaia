@@ -41,9 +41,13 @@ public final class Parameter {
      * @param name the name
      * @param modifiers the modifiers: none, or {@code final}
      * @return the parameter
-     * @throws IllegalArgumentException if the name is not a valid identifier, or a modifier is not {@code final}
+     * @throws IllegalArgumentException if the name is not a valid identifier, the type is {@code void} or a wildcard,
+     *     or a modifier is not {@code final}, is repeated, or is given to a receiver parameter
      */
     public static Parameter of(TypeName type, String name, Modifier... modifiers) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(name, "name");
+        Checks.elements(modifiers, "modifiers");
         return newBuilder(type, name).addModifiers(modifiers).build();
     }
 
@@ -54,9 +58,13 @@ public final class Parameter {
      * @param name the name
      * @param modifiers the modifiers: none, or {@code final}
      * @return the parameter
-     * @throws IllegalArgumentException if the name is not a valid identifier, or a modifier is not {@code final}
+     * @throws IllegalArgumentException if the class is {@code void}, local or anonymous; the name is not a valid
+     *     identifier; or a modifier is not {@code final}, is repeated, or is given to a receiver parameter
      */
     public static Parameter of(Class<?> type, String name, Modifier... modifiers) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(name, "name");
+        Objects.requireNonNull(modifiers, "modifiers");
         return of(TypeName.of(type), name, modifiers);
     }
 
@@ -66,9 +74,11 @@ public final class Parameter {
      *
      * @param parameter the parameter
      * @return the copy
-     * @throws IllegalArgumentException if the element is not a parameter, such as a field or a local variable
+     * @throws IllegalArgumentException if the element is not a parameter, such as a field or a local variable, or its
+     *     type has no name, as {@link TypeName#of(javax.lang.model.type.TypeMirror)} names it
      */
     public static Parameter of(VariableElement parameter) {
+        Objects.requireNonNull(parameter, "parameter");
         if (parameter.getKind() != ElementKind.PARAMETER) {
             throw new IllegalArgumentException("Not a parameter but a " + parameter.getKind() + ": " + parameter);
         }
@@ -86,9 +96,11 @@ public final class Parameter {
      * @param type the type
      * @param name the name
      * @return a new builder
-     * @throws IllegalArgumentException if the name is not a valid identifier
+     * @throws IllegalArgumentException if the name is not a valid identifier, or the type is {@code void} or a wildcard
      */
     public static Builder newBuilder(TypeName type, String name) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(name, "name");
         return new Builder(type, name);
     }
 
@@ -98,9 +110,12 @@ public final class Parameter {
      * @param type the type
      * @param name the name
      * @return a new builder
-     * @throws IllegalArgumentException if the name is not a valid identifier
+     * @throws IllegalArgumentException if the class is {@code void}, local or anonymous, or the name is not a valid
+     *     identifier
      */
     public static Builder newBuilder(Class<?> type, String name) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(name, "name");
         return newBuilder(TypeName.of(type), name);
     }
 
@@ -209,11 +224,16 @@ public final class Parameter {
         private final CodeBlock.Builder javadoc = CodeBlock.newBuilder();
 
         private Builder(TypeName type, String name) {
+            Objects.requireNonNull(type, "type");
+            Objects.requireNonNull(name, "name");
             if ((!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) && !isReceiver(name)) {
                 throw new IllegalArgumentException("Not a parameter name: " + name);
             }
             if (type.equals(PrimitiveTypeName.VOID)) {
                 throw new IllegalArgumentException("A parameter cannot be void: " + name);
+            }
+            if (type instanceof WildcardTypeName) {
+                throw new IllegalArgumentException("A parameter cannot be a wildcard: " + name);
             }
             this.type = type;
             this.name = name;
@@ -224,10 +244,11 @@ public final class Parameter {
          *
          * @param more the modifiers: only {@code final} is allowed, and none on a receiver parameter
          * @return this builder
-         * @throws IllegalArgumentException if a modifier is not {@code final}, or this is a receiver parameter
+         * @throws IllegalArgumentException if a modifier is not {@code final} or is repeated, or this is a receiver
+         *     parameter
          */
         public Builder addModifiers(Modifier... more) {
-            Set<Modifier> added = Set.of(more);
+            Set<Modifier> added = Modifiers.added(more, "more", "A parameter");
             Modifiers.requireOnly(added, isReceiver(name) ? Set.of() : Set.of(Modifier.FINAL), "A parameter");
             modifiers.addAll(added);
             return this;
@@ -240,7 +261,7 @@ public final class Parameter {
          * @return this builder
          */
         public Builder addAnnotation(Annotation annotation) {
-            annotations.add(annotation);
+            annotations.add(Objects.requireNonNull(annotation, "annotation"));
             return this;
         }
 
@@ -249,8 +270,10 @@ public final class Parameter {
          *
          * @param annotation the annotation type
          * @return this builder
+         * @throws IllegalArgumentException if the class is not an annotation type
          */
         public Builder addAnnotation(Class<? extends java.lang.annotation.Annotation> annotation) {
+            Objects.requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -261,6 +284,7 @@ public final class Parameter {
          * @return this builder
          */
         public Builder addAnnotation(ClassName annotation) {
+            Objects.requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -271,7 +295,7 @@ public final class Parameter {
          * @return this builder
          */
         public Builder addAnnotations(Iterable<Annotation> more) {
-            more.forEach(annotations::add);
+            annotations.addAll(Checks.elements(more, "more"));
             return this;
         }
 
@@ -285,6 +309,8 @@ public final class Parameter {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addJavadoc(String format, @Nullable Object... args) {
+            Objects.requireNonNull(format, "format");
+            Objects.requireNonNull(args, "args");
             javadoc.add(format, args);
             return this;
         }
@@ -293,8 +319,10 @@ public final class Parameter {
          * Builds the parameter.
          *
          * @return the parameter
+         * @throws IllegalStateException if the Javadoc is not {@linkplain CodeBlock balanced}
          */
         public Parameter build() {
+            CodeBlock.checkBalanced(javadoc.build(), "The Javadoc of " + name);
             return new Parameter(this);
         }
     }

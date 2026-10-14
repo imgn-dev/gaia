@@ -67,4 +67,26 @@ class AnnotationTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Annotation.newBuilder(Deprecated.class).addMember("for", "true"));
     }
+
+    @Test
+    void rejectsClassesThatAreNotAnnotationTypes() {
+        Class<java.lang.annotation.Annotation> notAnAnnotationType = java.lang.annotation.Annotation.class;
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Annotation.of(notAnAnnotationType))
+                .withMessageStartingWith("Not an annotation type");
+        assertThatIllegalArgumentException().isThrownBy(() -> Annotation.newBuilder(notAnAnnotationType));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Field.newBuilder(int.class, "x").addAnnotation(notAnAnnotationType));
+    }
+
+    @Test
+    void rejectsUnbalancedValues() {
+        Annotation.Builder builder = Annotation.newBuilder(Deprecated.class);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> builder.addMember("since", "$<$S", "1"))
+                .withMessage("The value of since unindents more than it indents: a $< or a control flow is not opened");
+        assertThat(builder.build().members()).isEmpty();
+    }
 }

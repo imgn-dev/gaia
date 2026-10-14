@@ -4,6 +4,7 @@ import be.imgn.gaia.core.text.Splitter;
 import be.imgn.gaia.processing.MoreElements;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,8 +35,9 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * @throws IllegalArgumentException if a name is not a valid identifier, or there is no simple name
      */
     public ClassName {
-        simpleNames = List.copyOf(simpleNames);
-        annotations = List.copyOf(annotations);
+        Objects.requireNonNull(packageName, "packageName");
+        simpleNames = Checks.elements(simpleNames, "simpleNames");
+        annotations = Checks.elements(annotations, "annotations");
         if (simpleNames.isEmpty()) {
             throw new IllegalArgumentException("A class name needs a simple name");
         }
@@ -59,9 +61,11 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * @throws IllegalArgumentException if a name is not valid
      */
     public static ClassName of(String packageName, String simpleName, String... nestedNames) {
+        Objects.requireNonNull(packageName, "packageName");
+        Objects.requireNonNull(simpleName, "simpleName");
         List<String> simpleNames = new ArrayList<>();
         simpleNames.add(simpleName);
-        simpleNames.addAll(List.of(nestedNames));
+        simpleNames.addAll(Checks.elements(nestedNames, "nestedNames"));
         return new ClassName(packageName, simpleNames, List.of());
     }
 
@@ -73,6 +77,7 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * @throws IllegalArgumentException if the class is primitive, an array, local or anonymous
      */
     public static ClassName of(Class<?> type) {
+        Objects.requireNonNull(type, "type");
         if (type.isPrimitive() || type.isArray() || type.getCanonicalName() == null) {
             throw new IllegalArgumentException("Not a named class: " + type);
         }
@@ -91,6 +96,7 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * @throws IllegalArgumentException if the type is local or anonymous
      */
     public static ClassName of(TypeElement type) {
+        Objects.requireNonNull(type, "type");
         List<String> simpleNames = new ArrayList<>();
         Element current = type;
         while (current instanceof TypeElement nested) {
@@ -109,10 +115,11 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      *
      * @param canonicalName the canonical name, such as {@code java.util.Map.Entry}
      * @return the name
-     * @throws IllegalArgumentException if no part of the name starts with an upper-case letter, a part is empty, or a
-     *     part after the first upper-case one does not start with an upper-case letter
+     * @throws IllegalArgumentException if no part of the name starts with an upper-case letter, a part is empty, a part
+     *     after the first upper-case one does not start with an upper-case letter, or a part is not a valid identifier
      */
     public static ClassName bestGuess(String canonicalName) {
+        Objects.requireNonNull(canonicalName, "canonicalName");
         List<String> parts = Splitter.on('.').split(canonicalName);
         int first = 0;
         while (first < parts.size() && !startsWithUpperCase(parts.get(first))) {
@@ -197,6 +204,7 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * @throws IllegalArgumentException if the simple name is not valid
      */
     public ClassName nested(String simpleName) {
+        Objects.requireNonNull(simpleName, "simpleName");
         return new ClassName(
                 packageName,
                 Stream.concat(simpleNames.stream(), Stream.of(simpleName)).toList(),
@@ -211,6 +219,7 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * @throws IllegalArgumentException if the simple name is not valid
      */
     public ClassName peer(String simpleName) {
+        Objects.requireNonNull(simpleName, "simpleName");
         List<String> names = new ArrayList<>(simpleNames);
         names.set(names.size() - 1, simpleName);
         return new ClassName(packageName, names, List.of());
@@ -238,6 +247,7 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      *     a character that cannot be in an identifier, such as a dot or a space
      */
     public ClassName generatedNameWithSuffix(String suffix) {
+        Objects.requireNonNull(suffix, "suffix");
         if (!SourceVersion.isIdentifier(suffix)) {
             throw new IllegalArgumentException("Not a suffix for a generated type name: \"" + suffix + "\"");
         }
@@ -269,6 +279,7 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      *     a character that cannot be in an identifier, such as a dot or a space
      */
     public ClassName generatedNameWithPrefix(String prefix) {
+        Objects.requireNonNull(prefix, "prefix");
         if (!SourceVersion.isIdentifier(prefix)) {
             throw new IllegalArgumentException("Not a prefix for a generated type name: \"" + prefix + "\"");
         }
@@ -283,12 +294,13 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * @throws IllegalArgumentException if there is no type argument, or one is primitive
      */
     public ParameterizedTypeName parameterized(TypeName... typeArguments) {
+        Objects.requireNonNull(typeArguments, "typeArguments");
         return ParameterizedTypeName.of(this, typeArguments);
     }
 
     @Override
     public ClassName annotated(Annotation... more) {
-        return annotated(List.of(more));
+        return annotated(Checks.elements(more, "more"));
     }
 
     @Override
@@ -296,7 +308,8 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
         return new ClassName(
                 packageName,
                 simpleNames,
-                Stream.concat(annotations.stream(), more.stream()).toList());
+                Stream.concat(annotations.stream(), Checks.elements(more, "more").stream())
+                        .toList());
     }
 
     @Override
