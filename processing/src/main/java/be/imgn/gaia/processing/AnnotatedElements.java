@@ -3,6 +3,7 @@ package be.imgn.gaia.processing;
 import be.imgn.gaia.core.collect.Sets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.element.Element;
 
@@ -44,6 +45,7 @@ public final class AnnotatedElements {
      * @return the elements, in source order; empty if there is none
      */
     public Set<Element> annotatedWith(String qualifiedName) {
+        Objects.requireNonNull(qualifiedName, "qualifiedName");
         return byAnnotation.getOrDefault(qualifiedName, Set.of());
     }
 
@@ -58,6 +60,7 @@ public final class AnnotatedElements {
      *     declare that meta-annotation
      */
     public Set<Element> withAnnotationsAnnotatedWith(String metaAnnotation) {
+        Objects.requireNonNull(metaAnnotation, "metaAnnotation");
         return byMetaAnnotation.getOrDefault(metaAnnotation, Set.of());
     }
 

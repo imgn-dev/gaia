@@ -4,6 +4,7 @@ import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 import be.imgn.gaia.processing.AnnotatedElements;
 import be.imgn.gaia.processing.ProcessingContext;
@@ -13,6 +14,7 @@ import be.imgn.gaia.processing.testing.Compilation;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,8 +22,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
@@ -200,6 +205,69 @@ class StepProcessorTest {
         assertThat(processor.getSupportedAnnotationTypes())
                 .containsExactlyInAnyOrder("example.Mark", "example.Other", "example.Generate");
         assertThat(processor.getSupportedSourceVersion()).isEqualTo(SourceVersion.latestSupported());
+    }
+
+    @Test
+    void cannotBeInitializedTwice() {
+        Counting processor = new Counting();
+        javac().withProcessors(processor).compile(ANNOTATIONS);
+
+        assertThatIllegalStateException()
+                .isThrownBy(() -> processor.init(processor.environment()))
+                .withMessage("Cannot call init more than once.");
+        assertThat(processor.created).isEqualTo(1);
+    }
+
+    @Test
+    void cannotProcessARoundBeforeItIsInitialized() {
+        assertThatIllegalStateException()
+                .isThrownBy(() -> new Counting().process(Set.of(), new UnusedRound()))
+                .withMessage("The processor is not initialized");
+    }
+
+    /** A step processor without steps, counting the times it creates them. */
+    private static final class Counting extends StepProcessor {
+
+        private int created;
+
+        @Override
+        protected List<Step> steps(ProcessingContext context) {
+            created++;
+            return List.of();
+        }
+
+        ProcessingEnvironment environment() {
+            return processingEnv;
+        }
+    }
+
+    /** A round that a processor must not look at. */
+    private static final class UnusedRound implements RoundEnvironment {
+
+        @Override
+        public boolean processingOver() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean errorRaised() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Set<? extends Element> getRootElements() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Set<? extends Element> getElementsAnnotatedWith(TypeElement annotation) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Set<? extends Element> getElementsAnnotatedWith(Class<? extends Annotation> annotation) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /** A step recording, each round, the simple names of the elements it gets by annotation. */

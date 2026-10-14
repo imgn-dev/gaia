@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import be.imgn.gaia.processing.MoreElements;
 import be.imgn.gaia.processing.MoreTypes;
@@ -46,6 +47,21 @@ class TypeUtilitiesTest {
         assertThat(MoreTypes.isType(types.getNoType(TypeKind.VOID), void.class)).isTrue();
         assertThat(MoreTypes.isType(stringArray, String[].class)).isTrue();
         assertThat(MoreTypes.isType(stringArray, Object[].class)).isFalse();
+    }
+
+    @Test
+    void rejectsClassesWithoutACanonicalName(Elements elements, Types types) {
+        class Local {}
+        TypeMirror list = listOf(elements, types, String.class);
+        TypeMirror objects =
+                types.getArrayType(elements.getTypeElement("java.lang.Object").asType());
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> MoreTypes.isType(list, Local.class))
+                .withMessage(Local.class.getName() + " has no canonical name, as a local, anonymous or hidden class");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> MoreTypes.isType(objects, Local[].class))
+                .withMessageStartingWith(Local.class.getName() + " has no canonical name");
     }
 
     @Test

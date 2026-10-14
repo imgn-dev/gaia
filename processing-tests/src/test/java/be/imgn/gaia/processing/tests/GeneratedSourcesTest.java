@@ -4,16 +4,26 @@ import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import be.imgn.gaia.processing.AnnotatedElements;
 import be.imgn.gaia.processing.ProcessingContext;
 import be.imgn.gaia.processing.SourceScope;
 import be.imgn.gaia.processing.Step;
 import be.imgn.gaia.processing.StepProcessor;
+import be.imgn.gaia.processing.source.ClassName;
 import be.imgn.gaia.processing.source.Field;
 import be.imgn.gaia.processing.source.JavaFile;
 import be.imgn.gaia.processing.source.Type;
 import be.imgn.gaia.processing.testing.Compilation;
+import com.sun.source.tree.ClassTree;
+import com.sun.source.util.JavacTask;
+import com.sun.source.util.TaskEvent;
+import com.sun.source.util.TaskListener;
+import com.sun.source.util.TreePathScanner;
+import com.sun.source.util.Trees;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -23,13 +33,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
@@ -153,6 +167,110 @@ class GeneratedSourcesTest {
 
         assertThat(compilation).succeeded().hadErrorCount(0);
         assertThat(processor.results).containsExactly(true, false);
+    }
+
+    @Test
+    void rejectsAnInvalidName() {
+        List<String> names = List.of(
+                "", "Out.", ".Out", "example..Out", "example.class", "example.1Out", "example/Out", "example.Out-1");
+
+        Compilation compilation = FirstRound.run(List.of(GEN, SEED), List.of(), context -> {
+            for (String name : names) {
+                assertThatIllegalArgumentException()
+                        .isThrownBy(() -> context.sources().write(name, scope -> "final class Out {}\n"))
+                        .withMessage("Invalid qualified name " + name
+                                + ": it must be Java identifiers, none of them a keyword, separated by dots");
+            }
+        });
+
+        assertThat(compilation).succeeded();
+    }
+
+    @Test
+    void writesAFileAgainAfterItsBodyFailed() {
+        IllegalStateException failure = new IllegalStateException("no body");
+
+        Compilation compilation = FirstRound.run(List.of(GEN, SEED), List.of(), context -> {
+            assertThatThrownBy(() -> context.sources().write("example.Out", scope -> {
+                        throw failure;
+                    }))
+                    .isSameAs(failure);
+            assertThat(context.sources().isAvailable(ClassName.of("example", "Out")))
+                    .isTrue();
+            assertThat(context.sources().write("example.Out", scope -> "final class Out {}\n"))
+                    .isTrue();
+        });
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).generatedSourceFile("example.Out").contains("final class Out {}");
+    }
+
+    @Test
+    void rejectsNamesThatCannotBeWritten() {
+        class Local {}
+        Object anonymous = new Object() {};
+
+        Compilation compilation = FirstRound.run(List.of(GEN, SEED), List.of(), context -> {
+            TypeMirror constructor = ElementFilter.constructorsIn(
+                            context.elements().getTypeElement("example.Seed").getEnclosedElements())
+                    .getFirst()
+                    .asType();
+            TypeMirror pkg = context.elements().getPackageElement("example").asType();
+            Map<Function<SourceScope, String>, String> messages = new LinkedHashMap<>();
+            messages.put(
+                    scope -> scope.name(Local.class),
+                    Local.class.getName() + " has no canonical name, as a local, anonymous or hidden class");
+            messages.put(
+                    scope -> scope.name(Local[][].class),
+                    Local.class.getName() + " has no canonical name, as a local, anonymous or hidden class");
+            messages.put(
+                    scope -> scope.name(anonymous.getClass()),
+                    anonymous.getClass().getName() + " has no canonical name, as a local, anonymous or hidden class");
+            messages.put(
+                    scope -> scope.name("java.util."),
+                    "Invalid qualified name java.util.: it must be Java identifiers, none of them a keyword, separated"
+                            + " by dots");
+            messages.put(
+                    scope -> scope.name("example.class"),
+                    "Invalid qualified name example.class: it must be Java identifiers, none of them a keyword,"
+                            + " separated by dots");
+            messages.put(scope -> scope.name(constructor), "Cannot name a type of kind EXECUTABLE: ()void");
+            messages.put(scope -> scope.name(pkg), "Cannot name a type of kind PACKAGE: example");
+
+            messages.forEach((name, message) -> assertThatIllegalArgumentException()
+                    .isThrownBy(() -> context.sources().write("example.Out", name))
+                    .withMessage(message));
+            assertThat(context.sources().write("example.Out", scope -> "final class Out {}\n"))
+                    .isTrue();
+        });
+
+        assertThat(compilation).succeeded();
+    }
+
+    @Test
+    void rejectsLocalAndAnonymousClassesAndTheirMembers() {
+        LocalClasses processor = new LocalClasses();
+
+        Compilation compilation = javac().withProcessors(processor).compile(source("example.Locals", """
+                package example;
+
+                class Locals {
+                    void run() {
+                        class Local {
+                            class Member {}
+                        }
+                        Object anonymous = new Object() {};
+                    }
+                }
+                """));
+
+        assertThat(compilation).succeeded();
+        assertThat(processor.thrown).containsOnlyKeys(NestingKind.LOCAL, NestingKind.MEMBER, NestingKind.ANONYMOUS);
+        assertThat(processor.thrown.values())
+                .allSatisfy(exception -> assertThat(exception)
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessageStartingWith("Cannot name ")
+                        .hasMessageEndingWith(": it is a local or anonymous class, or is nested in one"));
     }
 
     @Test
@@ -317,6 +435,55 @@ class GeneratedSourcesTest {
                     return Set.of();
                 }
             });
+        }
+    }
+
+    /**
+     * Names each class declared in {@code example.Locals} but itself, once javac has analyzed it, through the scope of
+     * a source file, and records what that throws by the nesting kind of the class.
+     */
+    @SupportedAnnotationTypes("*")
+    private static final class LocalClasses extends AbstractProcessor {
+
+        private final Map<NestingKind, Throwable> thrown = new LinkedHashMap<>();
+
+        @Override
+        public SourceVersion getSupportedSourceVersion() {
+            return SourceVersion.latestSupported();
+        }
+
+        @Override
+        public synchronized void init(ProcessingEnvironment environment) {
+            super.init(environment);
+            JavacTask task = JavacTask.instance(environment);
+            Trees trees = Trees.instance(task);
+            ProcessingContext context = ProcessingContext.of(environment, LocalClasses.class);
+            task.addTaskListener(new TaskListener() {
+                @Override
+                public void finished(TaskEvent event) {
+                    TypeElement type = event.getTypeElement();
+                    if (event.getKind() == TaskEvent.Kind.ANALYZE && type != null) {
+                        new TreePathScanner<Void, Void>() {
+                            @Override
+                            public Void visitClass(ClassTree tree, Void unused) {
+                                TypeElement declared = (TypeElement) trees.getElement(getCurrentPath());
+                                if (!declared.equals(type)) {
+                                    thrown.put(
+                                            declared.getNestingKind(),
+                                            catchThrowable(() -> context.sources()
+                                                    .write("example.Out", scope -> scope.name(declared))));
+                                }
+                                return super.visitClass(tree, null);
+                            }
+                        }.scan(trees.getPath(type), null);
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+            return false;
         }
     }
 

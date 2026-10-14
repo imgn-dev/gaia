@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import be.imgn.gaia.processing.internal.UnicodeEscapes;
 import be.imgn.gaia.processing.source.Annotation;
 import be.imgn.gaia.processing.source.ClassName;
@@ -11,11 +13,13 @@ import java.io.Writer;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.FilerException;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ModuleElement;
 import javax.lang.model.element.PackageElement;
@@ -85,9 +89,13 @@ public final class GeneratedSources {
      *     delete it when they change; the first one also decides whether {@code @Generated} is visible
      * @return {@code true} if the file was written, {@code false} if it had already been created, by this processor or
      *     another one
+     * @throws IllegalStateException if a code block of the file unindents more than it indents, or indents more than it
+     *     unindents, as {@link JavaFile#toString()} says
      * @throws UncheckedIOException if the file cannot be written
      */
     public boolean write(JavaFile file, Element... originatingElements) {
+        Objects.requireNonNull(file, "file");
+        requireNonNullElements(originatingElements);
         String qualifiedName = file.className().canonicalName();
         String generated = generatedValue(originatingElements);
         Type type = file.type();
@@ -107,7 +115,8 @@ public final class GeneratedSources {
     }
 
     /**
-     * Writes a source file, unless it was already created. The file is written in ASCII only, with Unicode escapes.
+     * Writes a source file, unless it was already created. The file is written in ASCII only, with Unicode escapes. If
+     * {@code body} fails, nothing is written, and the file can be written again.
      *
      * @param qualifiedName the fully qualified name of the top-level type the file declares
      * @param body writes the source after the imports, naming types through the given scope
@@ -115,14 +124,23 @@ public final class GeneratedSources {
      *     delete it when they change; the first one also decides whether {@code @Generated} is visible
      * @return {@code true} if the file was written, {@code false} if it had already been created, by this processor or
      *     another one
+     * @throws IllegalArgumentException if {@code qualifiedName} is not a qualified name: Java identifiers, none of them
+     *     a keyword, separated by dots
      * @throws UncheckedIOException if the file cannot be written
      */
     public boolean write(String qualifiedName, Function<SourceScope, String> body, Element... originatingElements) {
+        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        Objects.requireNonNull(body, "body");
+        requireNonNullElements(originatingElements);
+        checkArgument(
+                SourceVersion.isName(qualifiedName),
+                "Invalid qualified name %s: it must be Java identifiers, none of them a keyword, separated by dots",
+                qualifiedName);
         return create(
                 qualifiedName,
                 () -> {
                     SourceScope scope = new SourceScope(elements, qualifiedName, generatedValue(originatingElements));
-                    return scope.assemble(body.apply(scope));
+                    return scope.assemble(Objects.requireNonNull(body.apply(scope), "body returned null"));
                 },
                 originatingElements);
     }
@@ -152,6 +170,7 @@ public final class GeneratedSources {
      * @return {@code true} if no type has that name and this object wrote no file for it
      */
     public boolean isAvailable(ClassName name) {
+        Objects.requireNonNull(name, "name");
         String canonicalName = name.canonicalName();
         return !written.contains(canonicalName)
                 && elements.getAllTypeElements(canonicalName).isEmpty();
@@ -172,11 +191,20 @@ public final class GeneratedSources {
                 : file.toBuilder().alwaysQualify(hidden).build();
     }
 
+    private static void requireNonNullElements(Element[] originatingElements) {
+        Objects.requireNonNull(originatingElements, "originatingElements");
+        for (Element element : originatingElements) {
+            Objects.requireNonNull(element, "originatingElements");
+        }
+    }
+
+    // The name is only taken once the source is ready, so that a body that fails leaves it free.
     private boolean create(String qualifiedName, Supplier<String> source, Element... originatingElements) {
-        if (!written.add(qualifiedName)) {
+        if (written.contains(qualifiedName)) {
             return false;
         }
         String text = UnicodeEscapes.escapeNonAscii(source.get());
+        written.add(qualifiedName);
         try (Writer writer =
                 filer.createSourceFile(qualifiedName, originatingElements).openWriter()) {
             writer.write(text);

@@ -1,13 +1,18 @@
 package be.imgn.gaia.processing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -80,16 +85,21 @@ public final class SourceScope {
     /**
      * Returns the name to write for a type, with its type arguments, recording the imports it needs.
      *
-     * @param type the type
+     * @param type the type: a primitive type, {@code void}, a declared type, an array type, a type variable, a
+     *     wildcard, or a type javac could not resolve, written as in the source
      * @return the name, such as {@code Map<String, List<Integer>>} or {@code Map.Entry<K, V>}
+     * @throws IllegalArgumentException if the type is another kind of type, such as an executable or a package type,
+     *     which has no name; or if it is, or refers to, a local or anonymous class
      */
     public String name(TypeMirror type) {
+        Objects.requireNonNull(type, "type");
         return switch (type.getKind()) {
             case DECLARED -> declared((DeclaredType) type);
             case ARRAY -> name(((ArrayType) type).getComponentType()) + "[]";
             case TYPEVAR -> ((TypeVariable) type).asElement().getSimpleName().toString();
             case WILDCARD -> wildcard((WildcardType) type);
-            default -> type.toString();
+            case BOOLEAN, BYTE, SHORT, INT, LONG, CHAR, FLOAT, DOUBLE, VOID, ERROR -> type.toString();
+            default -> throw new IllegalArgumentException("Cannot name a type of kind " + type.getKind() + ": " + type);
         };
     }
 
@@ -98,12 +108,15 @@ public final class SourceScope {
      *
      * @param type the class, which may be primitive or an array
      * @return the name, such as {@code List} or {@code int[]}
+     * @throws IllegalArgumentException if the class has no canonical name, as a local, anonymous or hidden class, or is
+     *     an array of such a class
      */
     public String name(Class<?> type) {
+        Objects.requireNonNull(type, "type");
         if (type.isArray()) {
             return name(type.getComponentType()) + "[]";
         }
-        return type.isPrimitive() ? type.getName() : name(type.getCanonicalName());
+        return type.isPrimitive() ? type.getName() : name(MoreTypes.canonicalName(type));
     }
 
     /**
@@ -111,8 +124,15 @@ public final class SourceScope {
      *
      * @param qualifiedName the canonical name, such as {@code java.util.Map.Entry}
      * @return the name, such as {@code Map.Entry}
+     * @throws IllegalArgumentException if {@code qualifiedName} is not a qualified name: Java identifiers, none of them
+     *     a keyword, separated by dots
      */
     public String name(String qualifiedName) {
+        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        checkArgument(
+                SourceVersion.isName(qualifiedName),
+                "Invalid qualified name %s: it must be Java identifiers, none of them a keyword, separated by dots",
+                qualifiedName);
         TypeElement type = elements.getTypeElement(qualifiedName);
         if (type != null) {
             return name(type);
@@ -126,14 +146,21 @@ public final class SourceScope {
      *
      * @param type the type
      * @return the name, such as {@code List} or {@code Map.Entry}
+     * @throws IllegalArgumentException if the type is local or anonymous, or is nested in such a type: code outside the
+     *     block that declares it cannot name it
      */
     public String name(TypeElement type) {
+        Objects.requireNonNull(type, "type");
         Deque<String> path = new ArrayDeque<>();
         Element current = type;
         while (current.getEnclosingElement() instanceof TypeElement enclosing) {
             path.push(current.getSimpleName().toString());
             current = enclosing;
         }
+        checkArgument(
+                ((TypeElement) current).getNestingKind() == NestingKind.TOP_LEVEL,
+                "Cannot name %s: it is a local or anonymous class, or is nested in one",
+                type);
         String nested = path.stream().map(name -> "." + name).collect(Collectors.joining());
         return reference(
                 MoreElements.packageOf(current).getQualifiedName().toString(),

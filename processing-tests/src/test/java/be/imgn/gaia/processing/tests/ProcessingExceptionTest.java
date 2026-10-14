@@ -478,6 +478,28 @@ class ProcessingExceptionTest {
     }
 
     @Test
+    void rejectsAnAnnotationOfAnotherElement() {
+        List<Throwable> thrown = new ArrayList<>();
+        Compilation compilation = compile(context -> List.of(markStep(elements -> {
+                    List<Element> fields = List.copyOf(elements.annotatedWith(MARK));
+                    AnnotationMirror first = mark(fields.getFirst());
+                    Element second = fields.get(1);
+                    thrown.add(catchThrowable(() -> new ProcessingException("m", second, first)));
+                    thrown.add(catchThrowable(() -> new ProcessingException("m", second, first, "level")));
+                    return Set.of();
+                })))
+                .compile(ANNOTATIONS, HOLDER);
+
+        assertThat(compilation).succeeded();
+        assertThat(thrown)
+                .allSatisfy(exception -> assertThat(exception).isInstanceOf(IllegalArgumentException.class))
+                .extracting(Throwable::getMessage)
+                .containsExactly(
+                        "@example.Mark(level=1) is not an annotation of second",
+                        "@example.Mark(level=1) is not an annotation of second");
+    }
+
+    @Test
     void cannotBeSerialized() {
         List<ProcessingException> exceptions = new ArrayList<>();
         compile(context -> List.of(markStep(elements -> {

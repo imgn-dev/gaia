@@ -1,12 +1,19 @@
 package be.imgn.gaia.processing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 import org.jspecify.annotations.Nullable;
 
@@ -38,7 +45,7 @@ public final class Diagnostics {
      * @return the report, to narrow to an annotation and then report
      */
     public Report on(Element element) {
-        return new Report(element, null, null);
+        return new Report(Objects.requireNonNull(element, "element"), null, null);
     }
 
     /**
@@ -47,8 +54,9 @@ public final class Diagnostics {
      * @param message the message
      */
     public void error(String message) {
+        Objects.requireNonNull(message, "message");
         errors++;
-        messager.printMessage(Diagnostic.Kind.ERROR, Objects.requireNonNull(message, "message"));
+        messager.printMessage(Diagnostic.Kind.ERROR, message);
     }
 
     /**
@@ -67,6 +75,7 @@ public final class Diagnostics {
      * @param exception the exception
      */
     public void error(ProcessingException exception) {
+        Objects.requireNonNull(exception, "exception");
         Report report = on(exception.element());
         Optional<AnnotationMirror> annotation = exception.annotation();
         if (annotation.isPresent()) {
@@ -125,11 +134,58 @@ public final class Diagnostics {
                 .orElseThrow(() -> new IllegalArgumentException(element + " has no @" + qualifiedName));
     }
 
+    // Checks that an annotation is on an element, as Report.annotation(AnnotationMirror) does: one of its annotations,
+    // or nested in the value of one, as a repeatable annotation is in its container, defaults included.
+    static AnnotationMirror requireAnnotationOf(Element element, AnnotationMirror annotation) {
+        checkArgument(
+                contains(element.getAnnotationMirrors(), annotation),
+                "%s is not an annotation of %s",
+                annotation,
+                element);
+        return annotation;
+    }
+
+    private static boolean contains(List<? extends AnnotationMirror> mirrors, AnnotationMirror annotation) {
+        for (AnnotationMirror mirror : mirrors) {
+            if (mirror.equals(annotation) || contains(nested(mirror), annotation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // The annotations an annotation holds in its attributes, written or left to their defaults.
+    private static List<AnnotationMirror> nested(AnnotationMirror mirror) {
+        TypeElement type = (TypeElement) mirror.getAnnotationType().asElement();
+        List<AnnotationMirror> nested = new ArrayList<>();
+        for (ExecutableElement attribute : ElementFilter.methodsIn(type.getEnclosedElements())) {
+            AnnotationValue written = mirror.getElementValues().get(attribute);
+            AnnotationValue value = written == null ? attribute.getDefaultValue() : written;
+            if (value != null) {
+                nested.addAll(annotationsIn(value));
+            }
+        }
+        return nested;
+    }
+
+    private static List<AnnotationMirror> annotationsIn(AnnotationValue value) {
+        return switch (value.getValue()) {
+            case AnnotationMirror mirror -> List.of(mirror);
+            case List<?> values ->
+                values.stream()
+                        .map(AnnotationValue.class::cast)
+                        .flatMap(element -> annotationsIn(element).stream())
+                        .toList();
+            default -> List.of();
+        };
+    }
+
     // Checks that the type of an annotation has an attribute, as Report.attribute(String) does; returns its name.
     static String requireAttribute(AnnotationMirror annotation, String name) {
         TypeElement type = (TypeElement) annotation.getAnnotationType().asElement();
         boolean declared = type.getEnclosedElements().stream()
-                .anyMatch(attribute -> attribute.getSimpleName().contentEquals(name));
+                .anyMatch(attribute -> attribute.getKind() == ElementKind.METHOD
+                        && attribute.getSimpleName().contentEquals(name));
         if (!declared) {
             throw new IllegalArgumentException("@" + type.getQualifiedName() + " has no attribute " + name);
         }
@@ -152,11 +208,14 @@ public final class Diagnostics {
         /**
          * Narrows this report to an annotation of the element.
          *
-         * @param annotation the annotation, as found on the element
+         * @param annotation the annotation, as found on the element: one of its annotations, or one nested in the value
+         *     of an attribute of those, as a repeatable annotation is in its container
          * @return the narrowed report
+         * @throws IllegalArgumentException if the annotation is not on the element
          */
         public Report annotation(AnnotationMirror annotation) {
-            return new Report(element, annotation, null);
+            Objects.requireNonNull(annotation, "annotation");
+            return new Report(element, requireAnnotationOf(element, annotation), null);
         }
 
         /**
@@ -167,7 +226,8 @@ public final class Diagnostics {
          * @throws IllegalArgumentException if the element has no such annotation
          */
         public Report annotation(String qualifiedName) {
-            return annotation(annotationOf(element, qualifiedName));
+            Objects.requireNonNull(qualifiedName, "qualifiedName");
+            return new Report(element, annotationOf(element, qualifiedName), null);
         }
 
         /**
@@ -180,6 +240,7 @@ public final class Diagnostics {
          * @throws IllegalArgumentException if the annotation has no such attribute
          */
         public Report attribute(String name) {
+            Objects.requireNonNull(name, "name");
             if (annotation == null) {
                 throw new IllegalStateException("Narrow the report to an annotation before an attribute");
             }
@@ -199,6 +260,7 @@ public final class Diagnostics {
          * @param message the message
          */
         public void error(String message) {
+            Objects.requireNonNull(message, "message");
             errors++;
             print(Diagnostic.Kind.ERROR, message);
         }

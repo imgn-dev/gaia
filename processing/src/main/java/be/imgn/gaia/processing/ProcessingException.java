@@ -54,10 +54,12 @@ public final class ProcessingException extends RuntimeException {
      *
      * @param message the message of the error
      * @param element the element the error is about
-     * @param annotation the annotation the error is about, as found on the element
+     * @param annotation the annotation the error is about, as found on the element: one of its annotations, or one
+     *     nested in the value of an attribute of those, as a repeatable annotation is in its container
+     * @throws IllegalArgumentException if the annotation is not on the element
      */
     public ProcessingException(String message, Element element, AnnotationMirror annotation) {
-        this(element, Objects.requireNonNull(annotation, "annotation"), null, message);
+        this(element, checkedAnnotation(message, element, annotation), null, message);
     }
 
     /**
@@ -69,7 +71,7 @@ public final class ProcessingException extends RuntimeException {
      * @throws IllegalArgumentException if the element has no such annotation
      */
     public ProcessingException(String message, Element element, String annotation) {
-        this(element, Diagnostics.annotationOf(element, annotation), null, message);
+        this(element, checkedAnnotation(message, element, annotation), null, message);
     }
 
     /**
@@ -78,12 +80,13 @@ public final class ProcessingException extends RuntimeException {
      *
      * @param message the message of the error
      * @param element the element the error is about
-     * @param annotation the annotation, as found on the element
+     * @param annotation the annotation, as found on the element: one of its annotations, or one nested in the value of
+     *     an attribute of those, as a repeatable annotation is in its container
      * @param attribute the name of the attribute the error is about
-     * @throws IllegalArgumentException if the annotation has no such attribute
+     * @throws IllegalArgumentException if the annotation is not on the element, or has no such attribute
      */
     public ProcessingException(String message, Element element, AnnotationMirror annotation, String attribute) {
-        this(element, annotation, Diagnostics.requireAttribute(annotation, attribute), message);
+        this(element, annotation, checkedAttribute(message, element, annotation, attribute), message);
     }
 
     /**
@@ -97,7 +100,7 @@ public final class ProcessingException extends RuntimeException {
      * @throws IllegalArgumentException if the element has no such annotation, or the annotation no such attribute
      */
     public ProcessingException(String message, Element element, String annotation, String attribute) {
-        this(message, element, Diagnostics.annotationOf(element, annotation), attribute);
+        this(message, element, checkedAnnotation(message, element, annotation, attribute), attribute);
     }
 
     // The annotation and the attribute are checked already; the order of the parameters sets it apart.
@@ -134,6 +137,33 @@ public final class ProcessingException extends RuntimeException {
      */
     public Optional<String> attribute() {
         return Optional.ofNullable(attribute);
+    }
+
+    // The checks of the constructors, which come before they read the element; each returns the annotation.
+    private static AnnotationMirror checkedAnnotation(String message, Element element, AnnotationMirror annotation) {
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(element, "element");
+        Objects.requireNonNull(annotation, "annotation");
+        return Diagnostics.requireAnnotationOf(element, annotation);
+    }
+
+    private static AnnotationMirror checkedAnnotation(String message, Element element, String annotation) {
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(element, "element");
+        Objects.requireNonNull(annotation, "annotation");
+        return Diagnostics.annotationOf(element, annotation);
+    }
+
+    private static AnnotationMirror checkedAnnotation(
+            String message, Element element, String annotation, String attribute) {
+        Objects.requireNonNull(attribute, "attribute");
+        return checkedAnnotation(message, element, annotation);
+    }
+
+    private static String checkedAttribute(
+            String message, Element element, AnnotationMirror annotation, String attribute) {
+        Objects.requireNonNull(attribute, "attribute");
+        return Diagnostics.requireAttribute(checkedAnnotation(message, element, annotation), attribute);
     }
 
     @Serial

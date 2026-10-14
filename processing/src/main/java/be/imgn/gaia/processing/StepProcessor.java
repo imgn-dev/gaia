@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -82,12 +83,22 @@ public abstract class StepProcessor extends AbstractProcessor {
      */
     protected abstract Iterable<? extends Step> steps(ProcessingContext context);
 
+    /**
+     * Initializes the processor with javac's processing environment, and creates its steps with
+     * {@link #steps(ProcessingContext)}.
+     *
+     * @param processingEnv the environment
+     * @throws IllegalStateException if the processor is already initialized
+     */
     @Override
     public final synchronized void init(ProcessingEnvironment processingEnv) {
+        Objects.requireNonNull(processingEnv, "processingEnv");
         super.init(processingEnv);
         ProcessingContext created = ProcessingContext.of(processingEnv, getClass());
         List<Step> all = new ArrayList<>();
-        steps(created).forEach(all::add);
+        Objects.requireNonNull(steps(created), "steps(ProcessingContext) returned null")
+                .forEach(
+                        step -> all.add(Objects.requireNonNull(step, "steps(ProcessingContext) returned a null step")));
         context = created;
         steps = List.copyOf(all);
         if (created.option(DEBUG)) {
@@ -144,8 +155,19 @@ public abstract class StepProcessor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
+    /**
+     * Processes a round: gives each step the elements it gets in this round, or finishes the steps and writes the
+     * service files in the last round.
+     *
+     * @param annotations the annotations of the round that the processor supports
+     * @param roundEnv the environment of the round
+     * @return {@code false}: the processor never claims the annotations
+     * @throws IllegalStateException if the processor is not initialized
+     */
     @Override
     public final boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        Objects.requireNonNull(annotations, "annotations");
+        Objects.requireNonNull(roundEnv, "roundEnv");
         ProcessingContext current = context();
         DebugLog log = debug;
         if (log != null) {

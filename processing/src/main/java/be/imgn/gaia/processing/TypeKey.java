@@ -80,6 +80,7 @@ public final class TypeKey {
      * @return its key
      */
     public static TypeKey of(TypeMirror type) {
+        Objects.requireNonNull(type, "type");
         return new TypeKey(type);
     }
 

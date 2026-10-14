@@ -95,6 +95,12 @@ public final class ServiceFiles {
      * @throws IllegalStateException if the file of the service was already written
      */
     public void add(ClassName service, ClassName implementation, Element... originatingElements) {
+        Objects.requireNonNull(service, "service");
+        Objects.requireNonNull(implementation, "implementation");
+        Objects.requireNonNull(originatingElements, "originatingElements");
+        for (Element element : originatingElements) {
+            Objects.requireNonNull(element, "originatingElements");
+        }
         String file = DIRECTORY + service.reflectionName();
         if (written.contains(file)) {
             throw new IllegalStateException(
@@ -103,8 +109,7 @@ public final class ServiceFiles {
         Service entries = pending.computeIfAbsent(file, ignored -> new Service(service.withoutAnnotations()));
         entries.implementations.putIfAbsent(implementation.reflectionName(), implementation.withoutAnnotations());
         for (Element element : originatingElements) {
-            ElementKey.of(Objects.requireNonNull(element, "originatingElements"))
-                    .ifPresentOrElse(entries.keys::add, () -> entries.unkeyed.add(element));
+            ElementKey.of(element).ifPresentOrElse(entries.keys::add, () -> entries.unkeyed.add(element));
         }
     }
 
@@ -119,6 +124,7 @@ public final class ServiceFiles {
      * @throws IllegalStateException if the file of the service was already written, and so checked
      */
     public void skipModuleCheck(ClassName service) {
+        Objects.requireNonNull(service, "service");
         String file = DIRECTORY + service.reflectionName();
         if (written.contains(file)) {
             throw new IllegalStateException(
@@ -149,6 +155,7 @@ public final class ServiceFiles {
      * @throws IllegalStateException if the file of the service was already written
      */
     public void discard(ClassName service) {
+        Objects.requireNonNull(service, "service");
         String file = DIRECTORY + service.reflectionName();
         if (written.contains(file)) {
             throw new IllegalStateException(
