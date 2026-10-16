@@ -27,6 +27,9 @@ The libraries require Java 21 or later and are released together under one versi
 - **`collect.Sets`**: unmodifiable sets that keep the order their elements are given in. `set(...)` and
   `setCopy(...)` behave like `Set.of` and `Set.copyOf`, and the `toSet()` collector like
   `Collectors.toUnmodifiableSet()`, except for iteration order.
+- **`collect.Multiset`**: a collection that counts the occurrences of each element, with `count`, `add(element, n)`,
+  `remove(element, n)`, `setCount` and live `elementSet()` and `entrySet()` views. `HashMultiset.create()` is backed by
+  a hash map.
 - **`collect.MoreCollectors`**: `onlyElement()` collects the only element of a stream, and `toOptional()` collects
   zero or one element.
 - **`collect.MoreGatherers`** (Java 24+): `instanceOf(type)` keeps the elements of a type, cast to it:
