@@ -29,7 +29,8 @@ The libraries require Java 21 or later and are released together under one versi
   `Collectors.toUnmodifiableSet()`, except for iteration order.
 - **`collect.Multiset`**: a collection that counts the occurrences of each element, with `count`, `add(element, n)`,
   `remove(element, n)`, `setCount` and live `elementSet()` and `entrySet()` views. `HashMultiset.create()` is backed by
-  a hash map.
+  a hash map. `TreeMultiset.create()` keeps its elements sorted, as a `SortedMultiset` with first and last entries,
+  live range views and a `reversed()` view.
 - **`collect.MoreCollectors`**: `onlyElement()` collects the only element of a stream, and `toOptional()` collects
   zero or one element.
 - **`collect.MoreGatherers`** (Java 24+): `instanceOf(type)` keeps the elements of a type, cast to it:
