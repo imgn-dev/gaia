@@ -1,1 +1,1 @@
-moduleSearchIndex = [{"l":"be.imgn.gaia.core"},{"l":"be.imgn.gaia.core.testing"},{"l":"be.imgn.gaia.platform"},{"l":"be.imgn.gaia.platform.testing"},{"l":"be.imgn.gaia.processing"},{"l":"be.imgn.gaia.processing.testing"}];updateSearchResults();
+moduleSearchIndex = [{"l":"be.imgn.gaia.core"},{"l":"be.imgn.gaia.core.testing"},{"l":"be.imgn.gaia.memfs"},{"l":"be.imgn.gaia.platform"},{"l":"be.imgn.gaia.platform.testing"},{"l":"be.imgn.gaia.processing"},{"l":"be.imgn.gaia.processing.testing"}];updateSearchResults();

@@ -1,10 +1,14 @@
 module:be.imgn.gaia.core
+be.imgn.gaia.core.base
 be.imgn.gaia.core.collect
+be.imgn.gaia.core.io
 be.imgn.gaia.core.system
 be.imgn.gaia.core.text
 be.imgn.gaia.core.time
 module:be.imgn.gaia.core.testing
 be.imgn.gaia.core.testing
+module:be.imgn.gaia.memfs
+be.imgn.gaia.memfs
 module:be.imgn.gaia.platform
 be.imgn.gaia.platform
 module:be.imgn.gaia.platform.testing
