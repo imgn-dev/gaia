@@ -7,11 +7,10 @@ import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.RecordComponentElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.IntersectionType;
@@ -51,23 +50,30 @@ public final class Resolution {
         return annotations(element.getAnnotationMirrors()).or(() -> declaration(element));
     }
 
+    // By kind rather than by interface, as Element asks: an implementation may implement several of them.
     private Optional<String> declaration(Element element) {
-        return switch (element) {
-            case TypeElement type ->
-                type(type.getSuperclass())
-                        .or(() -> types(type.getInterfaces()))
-                        .or(() -> elements(type.getTypeParameters()))
-                        .or(() -> elements(type.getEnclosedElements()));
-            case ExecutableElement method ->
-                type(method.getReturnType())
-                        .or(() -> elements(method.getParameters()))
-                        .or(() -> types(method.getThrownTypes()))
-                        .or(() -> elements(method.getTypeParameters()));
-            case TypeParameterElement parameter -> types(parameter.getBounds());
-            case VariableElement variable -> type(variable.asType());
-            case RecordComponentElement component -> type(component.asType());
+        return switch (element.getKind()) {
+            case TYPE_PARAMETER -> types(((TypeParameterElement) element).getBounds());
+            case RECORD_COMPONENT -> type(element.asType());
+            case ElementKind kind when kind.isDeclaredType() -> typeDeclaration((TypeElement) element);
+            case ElementKind kind when kind.isExecutable() -> executable((ExecutableElement) element);
+            case ElementKind kind when kind.isVariable() -> type(element.asType());
             default -> Optional.empty();
         };
+    }
+
+    private Optional<String> typeDeclaration(TypeElement type) {
+        return type(type.getSuperclass())
+                .or(() -> types(type.getInterfaces()))
+                .or(() -> elements(type.getTypeParameters()))
+                .or(() -> elements(type.getEnclosedElements()));
+    }
+
+    private Optional<String> executable(ExecutableElement method) {
+        return type(method.getReturnType())
+                .or(() -> elements(method.getParameters()))
+                .or(() -> types(method.getThrownTypes()))
+                .or(() -> elements(method.getTypeParameters()));
     }
 
     private Optional<String> elements(List<? extends Element> elements) {
@@ -135,8 +141,9 @@ public final class Resolution {
     // The name of an unresolved type as written, without the type annotations toString() shows, as ".@example.N
     // Missing".
     private static String name(TypeMirror type) {
-        return type instanceof DeclaredType declared && declared.asElement() instanceof TypeElement element
-                ? element.getQualifiedName().toString()
+        Element element = ((DeclaredType) type).asElement();
+        return element.getKind().isDeclaredType()
+                ? ((TypeElement) element).getQualifiedName().toString()
                 : type.toString();
     }
 

@@ -203,10 +203,10 @@ public final class MoreTypes {
 
     // ? and ? extends Object stand for any type argument, as the runtime does.
     private static boolean isUnboundedWildcard(TypeMirror type) {
-        if (!(type instanceof WildcardType wildcard) || wildcard.getSuperBound() != null) {
+        if (type.getKind() != TypeKind.WILDCARD || ((WildcardType) type).getSuperBound() != null) {
             return false;
         }
-        TypeMirror bound = wildcard.getExtendsBound();
+        TypeMirror bound = ((WildcardType) type).getExtendsBound();
         return bound == null || isType(bound, "java.lang.Object");
     }
 

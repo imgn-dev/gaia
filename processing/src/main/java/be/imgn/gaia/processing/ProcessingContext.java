@@ -526,10 +526,13 @@ public final class ProcessingContext {
         if (variable.getKind() != ElementKind.PARAMETER) {
             return types().asMemberOf(container, variable);
         }
-        if (!(variable.getEnclosingElement() instanceof ExecutableElement method)
-                || !method.getParameters().contains(variable)) {
+        Element enclosing = variable.getEnclosingElement();
+        if (enclosing == null
+                || !enclosing.getKind().isExecutable()
+                || !((ExecutableElement) enclosing).getParameters().contains(variable)) {
             throw new IllegalArgumentException("Not a parameter of a method or constructor: " + variable);
         }
+        var method = (ExecutableElement) enclosing;
         var type = (ExecutableType) types().asMemberOf(container, method);
         return type.getParameterTypes().get(method.getParameters().indexOf(variable));
     }
