@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -176,6 +178,20 @@ class TypeNameTest {
             assertThat(ArrayTypeName.of(returnType("unbounded"))).hasToString("java.util.List<?>[]");
             assertThatIllegalArgumentException().isThrownBy(() -> ParameterizedTypeName.of(int.class, String.class));
             assertThatIllegalArgumentException().isThrownBy(() -> ParameterizedTypeName.of(List.class));
+        }
+
+        @Test
+        void declareTypeVariablesWithTheirBounds() throws NoSuchMethodException {
+            var max = Collections.class.getMethod("max", Collection.class).getTypeParameters()[0];
+
+            assertThat(TypeVariableName.of(max))
+                    .isEqualTo(TypeVariableName.of(
+                            "T",
+                            ClassName.of(Comparable.class)
+                                    .parameterized(WildcardTypeName.supertypeOf(TypeVariableName.of("T")))));
+            assertThat(TypeVariableName.of(List.class.getTypeParameters()[0])).isEqualTo(TypeVariableName.of("E"));
+            assertThat(TypeVariableName.of(Samples.class.getTypeParameters()[0]))
+                    .isEqualTo(TypeVariableName.of("T", ClassName.of(Number.class)));
         }
 
         @Test

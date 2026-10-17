@@ -2,6 +2,7 @@ package be.imgn.gaia.processing.source;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
@@ -78,6 +79,25 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
                 .map(TypeName::of)
                 .toList();
         return new TypeVariableName(parameter.getSimpleName().toString(), bounds, List.of());
+    }
+
+    /**
+     * Returns the name of a type variable found by reflection, with its bounds, such as a type parameter of a class or
+     * a method, to declare it again: {@code T extends Comparable<? super T>} for the type parameter of
+     * {@code Collections.max}.
+     *
+     * @param variable the type variable
+     * @return the name
+     * @throws IllegalArgumentException if a bound names a local or anonymous class, as
+     *     {@link TypeName#of(java.lang.reflect.Type)} names it
+     */
+    public static TypeVariableName of(java.lang.reflect.TypeVariable<?> variable) {
+        requireNonNull(variable, "variable");
+        List<TypeName> bounds = Arrays.stream(variable.getBounds())
+                .filter(bound -> bound != Object.class)
+                .map(TypeName::of)
+                .toList();
+        return new TypeVariableName(variable.getName(), bounds, List.of());
     }
 
     /**
