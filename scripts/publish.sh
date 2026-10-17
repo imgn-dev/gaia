@@ -2,11 +2,12 @@
 #
 # Walks through publishing be.imgn.gaia to Maven Central.
 #
-# One reactor build publishes eight artifacts as ONE deployment:
+# One reactor build publishes nine artifacts as ONE deployment:
 #
 #   be.imgn.gaia:gaia-parent               the parent POM the libraries inherit
 #   be.imgn.gaia:gaia-bom                  the bill of materials
 #   be.imgn.gaia:gaia-core                 and gaia-core-testing
+#   be.imgn.gaia:gaia-memfs                the in-memory file system
 #   be.imgn.gaia:gaia-platform             and gaia-platform-testing
 #   be.imgn.gaia:gaia-processing           and gaia-processing-testing
 #
@@ -108,9 +109,9 @@ version_is_after() {
 
 # What the deployment in the Central portal must hold. Shared with release.sh.
 portal_contents() {
-    info "Expect ONE deployment, be.imgn.gaia:$RELEASE_VERSION, holding eight components:"
+    info "Expect ONE deployment, be.imgn.gaia:$RELEASE_VERSION, holding nine components:"
     info '  gaia-parent, gaia-bom               pom only'
-    info '  gaia-core, gaia-core-testing,'
+    info '  gaia-core, gaia-core-testing, gaia-memfs,'
     info '  gaia-platform, gaia-platform-testing,'
     info '  gaia-processing,'
     info '  gaia-processing-testing             jar, sources, javadoc'
@@ -318,7 +319,7 @@ run_release() {
     info "Release version : $RELEASE_VERSION"
     info "Next version    : $NEXT_VERSION-SNAPSHOT"
     info "Artifacts       : be.imgn.gaia:gaia-parent, gaia-bom, gaia-core,"
-    info "                  gaia-core-testing, gaia-platform, gaia-platform-testing,"
+    info "                  gaia-core-testing, gaia-memfs, gaia-platform, gaia-platform-testing,"
     info "                  gaia-processing, gaia-processing-testing"
     info 'This publishes signed artifacts to Central, tags the commit and pushes.'
     info 'Nothing becomes public until you press Publish in the portal.'
