@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -129,6 +130,97 @@ class TypeNameTest {
             assertThatIllegalArgumentException().isThrownBy(() -> ClassName.of(anonymous.getClass()));
             assertThatIllegalArgumentException().isThrownBy(() -> ClassName.of(int.class));
             assertThatIllegalArgumentException().isThrownBy(() -> ClassName.of(String[].class));
+        }
+    }
+
+    @Nested
+    class FromReflection {
+
+        @Test
+        void namesClassesAndParameterizedTypes() {
+            assertThat(TypeName.of(returnType("string"))).isEqualTo(ClassName.of(String.class));
+            assertThat(TypeName.of(returnType("ints"))).isEqualTo(ArrayTypeName.of(PrimitiveTypeName.INT));
+            assertThat(TypeName.of(returnType("map")))
+                    .hasToString("java.util.Map<java.lang.String, java.util.List<? extends java.lang.Number>>");
+            assertThat(TypeName.of(returnType("entry")))
+                    .hasToString("java.util.Map.Entry<java.lang.String, java.lang.Integer>");
+        }
+
+        @Test
+        void namesTypeVariablesGenericArraysAndWildcards() {
+            assertThat(TypeName.of(returnType("variable"))).isEqualTo(TypeVariableName.of("T"));
+            assertThat(TypeName.of(returnType("lists"))).hasToString("java.util.List<T>[]");
+            assertThat(TypeName.of(returnType("lower"))).hasToString("java.util.List<? super java.lang.Integer>");
+            assertThat(TypeName.of(returnType("unbounded"))).hasToString("java.util.List<?>");
+            assertThat(TypeName.of(returnType("objects"))).isEqualTo(TypeName.of(returnType("unbounded")));
+        }
+
+        @Test
+        void keepAParameterizedOwnerType() {
+            assertThat(TypeName.of(returnType("inner")))
+                    .isEqualTo(new ParameterizedTypeName(
+                            ClassName.of(Outer.class).parameterized(ClassName.of(String.class)),
+                            ClassName.of(Outer.Inner.class),
+                            List.of(),
+                            List.of()));
+        }
+
+        @Test
+        void serveAsTypesInCode() {
+            assertThat(CodeBlock.of("$T values", returnType("map")))
+                    .hasToString("java.util.Map<java.lang.String, java.util.List<? extends java.lang.Number>> values");
+        }
+
+        @Test
+        void rejectLocalClassesAndUnknownKinds() {
+            class Local {}
+            java.lang.reflect.Type local = Local.class;
+            java.lang.reflect.Type listOfLocal =
+                    new ArrayList<Local>() {}.getClass().getGenericSuperclass();
+            java.lang.reflect.Type unknown = new java.lang.reflect.Type() {};
+
+            assertThatIllegalArgumentException().isThrownBy(() -> TypeName.of(local));
+            assertThatIllegalArgumentException().isThrownBy(() -> TypeName.of(listOfLocal));
+            assertThatIllegalArgumentException().isThrownBy(() -> TypeName.of(unknown));
+        }
+
+        private static java.lang.reflect.Type returnType(String method) {
+            try {
+                return Samples.class.getMethod(method).getGenericReturnType();
+            } catch (NoSuchMethodException e) {
+                throw new AssertionError(e);
+            }
+        }
+
+        interface Samples<T extends Number> {
+
+            String string();
+
+            int[] ints();
+
+            Map<String, List<? extends Number>> map();
+
+            Map.Entry<String, Integer> entry();
+
+            T variable();
+
+            List<T>[] lists();
+
+            List<? super Integer> lower();
+
+            List<?> unbounded();
+
+            List<? extends Object> objects();
+
+            Outer<String>.Inner inner();
+        }
+
+        static class Outer<T> {
+
+            abstract class Inner {
+
+                abstract T value();
+            }
         }
     }
 

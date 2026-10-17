@@ -36,6 +36,24 @@ public sealed interface TypeName
     }
 
     /**
+     * Returns the name of a type obtained by reflection, such as the generic type of a field: a class, a parameterized
+     * type, a generic array, a type variable or a wildcard.
+     *
+     * <p>An inner class whose enclosing type has type arguments, as in {@code Outer<String>.Inner}, is named with a
+     * {@link ParameterizedTypeName#ownerType() owner type}. A reflective type carries no type annotations, so the name
+     * has none.
+     *
+     * @param type the type
+     * @return its name
+     * @throws IllegalArgumentException if the type is or refers to a local or anonymous class, or it is none of the
+     *     kinds of {@link java.lang.reflect.Type} above
+     */
+    static TypeName of(java.lang.reflect.Type type) {
+        Objects.requireNonNull(type, "type");
+        return ReflectiveTypes.name(type);
+    }
+
+    /**
      * Returns the name of a type, with its type annotations.
      *
      * <p>An inner class whose enclosing type has type arguments or annotations, as in {@code Outer<String>.Inner}, is

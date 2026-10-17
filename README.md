@@ -95,7 +95,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `JavaFile` writes it out with the imports worked out, qualifying names only where they would clash, including with
   the member types a supertype brings. It uses static imports, wraps long lines at `$W`, and indents multi-line
   statements. Outside a processor, `writeTo(directory)` writes it under a source root. `Method.overriding(...)`
-  starts an override from an element. `NameAllocator` hands out identifiers that don't clash.
+  starts an override from an element. `NameAllocator` hands out identifiers that don't clash. `TypeName.of(...)`
+  names a `Class`, a `TypeMirror` or a generic `java.lang.reflect.Type`.
 - **`GeneratedSources`**: writes generated source files, as a `JavaFile` or as text. It adds `@Generated` only where
   the generated code can see it, so a module that doesn't read `java.compiler` still compiles. It qualifies the
   `java.lang` types that a type of the same package hides. Writing the same file twice returns `false` instead of

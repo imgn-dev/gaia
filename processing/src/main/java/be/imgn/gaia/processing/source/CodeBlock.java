@@ -27,15 +27,15 @@ import org.jspecify.annotations.Nullable;
  *         .build();
  * }</pre>
  *
- * <p>The placeholders are {@code $T} for a type ({@link TypeName}, {@link Class}, {@link TypeMirror} or
- * {@link TypeElement}), imported as needed; {@code $N} for a name (a {@code String}, or a {@link Parameter},
- * {@link Field}, {@link Method} or {@link Type}); {@code $S} for a string literal, escaped, or {@code null}; {@code $L}
- * for anything written as is, such as a number, another code block, an annotation or an anonymous class; {@code $$} for
- * a dollar sign; {@code $>} and {@code $<} to indent and unindent the lines that follow; {@code $[} and {@code $]} to
- * start and end a statement, whose lines after the first are indented twice more; {@code $W} for a space, and
- * {@code $Z} for nothing, where the line breaks if what follows would go past column 100. Arguments are taken in order,
- * or by position with {@code $1T}, {@code $2N} and so on, but not both in one format; or by name with {@code $type:T},
- * from a map given to {@link Builder#addNamed(String, Map)}.
+ * <p>The placeholders are {@code $T} for a type ({@link TypeName}, {@link Class}, {@link java.lang.reflect.Type},
+ * {@link TypeMirror} or {@link TypeElement}), imported as needed; {@code $N} for a name (a {@code String}, or a
+ * {@link Parameter}, {@link Field}, {@link Method} or {@link Type}); {@code $S} for a string literal, escaped, or
+ * {@code null}; {@code $L} for anything written as is, such as a number, another code block, an annotation or an
+ * anonymous class; {@code $$} for a dollar sign; {@code $>} and {@code $<} to indent and unindent the lines that
+ * follow; {@code $[} and {@code $]} to start and end a statement, whose lines after the first are indented twice more;
+ * {@code $W} for a space, and {@code $Z} for nothing, where the line breaks if what follows would go past column 100.
+ * Arguments are taken in order, or by position with {@code $1T}, {@code $2N} and so on, but not both in one format; or
+ * by name with {@code $type:T}, from a map given to {@link Builder#addNamed(String, Map)}.
  *
  * <p>A format and its arguments do not match when a placeholder is not one of these, has no argument, or has an
  * argument it cannot write, such as a {@code $T} argument that is not a type or is a local or anonymous class, which
@@ -697,6 +697,7 @@ public final class CodeBlock {
             return switch (value) {
                 case TypeName name -> name;
                 case Class<?> type -> TypeName.of(type);
+                case java.lang.reflect.Type type -> TypeName.of(type);
                 case TypeMirror type -> TypeName.of(type);
                 case TypeElement type -> ClassName.of(type);
                 case null, default ->
