@@ -56,6 +56,42 @@ public interface SortedMultiset<E> extends Multiset<E>, SequencedCollection<E> {
     Optional<Entry<E>> lastEntry();
 
     /**
+     * Returns the entry of the highest element strictly lower than an element.
+     *
+     * @param element the element to compare with
+     * @return the entry of the highest element lower than {@code element}, or an empty {@code Optional} if there is
+     *     none
+     */
+    Optional<Entry<E>> lowerEntry(E element);
+
+    /**
+     * Returns the entry of the highest element lower than or equal to an element.
+     *
+     * @param element the element to compare with
+     * @return the entry of the highest element lower than or equal to {@code element}, or an empty {@code Optional} if
+     *     there is none
+     */
+    Optional<Entry<E>> floorEntry(E element);
+
+    /**
+     * Returns the entry of the lowest element higher than or equal to an element.
+     *
+     * @param element the element to compare with
+     * @return the entry of the lowest element higher than or equal to {@code element}, or an empty {@code Optional} if
+     *     there is none
+     */
+    Optional<Entry<E>> ceilingEntry(E element);
+
+    /**
+     * Returns the entry of the lowest element strictly higher than an element.
+     *
+     * @param element the element to compare with
+     * @return the entry of the lowest element higher than {@code element}, or an empty {@code Optional} if there is
+     *     none
+     */
+    Optional<Entry<E>> higherEntry(E element);
+
+    /**
      * Removes all occurrences of the lowest element, and returns its entry as it was.
      *
      * @return the entry of the element removed, which no longer changes, or an empty {@code Optional} if this multiset

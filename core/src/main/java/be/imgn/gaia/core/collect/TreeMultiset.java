@@ -150,6 +150,30 @@ public final class TreeMultiset<E> extends AbstractMapMultiset<E> implements Sor
     }
 
     @Override
+    public Optional<Entry<E>> lowerEntry(E element) {
+        requireNonNull(element, "element");
+        return liveEntry(counts.lowerEntry(element));
+    }
+
+    @Override
+    public Optional<Entry<E>> floorEntry(E element) {
+        requireNonNull(element, "element");
+        return liveEntry(counts.floorEntry(element));
+    }
+
+    @Override
+    public Optional<Entry<E>> ceilingEntry(E element) {
+        requireNonNull(element, "element");
+        return liveEntry(counts.ceilingEntry(element));
+    }
+
+    @Override
+    public Optional<Entry<E>> higherEntry(E element) {
+        requireNonNull(element, "element");
+        return liveEntry(counts.higherEntry(element));
+    }
+
+    @Override
     public Optional<Entry<E>> pollFirstEntry() {
         return removedEntry(counts.pollFirstEntry());
     }

@@ -129,6 +129,41 @@ class TreeMultisetTest {
         }
 
         @Test
+        void returnsTheNearestEntries() {
+            assertThat(multiset.lowerEntry("foo"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("baz=1"));
+            assertThat(multiset.floorEntry("foo"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("foo=3"));
+            assertThat(multiset.ceilingEntry("foo"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("foo=3"));
+            assertThat(multiset.higherEntry("foo"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("quuz=2"));
+            assertThat(multiset.floorEntry("bat"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("bar=1"));
+            assertThat(multiset.ceilingEntry("bat"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("baz=1"));
+        }
+
+        @Test
+        void returnsNoNearestEntryBeyondTheEnds() {
+            assertThat(multiset.lowerEntry("bar")).isEmpty();
+            assertThat(multiset.floorEntry("a")).isEmpty();
+            assertThat(multiset.ceilingEntry("z")).isEmpty();
+            assertThat(multiset.higherEntry("quuz")).isEmpty();
+        }
+
+        @Test
+        void returnsLiveNearestEntries() {
+            var floor = multiset.floorEntry("foo").orElseThrow();
+
+            floor.setCount(5);
+            multiset.add("foo");
+
+            assertThat(multiset.count("foo")).isEqualTo(6);
+            assertThat(floor.count()).isEqualTo(6);
+        }
+
+        @Test
         void pollsTheFirstAndLastEntries() {
             var first = multiset.pollFirstEntry().orElseThrow();
             var last = multiset.pollLastEntry().orElseThrow();
@@ -264,6 +299,30 @@ class TreeMultisetTest {
             assertThat(view.pollLastEntry())
                     .hasValueSatisfying(entry -> assertThat(entry).hasToString("foo=3"));
             assertThat(multiset).containsExactly("bar", "baz", "quuz", "quuz");
+        }
+
+        @Test
+        void returnsTheNearestEntriesOfItsRange() {
+            var view = multiset.subMultiset("baz", true, "foo", true);
+
+            assertThat(view.lowerEntry("baz")).isEmpty();
+            assertThat(view.higherEntry("foo")).isEmpty();
+            assertThat(view.ceilingEntry("bar"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("baz=1"));
+            assertThat(view.floorEntry("quuz"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("foo=3"));
+        }
+
+        @Test
+        void returnsTheNearestEntriesInReverse() {
+            var reversed = multiset.reversed();
+
+            assertThat(reversed.lowerEntry("foo"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("quuz=2"));
+            assertThat(reversed.higherEntry("foo"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("baz=1"));
+            assertThat(reversed.floorEntry("bat"))
+                    .hasValueSatisfying(entry -> assertThat(entry).hasToString("baz=1"));
         }
 
         @Test
