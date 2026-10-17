@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.processing.internal.Inheritance;
 import be.imgn.gaia.processing.internal.PresentAnnotations;
@@ -408,6 +409,35 @@ public final class ProcessingContext {
         return (supertype.isPrimitive() || supertype.isArray())
                 ? Optional.empty()
                 : asSupertype(type, MoreTypes.canonicalName(supertype));
+    }
+
+    /**
+     * Returns the direct superclass of a class as that class sees it, with the type arguments its declaration gives the
+     * superclass: {@code AbstractList<String>} for {@code ArrayList<String>}, as {@link #asSupertype(TypeMirror,
+     * TypeElement)} gives it. A raw type has a raw superclass.
+     *
+     * <p>{@code Object} is left out, so that walking up the hierarchy stops by itself:
+     *
+     * <pre>{@code
+     * for (var current = context.superclass(type); current.isPresent(); current = context.superclass(current.get())) {
+     *     ...
+     * }
+     * }</pre>
+     *
+     * @param type the class, enum or record
+     * @return its superclass; empty if the superclass is {@code Object} or javac could not resolve it, or if
+     *     {@code type} is {@code Object} itself, an interface or an annotation type
+     */
+    public Optional<DeclaredType> superclass(DeclaredType type) {
+        requireNonNull(type, "type");
+        TypeMirror superclass = ((TypeElement) type.asElement()).getSuperclass();
+        if (superclass.getKind() != TypeKind.DECLARED) {
+            return Optional.empty();
+        }
+        TypeElement element = (TypeElement) ((DeclaredType) superclass).asElement();
+        return element.getQualifiedName().contentEquals("java.lang.Object")
+                ? Optional.empty()
+                : asSupertype(type, element);
     }
 
     /**

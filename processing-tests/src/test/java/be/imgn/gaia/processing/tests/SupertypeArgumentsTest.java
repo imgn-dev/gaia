@@ -38,7 +38,10 @@ import javax.lang.model.type.TypeVariable;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
 
-/** The supertypes of a type with the type arguments its hierarchy gives them: {@code asSupertype}. */
+/**
+ * The supertypes of a type with the type arguments its hierarchy gives them: {@code asSupertype} and
+ * {@code superclass}.
+ */
 class SupertypeArgumentsTest {
 
     private static final JavaFileObject MARK = source("example.Mark", """
@@ -627,6 +630,121 @@ class SupertypeArgumentsTest {
                         absent -> assertThat(absent)
                                 .startsWith("example.Converter<java.util.List<")
                                 .contains("Absent"));
+    }
+
+    @Test
+    void findsTheSuperclassWithTheTypeArgumentsTheClassGivesIt() {
+        Map<String, String> found = superclasses(source("example.Uses", """
+                package example;
+
+                import java.util.ArrayList;
+
+                class Uses<Z> {
+                    @Mark StringConverter string;
+                    @Mark IntegerListConverter integers;
+                    @Mark ListConverter<Z> variable;
+                    @Mark ArrayList<String> strings;
+                    @SuppressWarnings("rawtypes")
+                    @Mark ArrayList raw;
+                    @Mark Thread.State constant;
+                    @Mark Point point;
+                }
+
+                record Point(int x, int y) {}
+                """));
+
+        assertThat(found)
+                .containsExactly(
+                        Map.entry("string", "example.AbstractConverter<java.lang.String>"),
+                        Map.entry("integers", "example.ListConverter<java.lang.Integer>"),
+                        Map.entry("variable", "example.AbstractConverter<java.util.List<Z>>"),
+                        Map.entry("strings", "java.util.AbstractList<java.lang.String>"),
+                        Map.entry("raw", "java.util.AbstractList"),
+                        Map.entry("constant", "java.lang.Enum<java.lang.Thread.State>"),
+                        Map.entry("point", "java.lang.Record"));
+    }
+
+    @Test
+    void leavesOutObjectAsASuperclass() {
+        Map<String, String> found = superclasses(source("example.Uses", """
+                package example;
+
+                class Uses {
+                    @Mark AbstractConverter<String> direct;
+                    @Mark Converter<String> notAClass;
+                    @Mark Object object;
+                    @Mark Mark annotation;
+                }
+                """));
+
+        assertThat(found)
+                .containsExactly(
+                        Map.entry("direct", "none"),
+                        Map.entry("notAClass", "none"),
+                        Map.entry("object", "none"),
+                        Map.entry("annotation", "none"));
+    }
+
+    @Test
+    void walksUpTheHierarchyToObject() {
+        Map<String, List<String>> chains = new LinkedHashMap<>();
+        Compilation compilation = process(
+                (context, element) -> {
+                    List<String> chain = new ArrayList<>();
+                    for (Optional<DeclaredType> current = context.superclass((DeclaredType) element.asType());
+                            current.isPresent();
+                            current = context.superclass(current.get())) {
+                        chain.add(current.get().toString());
+                    }
+                    chains.put(element.getSimpleName().toString(), chain);
+                },
+                CONVERTERS,
+                source("example.Uses", """
+                        package example;
+
+                        class Uses {
+                            @Mark IntegerListConverter integers;
+                        }
+                        """));
+
+        assertThat(compilation).succeeded();
+        assertThat(chains)
+                .containsExactly(Map.entry(
+                        "integers",
+                        List.of(
+                                "example.ListConverter<java.lang.Integer>",
+                                "example.AbstractConverter<java.util.List<java.lang.Integer>>")));
+    }
+
+    @Test
+    void hasNoSuperclassJavacCouldNotResolve() {
+        Map<String, String> found = new LinkedHashMap<>();
+        Compilation compilation = process(
+                (context, element) ->
+                        found.put(element.getSimpleName().toString(), describe(context.superclass((DeclaredType)
+                                element.asType()))),
+                source("example.Broken", """
+                        package example;
+
+                        @Mark
+                        class Broken extends Missing {}
+                        """));
+
+        assertThat(compilation).failed();
+        assertThat(found).containsExactly(Map.entry("Broken", "none"));
+    }
+
+    // The superclass of the type of each element annotated with @Mark, by simple name, as javac writes it, or "none".
+    private static Map<String, String> superclasses(JavaFileObject uses) {
+        Map<String, String> results = new LinkedHashMap<>();
+        Compilation compilation = process(
+                (context, element) ->
+                        results.put(element.getSimpleName().toString(), describe(context.superclass((DeclaredType)
+                                element.asType()))),
+                CONVERTERS,
+                uses);
+        assertThat(compilation).succeeded();
+        return results;
     }
 
     @Test
