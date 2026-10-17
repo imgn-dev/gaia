@@ -161,4 +161,15 @@ class TypeUtilitiesTest {
                         elements.getTypeElement("java.lang.Thread"), "java.lang.FunctionalInterface"))
                 .isFalse();
     }
+
+    @Test
+    void checksDirectAnnotationsByClass(Elements elements) {
+        assertThat(MoreElements.isAnnotatedWith(
+                        elements.getTypeElement("java.lang.Runnable"), FunctionalInterface.class))
+                .isTrue();
+        assertThat(MoreElements.isAnnotatedWith(elements.getTypeElement("java.lang.Thread"), FunctionalInterface.class))
+                .isFalse();
+        assertThat(MoreElements.isAnnotatedWith(elements.getTypeElement("java.lang.SecurityManager"), Deprecated.class))
+                .isTrue();
+    }
 }

@@ -3,6 +3,7 @@ package be.imgn.gaia.processing;
 import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.processing.internal.Resolution;
+import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
@@ -101,6 +102,23 @@ public final class MoreElements {
         requireNonNull(qualifiedName, "qualifiedName");
         return element.getAnnotationMirrors().stream()
                 .anyMatch(mirror -> MoreTypes.isType(mirror.getAnnotationType(), qualifiedName));
+    }
+
+    /**
+     * Returns whether an element is annotated directly with an annotation, known by its class. The class only names the
+     * annotation: the processor needs it on its class path, but the annotation does not need to be retained at run
+     * time.
+     *
+     * @param element the element
+     * @param annotation the annotation type
+     * @return {@code true} if the element has the annotation
+     * @throws IllegalArgumentException if {@code annotation} has no canonical name, as a local or hidden annotation
+     *     type
+     */
+    public static boolean isAnnotatedWith(Element element, Class<? extends Annotation> annotation) {
+        requireNonNull(element, "element");
+        requireNonNull(annotation, "annotation");
+        return isAnnotatedWith(element, MoreTypes.canonicalName(annotation));
     }
 
     /**
