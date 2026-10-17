@@ -1,6 +1,7 @@
 package be.imgn.gaia.platform.testing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.platform.Directories;
 import be.imgn.gaia.platform.Platform;
@@ -8,7 +9,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A {@link Platform} with the operating system of your choice and its directories under a root directory, such as a
@@ -83,8 +83,8 @@ public final class FakePlatform implements Platform {
         private Directories directories;
 
         private Builder(OperatingSystem operatingSystem, Path root) {
-            this.operatingSystem = Objects.requireNonNull(operatingSystem, "operatingSystem");
-            Objects.requireNonNull(root, "root");
+            this.operatingSystem = requireNonNull(operatingSystem, "operatingSystem");
+            requireNonNull(root, "root");
             directories = FakeDirectories.newBuilder(root).build();
             fileSystem = root.getFileSystem();
         }
@@ -98,7 +98,7 @@ public final class FakePlatform implements Platform {
          * @throws IllegalArgumentException if a directory is not on the file system of the root
          */
         public Builder directories(Directories directories) {
-            Objects.requireNonNull(directories, "directories");
+            requireNonNull(directories, "directories");
             List<Path> all = new ArrayList<>(List.of(
                     directories.home(),
                     directories.dataHome(),

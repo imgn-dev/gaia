@@ -1,10 +1,12 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.checkFromIndexSize;
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.ByteSource;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 import java.util.OptionalLong;
 
 /** A source that reads a part of another one. */
@@ -22,7 +24,7 @@ public final class SlicedByteSource implements ByteSource {
      * @param length the maximum number of bytes to read, not negative
      */
     public SlicedByteSource(ByteSource source, long offset, long length) {
-        this.source = Objects.requireNonNull(source, "source");
+        this.source = requireNonNull(source, "source");
         this.offset = offset;
         this.length = length;
     }
@@ -75,7 +77,7 @@ public final class SlicedByteSource implements ByteSource {
 
         @Override
         public int read(byte[] bytes, int offset, int length) throws IOException {
-            Objects.checkFromIndexSize(offset, length, bytes.length);
+            checkFromIndexSize(offset, length, bytes.length);
             if (length == 0) {
                 return 0;
             }

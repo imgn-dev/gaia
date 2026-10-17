@@ -1,10 +1,10 @@
 package be.imgn.gaia.platform;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.nio.file.Path;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 
@@ -37,7 +37,7 @@ public final class ApplicationDirectories {
 
     static ApplicationDirectories of(
             Platform platform, @Nullable String qualifier, @Nullable String vendor, String application) {
-        Objects.requireNonNull(platform, "platform");
+        requireNonNull(platform, "platform");
         if (qualifier != null) {
             checkName(qualifier, "qualifier");
         }
@@ -58,7 +58,7 @@ public final class ApplicationDirectories {
     // A name must be valid on every platform, not only on the one the JVM runs on. Windows is the strictest: it forbids
     // control characters, a trailing space and FORBIDDEN_CHARACTERS in a file name.
     private static void checkName(String name, String role) {
-        Objects.requireNonNull(name, role);
+        requireNonNull(name, role);
         checkArgument(
                 !name.isBlank() && !".".equals(name) && !"..".equals(name),
                 "The %s must be a name, not '%s'",

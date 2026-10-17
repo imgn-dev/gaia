@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.collect.Sets;
 import be.imgn.gaia.core.time.Ticker;
 import be.imgn.gaia.processing.internal.DebugLog;
@@ -12,7 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -92,13 +93,12 @@ public abstract class StepProcessor extends AbstractProcessor {
      */
     @Override
     public final synchronized void init(ProcessingEnvironment processingEnv) {
-        Objects.requireNonNull(processingEnv, "processingEnv");
+        requireNonNull(processingEnv, "processingEnv");
         super.init(processingEnv);
         ProcessingContext created = ProcessingContext.of(processingEnv, getClass());
         List<Step> all = new ArrayList<>();
-        Objects.requireNonNull(steps(created), "steps(ProcessingContext) returned null")
-                .forEach(
-                        step -> all.add(Objects.requireNonNull(step, "steps(ProcessingContext) returned a null step")));
+        requireNonNull(steps(created), "steps(ProcessingContext) returned null")
+                .forEach(step -> all.add(requireNonNull(step, "steps(ProcessingContext) returned a null step")));
         context = created;
         steps = List.copyOf(all);
         if (created.option(DEBUG)) {
@@ -166,8 +166,8 @@ public abstract class StepProcessor extends AbstractProcessor {
      */
     @Override
     public final boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Objects.requireNonNull(annotations, "annotations");
-        Objects.requireNonNull(roundEnv, "roundEnv");
+        requireNonNull(annotations, "annotations");
+        requireNonNull(roundEnv, "roundEnv");
         ProcessingContext current = context();
         DebugLog log = debug;
         if (log != null) {

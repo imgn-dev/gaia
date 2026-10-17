@@ -1,10 +1,10 @@
 package be.imgn.gaia.core.testing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.time.Ticker;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -35,7 +35,7 @@ public final class FakeTicker implements Ticker {
      * @throws ArithmeticException if {@code duration} does not fit in a {@code long} of nanoseconds
      */
     public FakeTicker advance(Duration duration) {
-        Objects.requireNonNull(duration, "duration");
+        requireNonNull(duration, "duration");
         checkArgument(!duration.isNegative(), "A ticker never goes back: %s", duration);
         nanos.addAndGet(duration.toNanos());
         return this;

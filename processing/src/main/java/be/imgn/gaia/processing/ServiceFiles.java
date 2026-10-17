@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.processing.internal.ElementKey;
 import be.imgn.gaia.processing.source.ClassName;
 import java.io.FileNotFoundException;
@@ -14,7 +16,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -95,11 +96,11 @@ public final class ServiceFiles {
      * @throws IllegalStateException if the file of the service was already written
      */
     public void add(ClassName service, ClassName implementation, Element... originatingElements) {
-        Objects.requireNonNull(service, "service");
-        Objects.requireNonNull(implementation, "implementation");
-        Objects.requireNonNull(originatingElements, "originatingElements");
+        requireNonNull(service, "service");
+        requireNonNull(implementation, "implementation");
+        requireNonNull(originatingElements, "originatingElements");
         for (Element element : originatingElements) {
-            Objects.requireNonNull(element, "originatingElements");
+            requireNonNull(element, "originatingElements");
         }
         String file = DIRECTORY + service.reflectionName();
         if (written.contains(file)) {
@@ -124,7 +125,7 @@ public final class ServiceFiles {
      * @throws IllegalStateException if the file of the service was already written, and so checked
      */
     public void skipModuleCheck(ClassName service) {
-        Objects.requireNonNull(service, "service");
+        requireNonNull(service, "service");
         String file = DIRECTORY + service.reflectionName();
         if (written.contains(file)) {
             throw new IllegalStateException(
@@ -155,7 +156,7 @@ public final class ServiceFiles {
      * @throws IllegalStateException if the file of the service was already written
      */
     public void discard(ClassName service) {
-        Objects.requireNonNull(service, "service");
+        requireNonNull(service, "service");
         String file = DIRECTORY + service.reflectionName();
         if (written.contains(file)) {
             throw new IllegalStateException(

@@ -1,6 +1,7 @@
 package be.imgn.gaia.platform.testing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.platform.Directories;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 
@@ -133,7 +133,7 @@ public final class FakeDirectories implements Directories {
         private boolean createDirectories;
 
         private Builder(Path root) {
-            Objects.requireNonNull(root, "root");
+            requireNonNull(root, "root");
             checkArgument(root.isAbsolute(), "The root must be an absolute path: %s", root);
             this.root = root;
             home = root.resolve("home");
@@ -291,7 +291,7 @@ public final class FakeDirectories implements Directories {
         }
 
         private Path checked(Path path, String name) {
-            Objects.requireNonNull(path, name);
+            requireNonNull(path, name);
             checkArgument(path.isAbsolute(), "%s must be an absolute path: %s", name, path);
             checkArgument(
                     path.getFileSystem().equals(root.getFileSystem()),
@@ -303,7 +303,7 @@ public final class FakeDirectories implements Directories {
         }
 
         private List<Path> checked(List<Path> paths, String name) {
-            Objects.requireNonNull(paths, name);
+            requireNonNull(paths, name);
             List<Path> copy = new ArrayList<>(paths.size());
             for (Path path : paths) {
                 copy.add(checked(path, name + "[" + copy.size() + "]"));

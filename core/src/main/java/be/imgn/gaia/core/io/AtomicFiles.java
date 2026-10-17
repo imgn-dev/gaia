@@ -1,6 +1,7 @@
 package be.imgn.gaia.core.io;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.io.BufferedOutputStream;
 import java.io.FilterOutputStream;
@@ -20,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFileAttributeView;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -62,8 +62,8 @@ public final class AtomicFiles {
      * @throws IOException if the file cannot be written, which leaves it as it was
      */
     public static void write(Path file, byte[] bytes) throws IOException {
-        Objects.requireNonNull(file, "file");
-        Objects.requireNonNull(bytes, "bytes");
+        requireNonNull(file, "file");
+        requireNonNull(bytes, "bytes");
         write(file, out -> out.write(bytes));
     }
 
@@ -77,8 +77,8 @@ public final class AtomicFiles {
      * @throws IOException if the file cannot be written or {@code output} fails, which leaves the file as it was
      */
     public static void write(Path file, Output output) throws IOException {
-        Objects.requireNonNull(file, "file");
-        Objects.requireNonNull(output, "output");
+        requireNonNull(file, "file");
+        requireNonNull(output, "output");
         Path target = Files.exists(file) ? file.toRealPath() : file.toAbsolutePath();
         Path directory = target.getParent();
         if (directory == null || Files.isDirectory(target)) {
@@ -108,8 +108,8 @@ public final class AtomicFiles {
      * @throws java.nio.charset.CharacterCodingException if the text contains a malformed surrogate pair
      */
     public static void writeString(Path file, CharSequence text) throws IOException {
-        Objects.requireNonNull(file, "file");
-        Objects.requireNonNull(text, "text");
+        requireNonNull(file, "file");
+        requireNonNull(text, "text");
         writeString(file, text, StandardCharsets.UTF_8);
     }
 
@@ -125,9 +125,9 @@ public final class AtomicFiles {
      *     a malformed surrogate pair
      */
     public static void writeString(Path file, CharSequence text, Charset charset) throws IOException {
-        Objects.requireNonNull(file, "file");
-        Objects.requireNonNull(text, "text");
-        Objects.requireNonNull(charset, "charset");
+        requireNonNull(file, "file");
+        requireNonNull(text, "text");
+        requireNonNull(charset, "charset");
         checkArgument(charset.canEncode(), "%s does not support encoding", charset);
         ByteBuffer bytes = charset.newEncoder().encode(CharBuffer.wrap(text));
         write(file, out -> out.write(bytes.array(), bytes.arrayOffset() + bytes.position(), bytes.remaining()));

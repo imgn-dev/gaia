@@ -1,6 +1,7 @@
 package be.imgn.gaia.core.io;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.io.internal.OpenOptions;
 import java.io.BufferedOutputStream;
@@ -12,7 +13,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.util.Objects;
 
 /**
  * A writable destination of bytes, such as a file, that opens a new stream each time it is written.
@@ -43,7 +43,7 @@ public interface ByteSink {
      * @return a sink that writes {@code file}
      */
     static ByteSink of(Path file, OpenOption... options) {
-        Objects.requireNonNull(file, "file");
+        requireNonNull(file, "file");
         var copy = OpenOptions.copyOf(options);
         return () -> Files.newOutputStream(file, copy);
     }
@@ -74,7 +74,7 @@ public interface ByteSink {
      * @throws IOException if this sink cannot be written
      */
     default void write(byte[] bytes) throws IOException {
-        Objects.requireNonNull(bytes, "bytes");
+        requireNonNull(bytes, "bytes");
         try (var out = openStream()) {
             out.write(bytes);
         }
@@ -88,7 +88,7 @@ public interface ByteSink {
      * @throws IOException if {@code in} cannot be read or this sink cannot be written
      */
     default long writeFrom(InputStream in) throws IOException {
-        Objects.requireNonNull(in, "in");
+        requireNonNull(in, "in");
         try (var out = openStream()) {
             return in.transferTo(out);
         }
@@ -104,7 +104,7 @@ public interface ByteSink {
      * @throws IllegalArgumentException if {@code charset} does not support encoding
      */
     default CharSink asCharSink(Charset charset) {
-        Objects.requireNonNull(charset, "charset");
+        requireNonNull(charset, "charset");
         checkArgument(charset.canEncode(), "%s does not support encoding", charset);
         return () -> new OutputStreamWriter(openStream(), charset.newEncoder());
     }

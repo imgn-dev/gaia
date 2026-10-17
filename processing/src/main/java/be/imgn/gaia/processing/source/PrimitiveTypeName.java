@@ -1,7 +1,8 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 
@@ -51,7 +52,7 @@ public record PrimitiveTypeName(String keyword, List<Annotation> annotations) im
      * @throws IllegalArgumentException if the keyword is not a primitive type or {@code void}
      */
     public PrimitiveTypeName {
-        Objects.requireNonNull(keyword, "keyword");
+        requireNonNull(keyword, "keyword");
         annotations = Checks.elements(annotations, "annotations");
         if (boxName(keyword) == null) {
             throw new IllegalArgumentException("Not a primitive type: " + keyword);
@@ -66,7 +67,7 @@ public record PrimitiveTypeName(String keyword, List<Annotation> annotations) im
      * @throws IllegalArgumentException if the keyword is not a primitive type or {@code void}
      */
     public static PrimitiveTypeName of(String keyword) {
-        Objects.requireNonNull(keyword, "keyword");
+        requireNonNull(keyword, "keyword");
         return new PrimitiveTypeName(keyword, List.of());
     }
 
@@ -116,8 +117,7 @@ public record PrimitiveTypeName(String keyword, List<Annotation> annotations) im
     }
 
     ClassName boxed() {
-        return ClassName.of("java.lang", Objects.requireNonNull(boxName(keyword)))
-                .annotated(annotations);
+        return ClassName.of("java.lang", requireNonNull(boxName(keyword))).annotated(annotations);
     }
 
     @Override

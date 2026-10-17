@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import be.imgn.gaia.processing.ProcessingContext;
@@ -18,7 +19,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import javax.annotation.processing.AbstractProcessor;
@@ -690,7 +690,7 @@ class TypeKeyTest {
     private record NamedTypes(Map<String, TypeMirror> types) {
 
         TypeMirror get(String name) {
-            return Objects.requireNonNull(types.get(name), name);
+            return requireNonNull(types.get(name), name);
         }
     }
 
@@ -773,8 +773,7 @@ class TypeKeyTest {
             Element type = trees.getElement(getCurrentPath());
             if (type instanceof TypeElement local && local.getNestingKind() == NestingKind.LOCAL) {
                 types.put(
-                        Objects.requireNonNull(local.getEnclosingElement()).getSimpleName() + "."
-                                + local.getSimpleName(),
+                        requireNonNull(local.getEnclosingElement()).getSimpleName() + "." + local.getSimpleName(),
                         local.asType());
             }
             return super.visitClass(tree, null);

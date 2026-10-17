@@ -2,12 +2,12 @@ package be.imgn.gaia.processing.source;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static be.imgn.gaia.core.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -103,7 +103,7 @@ public final class Method {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newBuilder(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new Builder(checkName(name)).returns(PrimitiveTypeName.VOID);
     }
 
@@ -143,7 +143,7 @@ public final class Method {
      *     method; or a type in its signature has no name, as {@link TypeName#of(TypeMirror)} names it
      */
     public static Builder overriding(ExecutableElement method) {
-        Objects.requireNonNull(method, "method");
+        requireNonNull(method, "method");
         checkOverridable(method);
         return overriding(method, (ExecutableType) method.asType());
     }
@@ -162,9 +162,9 @@ public final class Method {
      *     {@link TypeName#of(TypeMirror)} names it
      */
     public static Builder overriding(ExecutableElement method, DeclaredType enclosing, Types types) {
-        Objects.requireNonNull(method, "method");
-        Objects.requireNonNull(enclosing, "enclosing");
-        Objects.requireNonNull(types, "types");
+        requireNonNull(method, "method");
+        requireNonNull(enclosing, "enclosing");
+        requireNonNull(types, "types");
         checkOverridable(method);
         return overriding(method, (ExecutableType) types.asMemberOf(enclosing, method));
     }
@@ -389,7 +389,7 @@ public final class Method {
          * @throws IllegalStateException if this is a constructor
          */
         public Builder name(String newName) {
-            Objects.requireNonNull(newName, "newName");
+            requireNonNull(newName, "newName");
             if (isConstructor()) {
                 throw new IllegalStateException("A constructor has no name");
             }
@@ -458,7 +458,7 @@ public final class Method {
          * @return this builder
          */
         public Builder addAnnotation(Annotation annotation) {
-            annotations.add(Objects.requireNonNull(annotation, "annotation"));
+            annotations.add(requireNonNull(annotation, "annotation"));
             return this;
         }
 
@@ -470,7 +470,7 @@ public final class Method {
          * @throws IllegalArgumentException if the class is not an annotation type
          */
         public Builder addAnnotation(Class<? extends java.lang.annotation.Annotation> annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -481,7 +481,7 @@ public final class Method {
          * @return this builder
          */
         public Builder addAnnotation(ClassName annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -505,8 +505,8 @@ public final class Method {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addJavadoc(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             javadoc.add(format, args);
             return this;
         }
@@ -519,7 +519,7 @@ public final class Method {
          * @throws IllegalStateException if this is a compact constructor
          */
         public Builder addTypeVariable(TypeVariableName typeVariable) {
-            Objects.requireNonNull(typeVariable, "typeVariable");
+            requireNonNull(typeVariable, "typeVariable");
             return addTypeVariables(List.of(typeVariable));
         }
 
@@ -548,7 +548,7 @@ public final class Method {
          * @throws IllegalStateException if this is a constructor
          */
         public Builder returns(TypeName type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             checkArgument(!(type instanceof WildcardTypeName), "A return type cannot be a wildcard: %s", type);
             if (isConstructor()) {
                 throw new IllegalStateException("A constructor has no return type");
@@ -566,7 +566,7 @@ public final class Method {
          * @throws IllegalStateException if this is a constructor
          */
         public Builder returns(Class<?> type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             return returns(TypeName.of(type));
         }
 
@@ -579,7 +579,7 @@ public final class Method {
          *     is not first or the method is static
          */
         public Builder addParameter(Parameter parameter) {
-            Objects.requireNonNull(parameter, "parameter");
+            requireNonNull(parameter, "parameter");
             return addParameters(List.of(parameter));
         }
 
@@ -596,9 +596,9 @@ public final class Method {
          *     is not first or the method is static
          */
         public Builder addParameter(TypeName type, String name, Modifier... modifiers) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(modifiers, "modifiers");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
+            requireNonNull(modifiers, "modifiers");
             return addParameter(Parameter.of(type, name, modifiers));
         }
 
@@ -615,9 +615,9 @@ public final class Method {
          *     is not first or the method is static
          */
         public Builder addParameter(Class<?> type, String name, Modifier... modifiers) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(modifiers, "modifiers");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
+            requireNonNull(modifiers, "modifiers");
             return addParameter(TypeName.of(type), name, modifiers);
         }
 
@@ -670,7 +670,7 @@ public final class Method {
          * @throws IllegalStateException if this is a compact constructor
          */
         public Builder addException(TypeName exception) {
-            Objects.requireNonNull(exception, "exception");
+            requireNonNull(exception, "exception");
             return addExceptions(List.of(exception));
         }
 
@@ -683,7 +683,7 @@ public final class Method {
          * @throws IllegalStateException if this is a compact constructor
          */
         public Builder addException(Class<? extends Throwable> exception) {
-            Objects.requireNonNull(exception, "exception");
+            requireNonNull(exception, "exception");
             return addException(TypeName.of(exception));
         }
 
@@ -723,8 +723,8 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder addCode(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             code().add(format, args);
             return this;
         }
@@ -737,7 +737,7 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder addCode(CodeBlock block) {
-            Objects.requireNonNull(block, "block");
+            requireNonNull(block, "block");
             code().add(block);
             return this;
         }
@@ -752,8 +752,8 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder addNamedCode(String format, Map<String, ?> arguments) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(arguments, "arguments");
+            requireNonNull(format, "format");
+            requireNonNull(arguments, "arguments");
             code().addNamed(format, arguments);
             return this;
         }
@@ -768,8 +768,8 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder addStatement(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             code().addStatement(format, args);
             return this;
         }
@@ -782,7 +782,7 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder addStatement(CodeBlock statement) {
-            Objects.requireNonNull(statement, "statement");
+            requireNonNull(statement, "statement");
             code().addStatement(statement);
             return this;
         }
@@ -796,7 +796,7 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder addComment(String comment) {
-            Objects.requireNonNull(comment, "comment");
+            requireNonNull(comment, "comment");
             code().addComment(comment);
             return this;
         }
@@ -811,8 +811,8 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder beginControlFlow(String controlFlow, @Nullable Object... args) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(args, "args");
             code().beginControlFlow(controlFlow, args);
             return this;
         }
@@ -825,7 +825,7 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder beginControlFlow(CodeBlock controlFlow) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(controlFlow, "controlFlow");
             code().beginControlFlow(controlFlow);
             return this;
         }
@@ -841,8 +841,8 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder nextControlFlow(String controlFlow, @Nullable Object... args) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(args, "args");
             code().nextControlFlow(controlFlow, args);
             return this;
         }
@@ -855,7 +855,7 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder nextControlFlow(CodeBlock controlFlow) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(controlFlow, "controlFlow");
             code().nextControlFlow(controlFlow);
             return this;
         }
@@ -882,8 +882,8 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder endControlFlow(String controlFlow, @Nullable Object... args) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(args, "args");
             code().endControlFlow(controlFlow, args);
             return this;
         }
@@ -897,7 +897,7 @@ public final class Method {
          * @throws IllegalStateException if the method is abstract or native
          */
         public Builder endControlFlow(CodeBlock controlFlow) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(controlFlow, "controlFlow");
             code().endControlFlow(controlFlow);
             return this;
         }
@@ -921,8 +921,8 @@ public final class Method {
          * @throws IllegalStateException if this is a constructor
          */
         public Builder defaultValue(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             CodeBlock value = CodeBlock.requireBalanced(CodeBlock.of(format, args), "The default value of " + name);
             checkState(!isConstructor(), "A constructor has no default value");
             defaultValue = value;

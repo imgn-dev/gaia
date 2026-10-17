@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +11,6 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.OptionalLong;
 
 /** A source that reads a file. */
@@ -26,7 +27,7 @@ public final class PathSource implements ByteSource {
      * @param options how to open the file
      */
     public PathSource(Path file, OpenOption... options) {
-        this.file = Objects.requireNonNull(file, "file");
+        this.file = requireNonNull(file, "file");
         this.options = OpenOptions.copyOf(options);
         this.linkOptions = Arrays.asList(this.options).contains(LinkOption.NOFOLLOW_LINKS)
                 ? new LinkOption[] {LinkOption.NOFOLLOW_LINKS}

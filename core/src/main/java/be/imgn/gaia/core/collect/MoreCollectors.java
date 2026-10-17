@@ -1,7 +1,8 @@
 package be.imgn.gaia.core.collect;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public final class MoreCollectors {
         private @Nullable T element;
 
         void add(T newElement) {
-            Objects.requireNonNull(newElement, "element");
+            requireNonNull(newElement, "element");
             if (element != null) {
                 throw tooMany(element, newElement);
             }

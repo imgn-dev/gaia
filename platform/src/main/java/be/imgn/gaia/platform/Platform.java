@@ -1,11 +1,12 @@
 package be.imgn.gaia.platform;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.system.Environment;
 import be.imgn.gaia.core.system.SystemProperties;
 import be.imgn.gaia.platform.internal.Platforms;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.util.Objects;
 
 /**
  * The platform the JVM runs on: its operating system and the directories applications use on it.
@@ -117,7 +118,7 @@ public interface Platform {
      * @since 0.1.1
      */
     default ApplicationDirectories applicationDirectories(String vendor, String application) {
-        Objects.requireNonNull(vendor, "vendor");
+        requireNonNull(vendor, "vendor");
         return ApplicationDirectories.of(this, null, vendor, application);
     }
 
@@ -136,8 +137,8 @@ public interface Platform {
      * @since 0.1.1
      */
     default ApplicationDirectories applicationDirectories(String qualifier, String vendor, String application) {
-        Objects.requireNonNull(qualifier, "qualifier");
-        Objects.requireNonNull(vendor, "vendor");
+        requireNonNull(qualifier, "qualifier");
+        requireNonNull(vendor, "vendor");
         return ApplicationDirectories.of(this, qualifier, vendor, application);
     }
 
@@ -163,7 +164,7 @@ public interface Platform {
          * @return this builder
          */
         public Builder systemProperties(SystemProperties systemProperties) {
-            this.systemProperties = Objects.requireNonNull(systemProperties, "systemProperties");
+            this.systemProperties = requireNonNull(systemProperties, "systemProperties");
             return this;
         }
 
@@ -174,7 +175,7 @@ public interface Platform {
          * @return this builder
          */
         public Builder environment(Environment environment) {
-            this.environment = Objects.requireNonNull(environment, "environment");
+            this.environment = requireNonNull(environment, "environment");
             return this;
         }
 
@@ -185,7 +186,7 @@ public interface Platform {
          * @return this builder
          */
         public Builder fileSystem(FileSystem fileSystem) {
-            this.fileSystem = Objects.requireNonNull(fileSystem, "fileSystem");
+            this.fileSystem = requireNonNull(fileSystem, "fileSystem");
             return this;
         }
 

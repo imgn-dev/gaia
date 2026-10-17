@@ -1,9 +1,10 @@
 package be.imgn.gaia.core.time;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,7 +35,7 @@ public final class Stopwatch {
     private long startTick;
 
     private Stopwatch(Ticker ticker) {
-        this.ticker = Objects.requireNonNull(ticker, "ticker");
+        this.ticker = requireNonNull(ticker, "ticker");
     }
 
     /**

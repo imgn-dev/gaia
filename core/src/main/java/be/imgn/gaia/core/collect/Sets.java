@@ -1,8 +1,9 @@
 package be.imgn.gaia.core.collect;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -264,7 +265,7 @@ public final class Sets {
     public static <E> Collector<E, ?, Set<E>> toSet() {
         return Collector.<E, LinkedHashSet<E>, Set<E>>of(
                 LinkedHashSet::new,
-                (set, element) -> set.add(Objects.requireNonNull(element, "element")),
+                (set, element) -> set.add(requireNonNull(element, "element")),
                 (left, right) -> {
                     left.addAll(right);
                     return left;

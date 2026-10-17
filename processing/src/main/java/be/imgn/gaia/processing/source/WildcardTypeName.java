@@ -1,7 +1,8 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 
@@ -58,7 +59,7 @@ public record WildcardTypeName(
      * @throws IllegalArgumentException if the bound is primitive or a wildcard
      */
     public static WildcardTypeName subtypeOf(TypeName bound) {
-        return new WildcardTypeName(Objects.requireNonNull(bound, "bound"), null, List.of());
+        return new WildcardTypeName(requireNonNull(bound, "bound"), null, List.of());
     }
 
     /**
@@ -69,7 +70,7 @@ public record WildcardTypeName(
      * @throws IllegalArgumentException if the bound is primitive or a wildcard
      */
     public static WildcardTypeName supertypeOf(TypeName bound) {
-        return new WildcardTypeName(null, Objects.requireNonNull(bound, "bound"), List.of());
+        return new WildcardTypeName(null, requireNonNull(bound, "bound"), List.of());
     }
 
     @Override

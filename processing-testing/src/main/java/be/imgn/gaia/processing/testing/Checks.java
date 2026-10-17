@@ -1,7 +1,8 @@
 package be.imgn.gaia.processing.testing;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import java.util.Objects;
 import javax.lang.model.SourceVersion;
 
 /** Argument checks shared by the public types of this package. */
@@ -21,7 +22,7 @@ final class Checks {
      * @return an unmodifiable copy of {@code elements}
      */
     static <T> List<T> copyOfNonNull(List<? extends T> elements, String name) {
-        Objects.requireNonNull(elements, name);
+        requireNonNull(elements, name);
         for (int i = 0; i < elements.size(); i++) {
             if (elements.get(i) == null) {
                 throw new NullPointerException(name + "[" + i + "]");

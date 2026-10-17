@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing.testing;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.processing.testing.internal.GeneratedFile;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -12,7 +14,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.DiagnosticCollector;
@@ -75,8 +76,8 @@ public final class TestCompiler {
      *     {@code package-info}
      */
     public static JavaFileObject source(String qualifiedName, String text) {
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
-        Objects.requireNonNull(text, "text");
+        requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(text, "text");
         Checks.checkSourceName(qualifiedName);
         URI uri = URI.create("mem:///" + qualifiedName.replace('.', '/') + JavaFileObject.Kind.SOURCE.extension);
         return new SimpleJavaFileObject(uri, JavaFileObject.Kind.SOURCE) {
@@ -95,7 +96,7 @@ public final class TestCompiler {
      * @return a compiler running {@code processors}
      */
     public TestCompiler withProcessors(Processor... processors) {
-        Objects.requireNonNull(processors, "processors");
+        requireNonNull(processors, "processors");
         return new TestCompiler(Checks.copyOfNonNull(Arrays.asList(processors), "processors"), options);
     }
 
@@ -114,7 +115,7 @@ public final class TestCompiler {
      * @return a compiler passing {@code options}
      */
     public TestCompiler withOptions(String... options) {
-        Objects.requireNonNull(options, "options");
+        requireNonNull(options, "options");
         return new TestCompiler(processors, Checks.copyOfNonNull(Arrays.asList(options), "options"));
     }
 
@@ -132,7 +133,7 @@ public final class TestCompiler {
      * @throws UncheckedIOException if the temporary output directories cannot be written, read or deleted
      */
     public Compilation compile(JavaFileObject... sources) {
-        Objects.requireNonNull(sources, "sources");
+        requireNonNull(sources, "sources");
         return compile(Arrays.asList(sources));
     }
 

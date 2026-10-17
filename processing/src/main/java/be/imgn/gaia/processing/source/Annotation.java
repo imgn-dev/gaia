@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.source;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +43,7 @@ public final class Annotation {
      * @return the annotation
      */
     public static Annotation of(ClassName type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return newBuilder(type).build();
     }
 
@@ -54,7 +55,7 @@ public final class Annotation {
      * @throws IllegalArgumentException if the class is not an annotation type
      */
     public static Annotation of(Class<? extends java.lang.annotation.Annotation> type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return newBuilder(type).build();
     }
 
@@ -66,7 +67,7 @@ public final class Annotation {
      * @return the copy
      */
     public static Annotation of(AnnotationMirror annotation) {
-        Objects.requireNonNull(annotation, "annotation");
+        requireNonNull(annotation, "annotation");
         Builder builder = newBuilder(
                 ClassName.of((TypeElement) annotation.getAnnotationType().asElement()));
         annotation
@@ -84,7 +85,7 @@ public final class Annotation {
      * @return the copy
      */
     public static Annotation ofWithDefaults(AnnotationMirror annotation) {
-        Objects.requireNonNull(annotation, "annotation");
+        requireNonNull(annotation, "annotation");
         TypeElement type = (TypeElement) annotation.getAnnotationType().asElement();
         Builder builder = newBuilder(ClassName.of(type));
         Map<? extends ExecutableElement, ? extends AnnotationValue> written = annotation.getElementValues();
@@ -104,7 +105,7 @@ public final class Annotation {
      * @return a new builder
      */
     public static Builder newBuilder(ClassName type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return new Builder(type.withoutAnnotations());
     }
 
@@ -116,7 +117,7 @@ public final class Annotation {
      * @throws IllegalArgumentException if the class is not an annotation type
      */
     public static Builder newBuilder(Class<? extends java.lang.annotation.Annotation> type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         checkArgument(type.isAnnotation(), "Not an annotation type: %s", type);
         return newBuilder(ClassName.of(type));
     }
@@ -215,9 +216,9 @@ public final class Annotation {
          *     match, or the value is not {@linkplain CodeBlock balanced}
          */
         public Builder addMember(String name, String format, @Nullable Object... args) {
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(name, "name");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             return addMember(name, CodeBlock.of(format, args));
         }
 
@@ -231,8 +232,8 @@ public final class Annotation {
          *     {@linkplain CodeBlock balanced}
          */
         public Builder addMember(String name, CodeBlock value) {
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(value, "value");
+            requireNonNull(name, "name");
+            requireNonNull(value, "value");
             CodeBlock.requireBalanced(value, "The value of " + name);
             member(name).add(value);
             return this;

@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.io;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.internal.DecodingOutputStream;
 import be.imgn.gaia.core.io.internal.Streams;
 import java.io.BufferedWriter;
@@ -9,7 +11,6 @@ import java.nio.charset.Charset;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -72,7 +73,7 @@ public interface CharSink {
      * @throws IOException if this sink cannot be written
      */
     default void write(CharSequence chars) throws IOException {
-        Objects.requireNonNull(chars, "chars");
+        requireNonNull(chars, "chars");
         try (var out = openStream()) {
             out.append(chars);
         }
@@ -86,7 +87,7 @@ public interface CharSink {
      * @see System#lineSeparator()
      */
     default void writeLines(Iterable<? extends CharSequence> lines) throws IOException {
-        Objects.requireNonNull(lines, "lines");
+        requireNonNull(lines, "lines");
         writeLines(lines, System.lineSeparator());
     }
 
@@ -98,11 +99,11 @@ public interface CharSink {
      * @throws IOException if this sink cannot be written
      */
     default void writeLines(Iterable<? extends CharSequence> lines, String separator) throws IOException {
-        Objects.requireNonNull(lines, "lines");
-        Objects.requireNonNull(separator, "separator");
+        requireNonNull(lines, "lines");
+        requireNonNull(separator, "separator");
         // Checked before the sink is opened, which would already replace the content of a file.
         for (CharSequence line : lines) {
-            Objects.requireNonNull(line, "lines contains null");
+            requireNonNull(line, "lines contains null");
         }
         writeLines(lines.iterator(), separator);
     }
@@ -117,7 +118,7 @@ public interface CharSink {
      * @see System#lineSeparator()
      */
     default void writeLines(Stream<? extends CharSequence> lines) throws IOException {
-        Objects.requireNonNull(lines, "lines");
+        requireNonNull(lines, "lines");
         writeLines(lines, System.lineSeparator());
     }
 
@@ -130,8 +131,8 @@ public interface CharSink {
      * @throws IOException if this sink cannot be written
      */
     default void writeLines(Stream<? extends CharSequence> lines, String separator) throws IOException {
-        Objects.requireNonNull(lines, "lines");
-        Objects.requireNonNull(separator, "separator");
+        requireNonNull(lines, "lines");
+        requireNonNull(separator, "separator");
         writeLines(lines.iterator(), separator);
     }
 
@@ -139,8 +140,7 @@ public interface CharSink {
     private void writeLines(Iterator<? extends CharSequence> lines, String separator) throws IOException {
         try (var out = openBufferedStream()) {
             while (lines.hasNext()) {
-                out.append(Objects.requireNonNull(lines.next(), "lines contains null"))
-                        .append(separator);
+                out.append(requireNonNull(lines.next(), "lines contains null")).append(separator);
             }
         }
     }
@@ -153,7 +153,7 @@ public interface CharSink {
      * @throws IOException if {@code readable} cannot be read or this sink cannot be written
      */
     default long writeFrom(Readable readable) throws IOException {
-        Objects.requireNonNull(readable, "readable");
+        requireNonNull(readable, "readable");
         try (var out = openStream()) {
             return Streams.copy(readable, out);
         }
@@ -168,7 +168,7 @@ public interface CharSink {
      * @return a sink of bytes
      */
     default ByteSink asByteSink(Charset charset) {
-        Objects.requireNonNull(charset, "charset");
+        requireNonNull(charset, "charset");
         return () -> new DecodingOutputStream(openStream(), charset.newDecoder());
     }
 }

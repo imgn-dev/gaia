@@ -1,5 +1,8 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.checkFromIndexSize;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -7,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
-import java.util.Objects;
 
 /**
  * A stream of the bytes that encode the characters of a reader: the reverse of an {@link java.io.InputStreamReader}.
@@ -31,8 +33,8 @@ public final class EncodingInputStream extends InputStream {
      * @param encoder the encoder to use, new or reset
      */
     public EncodingInputStream(Reader reader, CharsetEncoder encoder) {
-        this.reader = Objects.requireNonNull(reader, "reader");
-        this.encoder = Objects.requireNonNull(encoder, "encoder");
+        this.reader = requireNonNull(reader, "reader");
+        this.encoder = requireNonNull(encoder, "encoder");
     }
 
     @Override
@@ -42,7 +44,7 @@ public final class EncodingInputStream extends InputStream {
 
     @Override
     public int read(byte[] buffer, int offset, int length) throws IOException {
-        Objects.checkFromIndexSize(offset, length, buffer.length);
+        checkFromIndexSize(offset, length, buffer.length);
         if (length == 0) {
             return 0;
         }

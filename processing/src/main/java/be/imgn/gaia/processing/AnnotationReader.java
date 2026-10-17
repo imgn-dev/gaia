@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.processing.source.Annotation;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,7 +80,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute
      */
     public boolean isExplicit(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         raw(name);
         return mirror.getElementValues().keySet().stream()
                 .map(ExecutableElement::getSimpleName)
@@ -93,7 +95,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or no value for it
      */
     public AnnotationValue raw(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         AnnotationValue value = values.get(name);
         if (value == null) {
             throw new IllegalArgumentException("@" + qualifiedName() + " has no value for " + name);
@@ -111,8 +113,8 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or its value is not a {@code type}
      */
     public <T> T value(String name, Class<T> type) {
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(type, "type");
+        requireNonNull(name, "name");
+        requireNonNull(type, "type");
         return as(name, raw(name).getValue(), type);
     }
 
@@ -124,7 +126,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not a {@code String}
      */
     public String string(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return value(name, String.class);
     }
 
@@ -136,7 +138,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not a {@code Class}
      */
     public TypeMirror type(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return value(name, TypeMirror.class);
     }
 
@@ -149,7 +151,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not an enum
      */
     public String enumConstant(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return value(name, VariableElement.class).getSimpleName().toString();
     }
 
@@ -164,8 +166,8 @@ public final class AnnotationReader {
      *     no constant of that name
      */
     public <E extends Enum<E>> E enumValue(String name, Class<E> type) {
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(type, "type");
+        requireNonNull(name, "name");
+        requireNonNull(type, "type");
         return Enum.valueOf(type, enumConstant(name));
     }
 
@@ -177,7 +179,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not an annotation
      */
     public AnnotationReader annotation(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new AnnotationReader(value(name, AnnotationMirror.class), elements);
     }
 
@@ -191,8 +193,8 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not an array of {@code type}
      */
     public <T> List<T> values(String name, Class<T> type) {
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(type, "type");
+        requireNonNull(name, "name");
+        requireNonNull(type, "type");
         return list(name).stream()
                 .map(value -> as(name, value.getValue(), type))
                 .toList();
@@ -206,7 +208,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not a {@code String[]}
      */
     public List<String> strings(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return values(name, String.class);
     }
 
@@ -218,7 +220,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not a {@code Class[]}
      */
     public List<TypeMirror> types(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return values(name, TypeMirror.class);
     }
 
@@ -230,7 +232,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not an enum array
      */
     public List<String> enumConstants(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return values(name, VariableElement.class).stream()
                 .map(constant -> constant.getSimpleName().toString())
                 .toList();
@@ -244,7 +246,7 @@ public final class AnnotationReader {
      * @throws IllegalArgumentException if the annotation has no such attribute, or it is not an annotation array
      */
     public List<AnnotationReader> annotations(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return values(name, AnnotationMirror.class).stream()
                 .map(nested -> new AnnotationReader(nested, elements))
                 .toList();

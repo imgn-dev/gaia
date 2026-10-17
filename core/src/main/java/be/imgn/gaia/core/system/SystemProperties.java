@@ -1,6 +1,7 @@
 package be.imgn.gaia.core.system;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.text.Splitter;
 import java.net.URI;
@@ -9,7 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -467,7 +467,7 @@ public interface SystemProperties {
     }
 
     private static String checkName(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         checkArgument(!name.isEmpty(), "The name of a system property must not be empty");
         return name;
     }

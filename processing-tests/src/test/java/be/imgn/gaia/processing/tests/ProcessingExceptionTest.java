@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -23,7 +24,6 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -354,7 +354,7 @@ class ProcessingExceptionTest {
     @Test
     void reportsFromAnyProcessor() {
         Compilation compilation = javac().withProcessors(new PlainProcessor(context -> {
-                    TypeElement mark = Objects.requireNonNull(context.elements().getTypeElement(MARK));
+                    TypeElement mark = requireNonNull(context.elements().getTypeElement(MARK));
                     return element -> {
                         try {
                             throw new ProcessingException("caught", element, MARK, "level");

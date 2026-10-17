@@ -1,5 +1,7 @@
 package be.imgn.gaia.core.io;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.internal.ByteArraySource;
 import be.imgn.gaia.core.io.internal.ConcatenatedByteSource;
 import be.imgn.gaia.core.io.internal.PathSource;
@@ -17,7 +19,6 @@ import java.nio.charset.Charset;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.OptionalLong;
 
 /**
@@ -80,7 +81,7 @@ public interface ByteSource {
      * @return a source of the content at {@code url}
      */
     static ByteSource of(URL url) {
-        Objects.requireNonNull(url, "url");
+        requireNonNull(url, "url");
         return url::openStream;
     }
 
@@ -92,7 +93,7 @@ public interface ByteSource {
      * @throws IllegalArgumentException if {@code uri} is not absolute, or has a scheme no URL protocol handler supports
      */
     static ByteSource of(URI uri) {
-        Objects.requireNonNull(uri, "uri");
+        requireNonNull(uri, "uri");
         try {
             return of(uri.toURL());
         } catch (MalformedURLException e) {
@@ -108,7 +109,7 @@ public interface ByteSource {
      * @return a source of the content of {@code sources}, in order
      */
     static ByteSource concat(ByteSource... sources) {
-        return new ConcatenatedByteSource(Arrays.asList(Objects.requireNonNull(sources, "sources")));
+        return new ConcatenatedByteSource(Arrays.asList(requireNonNull(sources, "sources")));
     }
 
     /**
@@ -203,7 +204,7 @@ public interface ByteSource {
      * @throws IOException if this source cannot be read or {@code out} cannot be written
      */
     default long copyTo(OutputStream out) throws IOException {
-        Objects.requireNonNull(out, "out");
+        requireNonNull(out, "out");
         try (var in = openStream()) {
             return in.transferTo(out);
         }
@@ -217,7 +218,7 @@ public interface ByteSource {
      * @throws IOException if this source cannot be read or {@code sink} cannot be written
      */
     default long copyTo(ByteSink sink) throws IOException {
-        Objects.requireNonNull(sink, "sink");
+        requireNonNull(sink, "sink");
         try (var in = openStream();
                 var out = sink.openStream()) {
             return in.transferTo(out);
@@ -232,7 +233,7 @@ public interface ByteSource {
      * @throws IOException if either source cannot be read
      */
     default boolean contentEquals(ByteSource other) throws IOException {
-        Objects.requireNonNull(other, "other");
+        requireNonNull(other, "other");
         var size = sizeIfKnown();
         var otherSize = other.sizeIfKnown();
         if (size.isPresent() && otherSize.isPresent() && size.getAsLong() != otherSize.getAsLong()) {
@@ -270,7 +271,7 @@ public interface ByteSource {
      * @return a source of the decoded characters
      */
     default CharSource asCharSource(Charset charset) {
-        Objects.requireNonNull(charset, "charset");
+        requireNonNull(charset, "charset");
         return () -> new InputStreamReader(openStream(), charset.newDecoder());
     }
 }

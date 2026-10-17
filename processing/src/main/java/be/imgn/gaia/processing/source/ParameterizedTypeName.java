@@ -1,7 +1,8 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public record ParameterizedTypeName(
      *     type argument and no owner type, or a type argument is primitive
      */
     public ParameterizedTypeName {
-        Objects.requireNonNull(rawType, "rawType");
+        requireNonNull(rawType, "rawType");
         typeArguments = Checks.elements(typeArguments, "typeArguments");
         annotations = Checks.elements(annotations, "annotations");
         if (!rawType.annotations().isEmpty()) {
@@ -58,7 +59,7 @@ public record ParameterizedTypeName(
      * @throws IllegalArgumentException if there is no type argument, or one is primitive
      */
     public static ParameterizedTypeName of(ClassName rawType, TypeName... typeArguments) {
-        Objects.requireNonNull(rawType, "rawType");
+        requireNonNull(rawType, "rawType");
         return of(rawType, Checks.elements(typeArguments, "typeArguments"));
     }
 
@@ -72,7 +73,7 @@ public record ParameterizedTypeName(
      * @throws IllegalArgumentException if there is no type argument, or one is primitive
      */
     public static ParameterizedTypeName of(ClassName rawType, List<? extends TypeName> typeArguments) {
-        Objects.requireNonNull(rawType, "rawType");
+        requireNonNull(rawType, "rawType");
         return new ParameterizedTypeName(
                 null,
                 rawType.withoutAnnotations(),
@@ -102,7 +103,7 @@ public record ParameterizedTypeName(
      * @throws IllegalArgumentException if the simple name is not valid, or a type argument is primitive
      */
     public ParameterizedTypeName nested(String simpleName, TypeName... typeArguments) {
-        Objects.requireNonNull(simpleName, "simpleName");
+        requireNonNull(simpleName, "simpleName");
         List<TypeName> arguments = Checks.elements(typeArguments, "typeArguments");
         return new ParameterizedTypeName(this, rawType.nested(simpleName), arguments, List.of());
     }

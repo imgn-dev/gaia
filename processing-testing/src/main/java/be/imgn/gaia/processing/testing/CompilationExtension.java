@@ -1,7 +1,8 @@
 package be.imgn.gaia.processing.testing;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.processing.testing.internal.RunningCompilation;
-import java.util.Objects;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -51,7 +52,7 @@ public final class CompilationExtension implements BeforeAllCallback, ParameterR
      */
     @Override
     public void beforeAll(ExtensionContext context) {
-        Objects.requireNonNull(context, "context");
+        requireNonNull(context, "context");
         if (context.getRequiredTestClass().isAnnotationPresent(SharedCompilation.class)) {
             compilation(context);
         }
@@ -66,8 +67,8 @@ public final class CompilationExtension implements BeforeAllCallback, ParameterR
      */
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-        Objects.requireNonNull(parameterContext, "parameterContext");
-        Objects.requireNonNull(extensionContext, "extensionContext");
+        requireNonNull(parameterContext, "parameterContext");
+        requireNonNull(extensionContext, "extensionContext");
         Class<?> type = parameterContext.getParameter().getType();
         return type == Elements.class || type == Types.class;
     }
@@ -84,8 +85,8 @@ public final class CompilationExtension implements BeforeAllCallback, ParameterR
      */
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-        Objects.requireNonNull(parameterContext, "parameterContext");
-        Objects.requireNonNull(extensionContext, "extensionContext");
+        requireNonNull(parameterContext, "parameterContext");
+        requireNonNull(extensionContext, "extensionContext");
         RunningCompilation compilation = compilation(extensionContext);
         Class<?> type = parameterContext.getParameter().getType();
         return type == Elements.class ? compilation.elements() : compilation.types();

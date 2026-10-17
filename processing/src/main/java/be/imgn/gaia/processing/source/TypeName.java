@@ -1,8 +1,9 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -28,7 +29,7 @@ public sealed interface TypeName
      * @throws IllegalArgumentException if the class is local or anonymous, and has no canonical name
      */
     static TypeName of(Class<?> type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         if (type.isArray()) {
             return ArrayTypeName.of(of(type.getComponentType()));
         }
@@ -49,7 +50,7 @@ public sealed interface TypeName
      *     kinds of {@link java.lang.reflect.Type} above
      */
     static TypeName of(java.lang.reflect.Type type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return ReflectiveTypes.name(type);
     }
 
@@ -66,7 +67,7 @@ public sealed interface TypeName
      *     guesses it
      */
     static TypeName of(TypeMirror type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         TypeName name = switch (type.getKind()) {
             case BOOLEAN, BYTE, SHORT, INT, LONG, CHAR, FLOAT, DOUBLE, VOID ->
                 PrimitiveTypeName.of(type.getKind().name().toLowerCase(Locale.ROOT));

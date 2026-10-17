@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -45,8 +47,8 @@ public final class Parameter {
      *     or a modifier is not {@code final}, is repeated, or is given to a receiver parameter
      */
     public static Parameter of(TypeName type, String name, Modifier... modifiers) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(name, "name");
+        requireNonNull(type, "type");
+        requireNonNull(name, "name");
         Checks.elements(modifiers, "modifiers");
         return newBuilder(type, name).addModifiers(modifiers).build();
     }
@@ -62,9 +64,9 @@ public final class Parameter {
      *     identifier; or a modifier is not {@code final}, is repeated, or is given to a receiver parameter
      */
     public static Parameter of(Class<?> type, String name, Modifier... modifiers) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(modifiers, "modifiers");
+        requireNonNull(type, "type");
+        requireNonNull(name, "name");
+        requireNonNull(modifiers, "modifiers");
         return of(TypeName.of(type), name, modifiers);
     }
 
@@ -78,7 +80,7 @@ public final class Parameter {
      *     type has no name, as {@link TypeName#of(javax.lang.model.type.TypeMirror)} names it
      */
     public static Parameter of(VariableElement parameter) {
-        Objects.requireNonNull(parameter, "parameter");
+        requireNonNull(parameter, "parameter");
         if (parameter.getKind() != ElementKind.PARAMETER) {
             throw new IllegalArgumentException("Not a parameter but a " + parameter.getKind() + ": " + parameter);
         }
@@ -99,8 +101,8 @@ public final class Parameter {
      * @throws IllegalArgumentException if the name is not a valid identifier, or the type is {@code void} or a wildcard
      */
     public static Builder newBuilder(TypeName type, String name) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(name, "name");
+        requireNonNull(type, "type");
+        requireNonNull(name, "name");
         return new Builder(type, name);
     }
 
@@ -114,8 +116,8 @@ public final class Parameter {
      *     identifier
      */
     public static Builder newBuilder(Class<?> type, String name) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(name, "name");
+        requireNonNull(type, "type");
+        requireNonNull(name, "name");
         return newBuilder(TypeName.of(type), name);
     }
 
@@ -224,8 +226,8 @@ public final class Parameter {
         private final CodeBlock.Builder javadoc = CodeBlock.newBuilder();
 
         private Builder(TypeName type, String name) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
             if ((!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) && !isReceiver(name)) {
                 throw new IllegalArgumentException("Not a parameter name: " + name);
             }
@@ -261,7 +263,7 @@ public final class Parameter {
          * @return this builder
          */
         public Builder addAnnotation(Annotation annotation) {
-            annotations.add(Objects.requireNonNull(annotation, "annotation"));
+            annotations.add(requireNonNull(annotation, "annotation"));
             return this;
         }
 
@@ -273,7 +275,7 @@ public final class Parameter {
          * @throws IllegalArgumentException if the class is not an annotation type
          */
         public Builder addAnnotation(Class<? extends java.lang.annotation.Annotation> annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -284,7 +286,7 @@ public final class Parameter {
          * @return this builder
          */
         public Builder addAnnotation(ClassName annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -309,8 +311,8 @@ public final class Parameter {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addJavadoc(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             javadoc.add(format, args);
             return this;
         }

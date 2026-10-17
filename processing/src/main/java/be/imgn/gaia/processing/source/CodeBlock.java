@@ -2,13 +2,13 @@ package be.imgn.gaia.processing.source;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static be.imgn.gaia.core.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collector;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -66,8 +66,8 @@ public final class CodeBlock {
      * @throws IllegalArgumentException if the format and the arguments do not match
      */
     public static CodeBlock of(String format, @Nullable Object... args) {
-        Objects.requireNonNull(format, "format");
-        Objects.requireNonNull(args, "args");
+        requireNonNull(format, "format");
+        requireNonNull(args, "args");
         return newBuilder().add(format, args).build();
     }
 
@@ -89,7 +89,7 @@ public final class CodeBlock {
      */
     public static CodeBlock join(Iterable<CodeBlock> blocks, String separator) {
         List<CodeBlock> checked = Checks.elements(blocks, "blocks");
-        return join(checked, Objects.requireNonNull(separator, "separator"), "", "");
+        return join(checked, requireNonNull(separator, "separator"), "", "");
     }
 
     private static CodeBlock join(Iterable<CodeBlock> blocks, String separator, String prefix, String suffix) {
@@ -112,7 +112,7 @@ public final class CodeBlock {
      * @return the collector
      */
     public static Collector<CodeBlock, ?, CodeBlock> joining(String separator) {
-        return joining(Objects.requireNonNull(separator, "separator"), "", "");
+        return joining(requireNonNull(separator, "separator"), "", "");
     }
 
     /**
@@ -125,12 +125,12 @@ public final class CodeBlock {
      * @return the collector
      */
     public static Collector<CodeBlock, ?, CodeBlock> joining(String separator, String prefix, String suffix) {
-        Objects.requireNonNull(separator, "separator");
-        Objects.requireNonNull(prefix, "prefix");
-        Objects.requireNonNull(suffix, "suffix");
+        requireNonNull(separator, "separator");
+        requireNonNull(prefix, "prefix");
+        requireNonNull(suffix, "suffix");
         return Collector.<CodeBlock, List<CodeBlock>, CodeBlock>of(
                 ArrayList::new,
-                (blocks, block) -> blocks.add(Objects.requireNonNull(block, "element")),
+                (blocks, block) -> blocks.add(requireNonNull(block, "element")),
                 (left, right) -> {
                     left.addAll(right);
                     return left;
@@ -263,7 +263,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder add(CodeBlock block) {
-            Objects.requireNonNull(block, "block");
+            requireNonNull(block, "block");
             parts.addAll(block.parts);
             return this;
         }
@@ -285,10 +285,10 @@ public final class CodeBlock {
          *     placeholder without a name
          */
         public Builder addNamed(String format, Map<String, ?> arguments) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(arguments, "arguments");
+            requireNonNull(format, "format");
+            requireNonNull(arguments, "arguments");
             for (String name : arguments.keySet()) {
-                Objects.requireNonNull(name, "arguments key");
+                requireNonNull(name, "arguments key");
                 if (!isArgumentName(name)) {
                     throw new IllegalArgumentException(
                             "An argument name starts with a lower-case letter, followed by letters, digits and"
@@ -323,7 +323,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder addStatement(CodeBlock statement) {
-            Objects.requireNonNull(statement, "statement");
+            requireNonNull(statement, "statement");
             parts.add(new Statement(true));
             add(statement);
             parts.add(new Text(";\n"));
@@ -339,7 +339,7 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the comment has a line break
          */
         public Builder addComment(String comment) {
-            Objects.requireNonNull(comment, "comment");
+            requireNonNull(comment, "comment");
             checkArgument(
                     comment.indexOf('\n') < 0 && comment.indexOf('\r') < 0,
                     "A line comment cannot have a line break: %s",
@@ -357,8 +357,8 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder beginControlFlow(String controlFlow, @Nullable Object... args) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(args, "args");
             return beginControlFlow(CodeBlock.of(controlFlow, args));
         }
 
@@ -369,7 +369,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder beginControlFlow(CodeBlock controlFlow) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(controlFlow, "controlFlow");
             add(controlFlow);
             parts.add(new Text(" {\n"));
             return indent();
@@ -384,8 +384,8 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder nextControlFlow(String controlFlow, @Nullable Object... args) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(args, "args");
             return nextControlFlow(CodeBlock.of(controlFlow, args));
         }
 
@@ -396,7 +396,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder nextControlFlow(CodeBlock controlFlow) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(controlFlow, "controlFlow");
             unindent();
             parts.add(new Text("} "));
             add(controlFlow);
@@ -424,8 +424,8 @@ public final class CodeBlock {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder endControlFlow(String controlFlow, @Nullable Object... args) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(args, "args");
             return endControlFlow(CodeBlock.of(controlFlow, args));
         }
 
@@ -436,7 +436,7 @@ public final class CodeBlock {
          * @return this builder
          */
         public Builder endControlFlow(CodeBlock controlFlow) {
-            Objects.requireNonNull(controlFlow, "controlFlow");
+            requireNonNull(controlFlow, "controlFlow");
             unindent();
             parts.add(new Text("} "));
             add(controlFlow);
@@ -493,8 +493,8 @@ public final class CodeBlock {
         }
 
         private static List<Part> parse(String format, @Nullable Object[] args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             return new Parser(format, args.clone(), null).parse();
         }
 

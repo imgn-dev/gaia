@@ -1,7 +1,8 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeParameterElement;
@@ -30,7 +31,7 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      *     wildcard; or a type variable is a bound with other bounds
      */
     public TypeVariableName {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         bounds = Checks.elements(bounds, "bounds");
         annotations = Checks.elements(annotations, "annotations");
         if (!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) {
@@ -58,7 +59,7 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      *     wildcard; or a type variable is a bound with other bounds
      */
     public static TypeVariableName of(String name, TypeName... bounds) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new TypeVariableName(name, Checks.elements(bounds, "bounds"), List.of());
     }
 
@@ -70,7 +71,7 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      * @throws IllegalArgumentException if a bound has no name, as {@link TypeName#of(TypeMirror)} names it
      */
     public static TypeVariableName of(TypeParameterElement parameter) {
-        Objects.requireNonNull(parameter, "parameter");
+        requireNonNull(parameter, "parameter");
         List<TypeName> bounds = parameter.getBounds().stream()
                 .filter(bound -> bound.getKind() != TypeKind.DECLARED
                         || !TypeName.of(bound).equals(ClassName.OBJECT))
@@ -89,7 +90,7 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
      *     be the bound of a declared type variable, such as the array bound of a captured wildcard
      */
     public static TypeVariableName of(TypeVariable variable) {
-        Objects.requireNonNull(variable, "variable");
+        requireNonNull(variable, "variable");
         TypeMirror upperBound = variable.getUpperBound();
         List<TypeName> bounds = upperBound.getKind() == TypeKind.INTERSECTION
                 ? ((IntersectionType) upperBound)

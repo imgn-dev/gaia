@@ -1,6 +1,8 @@
 package be.imgn.gaia.platform.testing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 import be.imgn.gaia.core.system.Environment;
 import be.imgn.gaia.core.system.SystemProperties;
@@ -8,7 +10,6 @@ import be.imgn.gaia.platform.Platform;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
@@ -124,7 +125,7 @@ public final class PlatformPreset {
         private boolean xdgVariables;
 
         private Builder(OperatingSystem operatingSystem) {
-            this.operatingSystem = Objects.requireNonNull(operatingSystem, "operatingSystem");
+            this.operatingSystem = requireNonNull(operatingSystem, "operatingSystem");
         }
 
         /**
@@ -182,8 +183,8 @@ public final class PlatformPreset {
          * @throws IllegalArgumentException if {@code name} is empty, which no JVM accepts as a property name
          */
         public Builder systemProperty(String name, String value) {
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(value, "value");
+            requireNonNull(name, "name");
+            requireNonNull(value, "value");
             checkArgument(!name.isEmpty(), "The name of a system property must not be empty");
             systemProperties.put(name, value);
             return this;
@@ -197,7 +198,7 @@ public final class PlatformPreset {
          * @return this builder
          */
         public Builder environmentVariable(String name, String value) {
-            environmentVariables.put(Objects.requireNonNull(name, "name"), Objects.requireNonNull(value, "value"));
+            environmentVariables.put(requireNonNull(name, "name"), requireNonNull(value, "value"));
             removedEnvironmentVariables.remove(name);
             return this;
         }
@@ -210,7 +211,7 @@ public final class PlatformPreset {
          * @return this builder
          */
         public Builder removeEnvironmentVariable(String name) {
-            environmentVariables.remove(Objects.requireNonNull(name, "name"));
+            environmentVariables.remove(requireNonNull(name, "name"));
             removedEnvironmentVariables.add(name);
             return this;
         }
@@ -224,7 +225,7 @@ public final class PlatformPreset {
             Map<String, String> properties = new HashMap<>();
             Map<String, String> environment = new HashMap<>();
             Host host = Host.of(operatingSystem);
-            String userHome = Objects.requireNonNullElse(home, host.homeParent() + userName);
+            String userHome = requireNonNullElse(home, host.homeParent() + userName);
             properties.put("os.name", host.osName());
             properties.put("os.version", host.osVersion());
             properties.put("os.arch", host.osArch());
@@ -279,7 +280,7 @@ public final class PlatformPreset {
         }
 
         private static String nonBlank(String value, String name) {
-            Objects.requireNonNull(value, name);
+            requireNonNull(value, name);
             checkArgument(!value.isBlank(), "%s must not be blank", name);
             return value;
         }

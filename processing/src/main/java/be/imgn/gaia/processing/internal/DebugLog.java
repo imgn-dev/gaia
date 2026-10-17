@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing.internal;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.time.Stopwatch;
 import be.imgn.gaia.core.time.Ticker;
 import java.util.ArrayList;
@@ -7,7 +9,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.QualifiedNameable;
@@ -59,9 +60,9 @@ public final class DebugLog {
      * @param ticker the source of time
      */
     public DebugLog(String processor, List<String> steps, Consumer<String> notes, Ticker ticker) {
-        this.processor = Objects.requireNonNull(processor, "processor");
+        this.processor = requireNonNull(processor, "processor");
         this.steps = steps.stream().map(name -> new StepTotals(name, ticker)).toList();
-        this.notes = Objects.requireNonNull(notes, "notes");
+        this.notes = requireNonNull(notes, "notes");
         this.ticker = ticker;
         this.total = Stopwatch.unstarted(ticker);
         this.round = Stopwatch.unstarted(ticker);
@@ -235,7 +236,7 @@ public final class DebugLog {
         private int errors;
 
         StepTotals(String name, Ticker ticker) {
-            this.name = Objects.requireNonNull(name, "name");
+            this.name = requireNonNull(name, "name");
             this.time = Stopwatch.unstarted(ticker);
         }
 

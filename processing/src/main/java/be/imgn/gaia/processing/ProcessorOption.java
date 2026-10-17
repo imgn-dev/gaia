@@ -1,11 +1,11 @@
 package be.imgn.gaia.processing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -62,8 +62,8 @@ public final class ProcessorOption<T> {
      * @throws IllegalArgumentException if {@code name} is not Java identifiers separated by dots
      */
     public static ProcessorOption<String> ofString(String name, String defaultValue) {
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(defaultValue, "defaultValue");
+        requireNonNull(name, "name");
+        requireNonNull(defaultValue, "defaultValue");
         checkName(name);
         return new ProcessorOption<>(name, defaultValue, "a value", Optional::ofNullable);
     }
@@ -77,7 +77,7 @@ public final class ProcessorOption<T> {
      * @throws IllegalArgumentException if {@code name} is not Java identifiers separated by dots
      */
     public static ProcessorOption<Boolean> ofBoolean(String name, boolean defaultValue) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         checkName(name);
         return new ProcessorOption<>(name, defaultValue, "true or false", value -> {
             if (value == null || value.equalsIgnoreCase("true")) {
@@ -96,7 +96,7 @@ public final class ProcessorOption<T> {
      * @throws IllegalArgumentException if {@code name} is not Java identifiers separated by dots
      */
     public static ProcessorOption<Integer> ofInt(String name, int defaultValue) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         checkName(name);
         return new ProcessorOption<>(name, defaultValue, "an integer", value -> {
             if (value == null || !value.strip().matches("[+-]?\\d{1,10}")) {
@@ -119,9 +119,9 @@ public final class ProcessorOption<T> {
      *     not an enum class
      */
     public static <E extends Enum<E>> ProcessorOption<E> ofEnum(String name, Class<E> type, E defaultValue) {
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(defaultValue, "defaultValue");
+        requireNonNull(name, "name");
+        requireNonNull(type, "type");
+        requireNonNull(defaultValue, "defaultValue");
         checkName(name);
         E[] constants = type.getEnumConstants();
         if (constants == null) {

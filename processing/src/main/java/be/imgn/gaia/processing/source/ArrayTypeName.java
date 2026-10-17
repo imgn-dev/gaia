@@ -1,7 +1,8 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -21,7 +22,7 @@ public record ArrayTypeName(TypeName componentType, List<Annotation> annotations
      * @throws IllegalArgumentException if the component type is {@code void} or a wildcard
      */
     public ArrayTypeName {
-        Objects.requireNonNull(componentType, "componentType");
+        requireNonNull(componentType, "componentType");
         annotations = Checks.elements(annotations, "annotations");
         if (componentType.equals(PrimitiveTypeName.VOID)) {
             throw new IllegalArgumentException("An array cannot have void elements");
@@ -39,7 +40,7 @@ public record ArrayTypeName(TypeName componentType, List<Annotation> annotations
      * @throws IllegalArgumentException if the component type is {@code void} or a wildcard
      */
     public static ArrayTypeName of(TypeName componentType) {
-        Objects.requireNonNull(componentType, "componentType");
+        requireNonNull(componentType, "componentType");
         return new ArrayTypeName(componentType, List.of());
     }
 

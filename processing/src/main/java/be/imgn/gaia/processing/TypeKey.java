@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -80,7 +82,7 @@ public final class TypeKey {
      * @return its key
      */
     public static TypeKey of(TypeMirror type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return new TypeKey(type);
     }
 
@@ -216,7 +218,7 @@ public final class TypeKey {
         Object generic = switch (parameter.getEnclosingElement()) {
             case TypeElement type -> declaration(type);
             case ExecutableElement method ->
-                List.of(declaration(Objects.requireNonNull(method.getEnclosingElement())), method.toString());
+                List.of(declaration(requireNonNull(method.getEnclosingElement())), method.toString());
             case null, default -> parameter;
         };
         return List.of(generic, parameter.getSimpleName().toString());

@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import be.imgn.gaia.processing.AnnotatedElements;
@@ -22,7 +23,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import javax.annotation.processing.AbstractProcessor;
@@ -1037,7 +1037,7 @@ class ServiceFilesTest {
         }
 
         ProcessingContext context() {
-            return Objects.requireNonNull(context);
+            return requireNonNull(context);
         }
 
         @Override

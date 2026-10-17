@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
@@ -22,7 +23,6 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -73,7 +73,7 @@ class FromSourceTest {
             """);
 
     private static TypeElement type(ProcessingContext context, String canonicalName) {
-        return Objects.requireNonNull(context.elements().getTypeElement(canonicalName), canonicalName);
+        return requireNonNull(context.elements().getTypeElement(canonicalName), canonicalName);
     }
 
     // Compiles sources into a directory, as an earlier build or a library would have been.
@@ -252,7 +252,7 @@ class FromSourceTest {
                         """));
         String modulePath = library
                 + File.pathSeparator
-                + Objects.requireNonNull(System.getProperty("jdk.module.path"), "tests run on the module path");
+                + requireNonNull(System.getProperty("jdk.module.path"), "tests run on the module path");
         Map<String, Boolean> results = new LinkedHashMap<>();
 
         Compilation compilation = FirstRound.run(

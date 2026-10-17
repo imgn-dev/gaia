@@ -1,5 +1,8 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.checkFromIndexSize;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -7,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
-import java.util.Objects;
 
 /**
  * A stream that decodes the bytes written to it into characters for a writer: the reverse of an
@@ -30,8 +32,8 @@ public final class DecodingOutputStream extends OutputStream {
      * @param decoder the decoder to use, new or reset
      */
     public DecodingOutputStream(Writer writer, CharsetDecoder decoder) {
-        this.writer = Objects.requireNonNull(writer, "writer");
-        this.decoder = Objects.requireNonNull(decoder, "decoder");
+        this.writer = requireNonNull(writer, "writer");
+        this.decoder = requireNonNull(decoder, "decoder");
     }
 
     @Override
@@ -41,7 +43,7 @@ public final class DecodingOutputStream extends OutputStream {
 
     @Override
     public void write(byte[] buffer, int offset, int length) throws IOException {
-        Objects.checkFromIndexSize(offset, length, buffer.length);
+        checkFromIndexSize(offset, length, buffer.length);
         if (closed) {
             throw new IOException("Stream closed");
         }

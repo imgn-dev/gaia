@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -116,7 +116,7 @@ class VisibilityTest {
             case CONSTRUCTOR, METHOD -> {
                 ExecutableElement executable = (ExecutableElement) element;
                 String name = element.getKind() == ElementKind.CONSTRUCTOR
-                        ? label(Objects.requireNonNull(element.getEnclosingElement()))
+                        ? label(requireNonNull(element.getEnclosingElement()))
                         : element.getSimpleName().toString();
                 yield executable.getParameters().stream()
                         .map(parameter -> parameter.asType().toString())

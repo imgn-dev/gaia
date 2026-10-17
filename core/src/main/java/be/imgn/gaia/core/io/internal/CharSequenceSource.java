@@ -1,9 +1,10 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.CharSource;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Objects;
 import java.util.OptionalLong;
 
 /** A source that reads a character sequence, which it does not copy. */
@@ -20,7 +21,7 @@ public final class CharSequenceSource implements CharSource {
      * @param chars the sequence to read
      */
     public CharSequenceSource(CharSequence chars) {
-        this.chars = Objects.requireNonNull(chars, "chars");
+        this.chars = requireNonNull(chars, "chars");
     }
 
     @Override

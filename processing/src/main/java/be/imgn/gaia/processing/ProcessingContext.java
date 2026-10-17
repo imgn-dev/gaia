@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -73,8 +72,8 @@ public final class ProcessingContext {
      * @return the context
      */
     public static ProcessingContext of(ProcessingEnvironment environment, Class<? extends Processor> processor) {
-        Objects.requireNonNull(environment, "environment");
-        Objects.requireNonNull(processor, "processor");
+        requireNonNull(environment, "environment");
+        requireNonNull(processor, "processor");
         return new ProcessingContext(environment, processor);
     }
 
@@ -132,7 +131,7 @@ public final class ProcessingContext {
      * @return its value, or its default value if it is not given or invalid
      */
     public <T> T option(ProcessorOption<T> option) {
-        Objects.requireNonNull(option, "option");
+        requireNonNull(option, "option");
         return option.read(environment.getOptions(), diagnostics);
     }
 
@@ -175,7 +174,7 @@ public final class ProcessingContext {
      *     the compilation cannot see it
      */
     public TypeMirror type(Class<?> clazz) {
-        Objects.requireNonNull(clazz, "clazz");
+        requireNonNull(clazz, "clazz");
         if (clazz.isArray()) {
             return types().getArrayType(type(clazz.getComponentType()));
         }
@@ -202,7 +201,7 @@ public final class ProcessingContext {
      *     a generic class: see {@link #type(Class, TypeMirror...)}
      */
     public DeclaredType type(Class<?> clazz, Class<?>... typeArguments) {
-        Objects.requireNonNull(clazz, "clazz");
+        requireNonNull(clazz, "clazz");
         requireNonNullElements(typeArguments);
         TypeMirror[] mirrors = new TypeMirror[typeArguments.length];
         for (int i = 0; i < typeArguments.length; i++) {
@@ -238,7 +237,7 @@ public final class ProcessingContext {
      *     class of a generic class
      */
     public DeclaredType type(Class<?> clazz, TypeMirror... typeArguments) {
-        Objects.requireNonNull(clazz, "clazz");
+        requireNonNull(clazz, "clazz");
         requireNonNullElements(typeArguments);
         if (clazz.isPrimitive() || clazz.isArray()) {
             throw new IllegalArgumentException(clazz.getTypeName() + " is not a class or an interface");
@@ -259,7 +258,7 @@ public final class ProcessingContext {
      *     invalid, as for {@link #type(Class, TypeMirror...)}
      */
     public DeclaredType type(String qualifiedName, TypeMirror... typeArguments) {
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(qualifiedName, "qualifiedName");
         requireNonNullElements(typeArguments);
         return declaredType(typeElement(qualifiedName), typeArguments);
     }
@@ -286,8 +285,8 @@ public final class ProcessingContext {
      * @return {@code true} if {@code left} and {@code right} are the same type
      */
     public boolean isSameType(TypeMirror left, TypeMirror right) {
-        Objects.requireNonNull(left, "left");
-        Objects.requireNonNull(right, "right");
+        requireNonNull(left, "left");
+        requireNonNull(right, "right");
         if (left.getKind() == TypeKind.WILDCARD && right.getKind() == TypeKind.WILDCARD) {
             return isSameWildcard((WildcardType) left, (WildcardType) right);
         }
@@ -306,8 +305,8 @@ public final class ProcessingContext {
      *     anything, or if {@code supertype} has no canonical name, as a local, anonymous or hidden class
      */
     public boolean isSubtype(TypeMirror type, Class<?> supertype) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(supertype, "supertype");
+        requireNonNull(type, "type");
+        requireNonNull(supertype, "supertype");
         checkSubtypeKind(type);
         return (supertype.isPrimitive() || supertype.isArray())
                 ? MoreTypes.isType(type, supertype)
@@ -324,8 +323,8 @@ public final class ProcessingContext {
      *     anything
      */
     public boolean isSubtype(TypeMirror type, String qualifiedName) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(type, "type");
+        requireNonNull(qualifiedName, "qualifiedName");
         checkSubtypeKind(type);
         TypeElement supertype = elements().getTypeElement(qualifiedName);
         return supertype != null && types().isSubtype(types().erasure(type), types().erasure(supertype.asType()));
@@ -359,8 +358,8 @@ public final class ProcessingContext {
      *     of it, or if it is another kind of type, such as a primitive, which is not boxed, or an array
      */
     public Optional<DeclaredType> asSupertype(TypeMirror type, TypeElement supertype) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(supertype, "supertype");
+        requireNonNull(type, "type");
+        requireNonNull(supertype, "supertype");
         Deque<TypeMirror> pending = new ArrayDeque<>();
         pending.push(type);
         Set<Element> visited = new HashSet<>();
@@ -388,8 +387,8 @@ public final class ProcessingContext {
      *     subtype of it, if it is another kind of type, or if no type has that name
      */
     public Optional<DeclaredType> asSupertype(TypeMirror type, String qualifiedName) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(type, "type");
+        requireNonNull(qualifiedName, "qualifiedName");
         TypeElement supertype = elements().getTypeElement(qualifiedName);
         return supertype == null ? Optional.empty() : asSupertype(type, supertype);
     }
@@ -407,8 +406,8 @@ public final class ProcessingContext {
      *     class
      */
     public Optional<DeclaredType> asSupertype(TypeMirror type, Class<?> supertype) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(supertype, "supertype");
+        requireNonNull(type, "type");
+        requireNonNull(supertype, "supertype");
         return (supertype.isPrimitive() || supertype.isArray())
                 ? Optional.empty()
                 : asSupertype(type, MoreTypes.canonicalName(supertype));
@@ -474,7 +473,7 @@ public final class ProcessingContext {
      *     for an interface, the methods of {@code Object} last
      */
     public List<ExecutableElement> methods(TypeElement type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return new Inheritance(elements(), types()).methods(type);
     }
 
@@ -504,7 +503,7 @@ public final class ProcessingContext {
      *     concrete class
      */
     public List<ExecutableElement> abstractMethods(TypeElement type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return new Inheritance(elements(), types()).abstractMethods(type);
     }
 
@@ -565,7 +564,7 @@ public final class ProcessingContext {
      *     {@link Elements#getFileObjectOf(Element)}, as javac does
      */
     public boolean isFromSource(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         Element declaration =
                 MoreElements.topLevelType(element).<Element>map(type -> type).orElse(element);
         // A type javac could not resolve has no file, and javac fails to look for one.
@@ -606,8 +605,8 @@ public final class ProcessingContext {
      * @param action what to do with each item
      */
     public <T> void forEach(Iterable<? extends T> items, Consumer<? super T> action) {
-        Objects.requireNonNull(items, "items");
-        Objects.requireNonNull(action, "action");
+        requireNonNull(items, "items");
+        requireNonNull(action, "action");
         for (T item : items) {
             try {
                 action.accept(item);
@@ -631,8 +630,8 @@ public final class ProcessingContext {
      * @return a reader of the annotation, or empty if the element does not have it
      */
     public Optional<AnnotationReader> annotation(Element element, String qualifiedName) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(element, "element");
+        requireNonNull(qualifiedName, "qualifiedName");
         return element.getAnnotationMirrors().stream()
                 .filter(mirror -> MoreTypes.isType(mirror.getAnnotationType(), qualifiedName))
                 .findFirst()
@@ -662,8 +661,8 @@ public final class ProcessingContext {
      *     of the source among annotations of the same retention; empty if the element has none
      */
     public List<AnnotationReader> annotations(Element element, String qualifiedName) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(element, "element");
+        requireNonNull(qualifiedName, "qualifiedName");
         return readers(PresentAnnotations.ofType(element, qualifiedName));
     }
 
@@ -685,8 +684,8 @@ public final class ProcessingContext {
      *     container followed by the annotations it wraps; empty if there is none
      */
     public List<AnnotationReader> annotationsAnnotatedWith(Element element, String metaAnnotation) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(metaAnnotation, "metaAnnotation");
+        requireNonNull(element, "element");
+        requireNonNull(metaAnnotation, "metaAnnotation");
         return readers(PresentAnnotations.annotatedWith(element, metaAnnotation, false));
     }
 
@@ -709,8 +708,8 @@ public final class ProcessingContext {
      *     written, each container followed by the annotations it wraps; empty if there is none
      */
     public List<AnnotationReader> annotationsMetaAnnotatedWith(Element element, String metaAnnotation) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(metaAnnotation, "metaAnnotation");
+        requireNonNull(element, "element");
+        requireNonNull(metaAnnotation, "metaAnnotation");
         return readers(PresentAnnotations.annotatedWith(element, metaAnnotation, true));
     }
 
@@ -732,8 +731,8 @@ public final class ProcessingContext {
      * @return a reader of the annotation the type declares, or else the one it inherits; empty if it has none
      */
     public Optional<AnnotationReader> inheritedAnnotation(TypeElement type, String qualifiedName) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(type, "type");
+        requireNonNull(qualifiedName, "qualifiedName");
         return elements().getAllAnnotationMirrors(type).stream()
                 .filter(mirror -> MoreTypes.isType(mirror.getAnnotationType(), qualifiedName))
                 .findFirst()
@@ -747,14 +746,14 @@ public final class ProcessingContext {
      * @return a reader of it
      */
     public AnnotationReader reader(AnnotationMirror annotation) {
-        Objects.requireNonNull(annotation, "annotation");
+        requireNonNull(annotation, "annotation");
         return new AnnotationReader(annotation, elements());
     }
 
     private static void requireNonNullElements(Object[] typeArguments) {
-        Objects.requireNonNull(typeArguments, "typeArguments");
+        requireNonNull(typeArguments, "typeArguments");
         for (Object argument : typeArguments) {
-            Objects.requireNonNull(argument, "typeArguments");
+            requireNonNull(argument, "typeArguments");
         }
     }
 

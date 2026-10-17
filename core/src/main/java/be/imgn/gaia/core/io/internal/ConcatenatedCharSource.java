@@ -1,12 +1,14 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.checkFromIndexSize;
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.CharSource;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.OptionalLong;
 import org.jspecify.annotations.Nullable;
 
@@ -22,8 +24,8 @@ public final class ConcatenatedCharSource implements CharSource {
      */
     public ConcatenatedCharSource(Iterable<? extends CharSource> sources) {
         var list = new ArrayList<CharSource>();
-        for (CharSource source : Objects.requireNonNull(sources, "sources")) {
-            list.add(Objects.requireNonNull(source, "sources contains null"));
+        for (CharSource source : requireNonNull(sources, "sources")) {
+            list.add(requireNonNull(source, "sources contains null"));
         }
         this.sources = List.copyOf(list);
     }
@@ -68,7 +70,7 @@ public final class ConcatenatedCharSource implements CharSource {
 
         @Override
         public int read(char[] chars, int offset, int length) throws IOException {
-            Objects.checkFromIndexSize(offset, length, chars.length);
+            checkFromIndexSize(offset, length, chars.length);
             if (length == 0) {
                 return 0;
             }

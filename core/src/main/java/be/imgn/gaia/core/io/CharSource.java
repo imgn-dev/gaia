@@ -1,6 +1,7 @@
 package be.imgn.gaia.core.io;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.io.internal.CharSequenceSource;
 import be.imgn.gaia.core.io.internal.ConcatenatedCharSource;
@@ -19,7 +20,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.function.Consumer;
@@ -116,7 +116,7 @@ public interface CharSource {
      * @return a source of the content of {@code sources}, in order
      */
     static CharSource concat(CharSource... sources) {
-        return new ConcatenatedCharSource(Arrays.asList(Objects.requireNonNull(sources, "sources")));
+        return new ConcatenatedCharSource(Arrays.asList(requireNonNull(sources, "sources")));
     }
 
     /**
@@ -259,7 +259,7 @@ public interface CharSource {
      * @throws IOException if this source cannot be read
      */
     default void forEachLine(Consumer<? super String> action) throws IOException {
-        Objects.requireNonNull(action, "action");
+        requireNonNull(action, "action");
         try (var in = openBufferedStream()) {
             for (var line = in.readLine(); line != null; line = in.readLine()) {
                 action.accept(line);
@@ -275,7 +275,7 @@ public interface CharSource {
      * @throws IOException if this source cannot be read or {@code out} cannot be written
      */
     default long copyTo(Appendable out) throws IOException {
-        Objects.requireNonNull(out, "out");
+        requireNonNull(out, "out");
         try (var in = openStream()) {
             return Streams.copy(in, out);
         }
@@ -289,7 +289,7 @@ public interface CharSource {
      * @throws IOException if this source cannot be read or {@code sink} cannot be written
      */
     default long copyTo(CharSink sink) throws IOException {
-        Objects.requireNonNull(sink, "sink");
+        requireNonNull(sink, "sink");
         try (var in = openStream();
                 var out = sink.openStream()) {
             return in.transferTo(out);
@@ -306,7 +306,7 @@ public interface CharSource {
      * @throws IllegalArgumentException if {@code charset} does not support encoding
      */
     default ByteSource asByteSource(Charset charset) {
-        Objects.requireNonNull(charset, "charset");
+        requireNonNull(charset, "charset");
         checkArgument(charset.canEncode(), "%s does not support encoding", charset);
         return () -> new EncodingInputStream(openStream(), charset.newEncoder());
     }

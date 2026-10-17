@@ -1,12 +1,14 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.checkFromIndexSize;
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.OptionalLong;
 import org.jspecify.annotations.Nullable;
 
@@ -22,8 +24,8 @@ public final class ConcatenatedByteSource implements ByteSource {
      */
     public ConcatenatedByteSource(Iterable<? extends ByteSource> sources) {
         var list = new ArrayList<ByteSource>();
-        for (ByteSource source : Objects.requireNonNull(sources, "sources")) {
-            list.add(Objects.requireNonNull(source, "sources contains null"));
+        for (ByteSource source : requireNonNull(sources, "sources")) {
+            list.add(requireNonNull(source, "sources contains null"));
         }
         this.sources = List.copyOf(list);
     }
@@ -79,7 +81,7 @@ public final class ConcatenatedByteSource implements ByteSource {
 
         @Override
         public int read(byte[] bytes, int offset, int length) throws IOException {
-            Objects.checkFromIndexSize(offset, length, bytes.length);
+            checkFromIndexSize(offset, length, bytes.length);
             if (length == 0) {
                 return 0;
             }

@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.entry;
@@ -24,7 +25,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -164,7 +164,7 @@ class ElementKindsTest {
                 .withProcessors(querying)
                 .compile(sources);
         assertThat(compilation).succeeded();
-        return Objects.requireNonNull(querying.result, "the query ran");
+        return requireNonNull(querying.result, "the query ran");
     }
 
     // Compiles sources into a directory, to read them from class files.
@@ -196,7 +196,7 @@ class ElementKindsTest {
             case CONSTRUCTOR, METHOD -> {
                 ExecutableElement executable = (ExecutableElement) element;
                 String name = element.getKind() == ElementKind.CONSTRUCTOR
-                        ? label(Objects.requireNonNull(element.getEnclosingElement()))
+                        ? label(requireNonNull(element.getEnclosingElement()))
                         : element.getSimpleName().toString();
                 yield executable.getParameters().stream()
                         .map(parameter -> parameter.asType().toString())
@@ -270,7 +270,7 @@ class ElementKindsTest {
     }
 
     private static TypeElement type(Elements elements, String qualifiedName) {
-        return Objects.requireNonNull(elements.getTypeElement(qualifiedName), qualifiedName);
+        return requireNonNull(elements.getTypeElement(qualifiedName), qualifiedName);
     }
 
     private static ExecutableElement method(TypeElement type, String name) {
@@ -422,9 +422,9 @@ class ElementKindsTest {
                         .filter(field -> field.getSimpleName().contentEquals("MAX_VALUE"))
                         .findFirst()
                         .orElseThrow();
-        PackageElement util = Objects.requireNonNull(elements.getPackageElement("java.util"));
+        PackageElement util = requireNonNull(elements.getPackageElement("java.util"));
         TypeParameterElement key = map.getTypeParameters().getFirst();
-        ModuleElement base = Objects.requireNonNull(elements.getModuleElement("java.base"));
+        ModuleElement base = requireNonNull(elements.getModuleElement("java.base"));
 
         assertThat(MoreElements.asType(map)).isSameAs(map);
         assertThat(MoreElements.asExecutable(get)).isSameAs(get);
@@ -433,7 +433,7 @@ class ElementKindsTest {
         assertThat(MoreElements.asPackage(util)).isSameAs(util);
         assertThat(MoreElements.asTypeParameter(key)).isSameAs(key);
         assertThat(MoreElements.asModule(base)).isSameAs(base);
-        assertThat(MoreElements.asModule(Objects.requireNonNull(util.getEnclosingElement())))
+        assertThat(MoreElements.asModule(requireNonNull(util.getEnclosingElement())))
                 .isSameAs(base);
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> MoreElements.asType(get))

@@ -1,8 +1,9 @@
 package be.imgn.gaia.processing.testing;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic;
@@ -53,7 +54,7 @@ public final class DiagnosticAssert
      * @throws IllegalArgumentException if {@code path} is empty
      */
     public DiagnosticAssert inFile(String path) {
-        Objects.requireNonNull(path, "path");
+        requireNonNull(path, "path");
         if (path.isEmpty()) {
             throw new IllegalArgumentException("The path must not be empty");
         }

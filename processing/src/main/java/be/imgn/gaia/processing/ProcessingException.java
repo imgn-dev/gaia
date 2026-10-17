@@ -1,9 +1,10 @@
 package be.imgn.gaia.processing;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.NotSerializableException;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
-import java.util.Objects;
 import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -106,8 +107,8 @@ public final class ProcessingException extends RuntimeException {
     // The annotation and the attribute are checked already; the order of the parameters sets it apart.
     private ProcessingException(
             Element element, @Nullable AnnotationMirror annotation, @Nullable String attribute, String message) {
-        super(Objects.requireNonNull(message, "message"));
-        this.element = Objects.requireNonNull(element, "element");
+        super(requireNonNull(message, "message"));
+        this.element = requireNonNull(element, "element");
         this.annotation = annotation;
         this.attribute = attribute;
     }
@@ -141,28 +142,28 @@ public final class ProcessingException extends RuntimeException {
 
     // The checks of the constructors, which come before they read the element; each returns the annotation.
     private static AnnotationMirror checkedAnnotation(String message, Element element, AnnotationMirror annotation) {
-        Objects.requireNonNull(message, "message");
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(annotation, "annotation");
+        requireNonNull(message, "message");
+        requireNonNull(element, "element");
+        requireNonNull(annotation, "annotation");
         return Diagnostics.requireAnnotationOf(element, annotation);
     }
 
     private static AnnotationMirror checkedAnnotation(String message, Element element, String annotation) {
-        Objects.requireNonNull(message, "message");
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(annotation, "annotation");
+        requireNonNull(message, "message");
+        requireNonNull(element, "element");
+        requireNonNull(annotation, "annotation");
         return Diagnostics.annotationOf(element, annotation);
     }
 
     private static AnnotationMirror checkedAnnotation(
             String message, Element element, String annotation, String attribute) {
-        Objects.requireNonNull(attribute, "attribute");
+        requireNonNull(attribute, "attribute");
         return checkedAnnotation(message, element, annotation);
     }
 
     private static String checkedAttribute(
             String message, Element element, AnnotationMirror annotation, String attribute) {
-        Objects.requireNonNull(attribute, "attribute");
+        requireNonNull(attribute, "attribute");
         return Diagnostics.requireAttribute(checkedAnnotation(message, element, annotation), attribute);
     }
 

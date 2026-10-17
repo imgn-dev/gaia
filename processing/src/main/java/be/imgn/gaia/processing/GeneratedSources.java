@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.processing.internal.UnicodeEscapes;
 import be.imgn.gaia.processing.source.Annotation;
@@ -13,7 +14,6 @@ import java.io.Writer;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -92,7 +92,7 @@ public final class GeneratedSources {
      * @throws UncheckedIOException if the file cannot be written
      */
     public boolean write(JavaFile file, Element... originatingElements) {
-        Objects.requireNonNull(file, "file");
+        requireNonNull(file, "file");
         requireNonNullElements(originatingElements);
         String qualifiedName = file.className().canonicalName();
         String generated = generatedValue(originatingElements);
@@ -127,8 +127,8 @@ public final class GeneratedSources {
      * @throws UncheckedIOException if the file cannot be written
      */
     public boolean write(String qualifiedName, Function<SourceScope, String> body, Element... originatingElements) {
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
-        Objects.requireNonNull(body, "body");
+        requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(body, "body");
         requireNonNullElements(originatingElements);
         checkArgument(
                 SourceVersion.isName(qualifiedName),
@@ -138,7 +138,7 @@ public final class GeneratedSources {
                 qualifiedName,
                 () -> {
                     SourceScope scope = new SourceScope(elements, qualifiedName, generatedValue(originatingElements));
-                    return scope.assemble(Objects.requireNonNull(body.apply(scope), "body returned null"));
+                    return scope.assemble(requireNonNull(body.apply(scope), "body returned null"));
                 },
                 originatingElements);
     }
@@ -168,7 +168,7 @@ public final class GeneratedSources {
      * @return {@code true} if no type has that name and this object wrote no file for it
      */
     public boolean isAvailable(ClassName name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         String canonicalName = name.canonicalName();
         return !written.contains(canonicalName)
                 && elements.getAllTypeElements(canonicalName).isEmpty();
@@ -190,9 +190,9 @@ public final class GeneratedSources {
     }
 
     private static void requireNonNullElements(Element[] originatingElements) {
-        Objects.requireNonNull(originatingElements, "originatingElements");
+        requireNonNull(originatingElements, "originatingElements");
         for (Element element : originatingElements) {
-            Objects.requireNonNull(element, "originatingElements");
+            requireNonNull(element, "originatingElements");
         }
     }
 

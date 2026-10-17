@@ -1,9 +1,10 @@
 package be.imgn.gaia.core.io.internal;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.io.ByteSource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Objects;
 import java.util.OptionalLong;
 
 /** A source that reads an array, which it does not copy. */
@@ -20,7 +21,7 @@ public final class ByteArraySource implements ByteSource {
      * @param bytes the array to read
      */
     public ByteArraySource(byte[] bytes) {
-        this.bytes = Objects.requireNonNull(bytes, "bytes");
+        this.bytes = requireNonNull(bytes, "bytes");
     }
 
     @Override

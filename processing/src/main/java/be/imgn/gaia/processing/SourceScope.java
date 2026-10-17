@@ -1,11 +1,11 @@
 package be.imgn.gaia.processing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -92,7 +92,7 @@ public final class SourceScope {
      *     which has no name; or if it is, or refers to, a local or anonymous class
      */
     public String name(TypeMirror type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return switch (type.getKind()) {
             case DECLARED -> declared((DeclaredType) type);
             case ARRAY -> name(((ArrayType) type).getComponentType()) + "[]";
@@ -112,7 +112,7 @@ public final class SourceScope {
      *     an array of such a class
      */
     public String name(Class<?> type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         if (type.isArray()) {
             return name(type.getComponentType()) + "[]";
         }
@@ -128,7 +128,7 @@ public final class SourceScope {
      *     a keyword, separated by dots
      */
     public String name(String qualifiedName) {
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(qualifiedName, "qualifiedName");
         checkArgument(
                 SourceVersion.isName(qualifiedName),
                 "Invalid qualified name %s: it must be Java identifiers, none of them a keyword, separated by dots",
@@ -150,7 +150,7 @@ public final class SourceScope {
      *     block that declares it cannot name it
      */
     public String name(TypeElement type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         Deque<String> path = new ArrayDeque<>();
         Element current = type;
         while (current.getEnclosingElement() instanceof TypeElement enclosing) {

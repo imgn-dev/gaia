@@ -1,5 +1,7 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -11,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -228,7 +229,7 @@ final class CodeWriter {
     }
 
     private static Set<String> memberTypeNames(Type type) {
-        return names(type.types().stream().map(nested -> Objects.requireNonNull(nested.name())));
+        return names(type.types().stream().map(nested -> requireNonNull(nested.name())));
     }
 
     private void emitFile(JavaFile file, List<String> imports) {
@@ -262,7 +263,7 @@ final class CodeWriter {
             case Field field -> emitField(field, Set.of());
             case Method method -> emitMethod(method, "Constructor", Type.Kind.CLASS);
             case Type type when type.isAnonymous() -> emitAnonymous(type);
-            case Type type -> emitType(type, Set.of(), ClassName.of("", Objects.requireNonNull(type.name())));
+            case Type type -> emitType(type, Set.of(), ClassName.of("", requireNonNull(type.name())));
             case null -> emit("null");
             default -> emit(value.toString());
         }
@@ -394,7 +395,7 @@ final class CodeWriter {
     private void emitArgument(CodeBlock.Argument argument) {
         Object value = argument.value();
         switch (argument.kind()) {
-            case 'T' -> emitTypeName((TypeName) Objects.requireNonNull(value));
+            case 'T' -> emitTypeName((TypeName) requireNonNull(value));
             case 'N' -> emit(String.valueOf(value));
             case 'S' -> emitString(value == null ? null : value.toString());
             default -> emitLiteral(value);
@@ -750,7 +751,7 @@ final class CodeWriter {
                 .filter(method -> !method.isConstructor())
                 .forEach(method -> members.add(new Member(false, () -> emitMethod(method, name, kind))));
         for (Type nested : type.types()) {
-            String nestedName = Objects.requireNonNull(nested.name());
+            String nestedName = requireNonNull(nested.name());
             ClassName nestedClassName = className == null ? ClassName.of("", nestedName) : className.nested(nestedName);
             members.add(new Member(
                     false, () -> emitType(nested, nestedTypeImplicit(kind, nested.kind()), nestedClassName)));

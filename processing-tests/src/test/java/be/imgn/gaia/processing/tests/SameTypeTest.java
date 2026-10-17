@@ -2,6 +2,7 @@ package be.imgn.gaia.processing.tests;
 
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import be.imgn.gaia.processing.ProcessingContext;
@@ -9,7 +10,6 @@ import be.imgn.gaia.processing.TypeKey;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -388,7 +388,7 @@ class SameTypeTest {
     private record Fields(Map<String, TypeMirror> types) {
 
         TypeMirror get(String name) {
-            return Objects.requireNonNull(types.get(name), name);
+            return requireNonNull(types.get(name), name);
         }
     }
 }

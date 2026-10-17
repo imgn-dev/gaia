@@ -1,10 +1,10 @@
 package be.imgn.gaia.processing;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.AnnotationMirror;
@@ -45,7 +45,7 @@ public final class Diagnostics {
      * @return the report, to narrow to an annotation and then report
      */
     public Report on(Element element) {
-        return new Report(Objects.requireNonNull(element, "element"), null, null);
+        return new Report(requireNonNull(element, "element"), null, null);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class Diagnostics {
      * @param message the message
      */
     public void error(String message) {
-        Objects.requireNonNull(message, "message");
+        requireNonNull(message, "message");
         errors++;
         messager.printMessage(Diagnostic.Kind.ERROR, message);
     }
@@ -75,7 +75,7 @@ public final class Diagnostics {
      * @param exception the exception
      */
     public void error(ProcessingException exception) {
-        Objects.requireNonNull(exception, "exception");
+        requireNonNull(exception, "exception");
         Report report = on(exception.element());
         Optional<AnnotationMirror> annotation = exception.annotation();
         if (annotation.isPresent()) {
@@ -85,7 +85,7 @@ public final class Diagnostics {
                 report = report.attribute(attribute.get());
             }
         }
-        report.error(Objects.requireNonNull(exception.getMessage(), "message"));
+        report.error(requireNonNull(exception.getMessage(), "message"));
     }
 
     /**
@@ -94,7 +94,7 @@ public final class Diagnostics {
      * @param message the message
      */
     public void warning(String message) {
-        messager.printMessage(Diagnostic.Kind.WARNING, Objects.requireNonNull(message, "message"));
+        messager.printMessage(Diagnostic.Kind.WARNING, requireNonNull(message, "message"));
     }
 
     /**
@@ -103,7 +103,7 @@ public final class Diagnostics {
      * @param message the message
      */
     public void note(String message) {
-        messager.printMessage(Diagnostic.Kind.NOTE, Objects.requireNonNull(message, "message"));
+        messager.printMessage(Diagnostic.Kind.NOTE, requireNonNull(message, "message"));
     }
 
     /**
@@ -214,7 +214,7 @@ public final class Diagnostics {
          * @throws IllegalArgumentException if the annotation is not on the element
          */
         public Report annotation(AnnotationMirror annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return new Report(element, requireAnnotationOf(element, annotation), null);
         }
 
@@ -226,7 +226,7 @@ public final class Diagnostics {
          * @throws IllegalArgumentException if the element has no such annotation
          */
         public Report annotation(String qualifiedName) {
-            Objects.requireNonNull(qualifiedName, "qualifiedName");
+            requireNonNull(qualifiedName, "qualifiedName");
             return new Report(element, annotationOf(element, qualifiedName), null);
         }
 
@@ -240,7 +240,7 @@ public final class Diagnostics {
          * @throws IllegalArgumentException if the annotation has no such attribute
          */
         public Report attribute(String name) {
-            Objects.requireNonNull(name, "name");
+            requireNonNull(name, "name");
             if (annotation == null) {
                 throw new IllegalStateException("Narrow the report to an annotation before an attribute");
             }
@@ -260,7 +260,7 @@ public final class Diagnostics {
          * @param message the message
          */
         public void error(String message) {
-            Objects.requireNonNull(message, "message");
+            requireNonNull(message, "message");
             errors++;
             print(Diagnostic.Kind.ERROR, message);
         }
@@ -284,7 +284,7 @@ public final class Diagnostics {
         }
 
         private void print(Diagnostic.Kind kind, String message) {
-            Objects.requireNonNull(message, "message");
+            requireNonNull(message, "message");
             messager.printMessage(kind, message, element, annotation, value);
         }
     }

@@ -1,10 +1,11 @@
 package be.imgn.gaia.core.system;
 
+import static java.util.Objects.requireNonNull;
+
 import be.imgn.gaia.core.text.Splitter;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -24,7 +25,7 @@ public interface Environment {
      * @return the JVM's environment
      */
     static Environment system() {
-        return name -> Optional.ofNullable(System.getenv(Objects.requireNonNull(name, "name")));
+        return name -> Optional.ofNullable(System.getenv(requireNonNull(name, "name")));
     }
 
     /**
@@ -35,7 +36,7 @@ public interface Environment {
      */
     static Environment of(Map<String, String> variables) {
         Map<String, String> copy = NamedValues.copyOf(variables, "variables");
-        return name -> Optional.ofNullable(copy.get(Objects.requireNonNull(name, "name")));
+        return name -> Optional.ofNullable(copy.get(requireNonNull(name, "name")));
     }
 
     /**

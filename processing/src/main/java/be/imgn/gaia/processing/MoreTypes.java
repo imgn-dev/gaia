@@ -2,7 +2,6 @@ package be.imgn.gaia.processing;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Objects;
 import java.util.Optional;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
@@ -28,8 +27,8 @@ public final class MoreTypes {
      *     or is an array of such a class
      */
     public static boolean isType(TypeMirror type, Class<?> clazz) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(clazz, "clazz");
+        requireNonNull(type, "type");
+        requireNonNull(clazz, "clazz");
         if (clazz.isArray()) {
             return type.getKind() == TypeKind.ARRAY
                     && isType(((ArrayType) type).getComponentType(), clazz.getComponentType());
@@ -49,8 +48,8 @@ public final class MoreTypes {
      * @return {@code true} if {@code type} is a declared type of that name
      */
     public static boolean isType(TypeMirror type, String qualifiedName) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(type, "type");
+        requireNonNull(qualifiedName, "qualifiedName");
         return asTypeElement(type)
                 .map(element -> element.getQualifiedName().contentEquals(qualifiedName))
                 .orElse(false);
@@ -63,7 +62,7 @@ public final class MoreTypes {
      * @return the declared type, or empty for a primitive, array, type variable or any other kind of type
      */
     public static Optional<DeclaredType> asDeclared(TypeMirror type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return type.getKind() == TypeKind.DECLARED ? Optional.of((DeclaredType) type) : Optional.empty();
     }
 
@@ -74,7 +73,7 @@ public final class MoreTypes {
      * @return its class, interface, enum, record or annotation type, or empty if it is not a declared type
      */
     public static Optional<TypeElement> asTypeElement(TypeMirror type) {
-        Objects.requireNonNull(type, "type");
+        requireNonNull(type, "type");
         return asDeclared(type).map(declared -> (TypeElement) declared.asElement());
     }
 

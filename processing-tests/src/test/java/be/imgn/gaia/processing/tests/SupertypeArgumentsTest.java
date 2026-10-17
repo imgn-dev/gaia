@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import be.imgn.gaia.processing.ProcessingContext;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -808,7 +808,7 @@ class SupertypeArgumentsTest {
     private record Found(Map<String, String> byElement) {
 
         String get(String element) {
-            return Objects.requireNonNull(byElement.get(element), element);
+            return requireNonNull(byElement.get(element), element);
         }
     }
 

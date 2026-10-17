@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
@@ -168,7 +168,7 @@ class AccessibilityTest {
 
     private static Element element(Elements elements, String name) {
         Element type = elements.getTypeElement(name);
-        return Objects.requireNonNull(type == null ? elements.getPackageElement(name) : type, name);
+        return requireNonNull(type == null ? elements.getPackageElement(name) : type, name);
     }
 
     private static void walk(Element element, Consumer<Element> action) {
@@ -180,7 +180,7 @@ class AccessibilityTest {
 
     // As Outer.Inner.method(int), from the top-level type.
     private static String path(Element element) {
-        Element enclosing = Objects.requireNonNull(element.getEnclosingElement());
+        Element enclosing = requireNonNull(element.getEnclosingElement());
         String name = element.getKind() == ElementKind.CONSTRUCTOR
                 ? enclosing.getSimpleName().toString()
                 : element.getSimpleName().toString();
@@ -516,7 +516,7 @@ class AccessibilityTest {
         }
         String modulePath = directory
                 + File.pathSeparator
-                + Objects.requireNonNull(System.getProperty("jdk.module.path"), "tests run on the module path");
+                + requireNonNull(System.getProperty("jdk.module.path"), "tests run on the module path");
         Map<String, Boolean> results = new LinkedHashMap<>();
 
         Compilation compilation = process(

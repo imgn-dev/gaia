@@ -1,11 +1,12 @@
 package be.imgn.gaia.processing.testing;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic;
@@ -100,7 +101,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @return assertions on the matching errors, such as their location
      */
     public DiagnosticAssert hadErrorContaining(String expected) {
-        Objects.requireNonNull(expected, "expected");
+        requireNonNull(expected, "expected");
         return hadDiagnosticContaining(EnumSet.of(Diagnostic.Kind.ERROR), "error", expected);
     }
 
@@ -111,7 +112,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @return assertions on the matching warnings, such as their location
      */
     public DiagnosticAssert hadWarningContaining(String expected) {
-        Objects.requireNonNull(expected, "expected");
+        requireNonNull(expected, "expected");
         return hadDiagnosticContaining(
                 EnumSet.of(Diagnostic.Kind.WARNING, Diagnostic.Kind.MANDATORY_WARNING), "warning", expected);
     }
@@ -123,7 +124,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @return assertions on the matching notes, such as their location
      */
     public DiagnosticAssert hadNoteContaining(String expected) {
-        Objects.requireNonNull(expected, "expected");
+        requireNonNull(expected, "expected");
         return hadDiagnosticContaining(EnumSet.of(Diagnostic.Kind.NOTE), "note", expected);
     }
 
@@ -169,7 +170,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @throws UncheckedIOException if the generated source cannot be read
      */
     public AbstractStringAssert<?> generatedSourceFile(String qualifiedName) {
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(qualifiedName, "qualifiedName");
         Checks.checkSourceName(qualifiedName);
         return generatedFile(StandardLocation.SOURCE_OUTPUT, qualifiedName.replace('.', '/') + ".java");
     }
@@ -187,8 +188,8 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
      * @throws UncheckedIOException if the generated file cannot be read
      */
     public AbstractStringAssert<?> generatedFile(JavaFileManager.Location location, String relativePath) {
-        Objects.requireNonNull(location, "location");
-        Objects.requireNonNull(relativePath, "relativePath");
+        requireNonNull(location, "location");
+        requireNonNull(relativePath, "relativePath");
         Checks.checkRelativePath(relativePath);
         isNotNull();
         String name = "/" + location.getName() + "/" + relativePath;

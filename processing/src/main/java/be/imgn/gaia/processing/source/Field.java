@@ -1,9 +1,10 @@
 package be.imgn.gaia.processing.source;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
@@ -52,9 +53,9 @@ public final class Field {
      *     or a modifier is not allowed on a field, is repeated, or conflicts with another one
      */
     public static Field of(TypeName type, String name, Modifier... modifiers) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(modifiers, "modifiers");
+        requireNonNull(type, "type");
+        requireNonNull(name, "name");
+        requireNonNull(modifiers, "modifiers");
         return newBuilder(type, name, modifiers).build();
     }
 
@@ -69,8 +70,8 @@ public final class Field {
      *     or a modifier is not allowed on a field, is repeated, or conflicts with another one
      */
     public static Builder newBuilder(TypeName type, String name, Modifier... modifiers) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(name, "name");
+        requireNonNull(type, "type");
+        requireNonNull(name, "name");
         Checks.elements(modifiers, "modifiers");
         return new Builder(type, name).addModifiers(modifiers);
     }
@@ -86,9 +87,9 @@ public final class Field {
      *     identifier; or a modifier is not allowed on a field, is repeated, or conflicts with another one
      */
     public static Builder newBuilder(Class<?> type, String name, Modifier... modifiers) {
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(modifiers, "modifiers");
+        requireNonNull(type, "type");
+        requireNonNull(name, "name");
+        requireNonNull(modifiers, "modifiers");
         return newBuilder(TypeName.of(type), name, modifiers);
     }
 
@@ -186,8 +187,8 @@ public final class Field {
         private CodeBlock initializer = CodeBlock.empty();
 
         private Builder(TypeName type, String name) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
             if (!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) {
                 throw new IllegalArgumentException("Not a field name: " + name);
             }
@@ -226,7 +227,7 @@ public final class Field {
          * @return this builder
          */
         public Builder addAnnotation(Annotation annotation) {
-            annotations.add(Objects.requireNonNull(annotation, "annotation"));
+            annotations.add(requireNonNull(annotation, "annotation"));
             return this;
         }
 
@@ -238,7 +239,7 @@ public final class Field {
          * @throws IllegalArgumentException if the class is not an annotation type
          */
         public Builder addAnnotation(Class<? extends java.lang.annotation.Annotation> annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -249,7 +250,7 @@ public final class Field {
          * @return this builder
          */
         public Builder addAnnotation(ClassName annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -273,8 +274,8 @@ public final class Field {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addJavadoc(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             javadoc.add(format, args);
             return this;
         }
@@ -290,8 +291,8 @@ public final class Field {
          * @throws IllegalStateException if the initializer is already set
          */
         public Builder initializer(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             return initializer(CodeBlock.of(format, args));
         }
 
@@ -304,7 +305,7 @@ public final class Field {
          * @throws IllegalStateException if the initializer is already set
          */
         public Builder initializer(CodeBlock expression) {
-            Objects.requireNonNull(expression, "expression");
+            requireNonNull(expression, "expression");
             CodeBlock.requireBalanced(expression, "The initializer of " + name);
             if (!initializer.isEmpty()) {
                 throw new IllegalStateException("The initializer of " + name + " is already set: " + initializer);

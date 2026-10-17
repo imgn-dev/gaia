@@ -1,6 +1,7 @@
 package be.imgn.gaia.processing.source;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -9,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.SourceVersion;
@@ -63,8 +63,8 @@ public final class JavaFile {
      *     only a member type can have: {@code protected}, {@code private} or {@code static}
      */
     public static Builder newBuilder(String packageName, Type type) {
-        Objects.requireNonNull(packageName, "packageName");
-        Objects.requireNonNull(type, "type");
+        requireNonNull(packageName, "packageName");
+        requireNonNull(type, "type");
         if (!packageName.isEmpty() && !SourceVersion.isName(packageName)) {
             throw new IllegalArgumentException("Not a package name: " + packageName);
         }
@@ -151,7 +151,7 @@ public final class JavaFile {
      * @throws IOException if {@code out} fails
      */
     public void writeTo(Appendable out) throws IOException {
-        Objects.requireNonNull(out, "out");
+        requireNonNull(out, "out");
         out.append(toString());
     }
 
@@ -168,7 +168,7 @@ public final class JavaFile {
      * @throws IOException if the folders cannot be created or the file cannot be written
      */
     public Path writeTo(Path directory) throws IOException {
-        Objects.requireNonNull(directory, "directory");
+        requireNonNull(directory, "directory");
         Path folder = directory.resolve(
                 packageName.replace(".", directory.getFileSystem().getSeparator()));
         Files.createDirectories(folder);
@@ -244,7 +244,7 @@ public final class JavaFile {
          *     {@code protected}, {@code private} or {@code static}
          */
         public Builder type(Type type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             this.type = checkTopLevel(type);
             return this;
         }
@@ -258,8 +258,8 @@ public final class JavaFile {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addFileComment(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             fileComment.add(format, args);
             return this;
         }
@@ -273,7 +273,7 @@ public final class JavaFile {
          * @throws IllegalArgumentException if a member name is not a valid identifier or {@code *}
          */
         public Builder addStaticImport(ClassName type, String... members) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             List<String> added = Checks.elements(members, "members");
             for (String member : added) {
                 if (!"*".equals(member) && (!SourceVersion.isIdentifier(member) || SourceVersion.isKeyword(member))) {
@@ -296,7 +296,7 @@ public final class JavaFile {
          *     identifier or {@code *}
          */
         public Builder addStaticImport(Class<?> type, String... members) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             return addStaticImport(ClassName.of(type), members);
         }
 
@@ -308,7 +308,7 @@ public final class JavaFile {
          * @throws IllegalArgumentException if the enum is local
          */
         public Builder addStaticImport(Enum<?> constant) {
-            Objects.requireNonNull(constant, "constant");
+            requireNonNull(constant, "constant");
             return addStaticImport(ClassName.of(constant.getDeclaringClass()), constant.name());
         }
 
@@ -332,7 +332,7 @@ public final class JavaFile {
          * @throws IllegalArgumentException if the indentation is not made of spaces and tabs
          */
         public Builder indent(String unit) {
-            Objects.requireNonNull(unit, "unit");
+            requireNonNull(unit, "unit");
             if (!unit.chars().allMatch(c -> c == ' ' || c == '\t')) {
                 throw new IllegalArgumentException("An indentation is made of spaces and tabs");
             }

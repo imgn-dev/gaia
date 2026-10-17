@@ -6,7 +6,6 @@ import be.imgn.gaia.processing.internal.Resolution;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -44,7 +43,7 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is not in a package, such as a module
      */
     public static PackageElement packageOf(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         for (Element current = element; current != null; current = current.getEnclosingElement()) {
             if (current instanceof PackageElement found) {
                 return found;
@@ -61,7 +60,7 @@ public final class MoreElements {
      *     a module
      */
     public static Optional<TypeElement> enclosingType(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         for (Element current = element.getEnclosingElement();
                 current != null;
                 current = current.getEnclosingElement()) {
@@ -80,7 +79,7 @@ public final class MoreElements {
      *     module
      */
     public static Optional<TypeElement> topLevelType(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         Optional<TypeElement> top = element instanceof TypeElement type ? Optional.of(type) : Optional.empty();
         for (Optional<TypeElement> enclosing = enclosingType(element);
                 enclosing.isPresent();
@@ -98,8 +97,8 @@ public final class MoreElements {
      * @return {@code true} if the element has the annotation
      */
     public static boolean isAnnotatedWith(Element element, String qualifiedName) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(qualifiedName, "qualifiedName");
+        requireNonNull(element, "element");
+        requireNonNull(qualifiedName, "qualifiedName");
         return element.getAnnotationMirrors().stream()
                 .anyMatch(mirror -> MoreTypes.isType(mirror.getAnnotationType(), qualifiedName));
     }
@@ -134,7 +133,7 @@ public final class MoreElements {
      *     type
      */
     public static TypeElement asType(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return cast(element, element.getKind().isDeclaredType(), TypeElement.class, "a type");
     }
 
@@ -146,7 +145,7 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is not a method, a constructor or an initializer
      */
     public static ExecutableElement asExecutable(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return cast(element, element.getKind().isExecutable(), ExecutableElement.class, "an executable");
     }
 
@@ -160,7 +159,7 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is not a variable
      */
     public static VariableElement asVariable(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return cast(element, element.getKind().isVariable(), VariableElement.class, "a variable");
     }
 
@@ -172,7 +171,7 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is not a package
      */
     public static PackageElement asPackage(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return cast(element, element.getKind() == ElementKind.PACKAGE, PackageElement.class, "a package");
     }
 
@@ -184,7 +183,7 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is not a type parameter
      */
     public static TypeParameterElement asTypeParameter(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return cast(
                 element,
                 element.getKind() == ElementKind.TYPE_PARAMETER,
@@ -200,7 +199,7 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is not a record component
      */
     public static RecordComponentElement asRecordComponent(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return cast(
                 element,
                 element.getKind() == ElementKind.RECORD_COMPONENT,
@@ -216,7 +215,7 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is not a module
      */
     public static ModuleElement asModule(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return cast(element, element.getKind() == ElementKind.MODULE, ModuleElement.class, "a module");
     }
 
@@ -227,7 +226,7 @@ public final class MoreElements {
      * @return {@code true} if the element is a record class
      */
     public static boolean isRecord(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return element.getKind() == ElementKind.RECORD;
     }
 
@@ -240,7 +239,7 @@ public final class MoreElements {
      * @return {@code true} if the element is a top-level type; {@code false} if it is not a type
      */
     public static boolean isTopLevel(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return element.getKind().isDeclaredType() && ((TypeElement) element).getNestingKind() == NestingKind.TOP_LEVEL;
     }
 
@@ -263,7 +262,7 @@ public final class MoreElements {
      * @return {@code true} if the element is an inner class; {@code false} if it is not a type
      */
     public static boolean isInnerClass(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return element.getKind().isDeclaredType() && isInner((TypeElement) element);
     }
 
@@ -276,7 +275,7 @@ public final class MoreElements {
      * @return {@code true} if the element is a static nested type; {@code false} if it is not a type, or is top-level
      */
     public static boolean isStaticNested(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return element.getKind().isDeclaredType()
                 && ((TypeElement) element).getNestingKind() != NestingKind.TOP_LEVEL
                 && !isInner((TypeElement) element);
@@ -302,7 +301,7 @@ public final class MoreElements {
      * @return its own visibility
      */
     public static Visibility visibility(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         return switch (element.getKind()) {
             case PACKAGE, MODULE, ENUM_CONSTANT, RECORD_COMPONENT -> Visibility.PUBLIC;
             case TYPE_PARAMETER,
@@ -331,7 +330,7 @@ public final class MoreElements {
      * @return its effective visibility
      */
     public static Visibility effectiveVisibility(Element element) {
-        Objects.requireNonNull(element, "element");
+        requireNonNull(element, "element");
         Visibility effective = visibility(element);
         for (Element current = element.getEnclosingElement();
                 current != null && isBelowPackage(current);
@@ -365,8 +364,8 @@ public final class MoreElements {
      * @return {@code true} if code in that package can access the element; {@code true} for a package or a module
      */
     public static boolean isAccessible(Element element, String packageName) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(packageName, "packageName");
+        requireNonNull(element, "element");
+        requireNonNull(packageName, "packageName");
         return accessible(element, packageName, null);
     }
 
@@ -389,9 +388,9 @@ public final class MoreElements {
      * @throws IllegalArgumentException if {@code superclass} is an interface or an annotation type
      */
     public static boolean isAccessible(Element element, String packageName, TypeElement superclass) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(packageName, "packageName");
-        Objects.requireNonNull(superclass, "superclass");
+        requireNonNull(element, "element");
+        requireNonNull(packageName, "packageName");
+        requireNonNull(superclass, "superclass");
         if (superclass.getKind().isInterface()) {
             throw new IllegalArgumentException(superclass + " is an interface, not a class");
         }
@@ -419,8 +418,8 @@ public final class MoreElements {
      * @throws IllegalArgumentException if the element is a module
      */
     public static boolean isExportedTo(Element element, ModuleElement module) {
-        Objects.requireNonNull(element, "element");
-        Objects.requireNonNull(module, "module");
+        requireNonNull(element, "element");
+        requireNonNull(module, "module");
         PackageElement found = packageOf(element);
         if (!(found.getEnclosingElement() instanceof ModuleElement owner) || owner.equals(module)) {
             return true;

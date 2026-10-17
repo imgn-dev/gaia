@@ -2,6 +2,7 @@ package be.imgn.gaia.processing.source;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static be.imgn.gaia.core.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,7 +100,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newClassBuilder(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new Builder(Kind.CLASS, checkName(name));
     }
 
@@ -110,7 +111,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newClassBuilder(ClassName name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return newClassBuilder(name.simpleName());
     }
 
@@ -122,7 +123,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newInterfaceBuilder(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new Builder(Kind.INTERFACE, checkName(name));
     }
 
@@ -133,7 +134,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newInterfaceBuilder(ClassName name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return newInterfaceBuilder(name.simpleName());
     }
 
@@ -145,7 +146,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newEnumBuilder(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new Builder(Kind.ENUM, checkName(name));
     }
 
@@ -156,7 +157,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newEnumBuilder(ClassName name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return newEnumBuilder(name.simpleName());
     }
 
@@ -168,7 +169,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newRecordBuilder(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new Builder(Kind.RECORD, checkName(name));
     }
 
@@ -179,7 +180,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newRecordBuilder(ClassName name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return newRecordBuilder(name.simpleName());
     }
 
@@ -191,7 +192,7 @@ public final class Type {
      * @throws IllegalArgumentException if the name is not a valid identifier
      */
     public static Builder newAnnotationBuilder(String name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return new Builder(Kind.ANNOTATION, checkName(name));
     }
 
@@ -202,7 +203,7 @@ public final class Type {
      * @return a new builder
      */
     public static Builder newAnnotationBuilder(ClassName name) {
-        Objects.requireNonNull(name, "name");
+        requireNonNull(name, "name");
         return newAnnotationBuilder(name.simpleName());
     }
 
@@ -218,8 +219,8 @@ public final class Type {
      *     {@linkplain CodeBlock balanced}
      */
     public static Builder newAnonymousClassBuilder(String format, @Nullable Object... args) {
-        Objects.requireNonNull(format, "format");
-        Objects.requireNonNull(args, "args");
+        requireNonNull(format, "format");
+        requireNonNull(args, "args");
         CodeBlock arguments =
                 CodeBlock.requireBalanced(CodeBlock.of(format, args), "The arguments of an anonymous class");
         Builder builder = new Builder(Kind.CLASS, null);
@@ -626,7 +627,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addAnnotation(Annotation annotation) {
-            annotations.add(Objects.requireNonNull(annotation, "annotation"));
+            annotations.add(requireNonNull(annotation, "annotation"));
             return this;
         }
 
@@ -638,7 +639,7 @@ public final class Type {
          * @throws IllegalArgumentException if the class is not an annotation type
          */
         public Builder addAnnotation(Class<? extends java.lang.annotation.Annotation> annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -649,7 +650,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addAnnotation(ClassName annotation) {
-            Objects.requireNonNull(annotation, "annotation");
+            requireNonNull(annotation, "annotation");
             return addAnnotation(Annotation.of(annotation));
         }
 
@@ -673,8 +674,8 @@ public final class Type {
          * @throws IllegalArgumentException if the format and the arguments do not match
          */
         public Builder addJavadoc(String format, @Nullable Object... args) {
-            Objects.requireNonNull(format, "format");
-            Objects.requireNonNull(args, "args");
+            requireNonNull(format, "format");
+            requireNonNull(args, "args");
             javadoc.add(format, args);
             return this;
         }
@@ -687,7 +688,7 @@ public final class Type {
          * @throws IllegalStateException if this is an enum, an annotation type or an anonymous class
          */
         public Builder addTypeVariable(TypeVariableName typeVariable) {
-            Objects.requireNonNull(typeVariable, "typeVariable");
+            requireNonNull(typeVariable, "typeVariable");
             return addTypeVariables(List.of(typeVariable));
         }
 
@@ -720,7 +721,7 @@ public final class Type {
          *     class that implements an interface
          */
         public Builder superclass(TypeName type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             checkArgument(
                     type instanceof ClassName || type instanceof ParameterizedTypeName,
                     "A superclass is a class or a parameterized type: %s",
@@ -745,7 +746,7 @@ public final class Type {
          *     class that implements an interface
          */
         public Builder superclass(Class<?> type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             checkArgument(
                     !type.isInterface()
                             && !type.isEnum()
@@ -774,7 +775,7 @@ public final class Type {
          *     class that implements an interface
          */
         public Builder superclass(TypeMirror type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             if (type.getKind() == TypeKind.DECLARED) {
                 TypeElement element = (TypeElement) ((DeclaredType) type).asElement();
                 checkArgument(
@@ -803,7 +804,7 @@ public final class Type {
          *     implements an interface already
          */
         public Builder addSuperinterface(TypeName type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             return addSuperinterfaces(List.of(type));
         }
 
@@ -818,7 +819,7 @@ public final class Type {
          *     implements an interface already
          */
         public Builder addSuperinterface(Class<?> type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             checkArgument(type.isInterface(), "Not an interface: %s", type);
             addSuperinterface(TypeName.of(type));
             nestedNames(type, alwaysQualifiedNames);
@@ -837,7 +838,7 @@ public final class Type {
          *     implements an interface already
          */
         public Builder addSuperinterface(TypeMirror type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             if (type.getKind() == TypeKind.DECLARED) {
                 ElementKind elementKind = ((DeclaredType) type).asElement().getKind();
                 checkArgument(
@@ -893,7 +894,7 @@ public final class Type {
          * @throws IllegalStateException if this is not a class or an interface, or is an anonymous class
          */
         public Builder addPermittedSubclass(TypeName type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             return addPermittedSubclasses(List.of(type));
         }
 
@@ -933,7 +934,7 @@ public final class Type {
          * @return this builder
          */
         public Builder avoidClashesWithNestedClasses(TypeElement type) {
-            nestedNames(Objects.requireNonNull(type, "type"), alwaysQualifiedNames);
+            nestedNames(requireNonNull(type, "type"), alwaysQualifiedNames);
             return this;
         }
 
@@ -945,7 +946,7 @@ public final class Type {
          * @return this builder
          */
         public Builder avoidClashesWithNestedClasses(Class<?> type) {
-            nestedNames(Objects.requireNonNull(type, "type"), alwaysQualifiedNames);
+            nestedNames(requireNonNull(type, "type"), alwaysQualifiedNames);
             return this;
         }
 
@@ -970,7 +971,7 @@ public final class Type {
          * @throws IllegalStateException if this is not an enum
          */
         public Builder addEnumConstant(String constant) {
-            Objects.requireNonNull(constant, "constant");
+            requireNonNull(constant, "constant");
             return addEnumConstant(constant, newAnonymousClassBuilder("").build());
         }
 
@@ -987,8 +988,8 @@ public final class Type {
          * @throws IllegalStateException if this is not an enum
          */
         public Builder addEnumConstant(String constant, Type body) {
-            Objects.requireNonNull(constant, "constant");
-            Objects.requireNonNull(body, "body");
+            requireNonNull(constant, "constant");
+            requireNonNull(body, "body");
             checkArgument(
                     SourceVersion.isIdentifier(constant) && !SourceVersion.isKeyword(constant),
                     "Not an enum constant name: %s",
@@ -1013,7 +1014,7 @@ public final class Type {
          * @throws IllegalStateException if this is not a record
          */
         public Builder addRecordComponent(Parameter component) {
-            Objects.requireNonNull(component, "component");
+            requireNonNull(component, "component");
             return addRecordComponents(List.of(component));
         }
 
@@ -1028,8 +1029,8 @@ public final class Type {
          * @throws IllegalStateException if this is not a record
          */
         public Builder addRecordComponent(TypeName type, String name) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
             return addRecordComponent(Parameter.of(type, name));
         }
 
@@ -1044,8 +1045,8 @@ public final class Type {
          * @throws IllegalStateException if this is not a record
          */
         public Builder addRecordComponent(Class<?> type, String name) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
             return addRecordComponent(TypeName.of(type), name);
         }
 
@@ -1088,7 +1089,7 @@ public final class Type {
          * @return this builder
          */
         public Builder addField(Field field) {
-            fields.add(Objects.requireNonNull(field, "field"));
+            fields.add(requireNonNull(field, "field"));
             return this;
         }
 
@@ -1103,9 +1104,9 @@ public final class Type {
          *     wildcard, or a modifier is not allowed on a field, is repeated, or conflicts with another one
          */
         public Builder addField(TypeName type, String name, Modifier... modifiers) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(modifiers, "modifiers");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
+            requireNonNull(modifiers, "modifiers");
             return addField(Field.of(type, name, modifiers));
         }
 
@@ -1120,9 +1121,9 @@ public final class Type {
          *     identifier; or a modifier is not allowed on a field, is repeated, or conflicts with another one
          */
         public Builder addField(Class<?> type, String name, Modifier... modifiers) {
-            Objects.requireNonNull(type, "type");
-            Objects.requireNonNull(name, "name");
-            Objects.requireNonNull(modifiers, "modifiers");
+            requireNonNull(type, "type");
+            requireNonNull(name, "name");
+            requireNonNull(modifiers, "modifiers");
             return addField(TypeName.of(type), name, modifiers);
         }
 
@@ -1145,7 +1146,7 @@ public final class Type {
          * @throws IllegalStateException if this is an interface or an annotation type
          */
         public Builder addStaticBlock(CodeBlock code) {
-            Objects.requireNonNull(code, "code");
+            requireNonNull(code, "code");
             checkState(!kind.isInterface(), "An interface has no static initializer");
             staticBlock.add(code);
             return this;
@@ -1159,7 +1160,7 @@ public final class Type {
          * @throws IllegalStateException if this is an interface, an annotation type or a record
          */
         public Builder addInitializerBlock(CodeBlock code) {
-            Objects.requireNonNull(code, "code");
+            requireNonNull(code, "code");
             checkState(!kind.isInterface(), "An interface has no instance initializer");
             checkState(kind != Kind.RECORD, "A record has no instance initializer");
             initializerBlock.add(code);
@@ -1177,7 +1178,7 @@ public final class Type {
          *     not default, static or private, or a method that is protected, final, synchronized or native
          */
         public Builder addMethod(Method method) {
-            Objects.requireNonNull(method, "method");
+            requireNonNull(method, "method");
             return addMethods(List.of(method));
         }
 
@@ -1225,7 +1226,7 @@ public final class Type {
          * @throws IllegalArgumentException if the type is anonymous
          */
         public Builder addType(Type type) {
-            Objects.requireNonNull(type, "type");
+            requireNonNull(type, "type");
             return addTypes(List.of(type));
         }
 
