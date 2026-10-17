@@ -4,6 +4,7 @@ import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -35,6 +36,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.FilerException;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -184,6 +186,34 @@ class GeneratedSourcesTest {
         });
 
         assertThat(compilation).succeeded();
+    }
+
+    @Test
+    void writesAJavaFileThroughTheFilerInAscii() {
+        JavaFile file = JavaFile.newBuilder(
+                        "example",
+                        Type.newClassBuilder("Out")
+                                .addField(Field.newBuilder(String.class, "MOON", Modifier.STATIC, Modifier.FINAL)
+                                        .initializer("$S", "月")
+                                        .build())
+                                .build())
+                .build();
+
+        Compilation compilation = FirstRound.run(List.of(GEN, SEED), List.of(), context -> {
+            try {
+                file.writeTo(context.filer(), context.elements().getTypeElement("example.Seed"));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            assertThatExceptionOfType(FilerException.class).isThrownBy(() -> file.writeTo(context.filer()));
+        });
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation)
+                .generatedSourceFile("example.Out")
+                .matches("\\p{ASCII}*")
+                .contains("\"" + BACKSLASH + "u6708\"")
+                .doesNotContain("Generated");
     }
 
     @Test

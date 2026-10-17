@@ -3,8 +3,11 @@ package be.imgn.gaia.processing.source;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.processing.internal.UnicodeEscapes;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +15,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.processing.Filer;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
@@ -169,13 +174,53 @@ public final class JavaFile {
      */
     public Path writeTo(Path directory) throws IOException {
         requireNonNull(directory, "directory");
+        return writeTo(directory, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Writes the file under a source root, as {@link #writeTo(Path)} does, in a charset. The compiler must then read
+     * the file with the same {@code -encoding}.
+     *
+     * @param directory the source root
+     * @param charset the charset
+     * @return the file written
+     * @throws IOException if the folders cannot be created or the file cannot be written, as when the charset cannot
+     *     encode a character of the source: {@link java.nio.charset.UnmappableCharacterException}
+     */
+    public Path writeTo(Path directory, Charset charset) throws IOException {
+        requireNonNull(directory, "directory");
+        requireNonNull(charset, "charset");
         Path folder = directory.resolve(
                 packageName.replace(".", directory.getFileSystem().getSeparator()));
         Files.createDirectories(folder);
         return Files.writeString(
-                folder.resolve(className().simpleName() + JavaFileObject.Kind.SOURCE.extension),
-                toString(),
-                StandardCharsets.UTF_8);
+                folder.resolve(className().simpleName() + JavaFileObject.Kind.SOURCE.extension), toString(), charset);
+    }
+
+    /**
+     * Writes the file through the filer of an annotation processor, in ASCII only: every character after U+007F is
+     * written as a Unicode escape, so that the code means the same under any {@code -encoding} of the compilation.
+     *
+     * <p>{@link be.imgn.gaia.processing.GeneratedSources} writes a file this way too, and also adds {@code @Generated},
+     * qualifies the types of {@code java.lang} that a type of the package hides, and writes the same file only once.
+     *
+     * @param filer the filer
+     * @param originatingElements the elements the file is generated from, so that incremental builds regenerate or
+     *     delete it when they change
+     * @throws IOException if the file cannot be written, as a {@link javax.annotation.processing.FilerException} if it
+     *     was already created
+     */
+    public void writeTo(Filer filer, Element... originatingElements) throws IOException {
+        requireNonNull(filer, "filer");
+        requireNonNull(originatingElements, "originatingElements");
+        for (Element element : originatingElements) {
+            requireNonNull(element, "originatingElements");
+        }
+        String source = UnicodeEscapes.escapeNonAscii(toString());
+        try (Writer writer = filer.createSourceFile(className().canonicalName(), originatingElements)
+                .openWriter()) {
+            writer.write(source);
+        }
     }
 
     /**

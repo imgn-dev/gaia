@@ -1,10 +1,12 @@
 package be.imgn.gaia.processing.source;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnmappableCharacterException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -263,6 +265,25 @@ class JavaFileTest {
             assertThat(written).isEqualTo(root.resolve("com").resolve("example").resolve("Top.java"));
             assertThat(Files.readString(written, StandardCharsets.UTF_8)).isEqualTo(file.toString());
             assertThat(file.toString()).contains("\"Salut, ça va ?\"");
+        }
+
+        @Test
+        void writesUnderASourceRootInACharset(@TempDir Path root) throws IOException {
+            JavaFile file = JavaFile.newBuilder(
+                            "com.example",
+                            Type.newClassBuilder("Top")
+                                    .addField(Field.newBuilder(String.class, "CAFE", Modifier.STATIC)
+                                            .initializer("$S", "café")
+                                            .build())
+                                    .build())
+                    .build();
+
+            Path written = file.writeTo(root, StandardCharsets.ISO_8859_1);
+
+            assertThat(Files.readString(written, StandardCharsets.ISO_8859_1)).isEqualTo(file.toString());
+            assertThat(Files.size(written)).isEqualTo(file.toString().length());
+            assertThatExceptionOfType(UnmappableCharacterException.class)
+                    .isThrownBy(() -> file.writeTo(root, StandardCharsets.US_ASCII));
         }
 
         @Test
