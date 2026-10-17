@@ -124,6 +124,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `List<String>`. `context.methods(type)` lists a type's methods as the compiler sees them, inherited ones included,
   and `context.abstractMethods(type)` the ones an implementation still has to write.
   `MoreElements.firstUnresolvedType(element)` names a type javac could not resolve in an element's signature.
+  `MoreTypes.isCastFromObjectUnchecked(type)` tells whether generated code casting to a type needs a reason it is safe.
 
 ```java
 Type point = Type.newRecordBuilder("Point")

@@ -1,12 +1,16 @@
 package be.imgn.gaia.processing;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Objects;
 import java.util.Optional;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.WildcardType;
 
 /** Checks and conversions on {@link TypeMirror}s that {@code javax.lang.model} does not provide. */
 public final class MoreTypes {
@@ -72,6 +76,43 @@ public final class MoreTypes {
     public static Optional<TypeElement> asTypeElement(TypeMirror type) {
         Objects.requireNonNull(type, "type");
         return asDeclared(type).map(declared -> (TypeElement) declared.asElement());
+    }
+
+    /**
+     * Returns whether casting an {@code Object} to a type is an unchecked cast: one the runtime cannot fully check, so
+     * that javac warns about it. Generated code that casts to such a type needs a reason it is safe.
+     *
+     * <p>A cast is unchecked to a type variable; to a parameterized type with a type argument other than {@code ?} or
+     * {@code ? extends Object}, such as {@code List<String>} or {@code List<? super Object>}; to an inner class of such
+     * a type, such as {@code Outer<String>.Inner}; to an array of any of these; and to an intersection type with any of
+     * these among its bounds. A cast to a raw type, to {@code List<?>} or to a primitive type is checked.
+     *
+     * @param type the type to cast to
+     * @return {@code true} if casting an {@code Object} to {@code type} is unchecked
+     */
+    public static boolean isCastFromObjectUnchecked(TypeMirror type) {
+        requireNonNull(type, "type");
+        return switch (type.getKind()) {
+            case TYPEVAR -> true;
+            case ARRAY -> isCastFromObjectUnchecked(((ArrayType) type).getComponentType());
+            case DECLARED -> {
+                DeclaredType declared = (DeclaredType) type;
+                yield !declared.getTypeArguments().stream().allMatch(MoreTypes::isUnboundedWildcard)
+                        || isCastFromObjectUnchecked(declared.getEnclosingType());
+            }
+            case INTERSECTION ->
+                ((IntersectionType) type).getBounds().stream().anyMatch(MoreTypes::isCastFromObjectUnchecked);
+            default -> false;
+        };
+    }
+
+    // ? and ? extends Object stand for any type argument, as the runtime does.
+    private static boolean isUnboundedWildcard(TypeMirror type) {
+        if (!(type instanceof WildcardType wildcard) || wildcard.getSuperBound() != null) {
+            return false;
+        }
+        TypeMirror bound = wildcard.getExtendsBound();
+        return bound == null || isType(bound, "java.lang.Object");
     }
 
     // The name a class is known by in the compilation; a class without one has no type there.
