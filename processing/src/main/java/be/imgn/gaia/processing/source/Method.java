@@ -788,16 +788,18 @@ public final class Method {
         }
 
         /**
-         * Adds a line comment to the body.
+         * Adds a line comment to the body; see {@link CodeBlock.Builder#addComment(String, Object...)}.
          *
-         * @param comment the comment, without {@code //}
+         * @param format the comment, without {@code //}, with placeholders
+         * @param args the arguments of the placeholders
          * @return this builder
-         * @throws IllegalArgumentException if the comment has a line break
+         * @throws IllegalArgumentException if the format and the arguments do not match, or the comment has a line
+         *     break
          * @throws IllegalStateException if the method is abstract or native
          */
-        public Builder addComment(String comment) {
-            requireNonNull(comment, "comment");
-            code().addComment(comment);
+        public Builder addComment(String format, @Nullable Object... args) {
+            requireNonNull(format, "format");
+            code().addComment(format, args);
             return this;
         }
 

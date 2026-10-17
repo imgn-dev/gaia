@@ -216,6 +216,27 @@ class JavaFileTest {
         }
 
         @Test
+        void importsTypesNamedInComments() {
+            Type type = Type.newClassBuilder("Top")
+                    .addMethod(Method.newBuilder("run")
+                            .addComment("fills a $T", List.class)
+                            .build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    import java.util.List;
+
+                    class Top {
+                        void run() {
+                            // fills a List
+                        }
+                    }
+                    """);
+        }
+
+        @Test
         void writesToAnAppendable() throws IOException {
             StringBuilder out = new StringBuilder();
 

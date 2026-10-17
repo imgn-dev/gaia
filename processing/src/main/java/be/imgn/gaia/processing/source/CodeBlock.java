@@ -332,19 +332,26 @@ public final class CodeBlock {
         }
 
         /**
-         * Adds a line comment.
+         * Adds a line comment, with placeholders as in {@link #add(String, Object...)}: a type named with {@code $T} is
+         * imported as needed, and a dollar sign is written {@code $$}.
          *
-         * @param comment the comment, without {@code //}
+         * @param format the comment, without {@code //}, with placeholders
+         * @param args the arguments of the placeholders
          * @return this builder
-         * @throws IllegalArgumentException if the comment has a line break
+         * @throws IllegalArgumentException if the format and the arguments do not match, or the comment has a line
+         *     break
          */
-        public Builder addComment(String comment) {
-            requireNonNull(comment, "comment");
+        public Builder addComment(String format, @Nullable Object... args) {
+            requireNonNull(format, "format");
+            CodeBlock comment = CodeBlock.of(format, args);
+            String written = comment.toString();
             checkArgument(
-                    comment.indexOf('\n') < 0 && comment.indexOf('\r') < 0,
+                    written.indexOf('\n') < 0 && written.indexOf('\r') < 0,
                     "A line comment cannot have a line break: %s",
-                    comment);
-            parts.add(new Text("// " + comment + "\n"));
+                    written);
+            parts.add(new Text("// "));
+            parts.addAll(comment.parts);
+            parts.add(new Text("\n"));
             return this;
         }
 

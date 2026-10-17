@@ -122,6 +122,8 @@ class CodeBlockTest {
                     .isThrownBy(() -> builder.addComment("first\nsecond"))
                     .withMessageContaining("line break");
             assertThatIllegalArgumentException().isThrownBy(() -> builder.addComment("first\rsecond"));
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.addComment("$L", "first\nsecond"));
+            assertThatIllegalArgumentException().isThrownBy(() -> builder.addComment("costs $5"));
             assertThat(builder.isEmpty()).isTrue();
         }
 
@@ -140,6 +142,19 @@ class CodeBlockTest {
 
     @Nested
     class Builder {
+
+        @Test
+        void writesCommentsWithPlaceholders() {
+            CodeBlock block = CodeBlock.newBuilder()
+                    .addComment("$T keeps $L entries, at $$$L each", Map.class, 3, 2)
+                    .addComment("from $S", "a \"quoted\" source")
+                    .build();
+
+            assertThat(block).hasToString("""
+                    // java.util.Map keeps 3 entries, at $2 each
+                    // from "a \\"quoted\\" source"
+                    """);
+        }
 
         @Test
         void writesStatementsAndControlFlow() {
