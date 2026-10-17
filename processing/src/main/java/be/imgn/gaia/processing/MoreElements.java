@@ -46,8 +46,8 @@ public final class MoreElements {
     public static PackageElement packageOf(Element element) {
         requireNonNull(element, "element");
         for (Element current = element; current != null; current = current.getEnclosingElement()) {
-            if (current instanceof PackageElement found) {
-                return found;
+            if (current.getKind() == ElementKind.PACKAGE) {
+                return asPackage(current);
             }
         }
         throw new IllegalArgumentException(element + " is not in a package");
@@ -65,8 +65,9 @@ public final class MoreElements {
         for (Element current = element.getEnclosingElement();
                 current != null;
                 current = current.getEnclosingElement()) {
-            if (current instanceof TypeElement found) {
-                return Optional.of(found);
+            Optional<TypeElement> found = asTypeElement(current);
+            if (found.isPresent()) {
+                return found;
             }
         }
         return Optional.empty();
@@ -81,7 +82,7 @@ public final class MoreElements {
      */
     public static Optional<TypeElement> topLevelType(Element element) {
         requireNonNull(element, "element");
-        Optional<TypeElement> top = element instanceof TypeElement type ? Optional.of(type) : Optional.empty();
+        Optional<TypeElement> top = asTypeElement(element);
         for (Optional<TypeElement> enclosing = enclosingType(element);
                 enclosing.isPresent();
                 enclosing = enclosingType(enclosing.get())) {
@@ -153,6 +154,18 @@ public final class MoreElements {
     public static TypeElement asType(Element element) {
         requireNonNull(element, "element");
         return cast(element, element.getKind().isDeclaredType(), TypeElement.class, "a type");
+    }
+
+    /**
+     * Returns an element as a class, interface, enum, record or annotation type, if it is one: the kind-checked
+     * counterpart of {@code element instanceof TypeElement type}.
+     *
+     * @param element the element
+     * @return the element, as a type; empty if it is another kind of element
+     */
+    public static Optional<TypeElement> asTypeElement(Element element) {
+        requireNonNull(element, "element");
+        return element.getKind().isDeclaredType() ? Optional.of((TypeElement) element) : Optional.empty();
     }
 
     /**
@@ -439,10 +452,11 @@ public final class MoreElements {
         requireNonNull(element, "element");
         requireNonNull(module, "module");
         PackageElement found = packageOf(element);
-        if (!(found.getEnclosingElement() instanceof ModuleElement owner) || owner.equals(module)) {
+        Element owner = found.getEnclosingElement();
+        if (owner == null || owner.getKind() != ElementKind.MODULE || owner.equals(module)) {
             return true;
         }
-        return reads(module, owner) && exports(owner, found, module);
+        return reads(module, asModule(owner)) && exports(asModule(owner), found, module);
     }
 
     private static <T extends Element> T cast(Element element, boolean matches, Class<T> type, String expected) {
@@ -484,24 +498,26 @@ public final class MoreElements {
         if (modifiers.contains(Modifier.PRIVATE) || isLocal(element)) {
             return Visibility.PRIVATE;
         }
+        Element enclosing = element.getEnclosingElement();
         if (modifiers.contains(Modifier.PUBLIC)
-                || (element.getEnclosingElement() instanceof TypeElement enclosing
-                        && enclosing.getKind().isInterface())) {
+                || (enclosing != null && enclosing.getKind().isInterface())) {
             return Visibility.PUBLIC;
         }
         if (modifiers.contains(Modifier.PROTECTED)) {
             return Visibility.PROTECTED;
         }
         return element.getKind() == ElementKind.CONSTRUCTOR
-                        && element.getEnclosingElement() instanceof TypeElement type
-                        && type.getKind() == ElementKind.ENUM
+                        && enclosing != null
+                        && enclosing.getKind() == ElementKind.ENUM
                 ? Visibility.PRIVATE
                 : Visibility.PACKAGE;
     }
 
     private static boolean isLocal(Element element) {
-        return element instanceof TypeElement type
-                && (type.getNestingKind() == NestingKind.LOCAL || type.getNestingKind() == NestingKind.ANONYMOUS);
+        return asTypeElement(element)
+                .map(type ->
+                        type.getNestingKind() == NestingKind.LOCAL || type.getNestingKind() == NestingKind.ANONYMOUS)
+                .orElse(false);
     }
 
     // Whether an element is below its package: a type, a member, a type parameter, a local declaration.
@@ -518,11 +534,12 @@ public final class MoreElements {
                 current != null && isBelowPackage(current);
                 current = current.getEnclosingElement()) {
             Visibility visibility = visibility(current);
+            Optional<TypeElement> declaring = directlyIn(current);
             boolean permitted = visibility == Visibility.PUBLIC
                     || (visibility == Visibility.PROTECTED
                             && superclass != null
-                            && current.getEnclosingElement() instanceof TypeElement declaring
-                            && isSubclass(superclass, declaring));
+                            && declaring.isPresent()
+                            && isSubclass(superclass, declaring.get()));
             if (!permitted) {
                 return false;
             }
@@ -532,11 +549,17 @@ public final class MoreElements {
 
     private static boolean isIn(Element element, String packageName) {
         for (Element current = element; current != null; current = current.getEnclosingElement()) {
-            if (current instanceof PackageElement found) {
-                return found.getQualifiedName().contentEquals(packageName);
+            if (current.getKind() == ElementKind.PACKAGE) {
+                return asPackage(current).getQualifiedName().contentEquals(packageName);
             }
         }
         return false;
+    }
+
+    // The type an element is declared in directly, if it is declared in a type.
+    private static Optional<TypeElement> directlyIn(Element element) {
+        Element enclosing = element.getEnclosingElement();
+        return enclosing == null ? Optional.empty() : asTypeElement(enclosing);
     }
 
     private static boolean isSubclass(TypeElement type, TypeElement superclass) {

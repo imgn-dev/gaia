@@ -1,5 +1,6 @@
 package be.imgn.gaia.processing.internal;
 
+import be.imgn.gaia.processing.MoreElements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,11 +9,7 @@ import java.util.stream.Stream;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.Parameterizable;
 import javax.lang.model.element.QualifiedNameable;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -53,7 +50,7 @@ public record ElementKey(String root, boolean inPackage, List<String> path) {
     public static Optional<ElementKey> of(Element element) {
         List<String> path = new ArrayList<>();
         Element current = element;
-        while (!(current instanceof TypeElement) && !(current instanceof PackageElement)) {
+        while (!current.getKind().isDeclaredType() && current.getKind() != ElementKind.PACKAGE) {
             Element parent = parentOf(current);
             if (parent == null || current.getKind() == ElementKind.MODULE) {
                 return Optional.empty();
@@ -62,33 +59,37 @@ public record ElementKey(String root, boolean inPackage, List<String> path) {
             current = parent;
         }
         String root = ((QualifiedNameable) current).getQualifiedName().toString();
-        if (root.isEmpty() && current instanceof TypeElement) {
+        if (root.isEmpty() && current.getKind().isDeclaredType()) {
             return Optional.empty();
         }
-        return Optional.of(new ElementKey(root, current instanceof PackageElement, path));
+        return Optional.of(new ElementKey(root, current.getKind() == ElementKind.PACKAGE, path));
     }
 
     private static @Nullable Element parentOf(Element element) {
-        return element instanceof TypeParameterElement parameter
-                ? parameter.getGenericElement()
+        return element.getKind() == ElementKind.TYPE_PARAMETER
+                ? MoreElements.asTypeParameter(element).getGenericElement()
                 : element.getEnclosingElement();
     }
 
     private static String segment(Element element) {
-        return switch (element) {
-            case ExecutableElement method ->
-                "method:"
-                        + method.getSimpleName()
-                        + method.getParameters().stream()
-                                .map(parameter -> simpleName(parameter.asType()))
-                                .collect(Collectors.joining(",", "(", ")"));
-            case TypeParameterElement parameter -> "type-parameter:" + parameter.getSimpleName();
-            default ->
-                element.getKind() == ElementKind.PARAMETER
-                                && element.getEnclosingElement() instanceof ExecutableElement method
-                        ? "parameter:" + method.getParameters().indexOf(element)
-                        : element.getKind() + ":" + element.getSimpleName();
-        };
+        ElementKind kind = element.getKind();
+        if (kind.isExecutable()) {
+            return "method:"
+                    + element.getSimpleName()
+                    + MoreElements.asExecutable(element).getParameters().stream()
+                            .map(parameter -> simpleName(parameter.asType()))
+                            .collect(Collectors.joining(",", "(", ")"));
+        }
+        if (kind == ElementKind.TYPE_PARAMETER) {
+            return "type-parameter:" + element.getSimpleName();
+        }
+        Element enclosing = element.getEnclosingElement();
+        return kind == ElementKind.PARAMETER
+                        && enclosing != null
+                        && enclosing.getKind().isExecutable()
+                ? "parameter:"
+                        + MoreElements.asExecutable(enclosing).getParameters().indexOf(element)
+                : kind + ":" + element.getSimpleName();
     }
 
     private static String simpleName(TypeMirror type) {
@@ -107,10 +108,12 @@ public record ElementKey(String root, boolean inPackage, List<String> path) {
 
     private static Stream<? extends Element> childrenOf(Element element) {
         Stream<? extends Element> children = element.getEnclosedElements().stream();
-        if (element instanceof Parameterizable parameterizable) {
-            children = Stream.concat(children, parameterizable.getTypeParameters().stream());
+        if (element.getKind().isDeclaredType()) {
+            children = Stream.concat(children, MoreElements.asType(element).getTypeParameters().stream());
         }
-        if (element instanceof ExecutableElement method) {
+        if (element.getKind().isExecutable()) {
+            ExecutableElement method = MoreElements.asExecutable(element);
+            children = Stream.concat(children, method.getTypeParameters().stream());
             children = Stream.concat(children, method.getParameters().stream());
         }
         return children;

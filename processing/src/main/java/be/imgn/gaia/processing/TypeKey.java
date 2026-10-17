@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.NestingKind;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ExecutableType;
@@ -201,13 +199,16 @@ public final class TypeKey {
     // canonical name, as a local class, by itself: javac gives a local class its simple name as qualified name.
     private static Object declaration(Element type) {
         for (Element enclosing = type;
-                enclosing instanceof TypeElement nested;
-                enclosing = nested.getEnclosingElement()) {
-            if (nested.getNestingKind() == NestingKind.LOCAL || nested.getNestingKind() == NestingKind.ANONYMOUS) {
+                enclosing != null && enclosing.getKind().isDeclaredType();
+                enclosing = enclosing.getEnclosingElement()) {
+            NestingKind nesting = MoreElements.asType(enclosing).getNestingKind();
+            if (nesting == NestingKind.LOCAL || nesting == NestingKind.ANONYMOUS) {
                 return type;
             }
         }
-        return type instanceof TypeElement named ? named.getQualifiedName().toString() : type;
+        return MoreElements.asTypeElement(type)
+                .<Object>map(named -> named.getQualifiedName().toString())
+                .orElse(type);
     }
 
     // A type variable by its type parameter: its name and its class, method or constructor. A method is known by its
@@ -215,12 +216,15 @@ public final class TypeKey {
     // differ. Another type variable, as one of a captured type, by its type parameter itself.
     private static Object declaration(TypeVariable variable) {
         Element parameter = variable.asElement();
-        Object generic = switch (parameter.getEnclosingElement()) {
-            case TypeElement type -> declaration(type);
-            case ExecutableElement method ->
-                List.of(declaration(requireNonNull(method.getEnclosingElement())), method.toString());
-            case null, default -> parameter;
-        };
+        Element enclosing = parameter.getEnclosingElement();
+        Object generic;
+        if (enclosing != null && enclosing.getKind().isDeclaredType()) {
+            generic = declaration(enclosing);
+        } else if (enclosing != null && enclosing.getKind().isExecutable()) {
+            generic = List.of(declaration(requireNonNull(enclosing.getEnclosingElement())), enclosing.toString());
+        } else {
+            generic = parameter;
+        }
         return List.of(generic, parameter.getSimpleName().toString());
     }
 

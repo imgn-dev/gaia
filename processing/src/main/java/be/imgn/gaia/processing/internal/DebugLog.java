@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.QualifiedNameable;
-import javax.lang.model.element.TypeElement;
 
 /**
  * The debug output of a step processor: one note per step that had work in a round, one per round, and a summary of
@@ -97,13 +97,16 @@ public final class DebugLog {
      */
     public static String name(Element element) {
         Element enclosing = element.getEnclosingElement();
-        return switch (element) {
-            case TypeElement type
-            when enclosing instanceof TypeElement outer -> name(outer) + "." + type.getSimpleName();
-            case TypeElement type -> type.getSimpleName().toString();
-            case QualifiedNameable named -> named.getQualifiedName().toString();
-            default -> enclosing == null ? element.toString() : name(enclosing) + "." + element;
-        };
+        ElementKind kind = element.getKind();
+        if (kind.isDeclaredType()) {
+            return enclosing != null && enclosing.getKind().isDeclaredType()
+                    ? name(enclosing) + "." + element.getSimpleName()
+                    : element.getSimpleName().toString();
+        }
+        if (kind == ElementKind.PACKAGE || kind == ElementKind.MODULE) {
+            return ((QualifiedNameable) element).getQualifiedName().toString();
+        }
+        return enclosing == null ? element.toString() : name(enclosing) + "." + element;
     }
 
     /**

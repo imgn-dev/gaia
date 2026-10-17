@@ -153,6 +153,24 @@ class TypeUtilitiesTest {
     }
 
     @Test
+    void castsElementsToTypesIfTheyAreTypes(Elements elements) {
+        TypeElement map = elements.getTypeElement("java.util.Map");
+        Element size = ElementFilter.methodsIn(map.getEnclosedElements()).stream()
+                .filter(method -> method.getSimpleName().contentEquals("size"))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(MoreElements.asTypeElement(map)).contains(map);
+        assertThat(MoreElements.asTypeElement(elements.getTypeElement("java.lang.annotation.Retention")))
+                .isPresent();
+        assertThat(MoreElements.asTypeElement(size)).isEmpty();
+        assertThat(MoreElements.asTypeElement(elements.getPackageElement("java.util")))
+                .isEmpty();
+        assertThat(MoreElements.asTypeElement(map.getTypeParameters().getFirst()))
+                .isEmpty();
+    }
+
+    @Test
     void navigatesToEnclosingTypesAndPackages(Elements elements) {
         TypeElement entry = elements.getTypeElement("java.util.Map.Entry");
         Element getKey = ElementFilter.methodsIn(entry.getEnclosedElements()).stream()

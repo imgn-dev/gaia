@@ -243,9 +243,8 @@ public final class GeneratedSources {
     }
 
     private static void requiredBy(ModuleElement module, boolean transitiveOnly, Deque<ModuleElement> pending) {
-        for (ModuleElement.Directive directive : module.getDirectives()) {
-            if (directive instanceof ModuleElement.RequiresDirective requires
-                    && (!transitiveOnly || requires.isTransitive())) {
+        for (ModuleElement.RequiresDirective requires : ElementFilter.requiresIn(module.getDirectives())) {
+            if (!transitiveOnly || requires.isTransitive()) {
                 pending.push(requires.getDependency());
             }
         }

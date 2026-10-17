@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import org.jspecify.annotations.Nullable;
@@ -706,7 +707,7 @@ public final class CodeBlock {
                 case Class<?> type -> TypeName.of(type);
                 case java.lang.reflect.Type type -> TypeName.of(type);
                 case TypeMirror type -> TypeName.of(type);
-                case TypeElement type -> ClassName.of(type);
+                case Element element when element.getKind().isDeclaredType() -> ClassName.of((TypeElement) element);
                 case null, default ->
                     throw new IllegalArgumentException("$T expects a type, not " + value + " in: " + format);
             };

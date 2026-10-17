@@ -153,12 +153,14 @@ public final class SourceScope {
         requireNonNull(type, "type");
         Deque<String> path = new ArrayDeque<>();
         Element current = type;
-        while (current.getEnclosingElement() instanceof TypeElement enclosing) {
+        for (Element enclosing = current.getEnclosingElement();
+                enclosing != null && enclosing.getKind().isDeclaredType();
+                enclosing = current.getEnclosingElement()) {
             path.push(current.getSimpleName().toString());
             current = enclosing;
         }
         checkArgument(
-                ((TypeElement) current).getNestingKind() == NestingKind.TOP_LEVEL,
+                MoreElements.asType(current).getNestingKind() == NestingKind.TOP_LEVEL,
                 "Cannot name %s: it is a local or anonymous class, or is nested in one",
                 type);
         String nested = path.stream().map(name -> "." + name).collect(Collectors.joining());

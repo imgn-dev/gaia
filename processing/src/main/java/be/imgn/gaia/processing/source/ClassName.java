@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 /**
@@ -103,11 +103,11 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
         requireNonNull(type, "type");
         List<String> simpleNames = new ArrayList<>();
         Element current = type;
-        while (current instanceof TypeElement nested) {
-            simpleNames.addFirst(nested.getSimpleName().toString());
-            current = nested.getEnclosingElement();
+        while (current != null && current.getKind().isDeclaredType()) {
+            simpleNames.addFirst(current.getSimpleName().toString());
+            current = current.getEnclosingElement();
         }
-        if (!(current instanceof PackageElement)) {
+        if (current == null || current.getKind() != ElementKind.PACKAGE) {
             throw new IllegalArgumentException("Not a named type: " + type + " is local or anonymous");
         }
         return new ClassName(MoreElements.packageOf(type).getQualifiedName().toString(), simpleNames, List.of());
