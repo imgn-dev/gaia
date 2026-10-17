@@ -4,6 +4,9 @@ import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -150,6 +153,29 @@ public final class JavaFile {
     public void writeTo(Appendable out) throws IOException {
         Objects.requireNonNull(out, "out");
         out.append(toString());
+    }
+
+    /**
+     * Writes the file under a source root, as {@code <directory>/com/example/Foo.java} for {@code com.example.Foo}, in
+     * UTF-8. The folders of the package are created as needed, and an existing file is replaced.
+     *
+     * <p>The file cannot tell which types its package declares, so a type of {@code java.lang} that one of them hides,
+     * such as {@code Override} next to a {@code com.example.Override} the file does not refer to, is written by its
+     * simple name. Name such types with {@link Builder#alwaysQualify(String...)}.
+     *
+     * @param directory the source root
+     * @return the file written
+     * @throws IOException if the folders cannot be created or the file cannot be written
+     */
+    public Path writeTo(Path directory) throws IOException {
+        Objects.requireNonNull(directory, "directory");
+        Path folder = directory.resolve(
+                packageName.replace(".", directory.getFileSystem().getSeparator()));
+        Files.createDirectories(folder);
+        return Files.writeString(
+                folder.resolve(className().simpleName() + JavaFileObject.Kind.SOURCE.extension),
+                toString(),
+                StandardCharsets.UTF_8);
     }
 
     /**

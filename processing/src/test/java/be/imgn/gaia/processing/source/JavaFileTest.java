@@ -4,12 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.lang.model.element.Modifier;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class JavaFileTest {
 
@@ -220,6 +224,47 @@ class JavaFileTest {
                     .writeTo(out);
 
             assertThat(out).hasToString("package com.example;\n\nclass Top {\n}\n");
+        }
+
+        @Test
+        void writesUnderASourceRootInUtf8(@TempDir Path root) throws IOException {
+            JavaFile file = JavaFile.newBuilder(
+                            "com.example",
+                            Type.newClassBuilder("Top")
+                                    .addField(Field.newBuilder(String.class, "GREETING", Modifier.STATIC)
+                                            .initializer("$S", "Salut, ça va ?")
+                                            .build())
+                                    .build())
+                    .build();
+
+            Path written = file.writeTo(root);
+
+            assertThat(written).isEqualTo(root.resolve("com").resolve("example").resolve("Top.java"));
+            assertThat(Files.readString(written, StandardCharsets.UTF_8)).isEqualTo(file.toString());
+            assertThat(file.toString()).contains("\"Salut, ça va ?\"");
+        }
+
+        @Test
+        void writesTheUnnamedPackageAtTheSourceRoot(@TempDir Path root) throws IOException {
+            Path written = JavaFile.newBuilder("", Type.newClassBuilder("Top").build())
+                    .build()
+                    .writeTo(root);
+
+            assertThat(written).isEqualTo(root.resolve("Top.java"));
+            assertThat(written).hasContent("class Top {\n}\n");
+        }
+
+        @Test
+        void replacesAnExistingFile(@TempDir Path root) throws IOException {
+            Path existing = Files.createDirectories(root.resolve("com").resolve("example"))
+                    .resolve("Top.java");
+            Files.writeString(existing, "class Old { /* a longer file than the new one */ }\n");
+
+            JavaFile.newBuilder("com.example", Type.newClassBuilder("Top").build())
+                    .build()
+                    .writeTo(root);
+
+            assertThat(existing).hasContent("package com.example;\n\nclass Top {\n}\n");
         }
     }
 
