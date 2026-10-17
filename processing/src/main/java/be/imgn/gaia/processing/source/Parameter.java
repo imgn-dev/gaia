@@ -318,6 +318,19 @@ public final class Parameter {
         }
 
         /**
+         * Adds Javadoc text, written as an {@code @param} tag in the Javadoc of the method or record. End each line
+         * with {@code \n}.
+         *
+         * @param text the text
+         * @return this builder
+         */
+        public Builder addJavadoc(CodeBlock text) {
+            requireNonNull(text, "text");
+            javadoc.add(text);
+            return this;
+        }
+
+        /**
          * Builds the parameter.
          *
          * @return the parameter

@@ -102,6 +102,34 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
                 List.of());
     }
 
+    /**
+     * Returns this name with more bounds, after the ones it has, and the same annotations.
+     *
+     * @param more the bounds to add
+     * @return the name with the bounds
+     * @throws IllegalArgumentException if a bound is primitive, an array or a wildcard, or a type variable is a bound
+     *     with other bounds
+     */
+    public TypeVariableName withBounds(TypeName... more) {
+        return withBounds(Checks.elements(more, "more"));
+    }
+
+    /**
+     * Returns this name with more bounds, after the ones it has, and the same annotations.
+     *
+     * @param more the bounds to add
+     * @return the name with the bounds
+     * @throws IllegalArgumentException if a bound is primitive, an array or a wildcard, or a type variable is a bound
+     *     with other bounds
+     */
+    public TypeVariableName withBounds(List<? extends TypeName> more) {
+        return new TypeVariableName(
+                name,
+                Stream.concat(bounds.stream(), Checks.elements(more, "more").stream())
+                        .toList(),
+                annotations);
+    }
+
     @Override
     public TypeVariableName annotated(Annotation... more) {
         return annotated(Checks.elements(more, "more"));

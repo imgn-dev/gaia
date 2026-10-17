@@ -267,6 +267,20 @@ class TypeNameTest {
         }
 
         @Test
+        void addBoundsToATypeVariable() {
+            TypeVariableName variable =
+                    TypeVariableName.of("T", ClassName.of(Number.class)).annotated(NULLABLE);
+            TypeName comparable = ClassName.of(Comparable.class).parameterized(TypeVariableName.of("T"));
+
+            TypeVariableName bounded = variable.withBounds(comparable);
+
+            assertThat(bounded.bounds()).containsExactly(ClassName.of(Number.class), comparable);
+            assertThat(bounded.annotations()).containsExactly(NULLABLE);
+            assertThat(variable.withBounds(List.of())).isEqualTo(variable);
+            assertThatIllegalArgumentException().isThrownBy(() -> variable.withBounds(PrimitiveTypeName.INT));
+        }
+
+        @Test
         void accumulateAnnotations() {
             Annotation other = Annotation.of(ClassName.of("org.example", "Other"));
 

@@ -681,6 +681,18 @@ public final class Type {
         }
 
         /**
+         * Adds Javadoc text. End each line with {@code \n}.
+         *
+         * @param text the text
+         * @return this builder
+         */
+        public Builder addJavadoc(CodeBlock text) {
+            requireNonNull(text, "text");
+            javadoc.add(text);
+            return this;
+        }
+
+        /**
          * Declares a type variable, such as {@code T} in {@code class Box<T>}.
          *
          * @param typeVariable the type variable, with its bounds
@@ -1080,6 +1092,16 @@ public final class Type {
             checkState(!isVarargs || kind == Kind.RECORD, "Only a record is varargs");
             varargs = isVarargs;
             return this;
+        }
+
+        /**
+         * Makes the last component of a record variable arity. Its type must be an array.
+         *
+         * @return this builder
+         * @throws IllegalStateException if this is not a record
+         */
+        public Builder varargs() {
+            return varargs(true);
         }
 
         /**

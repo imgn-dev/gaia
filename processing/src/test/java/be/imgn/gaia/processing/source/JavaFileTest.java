@@ -239,6 +239,54 @@ class JavaFileTest {
         }
 
         @Test
+        void writesJavadocFromCodeBlocksAndVarargs() {
+            Type type = Type.newClassBuilder("Top")
+                    .addJavadoc(CodeBlock.of("Fills a {@link $T}.\n", List.class))
+                    .addField(Field.newBuilder(int.class, "size")
+                            .addJavadoc(CodeBlock.of("The size.\n"))
+                            .build())
+                    .addMethod(Method.newBuilder("fill")
+                            .addJavadoc(CodeBlock.of("Fills it.\n"))
+                            .addParameter(Parameter.newBuilder(String[].class, "values")
+                                    .addJavadoc(CodeBlock.of("the values\n"))
+                                    .build())
+                            .varargs()
+                            .build())
+                    .addType(Type.newRecordBuilder("Row")
+                            .addRecordComponent(String[].class, "cells")
+                            .varargs()
+                            .build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    import java.util.List;
+
+                    /**
+                     * Fills a {@link List}.
+                     */
+                    class Top {
+                        /**
+                         * The size.
+                         */
+                        int size;
+
+                        /**
+                         * Fills it.
+                         *
+                         * @param values the values
+                         */
+                        void fill(String... values) {
+                        }
+
+                        record Row(String... cells) {
+                        }
+                    }
+                    """);
+        }
+
+        @Test
         void writesToAnAppendable() throws IOException {
             StringBuilder out = new StringBuilder();
 

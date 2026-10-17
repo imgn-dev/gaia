@@ -512,6 +512,18 @@ public final class Method {
         }
 
         /**
+         * Adds Javadoc text. End each line with {@code \n}.
+         *
+         * @param text the text
+         * @return this builder
+         */
+        public Builder addJavadoc(CodeBlock text) {
+            requireNonNull(text, "text");
+            javadoc.add(text);
+            return this;
+        }
+
+        /**
          * Declares a type variable, such as {@code T} in {@code <T> T first(List<T> list)}.
          *
          * @param typeVariable the type variable, with its bounds
@@ -659,6 +671,15 @@ public final class Method {
         public Builder varargs(boolean isVarargs) {
             varargs = isVarargs;
             return this;
+        }
+
+        /**
+         * Makes the last parameter variable arity. Its type must be an array.
+         *
+         * @return this builder
+         */
+        public Builder varargs() {
+            return varargs(true);
         }
 
         /**

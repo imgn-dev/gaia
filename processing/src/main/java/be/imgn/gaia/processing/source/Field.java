@@ -281,6 +281,18 @@ public final class Field {
         }
 
         /**
+         * Adds Javadoc text. End each line with {@code \n}.
+         *
+         * @param text the text
+         * @return this builder
+         */
+        public Builder addJavadoc(CodeBlock text) {
+            requireNonNull(text, "text");
+            javadoc.add(text);
+            return this;
+        }
+
+        /**
          * Sets the initializer.
          *
          * @param format the expression after {@code =}, with placeholders
