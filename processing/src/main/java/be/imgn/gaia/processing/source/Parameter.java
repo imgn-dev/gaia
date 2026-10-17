@@ -258,6 +258,21 @@ public final class Parameter {
         }
 
         /**
+         * Adds modifiers.
+         *
+         * @param more the modifiers: only {@code final} is allowed, and none on a receiver parameter
+         * @return this builder
+         * @throws IllegalArgumentException if a modifier is not {@code final} or is repeated, or this is a receiver
+         *     parameter
+         */
+        public Builder addModifiers(Iterable<Modifier> more) {
+            Set<Modifier> added = Modifiers.added(more, "more", "A parameter");
+            Modifiers.requireOnly(added, isReceiver(name) ? Set.of() : Set.of(Modifier.FINAL), "A parameter");
+            modifiers.addAll(added);
+            return this;
+        }
+
+        /**
          * Adds a declaration annotation. A type annotation, such as {@code @Nullable}, goes on the type instead.
          *
          * @param annotation the annotation

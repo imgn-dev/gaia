@@ -18,6 +18,15 @@ class DeclarationValidationTest {
     class Types {
 
         @Test
+        void takesTheArgumentsOfAnAnonymousClassAsACodeBlock() {
+            assertThat(Type.newAnonymousClassBuilder(CodeBlock.of("$S", "name"))
+                            .build()
+                            .anonymousArguments())
+                    .isEqualTo(CodeBlock.of("$S", "name"));
+            assertThatIllegalArgumentException().isThrownBy(() -> Type.newAnonymousClassBuilder(CodeBlock.of("$>")));
+        }
+
+        @Test
         void rejectsMembersThatDoNotFitTheKind() {
             assertThatIllegalStateException()
                     .isThrownBy(() -> Type.newInterfaceBuilder("I")
@@ -134,6 +143,21 @@ class DeclarationValidationTest {
     class Methods {
 
         @Test
+        void takesADefaultValueAsACodeBlock() {
+            Method value = Method.newBuilder("value")
+                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                    .returns(String.class)
+                    .defaultValue(CodeBlock.of("$S", "none"))
+                    .build();
+
+            assertThat(value.defaultValue()).hasToString("\"none\"");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Method.newBuilder("value").defaultValue(CodeBlock.of("$>1")));
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> Method.newConstructorBuilder().defaultValue(CodeBlock.of("1")));
+        }
+
+        @Test
         void rejectsInconsistentMethods() {
             assertThatIllegalStateException()
                     .isThrownBy(() -> Method.newBuilder("of")
@@ -186,6 +210,17 @@ class DeclarationValidationTest {
 
     @Nested
     class FieldsAndParameters {
+
+        @Test
+        void addsParameterModifiersFromAnIterable() {
+            assertThat(Parameter.newBuilder(int.class, "x")
+                            .addModifiers(List.of(Modifier.FINAL))
+                            .build()
+                            .modifiers())
+                    .containsExactly(Modifier.FINAL);
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Parameter.newBuilder(int.class, "x").addModifiers(List.of(Modifier.PUBLIC)));
+        }
 
         @Test
         void rejectsModifiersThatDoNotApply() {

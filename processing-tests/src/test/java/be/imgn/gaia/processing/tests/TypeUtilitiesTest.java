@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import be.imgn.gaia.processing.MoreElements;
 import be.imgn.gaia.processing.MoreTypes;
 import be.imgn.gaia.processing.TypeKey;
+import be.imgn.gaia.processing.source.ClassName;
+import be.imgn.gaia.processing.source.Type;
 import be.imgn.gaia.processing.testing.CompilationExtension;
 import be.imgn.gaia.processing.testing.SharedCompilation;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -120,6 +123,19 @@ class TypeUtilitiesTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> MoreTypes.asUnion(string))
                 .withMessage("DECLARED java.lang.String is not a union type");
+    }
+
+    @Test
+    void permitsSubclassesGivenAsTypeMirrors(Elements elements, Types types) {
+        Type shape = Type.newInterfaceBuilder("Shape")
+                .addModifiers(Modifier.SEALED)
+                .addPermittedSubclass(listOf(elements, types, String.class))
+                .build();
+
+        assertThat(shape.permittedSubclasses()).containsExactly(ClassName.of(List.class));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() ->
+                        Type.newInterfaceBuilder("Shape").addPermittedSubclass(types.getPrimitiveType(TypeKind.INT)));
     }
 
     @Test

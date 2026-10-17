@@ -221,10 +221,21 @@ public final class Type {
     public static Builder newAnonymousClassBuilder(String format, @Nullable Object... args) {
         requireNonNull(format, "format");
         requireNonNull(args, "args");
-        CodeBlock arguments =
-                CodeBlock.requireBalanced(CodeBlock.of(format, args), "The arguments of an anonymous class");
+        return newAnonymousClassBuilder(CodeBlock.of(format, args));
+    }
+
+    /**
+     * Returns a builder of anonymous classes; see {@link #newAnonymousClassBuilder(String, Object...)}.
+     *
+     * @param arguments the arguments of the superclass constructor; empty for none
+     * @return a new builder
+     * @throws IllegalArgumentException if the arguments are not {@linkplain CodeBlock balanced}
+     */
+    public static Builder newAnonymousClassBuilder(CodeBlock arguments) {
+        requireNonNull(arguments, "arguments");
+        CodeBlock checked = CodeBlock.requireBalanced(arguments, "The arguments of an anonymous class");
         Builder builder = new Builder(Kind.CLASS, null);
-        builder.anonymousArguments = arguments;
+        builder.anonymousArguments = checked;
         return builder;
     }
 
@@ -925,6 +936,21 @@ public final class Type {
         public Builder addPermittedSubclass(Class<?> type) {
             requireNonNull(type, "type");
             return addPermittedSubclass(TypeName.of(type));
+        }
+
+        /**
+         * Adds a subclass this sealed type permits. A parameterized type stands for its class, without type arguments
+         * or type annotations, as a {@code permits} clause names it.
+         *
+         * @param type the subclass
+         * @return this builder
+         * @throws IllegalArgumentException if the type is not a declared type, or is a local or anonymous class
+         * @throws IllegalStateException if this is not a class or an interface, or is an anonymous class
+         */
+        public Builder addPermittedSubclass(TypeMirror type) {
+            requireNonNull(type, "type");
+            checkArgument(type.getKind() == TypeKind.DECLARED, "A permitted subclass is a class: %s", type);
+            return addPermittedSubclass(ClassName.of((TypeElement) ((DeclaredType) type).asElement()));
         }
 
         /**

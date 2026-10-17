@@ -966,9 +966,22 @@ public final class Method {
         public Builder defaultValue(String format, @Nullable Object... args) {
             requireNonNull(format, "format");
             requireNonNull(args, "args");
-            CodeBlock value = CodeBlock.requireBalanced(CodeBlock.of(format, args), "The default value of " + name);
+            return defaultValue(CodeBlock.of(format, args));
+        }
+
+        /**
+         * Sets the default value of an annotation type member.
+         *
+         * @param value the value after {@code default}
+         * @return this builder
+         * @throws IllegalArgumentException if the value is not {@linkplain CodeBlock balanced}
+         * @throws IllegalStateException if this is a constructor
+         */
+        public Builder defaultValue(CodeBlock value) {
+            requireNonNull(value, "value");
+            CodeBlock checked = CodeBlock.requireBalanced(value, "The default value of " + name);
             checkState(!isConstructor(), "A constructor has no default value");
-            defaultValue = value;
+            defaultValue = checked;
             return this;
         }
 
