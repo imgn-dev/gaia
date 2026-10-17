@@ -1,0 +1,113 @@
+name: API docs
+
+# Publishes or removes the API documentation of a released version on the
+# gh-pages branch, served at https://imgn-dev.github.io/gaia/api/. The release
+# workflow calls it; run it by hand to publish an older version again or to
+# remove one that was never published to Maven Central.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Released version: MAJOR.MINOR.PATCH, e.g. 0.1.0'
+        required: true
+        type: string
+      action:
+        description: 'publish the documentation of the version, or remove it'
+        required: true
+        type: choice
+        options:
+          - publish
+          - remove
+        default: publish
+      replace:
+        description: 'With publish: replace the documentation of a version already published'
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+# Two runs must never push to gh-pages at the same time.
+concurrency:
+  group: docs
+  cancel-in-progress: false
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version }}
+      # A call from the release workflow always publishes, and never replaces.
+      ACTION: ${{ inputs.action || 'publish' }}
+      REPLACE: ${{ inputs.replace && '--replace' || '' }}
+    steps:
+      - name: Check version format
+        run: |
+          if [[ ! $VERSION =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::version is '$VERSION'. It must be MAJOR.MINOR.PATCH, e.g. 0.1.0, and nothing else."
+            exit 1
+          fi
+
+      # The scripts of the default branch work on the sources of any tag.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: main
+
+      - if: env.ACTION == 'publish'
+        uses: actions/checkout@v7
+        with:
+          ref: v${{ inputs.version }}
+          path: source
+
+      - if: env.ACTION == 'publish'
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - if: env.ACTION == 'publish'
+        name: Build the documentation
+        run: main/scripts/javadoc.sh source "$RUNNER_TEMP/javadoc"
+
+      - name: Check out gh-pages
+        working-directory: main
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch --depth=1 origin gh-pages:gh-pages; then
+            git worktree add ../site gh-pages
+          else
+            echo 'No gh-pages branch yet: starting it.'
+            git worktree add --orphan -b gh-pages ../site
+          fi
+
+      - name: Update the site
+        run: |
+          if [[ $ACTION == publish ]]; then
+            main/scripts/docs-site.sh publish site "$VERSION" "$RUNNER_TEMP/javadoc" $REPLACE
+          else
+            main/scripts/docs-site.sh remove site "$VERSION"
+          fi
+
+      - name: Push gh-pages
+        working-directory: site
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'Nothing changed.'
+            exit 0
+          fi
+          if [[ $ACTION == publish ]]; then
+            git commit -m "docs: publish the API of $VERSION"
+          else
+            git commit -m "docs: remove the API of $VERSION"
+          fi
+          git push origin gh-pages

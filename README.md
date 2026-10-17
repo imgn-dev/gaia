@@ -5,6 +5,9 @@ annotation processors. Each library has a matching testing library for testing t
 
 The libraries require Java 21 or later and are released together under one version.
 
+API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
+[every released version](https://imgn-dev.github.io/gaia/api/).
+
 ## Libraries
 
 | Artifact                  | Module                            | What it does                                                |

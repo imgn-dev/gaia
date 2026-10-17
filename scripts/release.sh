@@ -5,7 +5,8 @@
 #
 #   set the release version, verify, deploy with -Prelease (sources, javadoc,
 #   GPG signature, upload to the Central portal), commit and tag, set the next
-#   -SNAPSHOT version, commit, push, and create the GitHub release.
+#   -SNAPSHOT version, commit, push, create the GitHub release, and start the
+#   API docs workflow.
 #
 # The version lives in one place: -Drevision in .mvn/maven.config. Every POM
 # reads ${revision}, and flatten-maven-plugin writes the resolved version into
@@ -282,8 +283,10 @@ tag_and_bump() {
         would "push both commits and tag v$RELEASE_VERSION to origin"
         if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
             would "create the GitHub release v$RELEASE_VERSION in $REPO"
+            would "start the API docs workflow for $RELEASE_VERSION"
         else
             warn "gh unavailable: create the GitHub release for v$RELEASE_VERSION by hand."
+            warn "gh unavailable: run the API docs workflow for $RELEASE_VERSION by hand."
         fi
         return
     fi
@@ -310,8 +313,13 @@ tag_and_bump() {
         gh release create "v$RELEASE_VERSION" --repo "$REPO" \
             --title "v$RELEASE_VERSION" --generate-notes
         ok 'GitHub release created'
+        # As in the release workflow: built from the tag, without waiting for
+        # the deployment to be published.
+        gh workflow run docs.yml --repo "$REPO" --ref main -f version="$RELEASE_VERSION"
+        ok 'API docs workflow started'
     else
         warn "gh unavailable: create the GitHub release for v$RELEASE_VERSION by hand."
+        warn "gh unavailable: run the API docs workflow for $RELEASE_VERSION by hand."
     fi
 }
 
