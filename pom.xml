@@ -41,6 +41,7 @@
     <module>bom</module>
     <module>core</module>
     <module>core-testing</module>
+    <module>memfs</module>
     <module>platform</module>
     <module>platform-testing</module>
     <module>processing</module>

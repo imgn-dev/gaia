@@ -14,6 +14,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 |---------------------------|-----------------------------------|-------------------------------------------------------------|
 | `gaia-core`               | `be.imgn.gaia.core`               | Extensions to the JDK                                       |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | Test helpers for code using `gaia-core`                     |
+| `gaia-memfs`              | `be.imgn.gaia.memfs`              | An in-memory file system for the `mem:` URI scheme          |
 | `gaia-platform`           | `be.imgn.gaia.platform`           | A cross-platform API over the host the JVM runs on          |
 | `gaia-platform-testing`   | `be.imgn.gaia.platform.testing`   | Test helpers for code using `gaia-platform`                 |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | Helpers for writing annotation processors                   |
@@ -58,6 +59,22 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 ### `gaia-core-testing`
 
 - **`FakeTicker`**: a `Ticker` that tests advance by hand, for exact and instant tests of timing code.
+
+### `gaia-memfs`
+
+- **`MemoryFileSystems`**: creates file systems that live in memory until they are closed, for tests or scratch work:
+  `MemoryFileSystems.newFileSystem()`. Their paths have `mem:` URIs, such as `mem://name/work/file.txt`, which
+  `Path.of(uri)` finds while the file system is open; `FileSystems.newFileSystem(URI.create("mem://name"), env)`
+  creates one too. They support the whole `java.nio.file` API: channels, file channels with locks, asynchronous
+  channels, symbolic and hard links, secure directory streams, the `basic`, `owner`, `posix`, `unix`, `dos`, `acl` and
+  `user` attribute views, glob and regex path matchers, and a polling watch service. Only `Path.toFile()` and
+  `FileChannel.map()` are unsupported.
+- **`Configuration`**: how a file system behaves. `Configuration.unix()`, `macOS()`, `windows()` and
+  `forCurrentPlatform()` look like those systems: path style, roots (drives and UNC shares on Windows), case and
+  Unicode normalization when matching names, and attribute views. `toBuilder()` changes the working directory, block
+  size, capacity, maximum name length, default attributes, clock, watch polling interval and optional features.
+  `currentUser("alice", "staff")` enforces POSIX permissions, DOS read-only flags and access control lists for that
+  user.
 
 ### `gaia-platform`
 
