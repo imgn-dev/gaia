@@ -21,9 +21,12 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -503,6 +506,33 @@ public final class ProcessingContext {
     public List<ExecutableElement> abstractMethods(TypeElement type) {
         Objects.requireNonNull(type, "type");
         return new Inheritance(elements(), types()).abstractMethods(type);
+    }
+
+    /**
+     * Returns the type of a field or of a parameter as a member of a type: the parameter of {@code add(E)} has the type
+     * {@code String} in {@code List<String>}. This is {@link Types#asMemberOf(DeclaredType, Element)}, which javac
+     * rejects for a parameter, since its enclosing element is a method rather than a type: a parameter has the type
+     * that its method, as a member of {@code container}, gives it. The field of a record component gives the type of
+     * the component.
+     *
+     * @param container the type the variable is a member of, or a subtype of the type declaring it
+     * @param variable a field, an enum constant, or a parameter of a method or constructor
+     * @return the type of {@code variable} in {@code container}
+     * @throws IllegalArgumentException if {@code variable} is another kind of variable, such as a local variable, or is
+     *     not a member of {@code container}, nor a parameter of one
+     */
+    public TypeMirror asMemberOf(DeclaredType container, VariableElement variable) {
+        requireNonNull(container, "container");
+        requireNonNull(variable, "variable");
+        if (variable.getKind() != ElementKind.PARAMETER) {
+            return types().asMemberOf(container, variable);
+        }
+        if (!(variable.getEnclosingElement() instanceof ExecutableElement method)
+                || !method.getParameters().contains(variable)) {
+            throw new IllegalArgumentException("Not a parameter of a method or constructor: " + variable);
+        }
+        var type = (ExecutableType) types().asMemberOf(container, method);
+        return type.getParameterTypes().get(method.getParameters().indexOf(variable));
     }
 
     /**

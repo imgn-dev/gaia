@@ -126,6 +126,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `MoreElements.firstUnresolvedType(element)` names a type javac could not resolve in an element's signature.
   `MoreTypes.isCastFromObjectUnchecked(type)` tells whether generated code casting to a type needs a reason it is safe.
   `context.superclass(type)` gives the direct superclass with its type arguments, leaving out `Object`.
+  `context.asMemberOf(type, variable)` gives a field or a parameter the type it has as a member of a type.
 
 ```java
 Type point = Type.newRecordBuilder("Point")
