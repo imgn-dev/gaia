@@ -67,14 +67,15 @@ public final class MoreTypes {
     }
 
     /**
-     * Returns a type as a declared type, if it is one.
+     * Returns a type as a declared type: a class, interface, enum, record or annotation type, possibly parameterized.
      *
      * @param type the type
-     * @return the declared type, or empty for a primitive, array, type variable or any other kind of type
+     * @return the type, as a declared type
+     * @throws IllegalArgumentException if the type is not a declared type
      */
-    public static Optional<DeclaredType> asDeclared(TypeMirror type) {
+    public static DeclaredType asDeclared(TypeMirror type) {
         requireNonNull(type, "type");
-        return type.getKind() == TypeKind.DECLARED ? Optional.of((DeclaredType) type) : Optional.empty();
+        return cast(type, type.getKind() == TypeKind.DECLARED, DeclaredType.class, "a declared type");
     }
 
     /**
@@ -85,7 +86,9 @@ public final class MoreTypes {
      */
     public static Optional<TypeElement> asTypeElement(TypeMirror type) {
         requireNonNull(type, "type");
-        return asDeclared(type).map(declared -> (TypeElement) declared.asElement());
+        return type.getKind() == TypeKind.DECLARED
+                ? Optional.of((TypeElement) asDeclared(type).asElement())
+                : Optional.empty();
     }
 
     /**

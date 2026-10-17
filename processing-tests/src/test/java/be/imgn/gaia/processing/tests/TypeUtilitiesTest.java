@@ -74,7 +74,11 @@ class TypeUtilitiesTest {
                 .contains(elements.getTypeElement("java.util.List"));
         assertThat(MoreTypes.asTypeElement(types.getPrimitiveType(TypeKind.INT)))
                 .isEmpty();
-        assertThat(MoreTypes.asDeclared(types.getPrimitiveType(TypeKind.INT))).isEmpty();
+        assertThat(MoreTypes.asDeclared(listOf(elements, types, String.class)).getTypeArguments())
+                .hasSize(1);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> MoreTypes.asDeclared(types.getPrimitiveType(TypeKind.INT)))
+                .withMessage("INT int is not a declared type");
     }
 
     @Test
