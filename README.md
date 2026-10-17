@@ -123,6 +123,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `context.asSupertype(type, List.class)` gives the supertype with the type arguments the hierarchy gives it, such as
   `List<String>`. `context.methods(type)` lists a type's methods as the compiler sees them, inherited ones included,
   and `context.abstractMethods(type)` the ones an implementation still has to write.
+  `MoreElements.firstUnresolvedType(element)` names a type javac could not resolve in an element's signature.
 
 ```java
 Type point = Type.newRecordBuilder("Point")

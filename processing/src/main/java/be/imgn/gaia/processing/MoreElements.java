@@ -1,5 +1,8 @@
 package be.imgn.gaia.processing;
 
+import static java.util.Objects.requireNonNull;
+
+import be.imgn.gaia.processing.internal.Resolution;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
@@ -99,6 +102,27 @@ public final class MoreElements {
         Objects.requireNonNull(qualifiedName, "qualifiedName");
         return element.getAnnotationMirrors().stream()
                 .anyMatch(mirror -> MoreTypes.isType(mirror.getAnnotationType(), qualifiedName));
+    }
+
+    /**
+     * Returns the first type javac could not resolve in the signature of an element, typically because another
+     * processor has not generated it yet. A processor that needs the element's types to be complete can wait for a
+     * later round while there is one, as {@link StepProcessor} does for the elements its steps defer.
+     *
+     * <p>The signature covers the element's annotations and their values, class literals included, and the types it
+     * declares: the superclass, interfaces, type parameters and members of a type; the return, parameter and thrown
+     * types and the type parameters of a method; the type of a field, parameter or record component; the bounds of a
+     * type parameter. Method bodies and field initializers are not covered.
+     *
+     * @param element the element
+     * @return the name of the unresolved type as written in the source, without type annotations or type arguments,
+     *     such as {@code Missing} for {@code List<@Nullable Missing>} or {@code com.example.Missing} when qualified,
+     *     but only the name javac gives an unresolved class literal in an annotation, such as {@code <error>}; or empty
+     *     if every type is resolved
+     */
+    public static Optional<String> firstUnresolvedType(Element element) {
+        requireNonNull(element, "element");
+        return Resolution.firstUnresolved(element);
     }
 
     /**
