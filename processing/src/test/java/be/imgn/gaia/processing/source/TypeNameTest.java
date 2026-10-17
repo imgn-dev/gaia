@@ -167,6 +167,18 @@ class TypeNameTest {
         }
 
         @Test
+        void buildNamesFromReflectiveTypes() {
+            assertThat(ParameterizedTypeName.of(Map.class, String.class, returnType("lower")))
+                    .hasToString("java.util.Map<java.lang.String, java.util.List<? super java.lang.Integer>>");
+            assertThat(WildcardTypeName.subtypeOf(returnType("variable"))).hasToString("? extends T");
+            assertThat(WildcardTypeName.supertypeOf(Integer.class))
+                    .isEqualTo(WildcardTypeName.supertypeOf(ClassName.of(Integer.class)));
+            assertThat(ArrayTypeName.of(returnType("unbounded"))).hasToString("java.util.List<?>[]");
+            assertThatIllegalArgumentException().isThrownBy(() -> ParameterizedTypeName.of(int.class, String.class));
+            assertThatIllegalArgumentException().isThrownBy(() -> ParameterizedTypeName.of(List.class));
+        }
+
+        @Test
         void serveAsTypesInCode() {
             assertThat(CodeBlock.of("$T values", returnType("map")))
                     .hasToString("java.util.Map<java.lang.String, java.util.List<? extends java.lang.Number>> values");

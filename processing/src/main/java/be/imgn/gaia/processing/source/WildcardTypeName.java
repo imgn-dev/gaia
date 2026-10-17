@@ -63,6 +63,18 @@ public record WildcardTypeName(
     }
 
     /**
+     * Returns {@code ? extends bound}.
+     *
+     * @param bound the upper bound: a class, or a generic type
+     * @return the wildcard
+     * @throws IllegalArgumentException if the bound is primitive or a wildcard, or names a local or anonymous class, as
+     *     {@link TypeName#of(java.lang.reflect.Type)} names it
+     */
+    public static WildcardTypeName subtypeOf(java.lang.reflect.Type bound) {
+        return subtypeOf(TypeName.of(requireNonNull(bound, "bound")));
+    }
+
+    /**
      * Returns {@code ? super bound}.
      *
      * @param bound the lower bound
@@ -71,6 +83,18 @@ public record WildcardTypeName(
      */
     public static WildcardTypeName supertypeOf(TypeName bound) {
         return new WildcardTypeName(null, requireNonNull(bound, "bound"), List.of());
+    }
+
+    /**
+     * Returns {@code ? super bound}.
+     *
+     * @param bound the lower bound: a class, or a generic type
+     * @return the wildcard
+     * @throws IllegalArgumentException if the bound is primitive or a wildcard, or names a local or anonymous class, as
+     *     {@link TypeName#of(java.lang.reflect.Type)} names it
+     */
+    public static WildcardTypeName supertypeOf(java.lang.reflect.Type bound) {
+        return supertypeOf(TypeName.of(requireNonNull(bound, "bound")));
     }
 
     @Override

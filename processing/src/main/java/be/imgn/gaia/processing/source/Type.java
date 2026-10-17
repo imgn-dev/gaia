@@ -750,28 +750,30 @@ public final class Type {
         /**
          * Sets the superclass of a class, and qualifies the names of the member types it brings.
          *
-         * @param type the superclass
+         * @param type the superclass: a class, or a parameterized type such as the generic superclass of a class
          * @return this builder
-         * @throws IllegalArgumentException if the class cannot be extended: if it is an interface, an enum, a record,
-         *     final, primitive, an array, {@code Enum} or {@code Record}; or it is local or anonymous
+         * @throws IllegalArgumentException if the type is neither a class nor a parameterized type; or the class cannot
+         *     be extended: if it is an interface, an enum, a record, final, primitive, an array, {@code Enum} or
+         *     {@code Record}; or a class it names is local or anonymous
          * @throws IllegalStateException if this is not a class, the superclass is already set, or this is an anonymous
          *     class that implements an interface
          */
-        public Builder superclass(Class<?> type) {
+        public Builder superclass(java.lang.reflect.Type type) {
             requireNonNull(type, "type");
+            Class<?> raw = ReflectiveTypes.rawClass(type);
             checkArgument(
-                    !type.isInterface()
-                            && !type.isEnum()
-                            && !type.isRecord()
-                            && !type.isPrimitive()
-                            && !type.isArray()
-                            && !java.lang.reflect.Modifier.isFinal(type.getModifiers())
-                            && type != Enum.class
-                            && type != Record.class,
+                    !raw.isInterface()
+                            && !raw.isEnum()
+                            && !raw.isRecord()
+                            && !raw.isPrimitive()
+                            && !raw.isArray()
+                            && !java.lang.reflect.Modifier.isFinal(raw.getModifiers())
+                            && raw != Enum.class
+                            && raw != Record.class,
                     "Not a class that can be extended: %s",
                     type);
             superclass(TypeName.of(type));
-            nestedNames(type, alwaysQualifiedNames);
+            nestedNames(raw, alwaysQualifiedNames);
             return this;
         }
 
@@ -824,17 +826,19 @@ public final class Type {
          * Adds an interface this type implements, or extends for an interface, and qualifies the names of the member
          * types it brings.
          *
-         * @param type the interface
+         * @param type the interface: a class, or a parameterized type such as a generic interface of a class
          * @return this builder
-         * @throws IllegalArgumentException if the class is not an interface, or is local or anonymous
+         * @throws IllegalArgumentException if the type is neither a class nor a parameterized type, its class is not an
+         *     interface, or a class it names is local or anonymous
          * @throws IllegalStateException if this is an annotation type, or an anonymous class that extends a class or
          *     implements an interface already
          */
-        public Builder addSuperinterface(Class<?> type) {
+        public Builder addSuperinterface(java.lang.reflect.Type type) {
             requireNonNull(type, "type");
-            checkArgument(type.isInterface(), "Not an interface: %s", type);
+            Class<?> raw = ReflectiveTypes.rawClass(type);
+            checkArgument(raw.isInterface(), "Not an interface: %s", type);
             addSuperinterface(TypeName.of(type));
-            nestedNames(type, alwaysQualifiedNames);
+            nestedNames(raw, alwaysQualifiedNames);
             return this;
         }
 
@@ -908,6 +912,19 @@ public final class Type {
         public Builder addPermittedSubclass(TypeName type) {
             requireNonNull(type, "type");
             return addPermittedSubclasses(List.of(type));
+        }
+
+        /**
+         * Adds a subclass this sealed type permits.
+         *
+         * @param type the subclass
+         * @return this builder
+         * @throws IllegalArgumentException if the class is primitive, an array, local or anonymous
+         * @throws IllegalStateException if this is not a class or an interface, or is an anonymous class
+         */
+        public Builder addPermittedSubclass(Class<?> type) {
+            requireNonNull(type, "type");
+            return addPermittedSubclass(TypeName.of(type));
         }
 
         /**
@@ -1049,14 +1066,14 @@ public final class Type {
         /**
          * Adds a component to a record.
          *
-         * @param type the type
+         * @param type the type: a class, or a generic type
          * @param name the name
          * @return this builder
-         * @throws IllegalArgumentException if the class is {@code void}, local or anonymous, or the name is not a valid
-         *     identifier
+         * @throws IllegalArgumentException if the type is {@code void}, or names a local or anonymous class, as
+         *     {@link TypeName#of(java.lang.reflect.Type)} names it; or the name is not a valid identifier
          * @throws IllegalStateException if this is not a record
          */
-        public Builder addRecordComponent(Class<?> type, String name) {
+        public Builder addRecordComponent(java.lang.reflect.Type type, String name) {
             requireNonNull(type, "type");
             requireNonNull(name, "name");
             return addRecordComponent(TypeName.of(type), name);
@@ -1135,14 +1152,15 @@ public final class Type {
         /**
          * Adds a field without initializer.
          *
-         * @param type the type
+         * @param type the type: a class, or a generic type
          * @param name the name
          * @param modifiers the modifiers
          * @return this builder
-         * @throws IllegalArgumentException if the class is {@code void}, local or anonymous; the name is not a valid
-         *     identifier; or a modifier is not allowed on a field, is repeated, or conflicts with another one
+         * @throws IllegalArgumentException if the type is {@code void}, or names a local or anonymous class, as
+         *     {@link TypeName#of(java.lang.reflect.Type)} names it; the name is not a valid identifier; or a modifier
+         *     is not allowed on a field, is repeated, or conflicts with another one
          */
-        public Builder addField(Class<?> type, String name, Modifier... modifiers) {
+        public Builder addField(java.lang.reflect.Type type, String name, Modifier... modifiers) {
             requireNonNull(type, "type");
             requireNonNull(name, "name");
             requireNonNull(modifiers, "modifiers");

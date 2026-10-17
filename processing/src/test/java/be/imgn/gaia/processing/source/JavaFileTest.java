@@ -2,6 +2,7 @@ package be.imgn.gaia.processing.source;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -9,9 +10,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.lang.model.element.Modifier;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -284,6 +290,80 @@ class JavaFileTest {
                         }
                     }
                     """);
+        }
+
+        @Test
+        void writesGenericTypesFoundByReflection() throws NoSuchMethodException {
+            Type type = Type.newClassBuilder("Names")
+                    .addTypeVariable(TypeVariableName.of("E"))
+                    .superclass(ArrayList.class.getGenericSuperclass())
+                    .addSuperinterface(ArrayList.class.getGenericInterfaces()[0])
+                    .addField(Comparator.class.getMethod("reversed").getGenericReturnType(), "order")
+                    .addMethod(Method.newBuilder("first")
+                            .addTypeVariable(TypeVariableName.of("X", ClassName.of(Throwable.class)))
+                            .returns(Optional.class.getMethod("stream").getGenericReturnType())
+                            .addParameter(
+                                    Function.class.getMethod("apply", Object.class)
+                                            .getGenericParameterTypes()[0],
+                                    "value")
+                            .addException(Optional.class.getMethod("orElseThrow", Supplier.class)
+                                    .getGenericExceptionTypes()[0])
+                            .addStatement("return null")
+                            .build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    import java.util.AbstractList;
+                    import java.util.Comparator;
+                    import java.util.List;
+                    import java.util.stream.Stream;
+
+                    class Names<E> extends AbstractList<E> implements List<E> {
+                        Comparator<T> order;
+
+                        <X extends Throwable> Stream<T> first(T value) throws X {
+                            return null;
+                        }
+                    }
+                    """);
+        }
+
+        @Test
+        void buildsFieldsAndParametersOfGenericTypes() throws NoSuchMethodException {
+            java.lang.reflect.Type stream = Optional.class.getMethod("stream").getGenericReturnType();
+
+            assertThat(Field.newBuilder(stream, "values").build().type()).isEqualTo(TypeName.of(stream));
+            assertThat(Parameter.of(stream, "values").type()).isEqualTo(TypeName.of(stream));
+            assertThat(Parameter.newBuilder(stream, "values").build().type()).isEqualTo(TypeName.of(stream));
+        }
+
+        @Test
+        void rejectsReflectiveSupertypesOfTheWrongKind() throws NoSuchMethodException {
+            java.lang.reflect.Type variable =
+                    Function.class.getMethod("apply", Object.class).getGenericParameterTypes()[0];
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newClassBuilder("Top").superclass(variable));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Type.newClassBuilder("Top")
+                            .superclass(ArrayList.class.getGenericInterfaces()[0]));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() ->
+                            Type.newClassBuilder("Top").addSuperinterface(ArrayList.class.getGenericSuperclass()));
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Method.newBuilder("run").addException((java.lang.reflect.Type) String.class));
+        }
+
+        @Test
+        void permitsSubclassesGivenAsClasses() {
+            Type shape = Type.newInterfaceBuilder("Shape")
+                    .addModifiers(Modifier.SEALED)
+                    .addPermittedSubclass(Map.class)
+                    .build();
+
+            assertThat(shape.permittedSubclasses()).containsExactly(ClassName.of(Map.class));
         }
 
         @Test

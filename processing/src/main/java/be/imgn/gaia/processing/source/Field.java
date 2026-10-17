@@ -79,14 +79,15 @@ public final class Field {
     /**
      * Returns a builder of fields.
      *
-     * @param type the type
+     * @param type the type: a class, or a generic type
      * @param name the name
      * @param modifiers the modifiers
      * @return a new builder
-     * @throws IllegalArgumentException if the class is {@code void}, local or anonymous; the name is not a valid
-     *     identifier; or a modifier is not allowed on a field, is repeated, or conflicts with another one
+     * @throws IllegalArgumentException if the type is {@code void}, or names a local or anonymous class, as
+     *     {@link TypeName#of(java.lang.reflect.Type)} names it; the name is not a valid identifier; or a modifier is
+     *     not allowed on a field, is repeated, or conflicts with another one
      */
-    public static Builder newBuilder(Class<?> type, String name, Modifier... modifiers) {
+    public static Builder newBuilder(java.lang.reflect.Type type, String name, Modifier... modifiers) {
         requireNonNull(type, "type");
         requireNonNull(name, "name");
         requireNonNull(modifiers, "modifiers");

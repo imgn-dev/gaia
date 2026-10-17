@@ -44,6 +44,19 @@ public record ArrayTypeName(TypeName componentType, List<Annotation> annotations
         return new ArrayTypeName(componentType, List.of());
     }
 
+    /**
+     * Returns the name of an array type, without annotations.
+     *
+     * @param componentType the type of the elements: a class, or a generic type
+     * @return the name
+     * @throws IllegalArgumentException if the component type is {@code void} or a wildcard, or names a local or
+     *     anonymous class, as {@link TypeName#of(java.lang.reflect.Type)} names it
+     */
+    public static ArrayTypeName of(java.lang.reflect.Type componentType) {
+        requireNonNull(componentType, "componentType");
+        return of(TypeName.of(componentType));
+    }
+
     @Override
     public ArrayTypeName annotated(Annotation... more) {
         return annotated(Checks.elements(more, "more"));

@@ -572,12 +572,13 @@ public final class Method {
         /**
          * Sets the return type.
          *
-         * @param type the return type
+         * @param type the return type: a class, or a generic type
          * @return this builder
-         * @throws IllegalArgumentException if the class is local or anonymous
+         * @throws IllegalArgumentException if the type names a local or anonymous class, as
+         *     {@link TypeName#of(java.lang.reflect.Type)} names it
          * @throws IllegalStateException if this is a constructor
          */
-        public Builder returns(Class<?> type) {
+        public Builder returns(java.lang.reflect.Type type) {
             requireNonNull(type, "type");
             return returns(TypeName.of(type));
         }
@@ -617,16 +618,17 @@ public final class Method {
         /**
          * Adds a parameter.
          *
-         * @param type the type
+         * @param type the type: a class, or a generic type
          * @param name the name
          * @param modifiers the modifiers: none, or {@code final}
          * @return this builder
-         * @throws IllegalArgumentException if the class is {@code void}, local or anonymous; the name is not a valid
-         *     identifier; or a modifier is not {@code final}, is repeated, or is given to a receiver parameter
+         * @throws IllegalArgumentException if the type is {@code void}, or names a local or anonymous class, as
+         *     {@link TypeName#of(java.lang.reflect.Type)} names it; the name is not a valid identifier; or a modifier
+         *     is not {@code final}, is repeated, or is given to a receiver parameter
          * @throws IllegalStateException if this is a compact constructor, or the parameter is a receiver parameter but
          *     is not first or the method is static
          */
-        public Builder addParameter(Class<?> type, String name, Modifier... modifiers) {
+        public Builder addParameter(java.lang.reflect.Type type, String name, Modifier... modifiers) {
             requireNonNull(type, "type");
             requireNonNull(name, "name");
             requireNonNull(modifiers, "modifiers");
@@ -705,6 +707,24 @@ public final class Method {
          */
         public Builder addException(Class<? extends Throwable> exception) {
             requireNonNull(exception, "exception");
+            return addException(TypeName.of(exception));
+        }
+
+        /**
+         * Adds an exception to the {@code throws} clause, such as a generic exception type of a method.
+         *
+         * @param exception the exception type: a class or a type variable
+         * @return this builder
+         * @throws IllegalArgumentException if the type is a class that is not a {@link Throwable}, or is neither a
+         *     class nor a type variable, or names a local or anonymous class
+         * @throws IllegalStateException if this is a compact constructor
+         */
+        public Builder addException(java.lang.reflect.Type exception) {
+            requireNonNull(exception, "exception");
+            checkArgument(
+                    !(exception instanceof Class<?> raw) || Throwable.class.isAssignableFrom(raw),
+                    "Not an exception: %s",
+                    exception);
             return addException(TypeName.of(exception));
         }
 

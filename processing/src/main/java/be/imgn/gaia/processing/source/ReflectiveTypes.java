@@ -30,6 +30,14 @@ final class ReflectiveTypes {
         };
     }
 
+    static Class<?> rawClass(Type type) {
+        return switch (type) {
+            case Class<?> raw -> raw;
+            case ParameterizedType parameterized -> (Class<?>) parameterized.getRawType();
+            default -> throw new IllegalArgumentException("Not a class or a parameterized type: " + type);
+        };
+    }
+
     // The enclosing type of an inner class is kept when it says more than its name: Outer<String>.Inner.
     private static TypeName parameterized(ParameterizedType type) {
         ClassName raw = ClassName.of((Class<?>) type.getRawType());

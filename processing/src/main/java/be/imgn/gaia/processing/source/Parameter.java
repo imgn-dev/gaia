@@ -56,14 +56,15 @@ public final class Parameter {
     /**
      * Returns a parameter.
      *
-     * @param type the type
+     * @param type the type: a class, or a generic type
      * @param name the name
      * @param modifiers the modifiers: none, or {@code final}
      * @return the parameter
-     * @throws IllegalArgumentException if the class is {@code void}, local or anonymous; the name is not a valid
-     *     identifier; or a modifier is not {@code final}, is repeated, or is given to a receiver parameter
+     * @throws IllegalArgumentException if the type is {@code void}, or names a local or anonymous class, as
+     *     {@link TypeName#of(java.lang.reflect.Type)} names it; the name is not a valid identifier; or a modifier is
+     *     not {@code final}, is repeated, or is given to a receiver parameter
      */
-    public static Parameter of(Class<?> type, String name, Modifier... modifiers) {
+    public static Parameter of(java.lang.reflect.Type type, String name, Modifier... modifiers) {
         requireNonNull(type, "type");
         requireNonNull(name, "name");
         requireNonNull(modifiers, "modifiers");
@@ -109,13 +110,13 @@ public final class Parameter {
     /**
      * Returns a builder of parameters.
      *
-     * @param type the type
+     * @param type the type: a class, or a generic type
      * @param name the name
      * @return a new builder
-     * @throws IllegalArgumentException if the class is {@code void}, local or anonymous, or the name is not a valid
-     *     identifier
+     * @throws IllegalArgumentException if the type is {@code void}, or names a local or anonymous class, as
+     *     {@link TypeName#of(java.lang.reflect.Type)} names it; or the name is not a valid identifier
      */
-    public static Builder newBuilder(Class<?> type, String name) {
+    public static Builder newBuilder(java.lang.reflect.Type type, String name) {
         requireNonNull(type, "type");
         requireNonNull(name, "name");
         return newBuilder(TypeName.of(type), name);

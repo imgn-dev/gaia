@@ -81,6 +81,25 @@ public record ParameterizedTypeName(
                 rawType.annotations());
     }
 
+    /**
+     * Returns the name of a parameterized type, such as {@code Map<String, List<Integer>>} for {@code Map.class} and
+     * the generic types of its arguments.
+     *
+     * @param rawType the class being parameterized
+     * @param typeArguments the type arguments: classes, or generic types
+     * @return the name
+     * @throws IllegalArgumentException if there is no type argument, or one is primitive; the class is primitive or an
+     *     array; or a class is local or anonymous
+     */
+    public static ParameterizedTypeName of(Class<?> rawType, java.lang.reflect.Type... typeArguments) {
+        requireNonNull(rawType, "rawType");
+        return of(
+                ClassName.of(rawType),
+                Checks.elements(typeArguments, "typeArguments").stream()
+                        .map(TypeName::of)
+                        .toList());
+    }
+
     private static void checkOwner(TypeName ownerType, ClassName rawType) {
         ClassName ownerRaw = switch (ownerType) {
             case ClassName name -> name.withoutAnnotations();
