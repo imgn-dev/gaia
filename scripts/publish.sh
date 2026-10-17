@@ -77,10 +77,18 @@ valid_version() {
     [[ $1 =~ $VERSION_PATTERN ]]
 }
 
-# Long key IDs of every secret key, one per line, sorted.
+# Long key IDs of every secret key, one per line, sorted. If gpg fails, the
+# script stops with gpg's own words: going on with no keys listed would offer
+# to generate a new key in place of the one gpg could not read.
 list_secret_key_ids() {
-    gpg --list-secret-keys --keyid-format=long --with-colons 2>/dev/null \
-        | awk -F: '/^sec/ {print $5}' | sort
+    local listing
+    listing=$(gpg --list-secret-keys --keyid-format=long --with-colons 2>&1) \
+        || die "gpg cannot list the secret keys:
+$listing
+If it waits for a lock held by a process that no longer runs, the lock is stale:
+run 'gpgconf --kill all', remove the *.lock files in ~/.gnupg/public-keys.d/
+(and the .#lk* files next to them), then try again."
+    awk -F: '/^sec/ {print $5}' <<<"$listing" | sort
 }
 
 # Lines in $2 that are absent from $1. Used to spot a freshly created key.
@@ -92,8 +100,11 @@ added_lines() {
 # gpg walk every key it knows, prompting for passphrases of unrelated keys.
 count_secret_keys_matching() {
     [[ -n ${1:-} ]] || { echo 0; return; }
-    gpg --list-secret-keys --with-colons "$1" 2>/dev/null \
-        | grep -c '^sec' || true
+    local listing
+    listing=$(gpg --list-secret-keys --with-colons "$1" 2>&1) \
+        || die "gpg cannot list the secret keys matching '$1':
+$listing"
+    grep -c '^sec' <<<"$listing" || true
 }
 
 # An armoured private key, or nothing. Never let an empty export reach a secret.
