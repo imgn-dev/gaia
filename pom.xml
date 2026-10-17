@@ -62,7 +62,7 @@
     <java.release>21</java.release>
 
     <!-- Reproducible builds: bump on each release. -->
-    <project.build.outputTimestamp>2026-10-12T00:00:00Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2026-10-17T19:51:24Z</project.build.outputTimestamp>
 
     <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
     <build-helper-maven-plugin.version>3.6.2</build-helper-maven-plugin.version>
