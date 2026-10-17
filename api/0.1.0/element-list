@@ -1,0 +1,16 @@
+module:be.imgn.gaia.core
+be.imgn.gaia.core.collect
+be.imgn.gaia.core.system
+be.imgn.gaia.core.text
+be.imgn.gaia.core.time
+module:be.imgn.gaia.core.testing
+be.imgn.gaia.core.testing
+module:be.imgn.gaia.platform
+be.imgn.gaia.platform
+module:be.imgn.gaia.platform.testing
+be.imgn.gaia.platform.testing
+module:be.imgn.gaia.processing
+be.imgn.gaia.processing
+be.imgn.gaia.processing.source
+module:be.imgn.gaia.processing.testing
+be.imgn.gaia.processing.testing
