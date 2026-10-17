@@ -49,7 +49,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.outputTimestamp>2026-10-12T00:00:00Z</project.build.outputTimestamp>
 
-    <!-- The same versions be.imgn.parent:parent 2026-10-07 pins. Keep them in
+    <!-- The same versions be.imgn.parent:parent 2026-10-17 pins. Keep them in
          step when the parent is bumped: central-publishing-maven-plugin in
          particular refuses a reactor that mixes two of its versions. -->
     <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
@@ -57,7 +57,7 @@
     <maven-deploy-plugin.version>3.2.0</maven-deploy-plugin.version>
     <maven-site-plugin.version>3.22.0</maven-site-plugin.version>
     <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-    <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+    <central-publishing-maven-plugin.version>0.12.0</central-publishing-maven-plugin.version>
     <!-- Same as gaia-parent. -->
     <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
   </properties>

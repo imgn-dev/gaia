@@ -12,7 +12,7 @@
   <parent>
     <groupId>be.imgn.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>2026-10-07</version>
+    <version>2026-10-17</version>
     <relativePath/>
   </parent>
 
@@ -56,12 +56,6 @@
     <!-- ${revision}, the one gaia version, is set in .mvn/maven.config rather
          than here: gaia-bom has no parent, so a property defined in this POM
          would not reach it. A release overrides it: -Drevision=1.2.3. -->
-
-    <!-- The parent's reactorModuleConvergence rejects any reactor module
-         without a parent, and gaia-bom must have none (see bom/pom.xml). Only
-         this rule is skipped; every other parent rule stays on. Every library
-         module still gets its version from the same ${revision}. -->
-    <enforcer.skipRules>reactorModuleConvergence</enforcer.skipRules>
 
     <!-- The baseline every gaia library runs on. The parent wires this into the
          compiler's and javadoc's release and into requireJavaVersion. -->
