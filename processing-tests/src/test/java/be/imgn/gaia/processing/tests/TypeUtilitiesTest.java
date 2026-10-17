@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -71,6 +72,54 @@ class TypeUtilitiesTest {
         assertThat(MoreTypes.asTypeElement(types.getPrimitiveType(TypeKind.INT)))
                 .isEmpty();
         assertThat(MoreTypes.asDeclared(types.getPrimitiveType(TypeKind.INT))).isEmpty();
+    }
+
+    @Test
+    void castsTypesOfAKnownKind(Elements elements, Types types) {
+        TypeMirror ints = types.getArrayType(types.getPrimitiveType(TypeKind.INT));
+        TypeElement collections = elements.getTypeElement("java.util.Collections");
+        ExecutableElement max = ElementFilter.methodsIn(collections.getEnclosedElements()).stream()
+                .filter(method -> method.getSimpleName().contentEquals("max")
+                        && method.getParameters().size() == 1)
+                .findFirst()
+                .orElseThrow();
+        TypeMirror element = elements.getTypeElement("java.util.List")
+                .getTypeParameters()
+                .getFirst()
+                .asType();
+        TypeMirror wildcard = types.getWildcardType(null, null);
+
+        assertThat(MoreTypes.asArray(ints)).isSameAs(ints);
+        assertThat(MoreTypes.asPrimitive(types.getPrimitiveType(TypeKind.INT)).getKind())
+                .isEqualTo(TypeKind.INT);
+        assertThat(MoreTypes.asExecutable(max.asType()).getParameterTypes()).hasSize(1);
+        assertThat(MoreTypes.asTypeVariable(element)).isSameAs(element);
+        assertThat(MoreTypes.asWildcard(wildcard)).isSameAs(wildcard);
+        // <T extends Object & Comparable<? super T>> T max(Collection<? extends T> coll)
+        assertThat(MoreTypes.asIntersection(
+                                MoreTypes.asTypeVariable(max.getReturnType()).getUpperBound())
+                        .getBounds())
+                .hasSize(2);
+    }
+
+    @Test
+    void rejectsTypesOfAnotherKind(Elements elements, Types types) {
+        TypeMirror string = elements.getTypeElement("java.lang.String").asType();
+        TypeMirror voidType = types.getNoType(TypeKind.VOID);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> MoreTypes.asArray(string))
+                .withMessage("DECLARED java.lang.String is not an array type");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> MoreTypes.asPrimitive(voidType))
+                .withMessage("VOID void is not a primitive type");
+        assertThatIllegalArgumentException().isThrownBy(() -> MoreTypes.asExecutable(string));
+        assertThatIllegalArgumentException().isThrownBy(() -> MoreTypes.asTypeVariable(string));
+        assertThatIllegalArgumentException().isThrownBy(() -> MoreTypes.asWildcard(string));
+        assertThatIllegalArgumentException().isThrownBy(() -> MoreTypes.asIntersection(string));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> MoreTypes.asUnion(string))
+                .withMessage("DECLARED java.lang.String is not a union type");
     }
 
     @Test

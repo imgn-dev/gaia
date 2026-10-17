@@ -113,8 +113,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   Declare them in `StepProcessor.options()` and read them with `context.option(...)`. An invalid value is reported
   as an error.
 - **`MoreTypes`**, **`MoreElements`** and **`TypeKey`**: check a type against a class or a name, navigate to an
-  element's package or enclosing type, cast an element with a clear error, tell inner classes from static nested
-  ones, tell whether generated code can access an element (its `Visibility`, protected access from a subclass,
+  element's package or enclosing type, cast an element or a type with a clear error, tell inner classes from static
+  nested ones, tell whether generated code can access an element (its `Visibility`, protected access from a subclass,
   module exports), and use types as keys in sets and maps. `context.type(List.class, String.class)` builds
   `List<String>`, `context.isSameType(...)` compares types ignoring type annotations such as `@Nullable`, and
   `context.isFromSource(element)` tells code compiled from this compilation's sources, generated ones included, from
