@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -237,6 +238,32 @@ class TypeNameTest {
             assertThat(list).hasSameHashCodeAs(ClassName.of(List.class).parameterized(ClassName.of(String.class)));
             assertThat(list.annotated(NULLABLE)).isNotEqualTo(list);
             assertThat(list.annotated(NULLABLE).withoutAnnotations()).isEqualTo(list);
+        }
+
+        @Test
+        void orderClassNamesByPackageNamesAndAnnotations() {
+            ClassName string = ClassName.of(String.class);
+            ClassName entry = ClassName.of(Map.Entry.class);
+            List<ClassName> names = List.of(
+                    entry,
+                    string.annotated(NULLABLE),
+                    ClassName.of(Map.class),
+                    string,
+                    ClassName.of("", "Default"),
+                    ClassName.of("java", "util", "Map"),
+                    entry.annotated(NULLABLE));
+
+            assertThat(names.stream().sorted())
+                    .containsExactly(
+                            ClassName.of("", "Default"),
+                            ClassName.of("java", "util", "Map"),
+                            string,
+                            string.annotated(NULLABLE),
+                            ClassName.of(Map.class),
+                            entry,
+                            entry.annotated(NULLABLE));
+            assertThat(new TreeSet<>(names)).hasSameSizeAs(names);
+            assertThat(string.compareTo(ClassName.of(String.class))).isZero();
         }
 
         @Test

@@ -17,12 +17,15 @@ import javax.lang.model.element.TypeElement;
 /**
  * The name of a class, interface, enum, record or annotation type, possibly nested in others.
  *
+ * <p>Names are ordered by package, then by their simple names from the top-level type, then by their type annotations
+ * as they are written, so that {@code java.lang.String} comes before {@code java.lang.@Nullable String}.
+ *
  * @param packageName the package, empty for the unnamed package
  * @param simpleNames the simple names from the top-level type to this one, such as {@code [Map, Entry]}
  * @param annotations the type annotations
  */
 public record ClassName(String packageName, List<String> simpleNames, List<Annotation> annotations)
-        implements TypeName {
+        implements TypeName, Comparable<ClassName> {
 
     /** {@code java.lang.Object}. */
     public static final ClassName OBJECT = of("java.lang", "Object");
@@ -316,6 +319,31 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
     @Override
     public ClassName withoutAnnotations() {
         return new ClassName(packageName, simpleNames, List.of());
+    }
+
+    @Override
+    public int compareTo(ClassName other) {
+        requireNonNull(other, "other");
+        int byPackage = packageName.compareTo(other.packageName);
+        if (byPackage != 0) {
+            return byPackage;
+        }
+        int byNames = compare(simpleNames, other.simpleNames);
+        return byNames != 0
+                ? byNames
+                : compare(
+                        annotations.stream().map(Annotation::toString).toList(),
+                        other.annotations.stream().map(Annotation::toString).toList());
+    }
+
+    private static int compare(List<String> left, List<String> right) {
+        for (int i = 0; i < Math.min(left.size(), right.size()); i++) {
+            int byElement = left.get(i).compareTo(right.get(i));
+            if (byElement != 0) {
+                return byElement;
+            }
+        }
+        return Integer.compare(left.size(), right.size());
     }
 
     @Override
