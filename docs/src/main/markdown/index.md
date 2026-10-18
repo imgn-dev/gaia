@@ -11,7 +11,7 @@ the [API documentation](https://imgn-dev.github.io/gaia/api/latest/).
 
 | Artifact                  | Module                            | What it does                                           |
 |---------------------------|-----------------------------------|--------------------------------------------------------|
-| `gaia-core`               | `be.imgn.gaia.core`               | [Extensions to the JDK](core.md), and [the host the JVM runs on](platform.md) |
+| `gaia-core`               | `be.imgn.gaia.core`               | [Extensions to the JDK](core.md), including [the platform the JVM runs on](core.md#platform) |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | [An in-memory file system](memfs.md)                   |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | [Helpers for writing annotation processors](processing.md) |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | [Test helpers for `gaia-core`](testing.md#gaia-core-testing) |

@@ -3,7 +3,6 @@
 index.md
 core.md
 memfs.md
-platform.md
 processing.md
 testing.md
 maven-plugin.md

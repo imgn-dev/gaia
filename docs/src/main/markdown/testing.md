@@ -31,7 +31,7 @@ assertThat(stopwatch.elapsed()).isEqualTo(Duration.ofSeconds(2));
 
 ### Platforms
 
-Code that receives a [`Platform`](platform.md) can be tested on any operating system, whatever the one the tests run
+Code that receives a [`Platform`](core.md#platform) can be tested on any operating system, whatever the one the tests run
 on, in two ways.
 
 [`FakePlatform`](api:be.imgn.gaia.core.testing.FakePlatform) has the operating system of your choice and its
