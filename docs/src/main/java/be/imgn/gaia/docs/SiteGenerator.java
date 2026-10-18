@@ -27,8 +27,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
  * <p>The Markdown directory holds the pages and {@code pages.txt}, which lists them in the order of the navigation, one
  * file name per line; {@code index.md} is the home page. Each page needs a level-1 heading, its title. A link goes to
  * another page ({@code core.md}), to a heading ({@code core.md#collections} or {@code #collections}, by the heading's
- * identifier as GitHub writes it), to a class in the API documentation ({@code api:be.imgn.gaia.core.text.Case}), or to
- * a web page ({@code https://...}). Every other link is an error.
+ * identifier as GitHub writes it), to a class in the API documentation ({@code api:be.imgn.gaia.core.text.Splitter}),
+ * or to a web page ({@code https://...}). Every other link is an error.
  *
  * <p>The theme directory holds {@code template.html}, where {@code {{title}}}, {@code {{navigation}}} and
  * {@code {{content}}} are replaced by those of each page, and the files to copy beside the pages, such as style sheets.

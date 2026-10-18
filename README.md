@@ -51,6 +51,10 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`system.SystemProperties` and `system.Environment`**: system properties and environment variables, read from
   the running JVM or from fixed values in tests. `SystemProperties` has a typed method for each standard Java
   property, such as `userHome()` or `javaVersion()`.
+- **`text.NamingConvention`**: converts names between `LOWER_CAMEL`, `UPPER_CAMEL`, `LOWER_HYPHEN`,
+  `LOWER_UNDERSCORE`, `UPPER_UNDERSCORE` and `LOWER_DOT`, whatever the default locale:
+  `LOWER_CAMEL.toLowerHyphen("timeoutSeconds")` gives `timeout-seconds`, and `LOWER_HYPHEN.from(text)` converts text
+  that follows any of them.
 - **`text.Splitter`**: splits strings on a character, a literal string or a regular expression, with optional
   trimming, omission of empty parts and a limit.
 - **`time.Stopwatch`**: measures elapsed time on a monotonic `Ticker`, with start, stop and reset. Its

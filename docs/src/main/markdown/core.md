@@ -98,20 +98,26 @@ Splitter.on("::").split("a::b");                                           // [a
 
 Unlike `String.split`, a string separator is literal, and nothing is dropped unless asked.
 
-[`Case`](api:be.imgn.gaia.core.text.Case) converts names between cases: `LOWER_CAMEL`, `UPPER_CAMEL`, `KEBAB`,
-`SNAKE`, `UPPER_SNAKE` and `DOT`:
+[`NamingConvention`](api:be.imgn.gaia.core.text.NamingConvention) converts names between naming conventions:
+`LOWER_CAMEL`, `UPPER_CAMEL`, `LOWER_HYPHEN`, `LOWER_UNDERSCORE`, `UPPER_UNDERSCORE` and `LOWER_DOT`:
 
 ```java
-Case.LOWER_CAMEL.to(Case.KEBAB, "timeoutSeconds");   // timeout-seconds
-Case.UPPER_SNAKE.to(Case.KEBAB, "TIMEOUT_SECONDS");  // timeout-seconds
-Case.KEBAB.to(Case.UPPER_CAMEL, "http-url");         // HttpUrl
+NamingConvention.LOWER_CAMEL.toLowerHyphen("timeoutSeconds");       // timeout-seconds
+NamingConvention.UPPER_UNDERSCORE.toLowerHyphen("TIMEOUT_SECONDS");  // timeout-seconds
+NamingConvention.LOWER_HYPHEN.toUpperCamel("http-url");              // HttpUrl
+NamingConvention.LOWER_HYPHEN.from("TIMEOUT_SECONDS");               // timeout-seconds
 ```
 
-A conversion splits the text into words, then joins them in the target case, whatever the default locale. In camel
-case, a word starts at an uppercase letter after a lowercase letter or a digit, and at the last uppercase letter of a
-run followed by a lowercase letter: `httpURLPath` gives `http-url-path`, `ipv4Address` gives `ipv4-address`, and
+`source.to(target, text)` converts to a convention chosen at run time, and `from` converts text that follows any
+convention. Text that several conventions accept, such as `name`, is a single word, so it converts the same from any
+of them.
+
+A conversion splits the text into words, then joins them in the target convention, whatever the default locale. In
+camel case, a word starts at an uppercase letter after a lowercase letter or a digit, and at the last uppercase letter
+of a run followed by a lowercase letter: `httpURLPath` gives `http-url-path`, `ipv4Address` gives `ipv4-address`, and
 `utf8` stays one word. Joined in camel case, a word keeps only its first letter in uppercase, so `http-url` gives
-`httpUrl`. Text that isn't written in the case it is converted from throws `IllegalArgumentException`.
+`httpUrl`. Text that doesn't follow the convention it is converted from, or no convention at all for `from`, throws
+`IllegalArgumentException`.
 
 ## Time
 

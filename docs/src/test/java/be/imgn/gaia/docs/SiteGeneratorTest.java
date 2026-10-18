@@ -72,7 +72,7 @@ class SiteGeneratorTest {
                 # Gaia
 
                 [Core](core.md), [collections](core.md#collections), [above](#gaia), \
-                [web](https://example.com/a.md), [Case](api:be.imgn.gaia.core.text.Case), \
+                [web](https://example.com/a.md), [Splitter](api:be.imgn.gaia.core.text.Splitter), \
                 [Entry](api:be.imgn.gaia.core.collect.Multiset.Entry)
                 """);
         page("core.md", "# Core\n\n## Collections\n");
@@ -86,7 +86,7 @@ class SiteGeneratorTest {
                 .contains("<a href=\"core.html#collections\">collections</a>")
                 .contains("<a href=\"#gaia\">above</a>")
                 .contains("<a href=\"https://example.com/a.md\">web</a>")
-                .contains("<a href=\"api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Case.html\">Case</a>")
+                .contains("<a href=\"api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html\">Splitter</a>")
                 .contains("<a href=\"api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.Entry.html\">");
     }
 
