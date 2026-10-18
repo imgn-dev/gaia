@@ -125,9 +125,10 @@ Java SE 21 documentation of <a href="https://docs.oracle.com/en/java/javase/25/d
 every Java runtime must define are returned as is, and throw <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link"><code>NoSuchElementException</code></a> if the source lacks them,
 which only a fixed source can. The others are returned as an <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>, or as an empty list for paths.
 
-<p>Paths are returned as strings: which <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileSystem.html" title="class or interface in java.nio.file" class="external-link"><code>FileSystem</code></a> they belong to is for the caller to decide.
-Path lists, such as <a href="#javaClassPath()"><code>javaClassPath()</code></a>, are split on the path separator of the same source, with empty entries
-skipped.</div>
+<p>Paths are returned in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes them. Path lists, such
+as <a href="#javaClassPath()"><code>javaClassPath()</code></a>, are split on the path separator of the same source, with empty entries skipped. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate for paths: its directories are in the file system
+it was given, which tests can replace. <a href="#get(java.lang.String)"><code>get(String)</code></a> still gives any value as a string.</div>
 </div>
 </section>
 <section class="summary">
@@ -158,7 +159,7 @@ skipped.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns the value of a property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#javaClassPath()" class="member-name-link">javaClassPath</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the class path, split on the path separator: the <code>java.class.path</code> property.</div>
@@ -169,17 +170,17 @@ skipped.</div>
 <div class="block">Returns the latest class file format version the Java runtime recognizes, as <code>MAJOR.MINOR</code>: the
 <code>java.class.version</code> property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#javaHome()" class="member-name-link">javaHome</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the installation directory of Java: the <code>java.home</code> property.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#javaIoTmpdir()" class="member-name-link">javaIoTmpdir</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the default temporary file directory: the <code>java.io.tmpdir</code> property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#javaLibraryPath()" class="member-name-link">javaLibraryPath</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the paths searched when loading libraries, split on the path separator: the <code>java.library.path</code>
@@ -275,13 +276,13 @@ as <code>21</code>: the <code>java.vm.specification.version</code> property.</di
 <div class="block">Returns the main class of the initial module, if the application was launched from a module: the
 <code>jdk.module.main.class</code> property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#jdkModulePath()" class="member-name-link">jdkModulePath</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the application module path, split on the path separator; empty when the application does not use one:
 the <code>jdk.module.path</code> property.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#jdkModuleUpgradePath()" class="member-name-link">jdkModuleUpgradePath</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the upgrade module path, split on the path separator; empty when there is none: the
@@ -338,12 +339,12 @@ the <code>jdk.module.path</code> property.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns the system properties of the running JVM.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userDir()" class="member-name-link">userDir</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the current working directory of the user: the <code>user.dir</code> property.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userHome()" class="member-name-link">userHome</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the home directory of the user: the <code>user.home</code> property.</div>
@@ -492,13 +493,18 @@ the <code>jdk.module.path</code> property.</div>
 <section class="detail" id="javaHome()">
 <h3>javaHome</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">javaHome</span>()</div>
-<div class="block">Returns the installation directory of Java: the <code>java.home</code> property.</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">javaHome</span>()</div>
+<div class="block">Returns the installation directory of Java: the <code>java.home</code> property.
+
+<p>The path is in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes it. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: its paths are in the file system it was
+given, which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is not set</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if the value is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
@@ -679,14 +685,19 @@ maintenance release: the <code>java.specification.maintenance.version</code> pro
 <section class="detail" id="javaClassPath()">
 <h3>javaClassPath</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">javaClassPath</span>()</div>
-<div class="block">Returns the class path, split on the path separator: the <code>java.class.path</code> property.</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">javaClassPath</span>()</div>
+<div class="block">Returns the class path, split on the path separator: the <code>java.class.path</code> property.
+
+<p>The paths are in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes them. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: its paths are in the file system it was
+given, which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property or the <code>path.separator</code> property is not set</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the <code>path.separator</code> property is empty</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if an entry is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
@@ -695,15 +706,20 @@ maintenance release: the <code>java.specification.maintenance.version</code> pro
 <section class="detail" id="javaLibraryPath()">
 <h3>javaLibraryPath</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">javaLibraryPath</span>()</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">javaLibraryPath</span>()</div>
 <div class="block">Returns the paths searched when loading libraries, split on the path separator: the <code>java.library.path</code>
-property.</div>
+property.
+
+<p>The paths are in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes them. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: its paths are in the file system it was
+given, which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property or the <code>path.separator</code> property is not set</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the <code>path.separator</code> property is empty</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if an entry is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
@@ -712,13 +728,18 @@ property.</div>
 <section class="detail" id="javaIoTmpdir()">
 <h3>javaIoTmpdir</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">javaIoTmpdir</span>()</div>
-<div class="block">Returns the default temporary file directory: the <code>java.io.tmpdir</code> property.</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">javaIoTmpdir</span>()</div>
+<div class="block">Returns the default temporary file directory: the <code>java.io.tmpdir</code> property.
+
+<p>The path is in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes it. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: its paths are in the file system it was
+given, which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is not set</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if the value is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
@@ -832,13 +853,19 @@ property.</div>
 <section class="detail" id="userHome()">
 <h3>userHome</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">userHome</span>()</div>
-<div class="block">Returns the home directory of the user: the <code>user.home</code> property.</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">userHome</span>()</div>
+<div class="block">Returns the home directory of the user: the <code>user.home</code> property.
+
+<p>The path is in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes it. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: the
+<a href="../platform/Directories.html#home()"><code>home</code></a> of its directories is in the file system it was given,
+which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is not set</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if the value is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
@@ -847,13 +874,18 @@ property.</div>
 <section class="detail" id="userDir()">
 <h3>userDir</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">userDir</span>()</div>
-<div class="block">Returns the current working directory of the user: the <code>user.dir</code> property.</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">userDir</span>()</div>
+<div class="block">Returns the current working directory of the user: the <code>user.dir</code> property.
+
+<p>The path is in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes it. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: its paths are in the file system it was
+given, which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is not set</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if the value is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
@@ -914,17 +946,22 @@ property.</div>
 <section class="detail" id="jdkModulePath()">
 <h3>jdkModulePath</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">jdkModulePath</span>()</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">jdkModulePath</span>()</div>
 <div class="block">Returns the application module path, split on the path separator; empty when the application does not use one:
 the <code>jdk.module.path</code> property.
 
-<p>Supported by the JDK, not required by the Java SE specification.</div>
+<p>Supported by the JDK, not required by the Java SE specification.
+
+<p>The paths are in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes them. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: its paths are in the file system it was
+given, which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is set but the <code>path.separator</code> property is not</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the property is set but the <code>path.separator</code> property is empty</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if an entry is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
@@ -933,17 +970,22 @@ the <code>jdk.module.path</code> property.
 <section class="detail" id="jdkModuleUpgradePath()">
 <h3>jdkModuleUpgradePath</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">jdkModuleUpgradePath</span>()</div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">jdkModuleUpgradePath</span>()</div>
 <div class="block">Returns the upgrade module path, split on the path separator; empty when there is none: the
 <code>jdk.module.upgrade.path</code> property.
 
-<p>Supported by the JDK, not required by the Java SE specification.</div>
+<p>Supported by the JDK, not required by the Java SE specification.
+
+<p>The paths are in the default file system, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)" title="class or interface in java.nio.file" class="external-link"><code>Path.of(String, String...)</code></a> makes them. A
+<a href="../platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> may be more appropriate: its paths are in the file system it was
+given, which tests can replace.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is set but the <code>path.separator</code> property is not</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the property is set but the <code>path.separator</code> property is empty</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/InvalidPathException.html" title="class or interface in java.nio.file" class="external-link">InvalidPathException</a></code> - if an entry is not a path of the default file system</dd>
 </dl>
 </div>
 </section>
