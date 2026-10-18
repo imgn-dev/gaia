@@ -46,6 +46,8 @@
     <module>platform-testing</module>
     <module>processing</module>
     <module>processing-testing</module>
+    <!-- Published, but not in the BOM: a build plugin is not a dependency. -->
+    <module>maven-plugin</module>
     <!-- Not published: tests that exercise X through X-testing. -->
     <module>core-tests</module>
     <module>platform-tests</module>

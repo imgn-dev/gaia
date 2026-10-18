@@ -296,6 +296,34 @@ dependencies {
 Declare the processor path explicitly, as above, rather than relying on processors found on the class path: since
 JDK 23, javac no longer runs those unless asked to with `-proc:full`.
 
+### Service providers on the module path
+
+A processor can list the service providers it generates in `META-INF/services`, which `ServiceLoader` reads on the
+class path, but it cannot add them to `module-info.java`. On the module path, `ServiceLoader` only finds providers
+declared there. The `register-services` goal of `gaia-maven-plugin` adds them to the compiled `module-info.class`
+as `provides` directives:
+
+```xml
+<plugin>
+  <groupId>be.imgn.gaia</groupId>
+  <artifactId>gaia-maven-plugin</artifactId>
+  <version>${gaia.version}</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>register-services</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+```
+
+It runs in the `process-classes` phase and registers every file in `META-INF/services`; list `<services>` in the
+configuration to register only some of them. For each service it registers, the providers in the file replace those
+that `module-info.java` declares, and the `provides` directives of other services stay as they are. Each provider
+must be a class of the module, or the build fails. Without `module-info.java`, the goal does nothing. Set
+`gaia.registerServices.skip` to skip it.
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).
