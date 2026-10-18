@@ -54,10 +54,23 @@ loadScripts(document, 'script');</script>
 <div class="toc-header">Contents&nbsp;<input type="text" class="filter-input" disabled placeholder="Filter contents (type .)" aria-label="Filter table of contents" autocomplete="off" spellcheck="false"><input type="reset" class="reset-filter" disabled tabindex="-1" value="Reset"></div>
 <ol class="toc-list" tabindex="-1">
 <li><a href="#" tabindex="0">Description</a></li>
+<li><a href="#nested-class-summary" tabindex="0">Nested Class Summary</a></li>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#instanceOf(java.lang.Class)" tabindex="0">instanceOf(Class)</a></li>
+<li><a href="#distinctBy(java.util.function.Function)" tabindex="0">distinctBy(Function)</a></li>
+<li><a href="#takeWhileInclusive(java.util.function.Predicate)" tabindex="0">takeWhileInclusive(Predicate)</a></li>
+<li><a href="#groupRuns(java.util.function.Function)" tabindex="0">groupRuns(Function)</a></li>
+<li><a href="#takeLast(int)" tabindex="0">takeLast(int)</a></li>
+<li><a href="#dropLast(int)" tabindex="0">dropLast(int)</a></li>
+<li><a href="#distinctAdjacent()" tabindex="0">distinctAdjacent()</a></li>
+<li><a href="#distinctAdjacentBy(java.util.function.Function)" tabindex="0">distinctAdjacentBy(Function)</a></li>
+<li><a href="#mapWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedFunction)" tabindex="0">mapWithIndex(MoreGatherers.IndexedFunction)</a></li>
+<li><a href="#filterWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedPredicate)" tabindex="0">filterWithIndex(MoreGatherers.IndexedPredicate)</a></li>
+<li><a href="#everyNth(int)" tabindex="0">everyNth(int)</a></li>
+<li><a href="#max(int,java.util.Comparator)" tabindex="0">max(int, Comparator)</a></li>
+<li><a href="#min(int,java.util.Comparator)" tabindex="0">min(int, Comparator)</a></li>
 </ol>
 </li>
 </ol>
@@ -78,11 +91,40 @@ loadScripts(document, 'script');</script>
 <div class="block">Gatherers that <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherers.html" title="class or interface in java.util.stream" class="external-link"><code>Gatherers</code></a> does not provide.
 
 <p>Gatherers exist since Java 24, so this class is only present when gaia runs on Java 24 or later: it lives in the
-<code>META-INF/versions/24</code> part of the multi-release jar.</div>
+<code>META-INF/versions/24</code> part of the multi-release jar.
+
+<p>Like streams, the gatherers accept <code>null</code> elements, and the key functions may return <code>null</code>. Keys and
+elements are compared with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link"><code>Objects.equals(Object, Object)</code></a>.
+
+<p>In a parallel stream, <a href="#instanceOf(java.lang.Class)"><code>instanceOf(Class)</code></a>, <a href="#takeWhileInclusive(java.util.function.Predicate)"><code>takeWhileInclusive(Predicate)</code></a>, <a href="#takeLast(int)"><code>takeLast(int)</code></a>,
+<a href="#max(int,java.util.Comparator)"><code>max(int, Comparator)</code></a> and <a href="#min(int,java.util.Comparator)"><code>min(int, Comparator)</code></a> run in parallel. The others depend on the elements
+before each one, so their stage runs sequentially, in encounter order.</div>
 </div>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="MoreGatherers.IndexedFunction.html" class="type-name-link" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedFunction</a>&lt;<a href="MoreGatherers.IndexedFunction.html#type-param-T" title="type parameter in MoreGatherers.IndexedFunction">T</a> extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, <a href="MoreGatherers.IndexedFunction.html#type-param-R" title="type parameter in MoreGatherers.IndexedFunction">R</a> extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
+<div class="col-last even-row-color">
+<div class="block">A function of an element and its index in a stream.</div>
+</div>
+<div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="MoreGatherers.IndexedPredicate.html" class="type-name-link" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedPredicate</a>&lt;<a href="MoreGatherers.IndexedPredicate.html#type-param-T" title="type parameter in MoreGatherers.IndexedPredicate">T</a> extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
+<div class="col-last odd-row-color">
+<div class="block">A predicate of an element and its index in a stream.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -94,11 +136,78 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;R&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>?,<wbr>R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#instanceOf(java.lang.Class)" class="member-name-link">instanceOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;R&gt;&nbsp;type)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#distinctAdjacent()" class="member-name-link">distinctAdjacent</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that drops each element equal to the one right before it.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, K extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#distinctAdjacentBy(java.util.function.Function)" class="member-name-link">distinctAdjacentBy</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super T, ? extends K&gt;&nbsp;key)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that drops each element whose key equals the key of the element right before it.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, K extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#distinctBy(java.util.function.Function)" class="member-name-link">distinctBy</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super T, ? extends K&gt;&nbsp;key)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that keeps the first element of each key, in encounter order.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#dropLast(int)" class="member-name-link">dropLast</a><wbr>(int&nbsp;n)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that drops the last <code>n</code> elements, or all of them if there are fewer.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#everyNth(int)" class="member-name-link">everyNth</a><wbr>(int&nbsp;n)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that keeps every <code>n</code>th element, starting with the first: the elements at index 0,
+<code>n</code>, <code>2n</code>, and so on.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#filterWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedPredicate)" class="member-name-link">filterWithIndex</a><wbr>(<a href="MoreGatherers.IndexedPredicate.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedPredicate</a>&lt;? super T&gt;&nbsp;predicate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that keeps the elements that satisfy a predicate of the element and its index in the stream,
+counted from 0.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, K extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#groupRuns(java.util.function.Function)" class="member-name-link">groupRuns</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super T, ? extends K&gt;&nbsp;key)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer of the runs of consecutive elements with equal keys, each as an unmodifiable list.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;R&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>?,<wbr>R&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#instanceOf(java.lang.Class)" class="member-name-link">instanceOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;R&gt;&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a gatherer that keeps the elements that are instances of <code>type</code>, cast to it: a
 <code>filter(type::isInstance)</code> and a <code>map(type::cast)</code> in one step, with the right stream type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, R extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>R&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#mapWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedFunction)" class="member-name-link">mapWithIndex</a><wbr>(<a href="MoreGatherers.IndexedFunction.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedFunction</a>&lt;? super T, ? extends R&gt;&nbsp;mapper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that maps each element with its index in the stream, counted from 0.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#max(int,java.util.Comparator)" class="member-name-link">max</a><wbr>(int&nbsp;n,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;? super T&gt;&nbsp;comparator)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer of the <code>n</code> greatest elements, the greatest first, or of all of them, sorted, if there
+are fewer.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#min(int,java.util.Comparator)" class="member-name-link">min</a><wbr>(int&nbsp;n,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;? super T&gt;&nbsp;comparator)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer of the <code>n</code> least elements, the least first, or of all of them, sorted, if there are
+fewer.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#takeLast(int)" class="member-name-link">takeLast</a><wbr>(int&nbsp;n)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that keeps the last <code>n</code> elements, or all of them if there are fewer.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a><wbr>&lt;T,<wbr>?,<wbr>T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#takeWhileInclusive(java.util.function.Predicate)" class="member-name-link">takeWhileInclusive</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super T&gt;&nbsp;predicate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a gatherer that keeps the elements while a predicate holds, and the first element that fails it, then
+stops.</div>
 </div>
 </div>
 </div>
@@ -137,6 +246,324 @@ Stream&lt;Circle&gt; circles = shapes.gather(MoreGatherers.instanceOf(Circle.cla
 <dd><code>type</code> - the class of the type to keep</dd>
 <dt>Returns:</dt>
 <dd>a gatherer of the instances of <code>type</code></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="distinctBy(java.util.function.Function)">
+<h3>distinctBy</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, K extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">distinctBy</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super T, ? extends K&gt;&nbsp;key)</span></div>
+<div class="block">Returns a gatherer that keeps the first element of each key, in encounter order.
+
+<pre><code>Stream.of("apple", "avocado", "banana", "blueberry", "cherry")
+        .gather(MoreGatherers.distinctBy(s -&gt; s.charAt(0)))  // apple, banana, cherry
+</code></pre>
+
+<p>It keeps every key it has seen until the stream ends.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="distinctBy(java.util.function.Function)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dd><span id="distinctBy(java.util.function.Function)-type-param-K"><code>K</code> - the type of the keys</span></dd>
+<dt>Parameters:</dt>
+<dd><code>key</code> - the function that gives the key of an element</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the elements whose key was not seen before</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="takeWhileInclusive(java.util.function.Predicate)">
+<h3>takeWhileInclusive</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">takeWhileInclusive</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super T&gt;&nbsp;predicate)</span></div>
+<div class="block">Returns a gatherer that keeps the elements while a predicate holds, and the first element that fails it, then
+stops. Unlike <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#takeWhile(java.util.function.Predicate)" title="class or interface in java.util.stream" class="external-link"><code>Stream.takeWhile(Predicate)</code></a>, the element that ends the run is kept, such
+as the terminator of a block.
+
+<pre><code>Stream.of(1, 2, 3, 4, 5).gather(MoreGatherers.takeWhileInclusive(i -&gt; i &lt; 3))  // 1, 2, 3
+</code></pre>
+
+<p>It stops pulling elements after the first that fails the predicate, so it ends an infinite stream.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="takeWhileInclusive(java.util.function.Predicate)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Parameters:</dt>
+<dd><code>predicate</code> - the predicate the elements before the last one satisfy</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the elements up to and including the first that fails <code>predicate</code></dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="groupRuns(java.util.function.Function)">
+<h3>groupRuns</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, K extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">groupRuns</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super T, ? extends K&gt;&nbsp;key)</span></div>
+<div class="block">Returns a gatherer of the runs of consecutive elements with equal keys, each as an unmodifiable list. Unlike
+grouping, an element whose key appeared before, but not right before, starts a new run.
+
+<pre><code>Stream.of("a1", "a2", "b1", "a3")
+        .gather(MoreGatherers.groupRuns(s -&gt; s.charAt(0)))  // [a1, a2], [b1], [a3]
+</code></pre></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="groupRuns(java.util.function.Function)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dd><span id="groupRuns(java.util.function.Function)-type-param-K"><code>K</code> - the type of the keys</span></dd>
+<dt>Parameters:</dt>
+<dd><code>key</code> - the function that gives the key of an element</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the runs of elements with equal keys</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="takeLast(int)">
+<h3>takeLast</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">takeLast</span><wbr><span class="parameters">(int&nbsp;n)</span></div>
+<div class="block">Returns a gatherer that keeps the last <code>n</code> elements, or all of them if there are fewer. It holds at most
+<code>n</code> elements, and pushes them when the stream ends.
+
+<pre><code>Stream.of(1, 2, 3, 4, 5).gather(MoreGatherers.takeLast(2))  // 4, 5
+</code></pre>
+
+<p>With <code>n</code> of 0, it stops pulling elements at once, so it ends an infinite stream.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="takeLast(int)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Parameters:</dt>
+<dd><code>n</code> - the number of elements to keep</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the last <code>n</code> elements</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>n</code> is negative</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="dropLast(int)">
+<h3>dropLast</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">dropLast</span><wbr><span class="parameters">(int&nbsp;n)</span></div>
+<div class="block">Returns a gatherer that drops the last <code>n</code> elements, or all of them if there are fewer. It holds at most
+<code>n</code> elements, each pushed once <code>n</code> more have followed it.
+
+<pre><code>Stream.of(1, 2, 3, 4, 5).gather(MoreGatherers.dropLast(2))  // 1, 2, 3
+</code></pre></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="dropLast(int)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Parameters:</dt>
+<dd><code>n</code> - the number of elements to drop</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the elements but the last <code>n</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>n</code> is negative</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="distinctAdjacent()">
+<h3>distinctAdjacent</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">distinctAdjacent</span>()</div>
+<div class="block">Returns a gatherer that drops each element equal to the one right before it.
+
+<pre><code>Stream.of(1, 1, 2, 2, 2, 1).gather(MoreGatherers.distinctAdjacent())  // 1, 2, 1
+</code></pre></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="distinctAdjacent()-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the elements that differ from the one before</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="distinctAdjacentBy(java.util.function.Function)">
+<h3>distinctAdjacentBy</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, K extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">distinctAdjacentBy</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super T, ? extends K&gt;&nbsp;key)</span></div>
+<div class="block">Returns a gatherer that drops each element whose key equals the key of the element right before it.
+
+<pre><code>Stream.of("apple", "avocado", "banana", "apricot")
+        .gather(MoreGatherers.distinctAdjacentBy(s -&gt; s.charAt(0)))  // apple, banana, apricot
+</code></pre></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="distinctAdjacentBy(java.util.function.Function)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dd><span id="distinctAdjacentBy(java.util.function.Function)-type-param-K"><code>K</code> - the type of the keys</span></dd>
+<dt>Parameters:</dt>
+<dd><code>key</code> - the function that gives the key of an element</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the elements whose key differs from the one before</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="mapWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedFunction)">
+<h3>mapWithIndex</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>, R extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>R&gt;</span>&nbsp;<span class="element-name">mapWithIndex</span><wbr><span class="parameters">(<a href="MoreGatherers.IndexedFunction.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedFunction</a>&lt;? super T, ? extends R&gt;&nbsp;mapper)</span></div>
+<div class="block">Returns a gatherer that maps each element with its index in the stream, counted from 0.
+
+<pre><code>Stream.of("a", "b").gather(MoreGatherers.mapWithIndex((i, s) -&gt; i + ": " + s))  // 0: a, 1: b
+</code></pre></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="mapWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedFunction)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dd><span id="mapWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedFunction)-type-param-R"><code>R</code> - the type of the results</span></dd>
+<dt>Parameters:</dt>
+<dd><code>mapper</code> - the function that maps an element and its index</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the mapped elements</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="filterWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedPredicate)">
+<h3>filterWithIndex</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">filterWithIndex</span><wbr><span class="parameters">(<a href="MoreGatherers.IndexedPredicate.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedPredicate</a>&lt;? super T&gt;&nbsp;predicate)</span></div>
+<div class="block">Returns a gatherer that keeps the elements that satisfy a predicate of the element and its index in the stream,
+counted from 0.
+
+<pre><code>Stream.of("a", "b", "c").gather(MoreGatherers.filterWithIndex((i, s) -&gt; i != 1))  // a, c
+</code></pre></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="filterWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedPredicate)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Parameters:</dt>
+<dd><code>predicate</code> - the predicate of an element and its index</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the elements that satisfy <code>predicate</code></dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="everyNth(int)">
+<h3>everyNth</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">everyNth</span><wbr><span class="parameters">(int&nbsp;n)</span></div>
+<div class="block">Returns a gatherer that keeps every <code>n</code>th element, starting with the first: the elements at index 0,
+<code>n</code>, <code>2n</code>, and so on.
+
+<pre><code>Stream.of(1, 2, 3, 4, 5).gather(MoreGatherers.everyNth(2))  // 1, 3, 5
+</code></pre></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="everyNth(int)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Parameters:</dt>
+<dd><code>n</code> - the distance between two kept elements</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of every <code>n</code>th element</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>n</code> is not positive</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="max(int,java.util.Comparator)">
+<h3>max</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">max</span><wbr><span class="parameters">(int&nbsp;n,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;? super T&gt;&nbsp;comparator)</span></div>
+<div class="block">Returns a gatherer of the <code>n</code> greatest elements, the greatest first, or of all of them, sorted, if there
+are fewer. Equal elements keep their encounter order, and the earliest of them are kept when not all fit. It
+holds at most <code>n</code> elements, and pushes them when the stream ends.
+
+<pre><code>Stream.of(3, 1, 4, 1, 5, 9, 2).gather(MoreGatherers.max(3, Comparator.naturalOrder()))  // 9, 5, 4
+</code></pre>
+
+<p>An element that is not greater than the least of <code>n</code> kept ones costs one comparison. With <code>n</code> of
+0, it stops pulling elements at once, so it ends an infinite stream.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="max(int,java.util.Comparator)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Parameters:</dt>
+<dd><code>n</code> - the number of elements to keep</dd>
+<dd><code>comparator</code> - the order of the elements</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the <code>n</code> greatest elements</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>n</code> is negative</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="min(int,java.util.Comparator)">
+<h3>min</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>
+<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html" title="class or interface in java.util.stream" class="external-link">Gatherer</a>&lt;T,<wbr>?,<wbr>T&gt;</span>&nbsp;<span class="element-name">min</span><wbr><span class="parameters">(int&nbsp;n,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;? super T&gt;&nbsp;comparator)</span></div>
+<div class="block">Returns a gatherer of the <code>n</code> least elements, the least first, or of all of them, sorted, if there are
+fewer. Equal elements keep their encounter order, and the earliest of them are kept when not all fit. It holds at
+most <code>n</code> elements, and pushes them when the stream ends.
+
+<pre><code>Stream.of(3, 1, 4, 1, 5, 9, 2).gather(MoreGatherers.min(3, Comparator.naturalOrder()))  // 1, 1, 2
+</code></pre>
+
+<p>An element that is not less than the greatest of <code>n</code> kept ones costs one comparison. With <code>n</code> of
+0, it stops pulling elements at once, so it ends an infinite stream.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="min(int,java.util.Comparator)-type-param-T"><code>T</code> - the type of the elements</span></dd>
+<dt>Parameters:</dt>
+<dd><code>n</code> - the number of elements to keep</dd>
+<dd><code>comparator</code> - the order of the elements</dd>
+<dt>Returns:</dt>
+<dd>a gatherer of the <code>n</code> least elements</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>n</code> is negative</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
 </dl>
 </div>
 </section>

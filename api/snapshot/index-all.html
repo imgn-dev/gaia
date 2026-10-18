@@ -618,6 +618,10 @@ meta-annotated with <code>@Component</code>.</div>
 <div class="block">The directories where one application stores its files: its own subdirectories of the platform's <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform"><code>Directories</code></a>,
 one for each kind of file, never shared with another kind.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedFunction.html#apply(long,T)" class="member-name-link">apply(long, T)</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedFunction.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedFunction</a></dt>
+<dd>
+<div class="block">Applies this function.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ArrayTypeName.html" class="type-name-link" title="class in be.imgn.gaia.processing.source">ArrayTypeName</a> - Record Class in <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/package-summary.html">be.imgn.gaia.processing.source</a></dt>
 <dd>
 <div class="block">The name of an array type, such as <code>String[]</code>.</div>
@@ -1372,9 +1376,25 @@ attribute of that annotation.</div>
 finds out, as late as in <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html#processingOver()"><code>Step.processingOver()</code></a>, that it must not write the file, as when the user wrote
 one by hand.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#distinctAdjacent()" class="member-name-link">distinctAdjacent()</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that drops each element equal to the one right before it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#distinctAdjacentBy(java.util.function.Function)" class="member-name-link">distinctAdjacentBy(Function)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that drops each element whose key equals the key of the element right before it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#distinctBy(java.util.function.Function)" class="member-name-link">distinctBy(Function)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that keeps the first element of each key, in encounter order.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/PrimitiveTypeName.html#DOUBLE" class="member-name-link">DOUBLE</a> - Static variable in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/PrimitiveTypeName.html" title="class in be.imgn.gaia.processing.source">PrimitiveTypeName</a></dt>
 <dd>
 <div class="block"><code>double</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#dropLast(int)" class="member-name-link">dropLast(int)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that drops the last <code>n</code> elements, or all of them if there are fewer.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:E">E</h2>
@@ -1585,6 +1605,11 @@ annotations, or one attribute of that annotation.</div>
 <dd>
 <div class="block">Returns the errors.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#everyNth(int)" class="member-name-link">everyNth(int)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that keeps every <code>n</code>th element, starting with the first: the elements at index 0,
+<code>n</code>, <code>2n</code>, and so on.</div>
+</dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/NameMatching.html#EXACT" class="member-name-link">EXACT</a> - Enum constant in enum class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/NameMatching.html" title="enum class in be.imgn.gaia.memfs">NameMatching</a></dt>
 <dd>
 <div class="block">Names match only when they have the same characters, as on Linux.</div>
@@ -1676,6 +1701,11 @@ test's temporary directory.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#fileSystem(java.nio.file.FileSystem)" class="member-name-link">fileSystem(FileSystem)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
 <dd>
 <div class="block">Sets the file system the platform's paths belong to.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#filterWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedPredicate)" class="member-name-link">filterWithIndex(MoreGatherers.IndexedPredicate)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that keeps the elements that satisfy a predicate of the element and its index in the stream,
+counted from 0.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html#firstEntry()" class="member-name-link">firstEntry()</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html" title="interface in be.imgn.gaia.core.collect">SortedMultiset</a></dt>
 <dd>
@@ -1799,6 +1829,10 @@ advance.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/StepProcessor.html#getSupportedSourceVersion()" class="member-name-link">getSupportedSourceVersion()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/StepProcessor.html" title="class in be.imgn.gaia.processing">StepProcessor</a></dt>
 <dd>
 <div class="block">Returns the latest source version, so that the processor never warns about newer sources.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#groupRuns(java.util.function.Function)" class="member-name-link">groupRuns(Function)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer of the runs of consecutive elements with equal keys, each as an unmodifiable list.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:H">H</h2>
@@ -2420,6 +2454,15 @@ separators included.</div>
 Unicode normalization, so that <code>Café</code> written with a composed or a decomposed <code>é</code> and <code>CAFÉ</code>
 name the same file.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#mapWithIndex(be.imgn.gaia.core.collect.MoreGatherers.IndexedFunction)" class="member-name-link">mapWithIndex(MoreGatherers.IndexedFunction)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that maps each element with its index in the stream, counted from 0.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#max(int,java.util.Comparator)" class="member-name-link">max(int, Comparator)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer of the <code>n</code> greatest elements, the greatest first, or of all of them, sorted, if there
+are fewer.</div>
+</dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#maxNameLength()" class="member-name-link">maxNameLength()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
 <div class="block">Returns how long a name may be.</div>
@@ -2467,6 +2510,11 @@ annotations are not known in advance.</div>
 <div class="block">Returns the methods of a type as the compiler sees them: those it declares, and those it inherits from its
 supertypes, as JLS 8.4.8 and 9.4.1 define inheritance.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#min(int,java.util.Comparator)" class="member-name-link">min(int, Comparator)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer of the <code>n</code> least elements, the least first, or of all of them, sorted, if there are
+fewer.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html#mirror()" class="member-name-link">mirror()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html" title="class in be.imgn.gaia.processing">AnnotationReader</a></dt>
 <dd>
 <div class="block">Returns the annotation this reader reads.</div>
@@ -2498,6 +2546,14 @@ supertypes, as JLS 8.4.8 and 9.4.1 define inheritance.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" class="type-name-link" title="class in be.imgn.gaia.core.collect">MoreGatherers</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/package-summary.html">be.imgn.gaia.core.collect</a></dt>
 <dd>
 <div class="block">Gatherers that <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherers.html" title="class or interface in java.util.stream" class="external-link"><code>Gatherers</code></a> does not provide.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedFunction.html" class="type-name-link" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedFunction&lt;T,<wbr>R&gt;</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/package-summary.html">be.imgn.gaia.core.collect</a></dt>
+<dd>
+<div class="block">A function of an element and its index in a stream.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedPredicate.html" class="type-name-link" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedPredicate&lt;T&gt;</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/package-summary.html">be.imgn.gaia.core.collect</a></dt>
+<dd>
+<div class="block">A predicate of an element and its index in a stream.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html" class="type-name-link" title="class in be.imgn.gaia.processing">MoreTypes</a> - Class in <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/package-summary.html">be.imgn.gaia.processing</a></dt>
 <dd>
@@ -3739,6 +3795,19 @@ superclass: <code>AbstractList&lt;String&gt;</code> for <code>ArrayList&lt;Strin
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#tailMultiset(E,boolean)" class="member-name-link">tailMultiset(E, boolean)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#takeLast(int)" class="member-name-link">takeLast(int)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that keeps the last <code>n</code> elements, or all of them if there are fewer.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#takeWhileInclusive(java.util.function.Predicate)" class="member-name-link">takeWhileInclusive(Predicate)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
+<dd>
+<div class="block">Returns a gatherer that keeps the elements while a predicate holds, and the first element that fails it, then
+stops.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedPredicate.html#test(long,T)" class="member-name-link">test(long, T)</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedPredicate.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedPredicate</a></dt>
+<dd>
+<div class="block">Evaluates this predicate.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/TestCompiler.html" class="type-name-link" title="class in be.imgn.gaia.processing.testing">TestCompiler</a> - Class in <a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/package-summary.html">be.imgn.gaia.processing.testing</a></dt>
 <dd>
 <div class="block">Compiles in-memory sources with the system Java compiler, in process, running the given annotation processors.</div>
