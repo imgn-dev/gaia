@@ -5,8 +5,11 @@ name: API docs
 # the guide of the newest version at https://imgn-dev.github.io/gaia/. The
 # release workflow calls it; run it by hand to publish an older version again,
 # to remove one that was never published to Maven Central, or to publish the
-# guide alone, from a branch, between releases.
+# guide alone, from a branch, between releases. Every push to main replaces
+# the API documentation of the snapshot, at api/snapshot/.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       version:
@@ -52,10 +55,10 @@ jobs:
     env:
       VERSION: ${{ inputs.version }}
       # A call from the release workflow always publishes, and never replaces.
-      ACTION: ${{ inputs.action || 'publish' }}
+      ACTION: ${{ github.event_name == 'push' && 'snapshot' || inputs.action || 'publish' }}
       REPLACE: ${{ inputs.replace && '--replace' || '' }}
     steps:
-      - if: env.ACTION != 'guide'
+      - if: env.ACTION == 'publish' || env.ACTION == 'remove'
         name: Check version format
         run: |
           if [[ ! $VERSION =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
@@ -72,22 +75,37 @@ jobs:
       - if: env.ACTION != 'remove'
         uses: actions/checkout@v7
         with:
-          ref: ${{ env.ACTION == 'guide' && (inputs.ref || github.event.repository.default_branch) || format('v{0}', inputs.version) }}
+          ref: ${{ env.ACTION == 'snapshot' && github.sha || env.ACTION == 'guide' && (inputs.ref || github.event.repository.default_branch) || format('v{0}', inputs.version) }}
           path: source
 
-      - if: env.ACTION != 'remove'
+      # A release pushes its own commit and the next snapshot's together, so the
+      # pushed commit is a snapshot unless main was set to a release by hand.
+      - if: env.ACTION == 'snapshot'
+        name: Check snapshot version
+        working-directory: source
+        run: |
+          version=$(sed -nE 's/.*-Drevision=([^[:space:]]+).*/\1/p' .mvn/maven.config)
+          if [[ $version =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-SNAPSHOT$ ]]; then
+            echo "SNAPSHOT_VERSION=$version" >>"$GITHUB_ENV"
+            echo "SNAPSHOT_COMMIT=$(git rev-parse --short HEAD)" >>"$GITHUB_ENV"
+          else
+            echo "The version is '$version', not a snapshot: nothing to publish."
+            echo 'SKIP=true' >>"$GITHUB_ENV"
+          fi
+
+      - if: env.ACTION != 'remove' && env.SKIP != 'true'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '25'
           cache: maven
 
-      - if: env.ACTION == 'publish'
+      - if: (env.ACTION == 'publish' || env.ACTION == 'snapshot') && env.SKIP != 'true'
         name: Build the documentation
         run: main/scripts/javadoc.sh source "$RUNNER_TEMP/javadoc"
 
       # Versions before 0.1.2 have no guide.
-      - if: env.ACTION != 'remove'
+      - if: env.ACTION == 'publish' || env.ACTION == 'guide'
         name: Build the guide
         working-directory: source
         run: |
@@ -102,7 +120,8 @@ jobs:
             echo 'This version has no guide.'
           fi
 
-      - name: Check out gh-pages
+      - if: env.SKIP != 'true'
+        name: Check out gh-pages
         working-directory: main
         run: |
           git config user.name  "github-actions[bot]"
@@ -114,7 +133,8 @@ jobs:
             git worktree add --orphan -b gh-pages ../site
           fi
 
-      - name: Update the site
+      - if: env.SKIP != 'true'
+        name: Update the site
         run: |
           case $ACTION in
           publish)
@@ -126,12 +146,16 @@ jobs:
           guide)
             main/scripts/docs-site.sh guide site "$GUIDE"
             ;;
+          snapshot)
+            main/scripts/docs-site.sh snapshot site "$RUNNER_TEMP/javadoc"
+            ;;
           remove)
             main/scripts/docs-site.sh remove site "$VERSION"
             ;;
           esac
 
-      - name: Push gh-pages
+      - if: env.SKIP != 'true'
+        name: Push gh-pages
         working-directory: site
         run: |
           git add -A
@@ -142,6 +166,7 @@ jobs:
           case $ACTION in
           publish) git commit -m "docs: publish the documentation of $VERSION" ;;
           guide)   git commit -m "docs: publish the guide of $GUIDE_COMMIT" ;;
+          snapshot) git commit -m "docs: publish the API of $SNAPSHOT_VERSION ($SNAPSHOT_COMMIT)" ;;
           remove)  git commit -m "docs: remove the API of $VERSION" ;;
           esac
           git push origin gh-pages

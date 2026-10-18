@@ -7,13 +7,17 @@
 #                    changed once published, unless explicitly replaced
 #   api/latest/      a copy of the newest version, rebuilt from scratch every
 #                    time, so that nothing of an earlier version lingers in it
-#   api/index.html   the list of versions, newest first
+#   api/snapshot/    the API documentation of the main branch, replaced as a
+#                    whole on every push to it
+#   api/index.html   the list of versions, the snapshot first, then the
+#                    releases from the newest
 #   everything else  the guide (docs/target/guide), replaced as a whole, so
 #                    that no page of an earlier guide lingers
 #
 # Usage:  scripts/docs-site.sh publish <site> <version> <javadoc> [--replace]
 #         scripts/docs-site.sh remove  <site> <version>
 #         scripts/docs-site.sh guide   <site> <guide> [<version>]
+#         scripts/docs-site.sh snapshot <site> <javadoc>
 #
 # With a version, guide publishes the guide only if that version is the newest:
 # publishing an older version again must not bring back its guide.
@@ -28,7 +32,8 @@ die() {
 usage() {
     die "Usage: $0 publish <site> <version> <javadoc> [--replace]
        $0 remove  <site> <version>
-       $0 guide   <site> <guide> [<version>]"
+       $0 guide   <site> <guide> [<version>]
+       $0 snapshot <site> <javadoc>"
 }
 
 VERSION_PATTERN='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
@@ -46,9 +51,12 @@ versions() {
 }
 
 refresh() {
-    local all newest version
+    local all newest version snapshot
     all=$(versions)
     newest=$(tail -n 1 <<<"$all")
+    # The version, such as 0.1.2-SNAPSHOT, is in the title javadoc gives the overview.
+    snapshot=$(sed -nE 's|.*<title>.*\(Gaia (.+) API\)</title>.*|\1|p' "$site/api/snapshot/index.html" 2>/dev/null \
+        | head -n 1 || true)
 
     rm -rf "$site/api/latest"
     [[ -n $newest ]] && cp -R "$site/api/$newest" "$site/api/latest"
@@ -66,6 +74,9 @@ refresh() {
 <h1>Gaia API documentation</h1>
 <ul>
 EOF
+        if [[ -d $site/api/snapshot ]]; then
+            printf '<li><a href="snapshot/">Snapshot%s</a></li>\n' "${snapshot:+ ($snapshot)}"
+        fi
         if [[ -n $newest ]]; then
             printf '<li><a href="latest/">Latest (%s)</a></li>\n' "$newest"
             for version in $(sort -rV <<<"$all"); do
@@ -123,6 +134,14 @@ guide)
     find "$site" -mindepth 1 -maxdepth 1 ! -name api ! -name .nojekyll ! -name .git -exec rm -rf {} +
     cp -R "$guide"/. "$site"/
     exit 0
+    ;;
+snapshot)
+    [[ $# -eq 3 ]] || usage
+    javadoc=$3
+    [[ -f $javadoc/index.html ]] || die "$javadoc has no index.html."
+    mkdir -p "$site/api"
+    rm -rf "$site/api/snapshot"
+    cp -R "$javadoc" "$site/api/snapshot"
     ;;
 remove)
     [[ $# -eq 3 ]] || usage
