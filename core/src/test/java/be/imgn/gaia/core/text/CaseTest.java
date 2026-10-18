@@ -2,6 +2,7 @@ package be.imgn.gaia.core.text;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import java.util.Locale;
 import java.util.stream.Stream;
@@ -139,5 +140,17 @@ class CaseTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> source.to(Case.KEBAB, text))
                 .withMessage("\"%s\" is not %s text", text, source);
+    }
+
+    // Passing null is the point.
+    @Test
+    @SuppressWarnings("NullAway")
+    void rejectsNulls() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> Case.KEBAB.to(null, "a"))
+                .withMessage("target");
+        assertThatNullPointerException()
+                .isThrownBy(() -> Case.KEBAB.to(Case.SNAKE, null))
+                .withMessage("text");
     }
 }
