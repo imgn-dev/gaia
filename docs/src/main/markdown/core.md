@@ -45,8 +45,7 @@ A [`Multiset`](api:be.imgn.gaia.core.collect.Multiset) counts the occurrences of
 [`MoreCollectors`](api:be.imgn.gaia.core.collect.MoreCollectors) has `onlyElement()`, which collects the only element
 of a stream, and `toOptional()`, which collects zero or one element.
 
-On Java 24 and later, [`MoreGatherers`](api:be.imgn.gaia.core.collect.MoreGatherers) has the gatherers the JDK
-lacks:
+On Java 24 and later, `MoreGatherers` has the gatherers the JDK lacks:
 
 ```java
 Stream<Circle> circles = shapes.stream().gather(MoreGatherers.instanceOf(Circle.class));
