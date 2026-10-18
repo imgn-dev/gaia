@@ -26,9 +26,9 @@
 </nav>
 <main>
 <h1 id="gaia">Gaia</h1>
-<p>Gaia is a family of Java libraries: utilities the JDK doesn't provide, an in-memory file system, a cross-platform
-API, and helpers for writing annotation processors. Each library has a matching testing library for testing the code
-that uses it.</p>
+<p>Gaia is a family of Java libraries: utilities the JDK doesn't provide, including a cross-platform API, an in-memory
+file system, and helpers for writing annotation processors. Each library has a matching testing library for testing
+the code that uses it.</p>
 <p>The libraries require Java 21 or later, and are released together under one version. Every class is documented in
 the <a href="https://imgn-dev.github.io/gaia/api/latest/">API documentation</a>.</p>
 <h2 id="libraries">Libraries</h2>
@@ -44,17 +44,12 @@ the <a href="https://imgn-dev.github.io/gaia/api/latest/">API documentation</a>.
 <tr>
 <td><code>gaia-core</code></td>
 <td><code>be.imgn.gaia.core</code></td>
-<td><a href="core.html">Extensions to the JDK</a></td>
+<td><a href="core.html">Extensions to the JDK</a>, and <a href="platform.html">the host the JVM runs on</a></td>
 </tr>
 <tr>
 <td><code>gaia-memfs</code></td>
 <td><code>be.imgn.gaia.memfs</code></td>
 <td><a href="memfs.html">An in-memory file system</a></td>
-</tr>
-<tr>
-<td><code>gaia-platform</code></td>
-<td><code>be.imgn.gaia.platform</code></td>
-<td><a href="platform.html">The host the JVM runs on</a></td>
 </tr>
 <tr>
 <td><code>gaia-processing</code></td>
@@ -65,11 +60,6 @@ the <a href="https://imgn-dev.github.io/gaia/api/latest/">API documentation</a>.
 <td><code>gaia-core-testing</code></td>
 <td><code>be.imgn.gaia.core.testing</code></td>
 <td><a href="testing.html#gaia-core-testing">Test helpers for <code>gaia-core</code></a></td>
-</tr>
-<tr>
-<td><code>gaia-platform-testing</code></td>
-<td><code>be.imgn.gaia.platform.testing</code></td>
-<td><a href="testing.html#gaia-platform-testing">Test helpers for <code>gaia-platform</code></a></td>
 </tr>
 <tr>
 <td><code>gaia-processing-testing</code></td>
@@ -97,17 +87,17 @@ generates in the compiled <code>module-info.class</code>.</p>
 &lt;dependencies&gt;
   &lt;dependency&gt;
     &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
-    &lt;artifactId&gt;gaia-platform&lt;/artifactId&gt;
+    &lt;artifactId&gt;gaia-core&lt;/artifactId&gt;
   &lt;/dependency&gt;
   &lt;dependency&gt;
     &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
-    &lt;artifactId&gt;gaia-platform-testing&lt;/artifactId&gt;
+    &lt;artifactId&gt;gaia-core-testing&lt;/artifactId&gt;
     &lt;scope&gt;test&lt;/scope&gt;
   &lt;/dependency&gt;
 &lt;/dependencies&gt;
 </code></pre>
 <p>The BOM manages gaia's own artifacts only, so importing it doesn't change the versions of your other dependencies.</p>
-<p>On the module path, require the modules you use, such as <code>requires be.imgn.gaia.platform;</code>.</p>
+<p>On the module path, require the modules you use, such as <code>requires be.imgn.gaia.core;</code>.</p>
 <h2 id="nulls">Nulls</h2>
 <p>Every package of gaia is annotated with JSpecify's <code>@NullMarked</code>: a parameter or a return value is never null unless
 it is annotated <code>@Nullable</code>. A method given null where it doesn't accept it throws <code>NullPointerException</code>, naming the

@@ -29,7 +29,7 @@
 <p>Each library has a testing library, for the tests of the code that uses it. Declare them in the test scope:</p>
 <pre><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
-  &lt;artifactId&gt;gaia-platform-testing&lt;/artifactId&gt;
+  &lt;artifactId&gt;gaia-core-testing&lt;/artifactId&gt;
   &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;
 </code></pre>
@@ -37,6 +37,7 @@
 <code>gaia-processing-testing</code> also has a JUnit extension.</p>
 <p>For code that works on files, the <a href="memfs.html">memory file system</a> gives each test a file system of its own.</p>
 <h2 id="gaia-core-testing">gaia-core-testing</h2>
+<h3 id="time">Time</h3>
 <p><a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html"><code>FakeTicker</code></a> is a <code>Ticker</code> that only moves when told to, so that tests of
 timing code are exact and instant:</p>
 <pre><code class="language-java">FakeTicker ticker = new FakeTicker();
@@ -44,16 +45,16 @@ Stopwatch stopwatch = Stopwatch.started(ticker);
 ticker.advance(Duration.ofSeconds(2));
 assertThat(stopwatch.elapsed()).isEqualTo(Duration.ofSeconds(2));
 </code></pre>
-<h2 id="gaia-platform-testing">gaia-platform-testing</h2>
+<h3 id="platforms">Platforms</h3>
 <p>Code that receives a <a href="platform.html"><code>Platform</code></a> can be tested on any operating system, whatever the one the tests run
 on, in two ways.</p>
-<p><a href="api/latest/be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html"><code>FakePlatform</code></a> has the operating system of your choice and its
+<p><a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html"><code>FakePlatform</code></a> has the operating system of your choice and its
 directories under a root directory, such as a test's temporary directory, so the real ones are never touched:</p>
 <pre><code class="language-java">Platform platform = FakePlatform.newBuilder(OperatingSystem.WINDOWS, temporaryDirectory).build();
 </code></pre>
-<p>Its directories are a <a href="api/latest/be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html"><code>FakeDirectories</code></a> unless others are
+<p>Its directories are a <a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html"><code>FakeDirectories</code></a> unless others are
 given; its builder sets each directory on its own.</p>
-<p><a href="api/latest/be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html"><code>PlatformPreset</code></a> instead runs the real detection of the
+<p><a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html"><code>PlatformPreset</code></a> instead runs the real detection of the
 directories of an operating system, from the system properties and environment variables a JVM typically has there:</p>
 <pre><code class="language-java">PlatformPreset windows = PlatformPreset.newBuilder(OperatingSystem.WINDOWS).userName(&quot;alice&quot;).build();
 Platform platform = Platform.newBuilder()
