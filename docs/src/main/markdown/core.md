@@ -45,11 +45,29 @@ A [`Multiset`](api:be.imgn.gaia.core.collect.Multiset) counts the occurrences of
 [`MoreCollectors`](api:be.imgn.gaia.core.collect.MoreCollectors) has `onlyElement()`, which collects the only element
 of a stream, and `toOptional()`, which collects zero or one element.
 
-On Java 24 and later, `MoreGatherers.instanceOf(type)` keeps the elements of a stream that are of a type, cast to it:
+On Java 24 and later, [`MoreGatherers`](api:be.imgn.gaia.core.collect.MoreGatherers) has the gatherers the JDK
+lacks:
 
 ```java
 Stream<Circle> circles = shapes.stream().gather(MoreGatherers.instanceOf(Circle.class));
+lines.stream().gather(MoreGatherers.takeWhileInclusive(line -> !line.equals("END")));  // up to and including END
+scores.stream().gather(MoreGatherers.max(3, Comparator.naturalOrder()));               // the top three, greatest first
 ```
+
+| Gatherer | Keeps |
+|---|---|
+| `instanceOf(type)` | The elements of a type, cast to it |
+| `distinctBy(key)` | The first element of each key |
+| `distinctAdjacent()`, `distinctAdjacentBy(key)` | The elements that differ from the one right before, or whose key does |
+| `takeWhileInclusive(predicate)` | The elements while the predicate holds, and the first that fails it |
+| `groupRuns(key)` | The runs of consecutive elements with equal keys, as lists |
+| `takeLast(n)`, `dropLast(n)` | The last `n` elements, or all but them |
+| `mapWithIndex(mapper)`, `filterWithIndex(predicate)` | The elements mapped, or filtered, with their index |
+| `everyNth(n)` | The elements at index 0, `n`, `2n`, and so on |
+| `max(n, comparator)`, `min(n, comparator)` | The `n` greatest or least elements, in order |
+
+They accept `null` elements, as streams do. In a parallel stream, `instanceOf`, `takeWhileInclusive`, `takeLast`,
+`max` and `min` run in parallel; the others depend on the elements before each one, so they run sequentially.
 
 `gaia-core` is a multi-release jar that adds `MoreGatherers` on Java 24. Tools that validate multi-release jars
 strictly, such as `jar --validate`, report it as a public class missing from the Java 21 version. That doesn't affect

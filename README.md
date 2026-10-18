@@ -36,8 +36,12 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `toMultiset()` collector make unmodifiable multisets that iterate in the order their elements first appear.
 - **`collect.MoreCollectors`**: `onlyElement()` collects the only element of a stream, and `toOptional()` collects
   zero or one element.
-- **`collect.MoreGatherers`** (Java 24+): `instanceOf(type)` keeps the elements of a type, cast to it:
-  `stream.gather(MoreGatherers.instanceOf(Circle.class))`.
+- **`collect.MoreGatherers`** (Java 24+): gatherers the JDK lacks. `instanceOf(type)` keeps the elements of a type,
+  cast to it: `stream.gather(MoreGatherers.instanceOf(Circle.class))`. `distinctBy(key)`, `distinctAdjacent()` and
+  `distinctAdjacentBy(key)` drop duplicates; `takeWhileInclusive(predicate)` keeps the element that ends the run;
+  `groupRuns(key)` groups consecutive elements with equal keys; `takeLast(n)` and `dropLast(n)` work at the end of a
+  stream; `mapWithIndex` and `filterWithIndex` see each element's index; `everyNth(n)` samples; and `max(n, comparator)`
+  and `min(n, comparator)` keep the greatest or least elements in one pass.
 - **`io.AtomicFiles`**: writes a file so that readers, or the next run after a crash, see either its old content or
   its new one, never a part of it: `write(file, bytes)`, `writeString(file, text)`, or
   `write(file, out -> ImageIO.write(image, "png", out))`. The file keeps its permissions.
