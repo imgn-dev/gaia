@@ -18,7 +18,6 @@
 <li><a href="index.html">Gaia</a></li>
 <li><a href="core.html" aria-current="page">Core</a></li>
 <li><a href="memfs.html">Memory file system</a></li>
-<li><a href="platform.html">Platform</a></li>
 <li><a href="processing.html">Annotation processing</a></li>
 <li><a href="testing.html">Testing</a></li>
 <li><a href="maven-plugin.html">Maven plugin</a></li>
@@ -27,7 +26,7 @@
 <main>
 <h1 id="core">Core</h1>
 <p><code>gaia-core</code> extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
-system properties, the <a href="platform.html">platform</a> the JVM runs on, text and time.</p>
+system properties, the <a href="#platform">platform</a> the JVM runs on, text and time.</p>
 <pre><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
   &lt;artifactId&gt;gaia-core&lt;/artifactId&gt;
@@ -84,7 +83,142 @@ CharSink.of(file, UTF_8).writeLines(lines);
 <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html"><code>Environment</code></a> read system properties and environment variables from the
 running JVM, or from fixed values in tests. <code>SystemProperties</code> has a typed method for each standard Java property,
 such as <code>userHome()</code> or <code>javaVersion()</code>. Paths come back as <code>Path</code>s of the default file system. For the directories
-of an application, or paths in a file system a test provides, the <a href="platform.html">platform</a> is often the better fit.</p>
+of an application, or paths in a file system a test provides, the <a href="#platform">platform</a> is often the better fit.</p>
+<h2 id="platform">Platform</h2>
+<p>The <code>platform</code> package tells what the JVM runs on, and where applications keep their files there. Up to 0.1.1, it
+was a library of its own, <code>gaia-platform</code>, with its fakes in <code>gaia-platform-testing</code>.</p>
+<h3 id="the-current-platform">The current platform</h3>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html"><code>Platform</code></a><code>.current()</code> detects the platform of the running JVM from its
+system properties and environment variables, once. It tells the operating system with <code>isLinux()</code>, <code>isMacOS()</code> and
+<code>isWindows()</code>; on other Unix-like systems, such as FreeBSD, all three are <code>false</code>. It also gives the file system all
+its paths belong to, and the base directories of the platform.</p>
+<p>Code that receives a <code>Platform</code> instead of calling <code>current()</code> itself can be tested against any platform: see
+<a href="testing.html#platforms"><code>gaia-core-testing</code></a>.</p>
+<h3 id="application-directories">Application directories</h3>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html"><code>ApplicationDirectories</code></a> are the directories where one
+application keeps its configuration, data, state, cache and runtime files, kept apart on every operating system:</p>
+<pre><code class="language-java">ApplicationDirectories directories = Platform.current().applicationDirectories(&quot;Quuz&quot;);
+Path settings = directories.config().resolve(&quot;settings.toml&quot;);
+</code></pre>
+<p>The directories are not created: create each one before writing in it. For an application named <code>Quuz</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Directory</th>
+<th>Linux and other Unix</th>
+<th>macOS</th>
+<th>Windows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config()</code></td>
+<td><code>~/.config/quuz</code></td>
+<td><code>~/Library/Application Support/Quuz/config</code></td>
+<td><code>%APPDATA%\Quuz\config</code></td>
+</tr>
+<tr>
+<td><code>data()</code></td>
+<td><code>~/.local/share/quuz</code></td>
+<td><code>~/Library/Application Support/Quuz/data</code></td>
+<td><code>%APPDATA%\Quuz\data</code></td>
+</tr>
+<tr>
+<td><code>state()</code></td>
+<td><code>~/.local/state/quuz</code></td>
+<td><code>~/Library/Application Support/Quuz/state</code></td>
+<td><code>%LOCALAPPDATA%\Quuz\state</code></td>
+</tr>
+<tr>
+<td><code>cache()</code></td>
+<td><code>~/.cache/quuz</code></td>
+<td><code>~/Library/Caches/Quuz</code></td>
+<td><code>%LOCALAPPDATA%\Quuz\cache</code></td>
+</tr>
+<tr>
+<td><code>runtime()</code></td>
+<td><code>$XDG_RUNTIME_DIR/quuz</code></td>
+<td>none</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<p>On Linux and other Unix-like systems, the name is in lower case with spaces replaced by <code>-</code>, under the base directories
+of the XDG Base Directory Specification, which its environment variables can move.</p>
+<p>Two overloads name the application more fully, for the operating systems that use more than its name:</p>
+<ul>
+<li><code>applicationDirectories(&quot;bar&quot;, &quot;Quuz&quot;)</code> adds the vendor, which Windows nests the application under:
+<code>%APPDATA%\bar\Quuz</code>.</li>
+<li><code>applicationDirectories(&quot;foo&quot;, &quot;bar&quot;, &quot;Quuz&quot;)</code> adds the vendor's qualifier, its top-level domain, which macOS names
+the directories after: <code>~/Library/Application Support/foo.bar.Quuz</code>.</li>
+</ul>
+<h3 id="base-directories">Base directories</h3>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html"><code>Directories</code></a> are the base directories, shared by all applications, as
+defined by the <a href="https://specifications.freedesktop.org/basedir-spec/latest/">XDG Base Directory Specification</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Directory</th>
+<th>Linux and other Unix</th>
+<th>macOS</th>
+<th>Windows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>home()</code></td>
+<td><code>$HOME</code></td>
+<td><code>user.home</code></td>
+<td><code>user.home</code></td>
+</tr>
+<tr>
+<td><code>dataHome()</code></td>
+<td><code>$XDG_DATA_HOME</code>, <code>~/.local/share</code></td>
+<td><code>~/Library/Application Support</code></td>
+<td><code>%APPDATA%</code></td>
+</tr>
+<tr>
+<td><code>configHome()</code></td>
+<td><code>$XDG_CONFIG_HOME</code>, <code>~/.config</code></td>
+<td><code>~/Library/Application Support</code></td>
+<td><code>%APPDATA%</code></td>
+</tr>
+<tr>
+<td><code>stateHome()</code></td>
+<td><code>$XDG_STATE_HOME</code>, <code>~/.local/state</code></td>
+<td><code>~/Library/Application Support</code></td>
+<td><code>%LOCALAPPDATA%</code></td>
+</tr>
+<tr>
+<td><code>cacheHome()</code></td>
+<td><code>$XDG_CACHE_HOME</code>, <code>~/.cache</code></td>
+<td><code>~/Library/Caches</code></td>
+<td><code>%LOCALAPPDATA%</code></td>
+</tr>
+<tr>
+<td><code>runtimeDir()</code></td>
+<td><code>$XDG_RUNTIME_DIR</code>, or none</td>
+<td>none</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>dataDirs()</code></td>
+<td><code>$XDG_DATA_DIRS</code>, <code>/usr/local/share:/usr/share</code></td>
+<td><code>/Library/Application Support</code></td>
+<td><code>%ProgramData%</code></td>
+</tr>
+<tr>
+<td><code>configDirs()</code></td>
+<td><code>$XDG_CONFIG_DIRS</code>, <code>/etc/xdg</code></td>
+<td><code>/Library/Application Support</code></td>
+<td><code>%ProgramData%</code></td>
+</tr>
+</tbody>
+</table>
+<p>On Linux and other Unix-like systems, a variable that is unset, empty or not an absolute path gives way to the
+default that follows it. On Windows, the directories come from the variables Windows sets, with their usual locations
+as defaults. On Windows and macOS several of them are the same directory, so put an application's files in
+subdirectories named after it, or use its <a href="#application-directories">application directories</a>.</p>
 <h2 id="text">Text</h2>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html"><code>Splitter</code></a> splits text on a character, a literal string or a regular
 expression, with optional trimming, omission of empty parts and a limit:</p>
