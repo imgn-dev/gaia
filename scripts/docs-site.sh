@@ -8,13 +8,15 @@
 #   api/latest/      a copy of the newest version, rebuilt from scratch every
 #                    time, so that nothing of an earlier version lingers in it
 #   api/index.html   the list of versions, newest first
-#   everything else  the guide of the newest version (docs/target/guide),
-#                    replaced as a whole, so that no page of an earlier guide
-#                    lingers
+#   everything else  the guide (docs/target/guide), replaced as a whole, so
+#                    that no page of an earlier guide lingers
 #
 # Usage:  scripts/docs-site.sh publish <site> <version> <javadoc> [--replace]
 #         scripts/docs-site.sh remove  <site> <version>
-#         scripts/docs-site.sh guide   <site> <version> <guide>
+#         scripts/docs-site.sh guide   <site> <guide> [<version>]
+#
+# With a version, guide publishes the guide only if that version is the newest:
+# publishing an older version again must not bring back its guide.
 
 set -euo pipefail
 
@@ -26,7 +28,7 @@ die() {
 usage() {
     die "Usage: $0 publish <site> <version> <javadoc> [--replace]
        $0 remove  <site> <version>
-       $0 guide   <site> <version> <guide>"
+       $0 guide   <site> <guide> [<version>]"
 }
 
 VERSION_PATTERN='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
@@ -81,16 +83,20 @@ EOF
     touch "$site/.nojekyll"
 }
 
+check_version() {
+    [[ $1 =~ $VERSION_PATTERN ]] || die "Version '$1' must be MAJOR.MINOR.PATCH, e.g. 0.1.0."
+}
+
 [[ $# -ge 3 ]] || usage
 action=$1
 site=$2
-version=$3
 [[ -d $site ]] || die "$site is not a directory."
-[[ $version =~ $VERSION_PATTERN ]] || die "Version '$version' must be MAJOR.MINOR.PATCH, e.g. 0.1.0."
 
 case $action in
 publish)
     [[ $# -eq 4 || ( $# -eq 5 && $5 == --replace ) ]] || usage
+    version=$3
+    check_version "$version"
     javadoc=$4
     [[ -f $javadoc/index.html ]] || die "$javadoc has no index.html."
     if [[ -e $site/api/$version && $# -eq 4 ]]; then
@@ -101,14 +107,18 @@ publish)
     cp -R "$javadoc" "$site/api/$version"
     ;;
 guide)
-    [[ $# -eq 4 ]] || usage
-    guide=$4
+    [[ $# -eq 3 || $# -eq 4 ]] || usage
+    guide=$3
     [[ -f $guide/index.html ]] || die "$guide has no index.html."
-    # Publishing an older version again must not bring back its guide.
+    # The guide links to the API documentation of the newest version.
     newest=$(versions | tail -n 1)
-    if [[ $version != "$newest" ]]; then
-        printf 'The guide of %s is not published: the newest version is %s.\n' "$version" "${newest:-none}"
-        exit 0
+    [[ -n $newest ]] || die "No API documentation is published: publish a version first."
+    if [[ $# -eq 4 ]]; then
+        check_version "$4"
+        if [[ $4 != "$newest" ]]; then
+            printf 'The guide of %s is not published: the newest version is %s.\n' "$4" "$newest"
+            exit 0
+        fi
     fi
     find "$site" -mindepth 1 -maxdepth 1 ! -name api ! -name .nojekyll ! -name .git -exec rm -rf {} +
     cp -R "$guide"/. "$site"/
@@ -116,6 +126,8 @@ guide)
     ;;
 remove)
     [[ $# -eq 3 ]] || usage
+    version=$3
+    check_version "$version"
     [[ -e $site/api/$version ]] || die "The documentation of $version is not published."
     rm -rf "$site/api/$version"
     ;;

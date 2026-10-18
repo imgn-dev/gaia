@@ -3,23 +3,30 @@ name: API docs
 # Publishes or removes the API documentation of a released version on the
 # gh-pages branch, served at https://imgn-dev.github.io/gaia/api/, and publishes
 # the guide of the newest version at https://imgn-dev.github.io/gaia/. The
-# release workflow calls it; run it by hand to publish an older version again
-# or to remove one that was never published to Maven Central.
+# release workflow calls it; run it by hand to publish an older version again,
+# to remove one that was never published to Maven Central, or to publish the
+# guide alone, from a branch, between releases.
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Released version: MAJOR.MINOR.PATCH, e.g. 0.1.0'
-        required: true
+        description: 'With publish or remove: released version, MAJOR.MINOR.PATCH, e.g. 0.1.0'
+        required: false
         type: string
       action:
-        description: 'publish the documentation of the version, or remove it'
+        description: 'publish the documentation of the version, remove it, or publish the guide alone'
         required: true
         type: choice
         options:
           - publish
           - remove
+          - guide
         default: publish
+      ref:
+        description: 'With guide: the branch or tag to build the guide from (default: the default branch)'
+        required: false
+        type: string
+        default: ''
       replace:
         description: 'With publish: replace the documentation of a version already published'
         required: false
@@ -48,7 +55,8 @@ jobs:
       ACTION: ${{ inputs.action || 'publish' }}
       REPLACE: ${{ inputs.replace && '--replace' || '' }}
     steps:
-      - name: Check version format
+      - if: env.ACTION != 'guide'
+        name: Check version format
         run: |
           if [[ ! $VERSION =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
             echo "::error::version is '$VERSION'. It must be MAJOR.MINOR.PATCH, e.g. 0.1.0, and nothing else."
@@ -61,13 +69,13 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           path: main
 
-      - if: env.ACTION == 'publish'
+      - if: env.ACTION != 'remove'
         uses: actions/checkout@v7
         with:
-          ref: v${{ inputs.version }}
+          ref: ${{ env.ACTION == 'guide' && (inputs.ref || github.event.repository.default_branch) || format('v{0}', inputs.version) }}
           path: source
 
-      - if: env.ACTION == 'publish'
+      - if: env.ACTION != 'remove'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -79,13 +87,17 @@ jobs:
         run: main/scripts/javadoc.sh source "$RUNNER_TEMP/javadoc"
 
       # Versions before 0.1.2 have no guide.
-      - if: env.ACTION == 'publish'
+      - if: env.ACTION != 'remove'
         name: Build the guide
         working-directory: source
         run: |
           if [[ -d docs ]]; then
             ./mvnw -B -ntp package -pl docs -am -DskipTests
             echo "GUIDE=$PWD/docs/target/guide" >>"$GITHUB_ENV"
+            echo "GUIDE_COMMIT=$(git rev-parse --short HEAD)" >>"$GITHUB_ENV"
+          elif [[ $ACTION == guide ]]; then
+            echo '::error::This ref has no guide.'
+            exit 1
           else
             echo 'This version has no guide.'
           fi
@@ -104,14 +116,20 @@ jobs:
 
       - name: Update the site
         run: |
-          if [[ $ACTION == publish ]]; then
+          case $ACTION in
+          publish)
             main/scripts/docs-site.sh publish site "$VERSION" "$RUNNER_TEMP/javadoc" $REPLACE
             if [[ -n ${GUIDE:-} ]]; then
-              main/scripts/docs-site.sh guide site "$VERSION" "$GUIDE"
+              main/scripts/docs-site.sh guide site "$GUIDE" "$VERSION"
             fi
-          else
+            ;;
+          guide)
+            main/scripts/docs-site.sh guide site "$GUIDE"
+            ;;
+          remove)
             main/scripts/docs-site.sh remove site "$VERSION"
-          fi
+            ;;
+          esac
 
       - name: Push gh-pages
         working-directory: site
@@ -121,9 +139,9 @@ jobs:
             echo 'Nothing changed.'
             exit 0
           fi
-          if [[ $ACTION == publish ]]; then
-            git commit -m "docs: publish the documentation of $VERSION"
-          else
-            git commit -m "docs: remove the API of $VERSION"
-          fi
+          case $ACTION in
+          publish) git commit -m "docs: publish the documentation of $VERSION" ;;
+          guide)   git commit -m "docs: publish the guide of $GUIDE_COMMIT" ;;
+          remove)  git commit -m "docs: remove the API of $VERSION" ;;
+          esac
           git push origin gh-pages
