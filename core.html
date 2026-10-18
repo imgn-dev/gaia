@@ -83,7 +83,8 @@ CharSink.of(file, UTF_8).writeLines(lines);
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html"><code>SystemProperties</code></a> and
 <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html"><code>Environment</code></a> read system properties and environment variables from the
 running JVM, or from fixed values in tests. <code>SystemProperties</code> has a typed method for each standard Java property,
-such as <code>userHome()</code> or <code>javaVersion()</code>.</p>
+such as <code>userHome()</code> or <code>javaVersion()</code>. Paths come back as <code>Path</code>s of the default file system. For the directories
+of an application, or paths in a file system a test provides, the <a href="platform.html">platform</a> is often the better fit.</p>
 <h2 id="text">Text</h2>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html"><code>Splitter</code></a> splits text on a character, a literal string or a regular
 expression, with optional trimming, omission of empty parts and a limit:</p>
