@@ -5,7 +5,7 @@
 <title>FakeDirectories.Builder (Gaia 0.1.2-SNAPSHOT API)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="declaration: module: be.imgn.gaia.platform.testing, package: be.imgn.gaia.platform.testing, class: FakeDirectories, class: Builder">
+<meta name="description" content="declaration: module: be.imgn.gaia.core.testing, package: be.imgn.gaia.core.testing, class: FakeDirectories, class: Builder">
 <meta name="generator" content="javadoc/ClassWriter">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/jquery-ui.min.css">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/stylesheet.css">
@@ -39,8 +39,8 @@ loadScripts(document, 'script');</script>
 <div class="sub-nav">
 <div class="nav-content">
 <ol class="sub-nav-list">
-<li><a href="../../../../../module-summary.html">be.imgn.gaia.platform.testing</a></li>
-<li><a href="package-summary.html">be.imgn.gaia.platform.testing</a></li>
+<li><a href="../../../../../module-summary.html">be.imgn.gaia.core.testing</a></li>
+<li><a href="package-summary.html">be.imgn.gaia.core.testing</a></li>
 <li><a href="FakeDirectories.html">FakeDirectories</a></li>
 <li><a href="FakeDirectories.Builder.html" class="current-selection">Builder</a></li>
 </ol>
@@ -79,19 +79,23 @@ loadScripts(document, 'script');</script>
 <h1 title="Class FakeDirectories.Builder" class="title">Class FakeDirectories.Builder</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">be.imgn.gaia.platform.testing.FakeDirectories.Builder</div>
+<div class="inheritance">be.imgn.gaia.core.testing.FakeDirectories.Builder</div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Enclosing class:</dt>
-<dd><code><a href="FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></code></dd>
+<dd><code><a href="FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public static final class </span><span class="element-name type-name-label">FakeDirectories.Builder</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Builds <a href="FakeDirectories.html" title="class in be.imgn.gaia.platform.testing"><code>FakeDirectories</code></a>. Each directory defaults to its own subdirectory of the root; each method replaces
+<div class="block">Builds <a href="FakeDirectories.html" title="class in be.imgn.gaia.core.testing"><code>FakeDirectories</code></a>. Each directory defaults to its own subdirectory of the root; each method replaces
 one with a path that must be absolute and belong to the file system of the root, but need not be under the root.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
 </div>
 </section>
 <section class="summary">
@@ -107,57 +111,57 @@ one with a path that must be absolute and belong to the file system of the root,
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Builds the directories, creating them if this builder was told to.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#cacheHome(java.nio.file.Path)" class="member-name-link">cacheHome</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;cacheHome)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the directory for user-specific cached data.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configDirs(java.util.List)" class="member-name-link">configDirs</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;configDirs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the system-wide directories to search for configuration files.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configHome(java.nio.file.Path)" class="member-name-link">configHome</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;configHome)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the directory for user-specific configuration files.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDirectories(boolean)" class="member-name-link">createDirectories</a><wbr>(boolean&nbsp;createDirectories)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets whether <a href="#build()"><code>build()</code></a> creates every directory, with its parents, if it does not exist yet.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataDirs(java.util.List)" class="member-name-link">dataDirs</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dataDirs)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the system-wide directories to search for data files.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataHome(java.nio.file.Path)" class="member-name-link">dataHome</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;dataHome)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the directory for user-specific data files.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#home(java.nio.file.Path)" class="member-name-link">home</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;home)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the user's home directory.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runtimeDir(java.nio.file.Path)" class="member-name-link">runtimeDir</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;runtimeDir)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the directory for user-specific runtime files, replacing any earlier <a href="#withoutRuntimeDir()"><code>withoutRuntimeDir()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stateHome(java.nio.file.Path)" class="member-name-link">stateHome</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;stateHome)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the directory for user-specific state.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withoutRuntimeDir()" class="member-name-link">withoutRuntimeDir</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes the runtime directory, so that <a href="FakeDirectories.html#runtimeDir()"><code>FakeDirectories.runtimeDir()</code></a> is empty, as on macOS, Windows,
@@ -184,7 +188,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="home(java.nio.file.Path)">
 <h3>home</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">home</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;home)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">home</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;home)</span></div>
 <div class="block">Sets the user's home directory.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -201,7 +205,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="dataHome(java.nio.file.Path)">
 <h3>dataHome</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">dataHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;dataHome)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">dataHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;dataHome)</span></div>
 <div class="block">Sets the directory for user-specific data files.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -218,7 +222,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="configHome(java.nio.file.Path)">
 <h3>configHome</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">configHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;configHome)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">configHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;configHome)</span></div>
 <div class="block">Sets the directory for user-specific configuration files.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -235,7 +239,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="stateHome(java.nio.file.Path)">
 <h3>stateHome</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">stateHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;stateHome)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">stateHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;stateHome)</span></div>
 <div class="block">Sets the directory for user-specific state.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -252,7 +256,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="cacheHome(java.nio.file.Path)">
 <h3>cacheHome</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">cacheHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;cacheHome)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">cacheHome</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;cacheHome)</span></div>
 <div class="block">Sets the directory for user-specific cached data.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -269,7 +273,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="runtimeDir(java.nio.file.Path)">
 <h3>runtimeDir</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">runtimeDir</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;runtimeDir)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">runtimeDir</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;runtimeDir)</span></div>
 <div class="block">Sets the directory for user-specific runtime files, replacing any earlier <a href="#withoutRuntimeDir()"><code>withoutRuntimeDir()</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -286,7 +290,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="withoutRuntimeDir()">
 <h3>withoutRuntimeDir</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">withoutRuntimeDir</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">withoutRuntimeDir</span>()</div>
 <div class="block">Removes the runtime directory, so that <a href="FakeDirectories.html#runtimeDir()"><code>FakeDirectories.runtimeDir()</code></a> is empty, as on macOS, Windows,
 and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <dl class="notes">
@@ -300,7 +304,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="dataDirs(java.util.List)">
 <h3>dataDirs</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">dataDirs</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dataDirs)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">dataDirs</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;dataDirs)</span></div>
 <div class="block">Sets the system-wide directories to search for data files.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -317,7 +321,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="configDirs(java.util.List)">
 <h3>configDirs</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">configDirs</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;configDirs)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">configDirs</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&nbsp;configDirs)</span></div>
 <div class="block">Sets the system-wide directories to search for configuration files.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -334,7 +338,7 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <section class="detail" id="createDirectories(boolean)">
 <h3>createDirectories</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">createDirectories</span><wbr><span class="parameters">(boolean&nbsp;createDirectories)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">createDirectories</span><wbr><span class="parameters">(boolean&nbsp;createDirectories)</span></div>
 <div class="block">Sets whether <a href="#build()"><code>build()</code></a> creates every directory, with its parents, if it does not exist yet. By default
 it does not, like the real directories, which may not exist.</div>
 <dl class="notes">
@@ -350,7 +354,7 @@ it does not, like the real directories, which may not exist.</div>
 <section class="detail" id="build()">
 <h3>build</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></span>&nbsp;<span class="element-name">build</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></span>&nbsp;<span class="element-name">build</span>()</div>
 <div class="block">Builds the directories, creating them if this builder was told to.</div>
 <dl class="notes">
 <dt>Returns:</dt>

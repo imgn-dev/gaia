@@ -5,7 +5,7 @@
 <title>PlatformPreset (Gaia 0.1.2-SNAPSHOT API)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="declaration: module: be.imgn.gaia.platform.testing, package: be.imgn.gaia.platform.testing, class: PlatformPreset">
+<meta name="description" content="declaration: module: be.imgn.gaia.core.testing, package: be.imgn.gaia.core.testing, class: PlatformPreset">
 <meta name="generator" content="javadoc/ClassWriter">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/jquery-ui.min.css">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/stylesheet.css">
@@ -39,8 +39,8 @@ loadScripts(document, 'script');</script>
 <div class="sub-nav">
 <div class="nav-content">
 <ol class="sub-nav-list">
-<li><a href="../../../../../module-summary.html">be.imgn.gaia.platform.testing</a></li>
-<li><a href="package-summary.html">be.imgn.gaia.platform.testing</a></li>
+<li><a href="../../../../../module-summary.html">be.imgn.gaia.core.testing</a></li>
+<li><a href="package-summary.html">be.imgn.gaia.core.testing</a></li>
 <li><a href="PlatformPreset.html" class="current-selection">PlatformPreset</a></li>
 </ol>
 <div class="nav-list-search"><input type="text" id="search-input" disabled placeholder="Search documentation (type /)" aria-label="Search in documentation" autocomplete="off" spellcheck="false"><input type="reset" id="reset-search" disabled value="Reset"></div>
@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#newBuilder(be.imgn.gaia.platform.testing.OperatingSystem)" tabindex="0">newBuilder(OperatingSystem)</a></li>
+<li><a href="#newBuilder(be.imgn.gaia.core.testing.OperatingSystem)" tabindex="0">newBuilder(OperatingSystem)</a></li>
 <li><a href="#systemProperties()" tabindex="0">systemProperties()</a></li>
 <li><a href="#environment()" tabindex="0">environment()</a></li>
 </ol>
@@ -71,7 +71,7 @@ loadScripts(document, 'script');</script>
 <h1 title="Class PlatformPreset" class="title">Class PlatformPreset</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">be.imgn.gaia.platform.testing.PlatformPreset</div>
+<div class="inheritance">be.imgn.gaia.core.testing.PlatformPreset</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -79,7 +79,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PlatformPreset</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The system properties and environment variables a JVM typically has on an operating system, to detect a
-<a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform"><code>Platform</code></a> from, so that tests run the real detection of the directories of any operating system:
+<a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> from, so that tests run the real detection of the directories of any operating system:
 
 <pre><code>PlatformPreset windows = PlatformPreset.newBuilder(OperatingSystem.WINDOWS).userName("alice").build();
 Platform platform = Platform.newBuilder()
@@ -128,7 +128,14 @@ properties are:
 <p>The values are strings, which the platform turns into paths of the file system it is given. Give it a file system
 of the same kind as the operating system to get the same paths as on that system: on a Unix file system, for example,
 a Windows path such as <code>C:\Users\test</code> is a relative path with a single name. The detected paths are still
-consistent, so a test can compare them with paths it builds on the same file system, the same way.</div>
+consistent, so a test can compare them with paths it builds on the same file system, the same way.
+
+<p>Before 0.1.2, it was <code>be.imgn.gaia.platform.testing.PlatformPreset</code>, in its own module,
+<code>gaia-platform-testing</code>.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
 </div>
 </section>
 <section class="summary">
@@ -143,9 +150,9 @@ consistent, so a test can compare them with paths it builds on the same file sys
 <div class="table-header col-second">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final class&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="PlatformPreset.Builder.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-second even-row-color"><code><a href="PlatformPreset.Builder.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Builds a <a href="PlatformPreset.html" title="class in be.imgn.gaia.platform.testing"><code>PlatformPreset</code></a>.</div>
+<div class="block">Builds a <a href="PlatformPreset.html" title="class in be.imgn.gaia.core.testing"><code>PlatformPreset</code></a>.</div>
 </div>
 </div>
 </section>
@@ -164,17 +171,17 @@ consistent, so a test can compare them with paths it builds on the same file sys
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#environment()" class="member-name-link">environment</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the environment variables, to give to <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
+<div class="block">Returns the environment variables, to give to <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newBuilder(be.imgn.gaia.platform.testing.OperatingSystem)" class="member-name-link">newBuilder</a><wbr>(<a href="OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a>&nbsp;operatingSystem)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newBuilder(be.imgn.gaia.core.testing.OperatingSystem)" class="member-name-link">newBuilder</a><wbr>(<a href="OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a>&nbsp;operatingSystem)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a builder of the system properties and environment variables of an operating system.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#systemProperties()" class="member-name-link">systemProperties</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the system properties, to give to <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
+<div class="block">Returns the system properties, to give to <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
 </div>
 </div>
 </div>
@@ -194,10 +201,10 @@ consistent, so a test can compare them with paths it builds on the same file sys
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="newBuilder(be.imgn.gaia.platform.testing.OperatingSystem)">
+<section class="detail" id="newBuilder(be.imgn.gaia.core.testing.OperatingSystem)">
 <h3>newBuilder</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">newBuilder</span><wbr><span class="parameters">(<a href="OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a>&nbsp;operatingSystem)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">newBuilder</span><wbr><span class="parameters">(<a href="OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a>&nbsp;operatingSystem)</span></div>
 <div class="block">Returns a builder of the system properties and environment variables of an operating system.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -213,7 +220,7 @@ consistent, so a test can compare them with paths it builds on the same file sys
 <h3>systemProperties</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></span>&nbsp;<span class="element-name">systemProperties</span>()</div>
-<div class="block">Returns the system properties, to give to <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
+<div class="block">Returns the system properties, to give to <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the system properties</dd>
@@ -226,7 +233,7 @@ consistent, so a test can compare them with paths it builds on the same file sys
 <h3>environment</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></span>&nbsp;<span class="element-name">environment</span>()</div>
-<div class="block">Returns the environment variables, to give to <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
+<div class="block">Returns the environment variables, to give to <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the environment variables</dd>

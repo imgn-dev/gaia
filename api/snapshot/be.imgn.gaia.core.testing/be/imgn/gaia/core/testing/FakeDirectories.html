@@ -5,7 +5,7 @@
 <title>FakeDirectories (Gaia 0.1.2-SNAPSHOT API)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="declaration: module: be.imgn.gaia.platform.testing, package: be.imgn.gaia.platform.testing, class: FakeDirectories">
+<meta name="description" content="declaration: module: be.imgn.gaia.core.testing, package: be.imgn.gaia.core.testing, class: FakeDirectories">
 <meta name="generator" content="javadoc/ClassWriter">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/jquery-ui.min.css">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/stylesheet.css">
@@ -39,8 +39,8 @@ loadScripts(document, 'script');</script>
 <div class="sub-nav">
 <div class="nav-content">
 <ol class="sub-nav-list">
-<li><a href="../../../../../module-summary.html">be.imgn.gaia.platform.testing</a></li>
-<li><a href="package-summary.html">be.imgn.gaia.platform.testing</a></li>
+<li><a href="../../../../../module-summary.html">be.imgn.gaia.core.testing</a></li>
+<li><a href="package-summary.html">be.imgn.gaia.core.testing</a></li>
 <li><a href="FakeDirectories.html" class="current-selection">FakeDirectories</a></li>
 </ol>
 <div class="nav-list-search"><input type="text" id="search-input" disabled placeholder="Search documentation (type /)" aria-label="Search in documentation" autocomplete="off" spellcheck="false"><input type="reset" id="reset-search" disabled value="Reset"></div>
@@ -77,19 +77,19 @@ loadScripts(document, 'script');</script>
 <h1 title="Class FakeDirectories" class="title">Class FakeDirectories</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">be.imgn.gaia.platform.testing.FakeDirectories</div>
+<div class="inheritance">be.imgn.gaia.core.testing.FakeDirectories</div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">FakeDirectories</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></span></div>
-<div class="block"><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform"><code>Directories</code></a> under one root directory, such as a test's temporary directory, so that code under test never
+implements <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></span></div>
+<div class="block"><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform"><code>Directories</code></a> under one root directory, such as a test's temporary directory, so that code under test never
 touches the real ones.
 
 <p>By default, each directory is a distinct subdirectory of the root, named after its method:
@@ -113,7 +113,14 @@ Windows and macOS, and the runtime directory removed, as on macOS and Windows.
 <a href="FakeDirectories.Builder.html#createDirectories(boolean)"><code>FakeDirectories.Builder.createDirectories(boolean)</code></a>: code that writes in them should create them first.
 
 <pre><code>Directories directories = FakeDirectories.newBuilder(temporaryDirectory).withoutRuntimeDir().build();
-</code></pre></div>
+</code></pre>
+
+<p>Before 0.1.2, it was <code>be.imgn.gaia.platform.testing.FakeDirectories</code>, in its own module,
+<code>gaia-platform-testing</code>.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
 </div>
 </section>
 <section class="summary">
@@ -128,9 +135,9 @@ Windows and macOS, and the runtime directory removed, as on macOS and Windows.
 <div class="table-header col-second">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final class&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="FakeDirectories.Builder.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-second even-row-color"><code><a href="FakeDirectories.Builder.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Builds <a href="FakeDirectories.html" title="class in be.imgn.gaia.platform.testing"><code>FakeDirectories</code></a>.</div>
+<div class="block">Builds <a href="FakeDirectories.html" title="class in be.imgn.gaia.core.testing"><code>FakeDirectories</code></a>.</div>
 </div>
 </div>
 </section>
@@ -155,7 +162,7 @@ Windows and macOS, and the runtime directory removed, as on macOS and Windows.
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configDirs()" class="member-name-link">configDirs</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the system-wide directories to search for configuration files, most important first, after
-<a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configHome()"><code>Directories.configHome()</code></a>.</div>
+<a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configHome()"><code>Directories.configHome()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configHome()" class="member-name-link">configHome</a>()</code></div>
@@ -165,7 +172,7 @@ Windows and macOS, and the runtime directory removed, as on macOS and Windows.
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataDirs()" class="member-name-link">dataDirs</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the system-wide directories to search for data files, most important first, after <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>.</div>
+<div class="block">Returns the system-wide directories to search for data files, most important first, after <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataHome()" class="member-name-link">dataHome</a>()</code></div>
@@ -177,7 +184,7 @@ Windows and macOS, and the runtime directory removed, as on macOS and Windows.
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the user's home directory.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newBuilder(java.nio.file.Path)" class="member-name-link">newBuilder</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;root)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a builder of directories under a root directory.</div>
@@ -191,7 +198,7 @@ Windows and macOS, and the runtime directory removed, as on macOS and Windows.
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stateHome()" class="member-name-link">stateHome</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the directory for user-specific state: data that should persist between restarts but is not important or
-portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>, such as history, logs or recently used files.</div>
+portable enough for <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>, such as history, logs or recently used files.</div>
 </div>
 </div>
 </div>
@@ -214,7 +221,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 <section class="detail" id="newBuilder(java.nio.file.Path)">
 <h3>newBuilder</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">newBuilder</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;root)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></span>&nbsp;<span class="element-name">newBuilder</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;root)</span></div>
 <div class="block">Returns a builder of directories under a root directory. Every path given to the builder must be absolute and
 belong to the file system of the root, which can be any file system, such as a ZIP file system.</div>
 <dl class="notes">
@@ -233,7 +240,7 @@ belong to the file system of the root, which can be any file system, such as a Z
 <h3>home</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">home</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#home()">Directories</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#home()">Directories</a></code></span></div>
 <div class="block">Returns the user's home directory.
 
 <ul>
@@ -242,7 +249,7 @@ belong to the file system of the root, which can be any file system, such as a Z
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#home()">home</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#home()">home</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the home directory</dd>
 </dl>
@@ -254,7 +261,7 @@ belong to the file system of the root, which can be any file system, such as a Z
 <h3>dataHome</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">dataHome</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()">Directories</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()">Directories</a></code></span></div>
 <div class="block">Returns the directory for user-specific data files.
 
 <ul>
@@ -264,7 +271,7 @@ belong to the file system of the root, which can be any file system, such as a Z
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()">dataHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()">dataHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the user data directory</dd>
 </dl>
@@ -276,7 +283,7 @@ belong to the file system of the root, which can be any file system, such as a Z
 <h3>configHome</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">configHome</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configHome()">Directories</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configHome()">Directories</a></code></span></div>
 <div class="block">Returns the directory for user-specific configuration files.
 
 <ul>
@@ -286,7 +293,7 @@ belong to the file system of the root, which can be any file system, such as a Z
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configHome()">configHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configHome()">configHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the user configuration directory</dd>
 </dl>
@@ -298,9 +305,9 @@ belong to the file system of the root, which can be any file system, such as a Z
 <h3>stateHome</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">stateHome</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#stateHome()">Directories</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#stateHome()">Directories</a></code></span></div>
 <div class="block">Returns the directory for user-specific state: data that should persist between restarts but is not important or
-portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>, such as history, logs or recently used files.
+portable enough for <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>, such as history, logs or recently used files.
 
 <ul>
   <li>Linux, Unix: <code>$XDG_STATE_HOME</code>, default <code>~/.local/state</code>
@@ -309,7 +316,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#stateHome()">stateHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#stateHome()">stateHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the user state directory</dd>
 </dl>
@@ -321,7 +328,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 <h3>cacheHome</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">cacheHome</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#cacheHome()">Directories</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#cacheHome()">Directories</a></code></span></div>
 <div class="block">Returns the directory for user-specific non-essential, cached data.
 
 <ul>
@@ -331,7 +338,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#cacheHome()">cacheHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#cacheHome()">cacheHome</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the user cache directory</dd>
 </dl>
@@ -343,7 +350,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 <h3>runtimeDir</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">runtimeDir</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#runtimeDir()">Directories</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#runtimeDir()">Directories</a></code></span></div>
 <div class="block">Returns the directory for user-specific runtime files, such as sockets and named pipes.
 
 <ul>
@@ -352,7 +359,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#runtimeDir()">runtimeDir</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#runtimeDir()">runtimeDir</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the user runtime directory, or empty if there is none</dd>
 </dl>
@@ -364,8 +371,8 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 <h3>dataDirs</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">dataDirs</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataDirs()">Directories</a></code></span></div>
-<div class="block">Returns the system-wide directories to search for data files, most important first, after <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>.
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataDirs()">Directories</a></code></span></div>
+<div class="block">Returns the system-wide directories to search for data files, most important first, after <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>.
 
 <ul>
   <li>Linux, Unix: <code>$XDG_DATA_DIRS</code>, default <code>/usr/local/share:/usr/share</code>
@@ -374,7 +381,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataDirs()">dataDirs</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataDirs()">dataDirs</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the system data directories, in order of importance</dd>
 </dl>
@@ -386,9 +393,9 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 <h3>configDirs</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">configDirs</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configDirs()">Directories</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configDirs()">Directories</a></code></span></div>
 <div class="block">Returns the system-wide directories to search for configuration files, most important first, after
-<a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configHome()"><code>Directories.configHome()</code></a>.
+<a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configHome()"><code>Directories.configHome()</code></a>.
 
 <ul>
   <li>Linux, Unix: <code>$XDG_CONFIG_DIRS</code>, default <code>/etc/xdg</code>
@@ -397,7 +404,7 @@ portable enough for <a href="../../../../../../be.imgn.gaia.platform/be/imgn/gai
 </ul></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configDirs()">configDirs</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configDirs()">configDirs</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></code></dd>
 <dt>Returns:</dt>
 <dd>the system configuration directories, in order of importance</dd>
 </dl>

@@ -5,7 +5,7 @@
 <title>PlatformPreset.Builder (Gaia 0.1.2-SNAPSHOT API)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="declaration: module: be.imgn.gaia.platform.testing, package: be.imgn.gaia.platform.testing, class: PlatformPreset, class: Builder">
+<meta name="description" content="declaration: module: be.imgn.gaia.core.testing, package: be.imgn.gaia.core.testing, class: PlatformPreset, class: Builder">
 <meta name="generator" content="javadoc/ClassWriter">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/jquery-ui.min.css">
 <link rel="stylesheet" type="text/css" href="../../../../../../resource-files/stylesheet.css">
@@ -39,8 +39,8 @@ loadScripts(document, 'script');</script>
 <div class="sub-nav">
 <div class="nav-content">
 <ol class="sub-nav-list">
-<li><a href="../../../../../module-summary.html">be.imgn.gaia.platform.testing</a></li>
-<li><a href="package-summary.html">be.imgn.gaia.platform.testing</a></li>
+<li><a href="../../../../../module-summary.html">be.imgn.gaia.core.testing</a></li>
+<li><a href="package-summary.html">be.imgn.gaia.core.testing</a></li>
 <li><a href="PlatformPreset.html">PlatformPreset</a></li>
 <li><a href="PlatformPreset.Builder.html" class="current-selection">Builder</a></li>
 </ol>
@@ -75,19 +75,23 @@ loadScripts(document, 'script');</script>
 <h1 title="Class PlatformPreset.Builder" class="title">Class PlatformPreset.Builder</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">be.imgn.gaia.platform.testing.PlatformPreset.Builder</div>
+<div class="inheritance">be.imgn.gaia.core.testing.PlatformPreset.Builder</div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Enclosing class:</dt>
-<dd><code><a href="PlatformPreset.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset</a></code></dd>
+<dd><code><a href="PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public static final class </span><span class="element-name type-name-label">PlatformPreset.Builder</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Builds a <a href="PlatformPreset.html" title="class in be.imgn.gaia.platform.testing"><code>PlatformPreset</code></a>. The properties and variables set one by one are applied last, over the ones the
+<div class="block">Builds a <a href="PlatformPreset.html" title="class in be.imgn.gaia.core.testing"><code>PlatformPreset</code></a>. The properties and variables set one by one are applied last, over the ones the
 preset computes from the operating system, the user name and the home directory.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
 </div>
 </section>
 <section class="summary">
@@ -103,41 +107,41 @@ preset computes from the operating system, the user name and the home directory.
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Builds the system properties and environment variables.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#environmentVariable(java.lang.String,java.lang.String)" class="member-name-link">environmentVariable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets an environment variable, replacing the preset's value if it has one.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#home(java.lang.String)" class="member-name-link">home</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;home)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the home directory of the user, which the other directories of the user, such as <code>APPDATA</code> on
 Windows, are under.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeEnvironmentVariable(java.lang.String)" class="member-name-link">removeEnvironmentVariable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes an environment variable, such as <code>HOME</code> or <code>APPDATA</code>, to test what happens when it is not
 set.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#systemProperty(java.lang.String,java.lang.String)" class="member-name-link">systemProperty</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets a system property, replacing the preset's value if it has one.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#userName(java.lang.String)" class="member-name-link">userName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;userName)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the name of the user, <code>test</code> by default.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#xdgVariables(boolean)" class="member-name-link">xdgVariables</a><wbr>(boolean&nbsp;xdgVariables)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets whether to set every variable of the XDG Base Directory Specification, each to a location that differs
@@ -168,7 +172,7 @@ from the specification's default: <code>XDG_DATA_HOME=/xdg/data-home</code>,
 <section class="detail" id="userName(java.lang.String)">
 <h3>userName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">userName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;userName)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">userName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;userName)</span></div>
 <div class="block">Sets the name of the user, <code>test</code> by default. Unless <a href="#home(java.lang.String)">given</a>, the home
 directory is the default one for that user: <code>/home/</code><i>name</i> on Linux and other Unix-like systems,
 <code>/Users/</code><i>name</i> on macOS, <code>C:\Users\</code><i>name</i> on Windows.</div>
@@ -187,7 +191,7 @@ directory is the default one for that user: <code>/home/</code><i>name</i> on Li
 <section class="detail" id="home(java.lang.String)">
 <h3>home</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">home</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;home)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">home</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;home)</span></div>
 <div class="block">Sets the home directory of the user, which the other directories of the user, such as <code>APPDATA</code> on
 Windows, are under.</div>
 <dl class="notes">
@@ -206,7 +210,7 @@ Windows, are under.</div>
 <section class="detail" id="xdgVariables(boolean)">
 <h3>xdgVariables</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">xdgVariables</span><wbr><span class="parameters">(boolean&nbsp;xdgVariables)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">xdgVariables</span><wbr><span class="parameters">(boolean&nbsp;xdgVariables)</span></div>
 <div class="block">Sets whether to set every variable of the XDG Base Directory Specification, each to a location that differs
 from the specification's default: <code>XDG_DATA_HOME=/xdg/data-home</code>,
 <code>XDG_CONFIG_HOME=/xdg/config-home</code>, <code>XDG_STATE_HOME=/xdg/state-home</code>,
@@ -228,7 +232,7 @@ from the specification's default: <code>XDG_DATA_HOME=/xdg/data-home</code>,
 <section class="detail" id="systemProperty(java.lang.String,java.lang.String)">
 <h3>systemProperty</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">systemProperty</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">systemProperty</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</span></div>
 <div class="block">Sets a system property, replacing the preset's value if it has one.</div>
 <dl class="notes">
@@ -247,7 +251,7 @@ from the specification's default: <code>XDG_DATA_HOME=/xdg/data-home</code>,
 <section class="detail" id="environmentVariable(java.lang.String,java.lang.String)">
 <h3>environmentVariable</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">environmentVariable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">environmentVariable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</span></div>
 <div class="block">Sets an environment variable, replacing the preset's value if it has one.</div>
 <dl class="notes">
@@ -264,7 +268,7 @@ from the specification's default: <code>XDG_DATA_HOME=/xdg/data-home</code>,
 <section class="detail" id="removeEnvironmentVariable(java.lang.String)">
 <h3>removeEnvironmentVariable</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">removeEnvironmentVariable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></span>&nbsp;<span class="element-name">removeEnvironmentVariable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
 <div class="block">Removes an environment variable, such as <code>HOME</code> or <code>APPDATA</code>, to test what happens when it is not
 set.</div>
 <dl class="notes">
@@ -280,7 +284,7 @@ set.</div>
 <section class="detail" id="build()">
 <h3>build</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset</a></span>&nbsp;<span class="element-name">build</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></span>&nbsp;<span class="element-name">build</span>()</div>
 <div class="block">Builds the system properties and environment variables.</div>
 <dl class="notes">
 <dt>Returns:</dt>

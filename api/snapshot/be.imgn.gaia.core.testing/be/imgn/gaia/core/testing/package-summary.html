@@ -72,13 +72,48 @@ loadScripts(document, 'script');</script>
 <ul class="summary-list">
 <li>
 <div id="class-summary">
-<div class="caption"><span>Classes</span></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enum Classes</button></div>
+<div id="class-summary.tabpanel" role="tabpanel" aria-labelledby="class-summary-tab0">
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block"><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform"><code>Directories</code></a> under one root directory, such as a test's temporary directory, so that code under test never
+touches the real ones.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Builds <a href="FakeDirectories.html" title="class in be.imgn.gaia.core.testing"><code>FakeDirectories</code></a>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> with the operating system of your choice and its directories under a root directory, such as a
+test's temporary directory.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="FakePlatform.Builder.html" title="class in be.imgn.gaia.core.testing">FakePlatform.Builder</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Builds a <a href="FakePlatform.html" title="class in be.imgn.gaia.core.testing"><code>FakePlatform</code></a>.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="FakeTicker.html" title="class in be.imgn.gaia.core.testing">FakeTicker</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">A <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">The operating systems a <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> can tell apart: one for each of <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isLinux()"><code>Platform.isLinux()</code></a>,
+<a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isMacOS()"><code>Platform.isMacOS()</code></a> and <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isWindows()"><code>Platform.isWindows()</code></a>, and one for the other Unix-like systems, for which all
+three are <code>false</code>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">The system properties and environment variables a JVM typically has on an operating system, to detect a
+<a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> from, so that tests run the real detection of the directories of any operating system:</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Builds a <a href="PlatformPreset.html" title="class in be.imgn.gaia.core.testing"><code>PlatformPreset</code></a>.</div>
+</div>
 </div>
 </div>
 </div>

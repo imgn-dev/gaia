@@ -601,21 +601,21 @@ meta-annotated with <code>@Component</code>.</div>
 <dd>
 <div class="block">Returns the arguments an anonymous class passes to its superclass constructor.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#applicationDirectories(java.lang.String)" class="member-name-link">applicationDirectories(String)</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#applicationDirectories(java.lang.String)" class="member-name-link">applicationDirectories(String)</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the directories of an application, named by its name alone.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#applicationDirectories(java.lang.String,java.lang.String)" class="member-name-link">applicationDirectories(String, String)</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#applicationDirectories(java.lang.String,java.lang.String)" class="member-name-link">applicationDirectories(String, String)</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the directories of an application, named by its vendor and its name.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#applicationDirectories(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">applicationDirectories(String, String, String)</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#applicationDirectories(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">applicationDirectories(String, String, String)</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the directories of an application, named by its vendor's qualifier, its vendor and its name.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html" class="type-name-link" title="class in be.imgn.gaia.platform">ApplicationDirectories</a> - Class in <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/package-summary.html">be.imgn.gaia.platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" class="type-name-link" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/package-summary.html">be.imgn.gaia.core.platform</a></dt>
 <dd>
-<div class="block">The directories where one application stores its files: its own subdirectories of the platform's <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform"><code>Directories</code></a>,
+<div class="block">The directories where one application stores its files: its own subdirectories of the platform's <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform"><code>Directories</code></a>,
 one for each kind of file, never shared with another kind.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ArrayTypeName.html" class="type-name-link" title="class in be.imgn.gaia.processing.source">ArrayTypeName</a> - Record Class in <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/package-summary.html">be.imgn.gaia.processing.source</a></dt>
@@ -819,13 +819,18 @@ some other way.</div>
 <dd>
 <div class="block">Reading and writing files.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/package-summary.html">be.imgn.gaia.core.platform</a> - package be.imgn.gaia.core.platform</dt>
+<dd>
+<div class="block">The cross-platform API.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/package-summary.html">be.imgn.gaia.core.system</a> - package be.imgn.gaia.core.system</dt>
 <dd>
 <div class="block">Sources of system properties and environment variables.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/module-summary.html">be.imgn.gaia.core.testing</a> - module be.imgn.gaia.core.testing</dt>
 <dd>
-<div class="block">Test helpers for code that uses <code>be.imgn.gaia.core</code>, such as a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing"><code>FakeTicker</code></a>.</div>
+<div class="block">Test helpers for code that uses <code>be.imgn.gaia.core</code>, such as a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing"><code>FakeTicker</code></a>
+or a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing"><code>FakePlatform</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a> - package be.imgn.gaia.core.testing</dt>
 <dd>
@@ -847,22 +852,6 @@ some other way.</div>
 <dd>
 <div class="block">An in-memory file system: <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/MemoryFileSystems.html" title="class in be.imgn.gaia.memfs"><code>MemoryFileSystems</code></a> creates one, configured by a
 <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs"><code>Configuration</code></a>.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform/module-summary.html">be.imgn.gaia.platform</a> - module be.imgn.gaia.platform</dt>
-<dd>
-<div class="block">A cross-platform API over the host the JVM runs on.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/package-summary.html">be.imgn.gaia.platform</a> - package be.imgn.gaia.platform</dt>
-<dd>
-<div class="block">The cross-platform API.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform.testing/module-summary.html">be.imgn.gaia.platform.testing</a> - module be.imgn.gaia.platform.testing</dt>
-<dd>
-<div class="block">Fakes of the <code>be.imgn.gaia.platform</code> API, such as a <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing"><code>FakePlatform</code></a>.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a> - package be.imgn.gaia.platform.testing</dt>
-<dd>
-<div class="block">Fakes for <code>be.imgn.gaia.platform</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/module-summary.html">be.imgn.gaia.processing</a> - module be.imgn.gaia.processing</dt>
 <dd>
@@ -933,21 +922,21 @@ starts with an upper-case letter, as conventional names do.</div>
 <div class="block">Returns the boxed type of a primitive type, such as <code>Integer</code> for <code>int</code>, with the same annotations;
 any other type unchanged.</div>
 </dd>
-<dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html" title="class in be.imgn.gaia.memfs">Configuration.Builder</a></dt>
-<dd>
-<div class="block">Builds the configuration.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Builds the directories, creating them if this builder was told to.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.Builder.html" title="class in be.imgn.gaia.platform.testing">FakePlatform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.Builder.html" title="class in be.imgn.gaia.core.testing">FakePlatform.Builder</a></dt>
 <dd>
 <div class="block">Builds the platform.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Builds the system properties and environment variables.</div>
+</dd>
+<dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html" title="class in be.imgn.gaia.memfs">Configuration.Builder</a></dt>
+<dd>
+<div class="block">Builds the configuration.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.Builder.html" title="class in be.imgn.gaia.processing.source">Annotation.Builder</a></dt>
 <dd>
@@ -992,17 +981,17 @@ any other type unchanged.</div>
 </dl>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html#cache()" class="member-name-link">cache()</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.platform">ApplicationDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#cache()" class="member-name-link">cache()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a></dt>
 <dd>
 <div class="block">Returns the directory for the application's non-essential, cached data.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#cacheHome()" class="member-name-link">cacheHome()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#cacheHome()" class="member-name-link">cacheHome()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
 <div class="block">Returns the directory for user-specific non-essential, cached data.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#cacheHome()" class="member-name-link">cacheHome()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#cacheHome()" class="member-name-link">cacheHome()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#cacheHome(java.nio.file.Path)" class="member-name-link">cacheHome(Path)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#cacheHome(java.nio.file.Path)" class="member-name-link">cacheHome(Path)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets the directory for user-specific cached data.</div>
 </dd>
@@ -1158,28 +1147,28 @@ to.</div>
 <dd>
 <div class="block">Returns a source that reads several sources one after the other.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html#config()" class="member-name-link">config()</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.platform">ApplicationDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#config()" class="member-name-link">config()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a></dt>
 <dd>
 <div class="block">Returns the directory for the application's configuration files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configDirs()" class="member-name-link">configDirs()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configDirs()" class="member-name-link">configDirs()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
 <div class="block">Returns the system-wide directories to search for configuration files, most important first, after
-<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configHome()"><code>Directories.configHome()</code></a>.</div>
+<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configHome()"><code>Directories.configHome()</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#configDirs()" class="member-name-link">configDirs()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#configDirs()" class="member-name-link">configDirs()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#configDirs(java.util.List)" class="member-name-link">configDirs(List)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#configDirs(java.util.List)" class="member-name-link">configDirs(List)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets the system-wide directories to search for configuration files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#configHome()" class="member-name-link">configHome()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#configHome()" class="member-name-link">configHome()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
 <div class="block">Returns the directory for user-specific configuration files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#configHome()" class="member-name-link">configHome()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#configHome()" class="member-name-link">configHome()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#configHome(java.nio.file.Path)" class="member-name-link">configHome(Path)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#configHome(java.nio.file.Path)" class="member-name-link">configHome(Path)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets the directory for user-specific configuration files.</div>
 </dd>
@@ -1254,11 +1243,11 @@ each as many times as it occurs there.</div>
 <dd>
 <div class="block">Returns a new, empty multiset sorted by a comparator.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#createDirectories(boolean)" class="member-name-link">createDirectories(boolean)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#createDirectories(boolean)" class="member-name-link">createDirectories(boolean)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
-<div class="block">Sets whether <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#build()"><code>FakeDirectories.Builder.build()</code></a> creates every directory, with its parents, if it does not exist yet.</div>
+<div class="block">Sets whether <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#build()"><code>FakeDirectories.Builder.build()</code></a> creates every directory, with its parents, if it does not exist yet.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#current()" class="member-name-link">current()</a> - Static method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#current()" class="member-name-link">current()</a> - Static method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the platform of the running JVM: detected from its system properties and environment variables, with the
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileSystems.html#getDefault()" title="class or interface in java.nio.file" class="external-link">default file system</a>.</div>
@@ -1278,27 +1267,27 @@ each as many times as it occurs there.</div>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html#data()" class="member-name-link">data()</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.platform">ApplicationDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#data()" class="member-name-link">data()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a></dt>
 <dd>
 <div class="block">Returns the directory for the application's data files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataDirs()" class="member-name-link">dataDirs()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataDirs()" class="member-name-link">dataDirs()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
-<div class="block">Returns the system-wide directories to search for data files, most important first, after <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>.</div>
+<div class="block">Returns the system-wide directories to search for data files, most important first, after <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#dataDirs()" class="member-name-link">dataDirs()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#dataDirs()" class="member-name-link">dataDirs()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#dataDirs(java.util.List)" class="member-name-link">dataDirs(List)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#dataDirs(java.util.List)" class="member-name-link">dataDirs(List)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets the system-wide directories to search for data files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()" class="member-name-link">dataHome()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()" class="member-name-link">dataHome()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
 <div class="block">Returns the directory for user-specific data files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#dataHome()" class="member-name-link">dataHome()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#dataHome()" class="member-name-link">dataHome()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#dataHome(java.nio.file.Path)" class="member-name-link">dataHome(Path)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#dataHome(java.nio.file.Path)" class="member-name-link">dataHome(Path)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets the directory for user-specific data files.</div>
 </dd>
@@ -1333,7 +1322,7 @@ such as <code>rw-r--r--</code>), <code>dos:readonly</code>, <code>dos:hidden</co
 <dd>
 <div class="block">Sets the default value of an annotation type member.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#detect()" class="member-name-link">detect()</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html" title="class in be.imgn.gaia.platform">Platform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#detect()" class="member-name-link">detect()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
 <dd>
 <div class="block">Detects the platform from this builder's sources.</div>
 </dd>
@@ -1363,17 +1352,17 @@ attribute of that annotation.</div>
 <dd>
 <div class="block">A report about an element, possibly narrowed to one of its annotations and one attribute of it.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#directories()" class="member-name-link">directories()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#directories()" class="member-name-link">directories()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the directories where applications store their files on this platform.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html#directories()" class="member-name-link">directories()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing">FakePlatform</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#directories()" class="member-name-link">directories()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.Builder.html#directories(be.imgn.gaia.platform.Directories)" class="member-name-link">directories(Directories)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.Builder.html" title="class in be.imgn.gaia.platform.testing">FakePlatform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.Builder.html#directories(be.imgn.gaia.core.platform.Directories)" class="member-name-link">directories(Directories)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.Builder.html" title="class in be.imgn.gaia.core.testing">FakePlatform.Builder</a></dt>
 <dd>
-<div class="block">Sets the directories of the platform, instead of the default <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing"><code>FakeDirectories</code></a> under the root.</div>
+<div class="block">Sets the directories of the platform, instead of the default <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing"><code>FakeDirectories</code></a> under the root.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" class="type-name-link" title="interface in be.imgn.gaia.platform">Directories</a> - Interface in <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/package-summary.html">be.imgn.gaia.platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" class="type-name-link" title="interface in be.imgn.gaia.core.platform">Directories</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/package-summary.html">be.imgn.gaia.core.platform</a></dt>
 <dd>
 <div class="block">The base directories where applications store their files, as defined by the <a href="https://specifications.freedesktop.org/basedir-spec/latest/">XDG Base Directory Specification</a>.</div>
 </dd>
@@ -1499,15 +1488,15 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dd>
 <div class="block">Returns the constant of an enum attribute.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html#environment()" class="member-name-link">environment()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html#environment()" class="member-name-link">environment()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></dt>
 <dd>
-<div class="block">Returns the environment variables, to give to <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
+<div class="block">Returns the environment variables, to give to <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html#environment()" class="member-name-link">environment()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html" title="class in be.imgn.gaia.processing">ProcessingContext</a></dt>
 <dd>
 <div class="block">Returns javac's processing environment.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)" class="member-name-link">environment(Environment)</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html" title="class in be.imgn.gaia.platform">Platform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)" class="member-name-link">environment(Environment)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
 <dd>
 <div class="block">Sets the environment variables to read.</div>
 </dd>
@@ -1515,7 +1504,7 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dd>
 <div class="block">A source of environment variables: the running JVM's, or fixed ones for tests.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html#environmentVariable(java.lang.String,java.lang.String)" class="member-name-link">environmentVariable(String, String)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#environmentVariable(java.lang.String,java.lang.String)" class="member-name-link">environmentVariable(String, String)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Sets an environment variable, replacing the preset's value if it has one.</div>
 </dd>
@@ -1611,23 +1600,23 @@ annotations, or one attribute of that annotation.</div>
 <dd>
 <div class="block">Verifies that javac reported at least one error.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a> - Class in <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">FakeDirectories</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
-<div class="block"><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform"><code>Directories</code></a> under one root directory, such as a test's temporary directory, so that code under test never
+<div class="block"><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform"><code>Directories</code></a> under one root directory, such as a test's temporary directory, so that code under test never
 touches the real ones.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a> - Class in <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
-<div class="block">Builds <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing"><code>FakeDirectories</code></a>.</div>
+<div class="block">Builds <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing"><code>FakeDirectories</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">FakePlatform</a> - Class in <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">FakePlatform</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
-<div class="block">A <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform"><code>Platform</code></a> with the operating system of your choice and its directories under a root directory, such as a
+<div class="block">A <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> with the operating system of your choice and its directories under a root directory, such as a
 test's temporary directory.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.Builder.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">FakePlatform.Builder</a> - Class in <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.Builder.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">FakePlatform.Builder</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
-<div class="block">Builds a <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing"><code>FakePlatform</code></a>.</div>
+<div class="block">Builds a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing"><code>FakePlatform</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">FakeTicker</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
@@ -1678,13 +1667,13 @@ test's temporary directory.</div>
 <dd>
 <div class="block">Returns the file separator, <code>"/"</code> on Unix: the <code>file.separator</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#fileSystem()" class="member-name-link">fileSystem()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#fileSystem()" class="member-name-link">fileSystem()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the file system of this platform, which all its paths belong to.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html#fileSystem()" class="member-name-link">fileSystem()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing">FakePlatform</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#fileSystem()" class="member-name-link">fileSystem()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#fileSystem(java.nio.file.FileSystem)" class="member-name-link">fileSystem(FileSystem)</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html" title="class in be.imgn.gaia.platform">Platform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#fileSystem(java.nio.file.FileSystem)" class="member-name-link">fileSystem(FileSystem)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
 <dd>
 <div class="block">Sets the file system the platform's paths belong to.</div>
 </dd>
@@ -1911,22 +1900,22 @@ its entries.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#higherEntry(E)" class="member-name-link">higherEntry(E)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#home()" class="member-name-link">home()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
+<dd>
+<div class="block">Returns the user's home directory.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html#home()" class="member-name-link">home()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></dt>
 <dd>
 <div class="block">Returns the user's home directory: the <code>HOME</code> variable, set on Unix-like systems.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#home()" class="member-name-link">home()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
-<dd>
-<div class="block">Returns the user's home directory.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#home()" class="member-name-link">home()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#home()" class="member-name-link">home()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html#home(java.lang.String)" class="member-name-link">home(String)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#home(java.lang.String)" class="member-name-link">home(String)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Sets the home directory of the user, which the other directories of the user, such as <code>APPDATA</code> on
 Windows, are under.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#home(java.nio.file.Path)" class="member-name-link">home(Path)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#home(java.nio.file.Path)" class="member-name-link">home(Path)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets the user's home directory.</div>
 </dd>
@@ -2103,17 +2092,17 @@ processor generates, rather than read from a class file compiled before.</div>
 <div class="block">Returns whether an element is an inner class: a nested class that is neither explicitly nor implicitly static, as
 JLS 8.1.3 defines it.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#isLinux()" class="member-name-link">isLinux()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isLinux()" class="member-name-link">isLinux()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns whether this platform runs Linux.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html#isLinux()" class="member-name-link">isLinux()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing">FakePlatform</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#isLinux()" class="member-name-link">isLinux()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#isMacOS()" class="member-name-link">isMacOS()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isMacOS()" class="member-name-link">isMacOS()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns whether this platform runs macOS.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html#isMacOS()" class="member-name-link">isMacOS()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing">FakePlatform</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#isMacOS()" class="member-name-link">isMacOS()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeName.html#isPrimitive()" class="member-name-link">isPrimitive()</a> - Method in interface be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeName.html" title="interface in be.imgn.gaia.processing.source">TypeName</a></dt>
 <dd>
@@ -2179,11 +2168,11 @@ compilation unit, not in another type or in a block.</div>
 <dd>
 <div class="block">Returns whether the last component of a record is variable arity, written <code>String... names</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#isWindows()" class="member-name-link">isWindows()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isWindows()" class="member-name-link">isWindows()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns whether this platform runs Windows.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html#isWindows()" class="member-name-link">isWindows()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing">FakePlatform</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#isWindows()" class="member-name-link">isWindows()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html#iterator()" class="member-name-link">iterator()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a></dt>
 <dd>&nbsp;</dd>
@@ -2384,7 +2373,7 @@ separators included.</div>
 <dd>
 <div class="block">Hard links: <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html#createLink(java.nio.file.Path,java.nio.file.Path)" title="class or interface in java.nio.file" class="external-link"><code>Files.createLink(Path, Path)</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html#LINUX" class="member-name-link">LINUX</a> - Enum constant in enum class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#LINUX" class="member-name-link">LINUX</a> - Enum constant in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
 <dd>
 <div class="block">Linux.</div>
 </dd>
@@ -2421,7 +2410,7 @@ separators included.</div>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html#MAC_OS" class="member-name-link">MAC_OS</a> - Enum constant in enum class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#MAC_OS" class="member-name-link">MAC_OS</a> - Enum constant in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
 <dd>
 <div class="block">macOS.</div>
 </dd>
@@ -2645,7 +2634,7 @@ or <code>Outer&lt;String&gt;.Inner&lt;Integer&gt;</code>.</div>
 <dd>
 <div class="block">Returns a builder of anonymous classes, written with <code>$L</code> in code, as in <code>new Runnable() { ... }</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#newBuilder()" class="member-name-link">newBuilder()</a> - Static method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform">Platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#newBuilder()" class="member-name-link">newBuilder()</a> - Static method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns a builder that detects a platform from the given sources, or from the running JVM's for any source not
 given.</div>
@@ -2654,17 +2643,17 @@ given.</div>
 <dd>
 <div class="block">Returns a builder of code blocks.</div>
 </dd>
-<dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#newBuilder(be.imgn.gaia.memfs.PathStyle)" class="member-name-link">newBuilder(PathStyle)</a> - Static method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
-<dd>
-<div class="block">Returns a builder that starts with the defaults of a path style: those of <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#unix()"><code>Configuration.unix()</code></a> or <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#windows()"><code>Configuration.windows()</code></a>.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html#newBuilder(be.imgn.gaia.platform.testing.OperatingSystem)" class="member-name-link">newBuilder(OperatingSystem)</a> - Static method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html#newBuilder(be.imgn.gaia.core.testing.OperatingSystem)" class="member-name-link">newBuilder(OperatingSystem)</a> - Static method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></dt>
 <dd>
 <div class="block">Returns a builder of the system properties and environment variables of an operating system.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html#newBuilder(be.imgn.gaia.platform.testing.OperatingSystem,java.nio.file.Path)" class="member-name-link">newBuilder(OperatingSystem, Path)</a> - Static method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html" title="class in be.imgn.gaia.platform.testing">FakePlatform</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#newBuilder(be.imgn.gaia.core.testing.OperatingSystem,java.nio.file.Path)" class="member-name-link">newBuilder(OperatingSystem, Path)</a> - Static method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>
 <div class="block">Returns a builder of a platform running an operating system, with its directories under a root directory.</div>
+</dd>
+<dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#newBuilder(be.imgn.gaia.memfs.PathStyle)" class="member-name-link">newBuilder(PathStyle)</a> - Static method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
+<dd>
+<div class="block">Returns a builder that starts with the defaults of a path style: those of <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#unix()"><code>Configuration.unix()</code></a> or <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#windows()"><code>Configuration.windows()</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html#newBuilder(be.imgn.gaia.processing.source.ClassName)" class="member-name-link">newBuilder(ClassName)</a> - Static method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html" title="class in be.imgn.gaia.processing.source">Annotation</a></dt>
 <dd>
@@ -2698,7 +2687,7 @@ given.</div>
 <dd>
 <div class="block">Returns a builder of files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#newBuilder(java.nio.file.Path)" class="member-name-link">newBuilder(Path)</a> - Static method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#newBuilder(java.nio.file.Path)" class="member-name-link">newBuilder(Path)</a> - Static method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>
 <div class="block">Returns a builder of directories under a root directory.</div>
 </dd>
@@ -3053,10 +3042,10 @@ defaults of the others, in the order the annotation type declares its members.</
 <dd>
 <div class="block">Opens a new stream on the characters of this source.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html" class="type-name-link" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a> - Enum Class in <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" class="type-name-link" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a> - Enum Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
-<div class="block">The operating systems a <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform"><code>Platform</code></a> can tell apart: one for each of <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#isLinux()"><code>Platform.isLinux()</code></a>,
-<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#isMacOS()"><code>Platform.isMacOS()</code></a> and <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html#isWindows()"><code>Platform.isWindows()</code></a>, and one for the other Unix-like systems, for which all
+<div class="block">The operating systems a <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> can tell apart: one for each of <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isLinux()"><code>Platform.isLinux()</code></a>,
+<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isMacOS()"><code>Platform.isMacOS()</code></a> and <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isWindows()"><code>Platform.isWindows()</code></a>, and one for the other Unix-like systems, for which all
 three are <code>false</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html#option(be.imgn.gaia.processing.ProcessorOption)" class="member-name-link">option(ProcessorOption)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html" title="class in be.imgn.gaia.processing">ProcessingContext</a></dt>
@@ -3083,7 +3072,7 @@ three are <code>false</code>.</div>
 <dd>
 <div class="block">Returns the version of the operating system: the <code>os.version</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html#OTHER_UNIX" class="member-name-link">OTHER_UNIX</a> - Enum constant in enum class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#OTHER_UNIX" class="member-name-link">OTHER_UNIX</a> - Enum constant in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
 <dd>
 <div class="block">A Unix-like system other than Linux and macOS, such as FreeBSD.</div>
 </dd>
@@ -3170,22 +3159,22 @@ separator (<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base
 <dd>
 <div class="block">Returns the subclasses a sealed type permits.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" class="type-name-link" title="interface in be.imgn.gaia.platform">Platform</a> - Interface in <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/package-summary.html">be.imgn.gaia.platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" class="type-name-link" title="interface in be.imgn.gaia.core.platform">Platform</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/package-summary.html">be.imgn.gaia.core.platform</a></dt>
 <dd>
 <div class="block">The platform the JVM runs on: its operating system and the directories applications use on it.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html" class="type-name-link" title="class in be.imgn.gaia.platform">Platform.Builder</a> - Class in <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/package-summary.html">be.imgn.gaia.platform</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" class="type-name-link" title="class in be.imgn.gaia.core.platform">Platform.Builder</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/package-summary.html">be.imgn.gaia.core.platform</a></dt>
 <dd>
-<div class="block">Detects a <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform"><code>Platform</code></a> from its sources.</div>
+<div class="block">Detects a <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> from its sources.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">PlatformPreset</a> - Class in <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">PlatformPreset</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
 <div class="block">The system properties and environment variables a JVM typically has on an operating system, to detect a
-<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.html" title="interface in be.imgn.gaia.platform"><code>Platform</code></a> from, so that tests run the real detection of the directories of any operating system:</div>
+<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> from, so that tests run the real detection of the directories of any operating system:</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" class="type-name-link" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a> - Class in <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/package-summary.html">be.imgn.gaia.platform.testing</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
-<div class="block">Builds a <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html" title="class in be.imgn.gaia.platform.testing"><code>PlatformPreset</code></a>.</div>
+<div class="block">Builds a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html" title="class in be.imgn.gaia.core.testing"><code>PlatformPreset</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html#pollFirstEntry()" class="member-name-link">pollFirstEntry()</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html" title="interface in be.imgn.gaia.core.collect">SortedMultiset</a></dt>
 <dd>
@@ -3348,7 +3337,7 @@ implementations of a service before its file is written.</div>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#removeAll(java.util.Collection)" class="member-name-link">removeAll(Collection)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html#removeEnvironmentVariable(java.lang.String)" class="member-name-link">removeEnvironmentVariable(String)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#removeEnvironmentVariable(java.lang.String)" class="member-name-link">removeEnvironmentVariable(String)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Removes an environment variable, such as <code>HOME</code> or <code>APPDATA</code>, to test what happens when it is not
 set.</div>
@@ -3396,20 +3385,20 @@ one has none yet.</div>
 <dd>
 <div class="block">Sets the root directories.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html#runtime()" class="member-name-link">runtime()</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.platform">ApplicationDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#runtime()" class="member-name-link">runtime()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a></dt>
 <dd>
 <div class="block">Returns the directory for the application's runtime files, such as sockets and named pipes, where the platform
 has a runtime directory.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#runtimeDir()" class="member-name-link">runtimeDir()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#runtimeDir()" class="member-name-link">runtimeDir()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
 <div class="block">Returns the directory for user-specific runtime files, such as sockets and named pipes.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#runtimeDir()" class="member-name-link">runtimeDir()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#runtimeDir()" class="member-name-link">runtimeDir()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#runtimeDir(java.nio.file.Path)" class="member-name-link">runtimeDir(Path)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#runtimeDir(java.nio.file.Path)" class="member-name-link">runtimeDir(Path)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
-<div class="block">Sets the directory for user-specific runtime files, replacing any earlier <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#withoutRuntimeDir()"><code>FakeDirectories.Builder.withoutRuntimeDir()</code></a>.</div>
+<div class="block">Sets the directory for user-specific runtime files, replacing any earlier <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#withoutRuntimeDir()"><code>FakeDirectories.Builder.withoutRuntimeDir()</code></a>.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
@@ -3581,19 +3570,19 @@ name the types it refers to.</div>
 <dd>
 <div class="block">Returns a running stopwatch on <code>ticker</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html#state()" class="member-name-link">state()</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.platform">ApplicationDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#state()" class="member-name-link">state()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a></dt>
 <dd>
 <div class="block">Returns the directory for the application's state: data that should persist between restarts but is not important
-or portable enough for <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/ApplicationDirectories.html#data()"><code>ApplicationDirectories.data()</code></a>, such as history, logs or recently used files.</div>
+or portable enough for <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#data()"><code>ApplicationDirectories.data()</code></a>, such as history, logs or recently used files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#stateHome()" class="member-name-link">stateHome()</a> - Method in interface be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html" title="interface in be.imgn.gaia.platform">Directories</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#stateHome()" class="member-name-link">stateHome()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
 <div class="block">Returns the directory for user-specific state: data that should persist between restarts but is not important or
-portable enough for <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>, such as history, logs or recently used files.</div>
+portable enough for <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#dataHome()"><code>Directories.dataHome()</code></a>, such as history, logs or recently used files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#stateHome()" class="member-name-link">stateHome()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#stateHome()" class="member-name-link">stateHome()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#stateHome(java.nio.file.Path)" class="member-name-link">stateHome(Path)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#stateHome(java.nio.file.Path)" class="member-name-link">stateHome(Path)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets the directory for user-specific state.</div>
 </dd>
@@ -3725,11 +3714,11 @@ superclass: <code>AbstractList&lt;String&gt;</code> for <code>ArrayList&lt;Strin
 <dd>
 <div class="block">Returns the ticker of the running JVM, which reads <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#nanoTime()" title="class or interface in java.lang" class="external-link"><code>System.nanoTime()</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html#systemProperties()" class="member-name-link">systemProperties()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html#systemProperties()" class="member-name-link">systemProperties()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></dt>
 <dd>
-<div class="block">Returns the system properties, to give to <a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
+<div class="block">Returns the system properties, to give to <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)" class="member-name-link">systemProperties(SystemProperties)</a> - Method in class be.imgn.gaia.platform.<a href="be.imgn.gaia.platform/be/imgn/gaia/platform/Platform.Builder.html" title="class in be.imgn.gaia.platform">Platform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)" class="member-name-link">systemProperties(SystemProperties)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
 <dd>
 <div class="block">Sets the system properties to read; <code>os.name</code> and <code>user.home</code> are required.</div>
 </dd>
@@ -3737,7 +3726,7 @@ superclass: <code>AbstractList&lt;String&gt;</code> for <code>ArrayList&lt;Strin
 <dd>
 <div class="block">A source of system properties: the running JVM's, or fixed ones for tests.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html#systemProperty(java.lang.String,java.lang.String)" class="member-name-link">systemProperty(String, String)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#systemProperty(java.lang.String,java.lang.String)" class="member-name-link">systemProperty(String, String)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Sets a system property, replacing the preset's value if it has one.</div>
 </dd>
@@ -4097,7 +4086,7 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dd>
 <div class="block">Returns the name of the user account: the <code>user.name</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html#userName(java.lang.String)" class="member-name-link">userName(String)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#userName(java.lang.String)" class="member-name-link">userName(String)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Sets the name of the user, <code>test</code> by default.</div>
 </dd>
@@ -4107,6 +4096,10 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html#value(java.lang.String,java.lang.Class)" class="member-name-link">value(String, Class)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html" title="class in be.imgn.gaia.processing">AnnotationReader</a></dt>
 <dd>
 <div class="block">Returns the value of an attribute of a primitive type or <code>String</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
@@ -4124,10 +4117,6 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a></dt>
-<dd>
-<div class="block">Returns the enum constant of this class with the specified name.</div>
-</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Kind.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Kind.html" title="enum class in be.imgn.gaia.processing.source">Type.Kind</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -4135,6 +4124,11 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Visibility.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Visibility.html" title="enum class in be.imgn.gaia.processing">Visibility</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
@@ -4152,11 +4146,6 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/PathStyle.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/PathStyle.html" title="enum class in be.imgn.gaia.memfs">PathStyle</a></dt>
-<dd>
-<div class="block">Returns an array containing the constants of this enum class, in
-the order they are declared.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
@@ -4239,13 +4228,13 @@ without one.</div>
 <code>C:\work</code>, names matched ignoring case, and the <code>basic</code>, <code>owner</code>, <code>dos</code>, <code>acl</code> and
 <code>user</code> attribute views.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#WINDOWS" class="member-name-link">WINDOWS</a> - Enum constant in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
+<dd>
+<div class="block">Windows.</div>
+</dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/PathStyle.html#WINDOWS" class="member-name-link">WINDOWS</a> - Enum constant in enum class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/PathStyle.html" title="enum class in be.imgn.gaia.memfs">PathStyle</a></dt>
 <dd>
 <div class="block">As on Windows: <code>\</code> is the separator, and <code>/</code> is read as one too.</div>
-</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html#WINDOWS" class="member-name-link">WINDOWS</a> - Enum constant in enum class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.platform.testing">OperatingSystem</a></dt>
-<dd>
-<div class="block">Windows.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotatedElements.html#withAnnotationsAnnotatedWith(java.lang.String)" class="member-name-link">withAnnotationsAnnotatedWith(String)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotatedElements.html" title="class in be.imgn.gaia.processing">AnnotatedElements</a></dt>
 <dd>
@@ -4281,9 +4270,9 @@ kept.</div>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html#withoutAnnotations()" class="member-name-link">withoutAnnotations()</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html" title="class in be.imgn.gaia.processing.source">WildcardTypeName</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html#withoutRuntimeDir()" class="member-name-link">withoutRuntimeDir()</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.platform.testing">FakeDirectories.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#withoutRuntimeDir()" class="member-name-link">withoutRuntimeDir()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
-<div class="block">Removes the runtime directory, so that <a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html#runtimeDir()"><code>FakeDirectories.runtimeDir()</code></a> is empty, as on macOS, Windows,
+<div class="block">Removes the runtime directory, so that <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#runtimeDir()"><code>FakeDirectories.runtimeDir()</code></a> is empty, as on macOS, Windows,
 and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/TestCompiler.html#withProcessors(javax.annotation.processing.Processor...)" class="member-name-link">withProcessors(Processor...)</a> - Method in class be.imgn.gaia.processing.testing.<a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/TestCompiler.html" title="class in be.imgn.gaia.processing.testing">TestCompiler</a></dt>
@@ -4393,7 +4382,7 @@ written as a Unicode escape, so that the code means the same under any <code>-en
 </dl>
 <h2 class="title" id="I:X">X</h2>
 <dl class="index">
-<dt><a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html#xdgVariables(boolean)" class="member-name-link">xdgVariables(boolean)</a> - Method in class be.imgn.gaia.platform.testing.<a href="be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.platform.testing">PlatformPreset.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#xdgVariables(boolean)" class="member-name-link">xdgVariables(boolean)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Sets whether to set every variable of the XDG Base Directory Specification, each to a location that differs
 from the specification's default: <code>XDG_DATA_HOME=/xdg/data-home</code>,
