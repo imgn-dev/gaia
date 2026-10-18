@@ -57,8 +57,7 @@ views and a <code>reversed()</code> view.</li>
 </ul>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreCollectors.html"><code>MoreCollectors</code></a> has <code>onlyElement()</code>, which collects the only element
 of a stream, and <code>toOptional()</code>, which collects zero or one element.</p>
-<p>On Java 24 and later, <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html"><code>MoreGatherers</code></a> has the gatherers the JDK
-lacks:</p>
+<p>On Java 24 and later, <code>MoreGatherers</code> has the gatherers the JDK lacks:</p>
 <pre><code class="language-java">Stream&lt;Circle&gt; circles = shapes.stream().gather(MoreGatherers.instanceOf(Circle.class));
 lines.stream().gather(MoreGatherers.takeWhileInclusive(line -&gt; !line.equals(&quot;END&quot;)));  // up to and including END
 scores.stream().gather(MoreGatherers.max(3, Comparator.naturalOrder()));               // the top three, greatest first
