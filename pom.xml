@@ -42,15 +42,12 @@
     <module>core</module>
     <module>core-testing</module>
     <module>memfs</module>
-    <module>platform</module>
-    <module>platform-testing</module>
     <module>processing</module>
     <module>processing-testing</module>
     <!-- Published, but not in the BOM: a build plugin is not a dependency. -->
     <module>maven-plugin</module>
     <!-- Not published: tests that exercise X through X-testing. -->
     <module>core-tests</module>
-    <module>platform-tests</module>
     <module>processing-tests</module>
     <!-- Not published: the guide, which goes to GitHub Pages. -->
     <module>docs</module>

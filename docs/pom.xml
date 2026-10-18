@@ -62,18 +62,6 @@
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
-      <artifactId>gaia-platform</artifactId>
-      <version>${revision}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>be.imgn.gaia</groupId>
-      <artifactId>gaia-platform-testing</artifactId>
-      <version>${revision}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-processing</artifactId>
       <version>${revision}</version>
       <scope>runtime</scope>

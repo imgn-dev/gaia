@@ -1,8 +1,8 @@
 # Gaia
 
-Gaia is a family of Java libraries: utilities the JDK doesn't provide, an in-memory file system, a cross-platform
-API, and helpers for writing annotation processors. Each library has a matching testing library for testing the code
-that uses it.
+Gaia is a family of Java libraries: utilities the JDK doesn't provide, including a cross-platform API, an in-memory
+file system, and helpers for writing annotation processors. Each library has a matching testing library for testing
+the code that uses it.
 
 The libraries require Java 21 or later, and are released together under one version. Every class is documented in
 the [API documentation](https://imgn-dev.github.io/gaia/api/latest/).
@@ -11,12 +11,10 @@ the [API documentation](https://imgn-dev.github.io/gaia/api/latest/).
 
 | Artifact                  | Module                            | What it does                                           |
 |---------------------------|-----------------------------------|--------------------------------------------------------|
-| `gaia-core`               | `be.imgn.gaia.core`               | [Extensions to the JDK](core.md)                       |
+| `gaia-core`               | `be.imgn.gaia.core`               | [Extensions to the JDK](core.md), and [the host the JVM runs on](platform.md) |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | [An in-memory file system](memfs.md)                   |
-| `gaia-platform`           | `be.imgn.gaia.platform`           | [The host the JVM runs on](platform.md)                |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | [Helpers for writing annotation processors](processing.md) |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | [Test helpers for `gaia-core`](testing.md#gaia-core-testing) |
-| `gaia-platform-testing`   | `be.imgn.gaia.platform.testing`   | [Test helpers for `gaia-platform`](testing.md#gaia-platform-testing) |
 | `gaia-processing-testing` | `be.imgn.gaia.processing.testing` | [Compiling through annotation processors in tests](testing.md#gaia-processing-testing) |
 
 The [Maven plugin](maven-plugin.md), `gaia-maven-plugin`, registers the service providers an annotation processor
@@ -42,11 +40,11 @@ Import the BOM, then declare the libraries you use without their versions:
 <dependencies>
   <dependency>
     <groupId>be.imgn.gaia</groupId>
-    <artifactId>gaia-platform</artifactId>
+    <artifactId>gaia-core</artifactId>
   </dependency>
   <dependency>
     <groupId>be.imgn.gaia</groupId>
-    <artifactId>gaia-platform-testing</artifactId>
+    <artifactId>gaia-core-testing</artifactId>
     <scope>test</scope>
   </dependency>
 </dependencies>
@@ -54,7 +52,7 @@ Import the BOM, then declare the libraries you use without their versions:
 
 The BOM manages gaia's own artifacts only, so importing it doesn't change the versions of your other dependencies.
 
-On the module path, require the modules you use, such as `requires be.imgn.gaia.platform;`.
+On the module path, require the modules you use, such as `requires be.imgn.gaia.core;`.
 
 ## Nulls
 

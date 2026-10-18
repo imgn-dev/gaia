@@ -12,11 +12,9 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 
 | Artifact                  | Module                            | What it does                                                |
 |---------------------------|-----------------------------------|-------------------------------------------------------------|
-| `gaia-core`               | `be.imgn.gaia.core`               | Extensions to the JDK                                       |
+| `gaia-core`               | `be.imgn.gaia.core`               | Extensions to the JDK, and the platform the JVM runs on     |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | Test helpers for code using `gaia-core`                     |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | An in-memory file system for the `mem:` URI scheme          |
-| `gaia-platform`           | `be.imgn.gaia.platform`           | A cross-platform API over the host the JVM runs on          |
-| `gaia-platform-testing`   | `be.imgn.gaia.platform.testing`   | Test helpers for code using `gaia-platform`                 |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | Helpers for writing annotation processors                   |
 | `gaia-processing-testing` | `be.imgn.gaia.processing.testing` | Compile sources through annotation processors in tests      |
 
@@ -48,6 +46,18 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `CharSource.of(file, UTF_8).readLines()`, `ByteSource.of(uri).slice(0, 4).read()`,
   `CharSink.of(file, UTF_8).writeLines(lines)`. Each is a functional interface, so a lambda that opens a stream
   makes one.
+- **`platform.Platform`**: the operating system (`isLinux()`, `isMacOS()`, `isWindows()`), the file system, and the
+  directories of the platform the JVM runs on. `Platform.current()` detects it. `Platform.newBuilder()` builds one
+  from given system properties, environment variables and file system, for tests: `gaia-core-testing` has
+  typical ones for each operating system, and fakes of `Platform` and `Directories`. Up to 0.1.1, the `platform`
+  package was a library of its own, `gaia-platform`, with its fakes in `gaia-platform-testing`.
+- **`platform.Directories`**: where applications store their data, configuration, state and cache files, following
+  the XDG Base Directory Specification on Linux and other Unix-like systems, and the standard locations on macOS and
+  Windows.
+- **`platform.ApplicationDirectories`**: one application's own configuration, data, state, cache and runtime
+  directories, kept apart on every operating system: `platform.applicationDirectories("Quuz")`, or with the vendor
+  (`"bar", "Quuz"`), which Windows nests the application under, and a qualifier (`"foo", "bar", "Quuz"`), which
+  names the macOS directories `foo.bar.Quuz`.
 - **`system.SystemProperties` and `system.Environment`**: system properties and environment variables, read from
   the running JVM or from fixed values in tests. `SystemProperties` has a typed method for each standard Java
   property, such as `userHome()` or `javaVersion()`.
@@ -63,6 +73,11 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 ### `gaia-core-testing`
 
 - **`FakeTicker`**: a `Ticker` that tests advance by hand, for exact and instant tests of timing code.
+- **`FakePlatform`** and **`FakeDirectories`**: a `Platform` with the operating system of your choice and its
+  directories under a test's temporary directory, so that code that receives a `Platform` can be tested on any
+  operating system.
+- **`PlatformPreset`**: the system properties and environment variables a JVM typically has on each operating
+  system, to give `Platform.newBuilder()` so that tests run the real detection of its directories.
 
 ### `gaia-memfs`
 
@@ -79,20 +94,6 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   size, capacity, maximum name length, default attributes, clock, watch polling interval and optional features.
   `currentUser("alice", "staff")` enforces POSIX permissions, DOS read-only flags and access control lists for that
   user.
-
-### `gaia-platform`
-
-- **`Platform`**: the operating system (`isLinux()`, `isMacOS()`, `isWindows()`), the file system, and the
-  directories of the platform the JVM runs on. `Platform.current()` detects it. `Platform.newBuilder()` builds one
-  from given system properties, environment variables and file system, for tests: `gaia-platform-testing` has
-  typical ones for each operating system, and fakes of `Platform` and `Directories`.
-- **`Directories`**: where applications store their data, configuration, state and cache files, following the XDG
-  Base Directory Specification on Linux and other Unix-like systems, and the standard locations on macOS and
-  Windows.
-- **`ApplicationDirectories`**: one application's own configuration, data, state, cache and runtime directories,
-  kept apart on every operating system: `platform.applicationDirectories("Quuz")`, or with the vendor
-  (`"bar", "Quuz"`), which Windows nests the application under, and a qualifier (`"foo", "bar", "Quuz"`), which
-  names the macOS directories `foo.bar.Quuz`.
 
 ### `gaia-processing`
 
@@ -232,11 +233,11 @@ Import the BOM, then declare the libraries you use without versions:
 <dependencies>
   <dependency>
     <groupId>be.imgn.gaia</groupId>
-    <artifactId>gaia-platform</artifactId>
+    <artifactId>gaia-core</artifactId>
   </dependency>
   <dependency>
     <groupId>be.imgn.gaia</groupId>
-    <artifactId>gaia-platform-testing</artifactId>
+    <artifactId>gaia-core-testing</artifactId>
     <scope>test</scope>
   </dependency>
 </dependencies>
@@ -245,7 +246,7 @@ Import the BOM, then declare the libraries you use without versions:
 The BOM manages gaia's own artifacts only, so importing it doesn't change the versions of your other
 dependencies.
 
-On the module path, require the modules you use, for example `requires be.imgn.gaia.platform;`.
+On the module path, require the modules you use, for example `requires be.imgn.gaia.core;`.
 
 `MoreGatherers` exists only on Java 24 and later: `gaia-core` is a multi-release jar that adds it there. Tools that
 validate multi-release jars strictly, such as `jar --validate`, report it as a public class missing from the

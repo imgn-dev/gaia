@@ -1,7 +1,7 @@
 # Core
 
 `gaia-core` extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
-system properties, text and time.
+system properties, the [platform](platform.md) the JVM runs on, text and time.
 
 ```xml
 <dependency>

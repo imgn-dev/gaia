@@ -5,7 +5,7 @@ Each library has a testing library, for the tests of the code that uses it. Decl
 ```xml
 <dependency>
   <groupId>be.imgn.gaia</groupId>
-  <artifactId>gaia-platform-testing</artifactId>
+  <artifactId>gaia-core-testing</artifactId>
   <scope>test</scope>
 </dependency>
 ```
@@ -17,6 +17,8 @@ For code that works on files, the [memory file system](memfs.md) gives each test
 
 ## gaia-core-testing
 
+### Time
+
 [`FakeTicker`](api:be.imgn.gaia.core.testing.FakeTicker) is a `Ticker` that only moves when told to, so that tests of
 timing code are exact and instant:
 
@@ -27,22 +29,22 @@ ticker.advance(Duration.ofSeconds(2));
 assertThat(stopwatch.elapsed()).isEqualTo(Duration.ofSeconds(2));
 ```
 
-## gaia-platform-testing
+### Platforms
 
 Code that receives a [`Platform`](platform.md) can be tested on any operating system, whatever the one the tests run
 on, in two ways.
 
-[`FakePlatform`](api:be.imgn.gaia.platform.testing.FakePlatform) has the operating system of your choice and its
+[`FakePlatform`](api:be.imgn.gaia.core.testing.FakePlatform) has the operating system of your choice and its
 directories under a root directory, such as a test's temporary directory, so the real ones are never touched:
 
 ```java
 Platform platform = FakePlatform.newBuilder(OperatingSystem.WINDOWS, temporaryDirectory).build();
 ```
 
-Its directories are a [`FakeDirectories`](api:be.imgn.gaia.platform.testing.FakeDirectories) unless others are
+Its directories are a [`FakeDirectories`](api:be.imgn.gaia.core.testing.FakeDirectories) unless others are
 given; its builder sets each directory on its own.
 
-[`PlatformPreset`](api:be.imgn.gaia.platform.testing.PlatformPreset) instead runs the real detection of the
+[`PlatformPreset`](api:be.imgn.gaia.core.testing.PlatformPreset) instead runs the real detection of the
 directories of an operating system, from the system properties and environment variables a JVM typically has there:
 
 ```java
