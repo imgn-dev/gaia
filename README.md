@@ -60,7 +60,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   names the macOS directories `foo.bar.Quuz`.
 - **`system.SystemProperties` and `system.Environment`**: system properties and environment variables, read from
   the running JVM or from fixed values in tests. `SystemProperties` has a typed method for each standard Java
-  property, such as `userHome()` or `javaVersion()`.
+  property, such as `userHome()` or `javaVersion()`. Paths come back as `Path`s of the default file system; for the
+  directories of an application, `platform.Platform` is often the better fit.
 - **`text.NamingConvention`**: converts names between `LOWER_CAMEL`, `UPPER_CAMEL`, `LOWER_HYPHEN`,
   `LOWER_UNDERSCORE`, `UPPER_UNDERSCORE` and `LOWER_DOT`, whatever the default locale:
   `LOWER_CAMEL.toLowerHyphen("timeoutSeconds")` gives `timeout-seconds`, and `LOWER_HYPHEN.from(text)` converts text

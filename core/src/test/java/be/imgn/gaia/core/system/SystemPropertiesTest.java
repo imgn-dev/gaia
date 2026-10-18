@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +70,7 @@ class SystemPropertiesTest {
                 .isEqualTo(Runtime.version().version());
         assertThat(properties.javaSpecificationVersion())
                 .isEqualTo(Runtime.version().feature());
-        assertThat(properties.userHome()).isEqualTo(System.getProperty("user.home"));
+        assertThat(properties.userHome()).isEqualTo(Path.of(System.getProperty("user.home")));
         assertThat(properties.lineSeparator()).isEqualTo(System.lineSeparator());
     }
 
@@ -123,9 +126,39 @@ class SystemPropertiesTest {
                     "java.class.path", "C:\\app\\a.jar;;C:\\app\\b.jar;",
                     "jdk.module.path", "mods"));
 
-            assertThat(properties.javaClassPath()).containsExactly("C:\\app\\a.jar", "C:\\app\\b.jar");
-            assertThat(properties.jdkModulePath()).containsExactly("mods");
+            assertThat(properties.javaClassPath())
+                    .containsExactly(Path.of("C:\\app\\a.jar"), Path.of("C:\\app\\b.jar"));
+            assertThat(properties.jdkModulePath()).containsExactly(Path.of("mods"));
             assertThat(properties.jdkModuleUpgradePath()).isEmpty();
+        }
+
+        @Test
+        void returnsPathsOfTheDefaultFileSystem() {
+            SystemProperties properties = SystemProperties.of(Map.of(
+                    "path.separator", ":",
+                    "java.home", "/opt/jdk",
+                    "java.io.tmpdir", "/tmp",
+                    "user.home", "/home/alice",
+                    "user.dir", "/home/alice/work",
+                    "java.library.path", "/usr/lib:/lib",
+                    "jdk.module.upgrade.path", "upgrades"));
+
+            assertThat(properties.javaHome()).isEqualTo(Path.of("/opt/jdk"));
+            assertThat(properties.javaIoTmpdir()).isEqualTo(Path.of("/tmp"));
+            assertThat(properties.userHome()).isEqualTo(Path.of("/home/alice"));
+            assertThat(properties.userDir()).isEqualTo(Path.of("/home/alice/work"));
+            assertThat(properties.javaLibraryPath()).containsExactly(Path.of("/usr/lib"), Path.of("/lib"));
+            assertThat(properties.jdkModuleUpgradePath()).containsExactly(Path.of("upgrades"));
+            assertThat(properties.userHome().getFileSystem()).isSameAs(FileSystems.getDefault());
+        }
+
+        @Test
+        void rejectsAValueThatIsNotAPath() {
+            SystemProperties properties = SystemProperties.of(
+                    Map.of("path.separator", ":", "user.home", "a\0b", "java.class.path", "a:b\0c"));
+
+            assertThatThrownBy(properties::userHome).isInstanceOf(InvalidPathException.class);
+            assertThatThrownBy(properties::javaClassPath).isInstanceOf(InvalidPathException.class);
         }
 
         @Test
@@ -153,7 +186,7 @@ class SystemPropertiesTest {
 
             values.put("os.name", "Linux");
 
-            assertThat(properties.userHome()).isEqualTo("/home/alice");
+            assertThat(properties.userHome()).isEqualTo(Path.of("/home/alice"));
             assertThat(properties.get("os.name")).isEmpty();
         }
     }

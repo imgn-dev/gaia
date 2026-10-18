@@ -5,6 +5,7 @@ import be.imgn.gaia.core.system.Environment;
 import be.imgn.gaia.core.system.SystemProperties;
 import java.nio.file.FileSystem;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 /** Detects the {@link Platform} the JVM runs on. */
 public final class Platforms {
@@ -29,7 +30,10 @@ public final class Platforms {
      * @return the platform
      */
     public static Platform detect(SystemProperties properties, Environment environment, FileSystem fileSystem) {
-        String userHome = properties.userHome();
+        // As text: the home directory is a path of the platform's file system, not of the default one.
+        String userHome = properties
+                .get("user.home")
+                .orElseThrow(() -> new NoSuchElementException("System property user.home is not set"));
         String name = properties.osName().toLowerCase(Locale.ROOT);
         if (name.startsWith("windows")) {
             return new WindowsPlatform(fileSystem, new WindowsDirectories(fileSystem, userHome, environment));

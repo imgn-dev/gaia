@@ -201,8 +201,8 @@ class PlatformPresetTest {
                 PlatformPreset.newBuilder(operatingSystem).userName("alice").build();
 
         assertThat(preset.systemProperties().userName()).isEqualTo("alice");
-        assertThat(preset.systemProperties().userHome()).isEqualTo(home);
-        assertThat(preset.systemProperties().userDir()).isEqualTo(home);
+        assertThat(preset.systemProperties().get("user.home")).hasValue(home);
+        assertThat(preset.systemProperties().get("user.dir")).hasValue(home);
         assertThat(detect(preset, DEFAULT).directories().home()).isEqualTo(path(home));
     }
 
@@ -220,7 +220,7 @@ class PlatformPresetTest {
                 .build();
 
         assertThat(preset.systemProperties().userName()).isEqualTo("bob");
-        assertThat(preset.systemProperties().userHome()).isEqualTo(home);
+        assertThat(preset.systemProperties().get("user.home")).hasValue(home);
         assertThat(detect(preset, DEFAULT).directories().home()).isEqualTo(path(home));
     }
 
@@ -234,7 +234,8 @@ class PlatformPresetTest {
         assertThat(preset.environment().get("APPDATA")).contains("D:\\Profiles\\alice\\AppData\\Roaming");
         assertThat(preset.environment().get("LOCALAPPDATA")).contains("D:\\Profiles\\alice\\AppData\\Local");
         assertThat(preset.environment().get("TEMP")).contains("D:\\Profiles\\alice\\AppData\\Local\\Temp");
-        assertThat(preset.systemProperties().javaIoTmpdir()).isEqualTo("D:\\Profiles\\alice\\AppData\\Local\\Temp\\");
+        assertThat(preset.systemProperties().get("java.io.tmpdir"))
+                .hasValue("D:\\Profiles\\alice\\AppData\\Local\\Temp\\");
         assertThat(detect(preset, DEFAULT).directories().cacheHome())
                 .isEqualTo(path("D:\\Profiles\\alice\\AppData\\Local"));
     }
@@ -261,7 +262,7 @@ class PlatformPresetTest {
         assertThat(preset.systemProperties().pathSeparator()).isEqualTo(pathSeparator);
         assertThat(preset.systemProperties().lineSeparator())
                 .isEqualTo(operatingSystem == OperatingSystem.WINDOWS ? "\r\n" : "\n");
-        assertThat(preset.systemProperties().javaIoTmpdir()).isEqualTo(temporaryDirectory);
+        assertThat(preset.systemProperties().get("java.io.tmpdir")).hasValue(temporaryDirectory);
         assertThat(preset.systemProperties().userName()).isEqualTo("test");
     }
 
@@ -273,7 +274,7 @@ class PlatformPresetTest {
         PlatformPreset preset = PlatformPreset.newBuilder(operatingSystem).build();
 
         assertThat(preset.environment().home())
-                .contains(preset.systemProperties().userHome());
+                .isEqualTo(preset.systemProperties().get("user.home"));
         assertThat(preset.environment().get("USER")).contains("test");
         assertThat(preset.environment().get("USERPROFILE")).isEmpty();
         assertThat(preset.environment().get("XDG_CONFIG_HOME")).isEmpty();
@@ -356,9 +357,9 @@ class PlatformPresetTest {
         PlatformPreset second =
                 builder.userName("alice").environmentVariable("CUSTOM", "value").build();
 
-        assertThat(first.systemProperties().userHome()).isEqualTo("/home/test");
+        assertThat(first.systemProperties().get("user.home")).hasValue("/home/test");
         assertThat(first.environment().get("CUSTOM")).isEmpty();
-        assertThat(second.systemProperties().userHome()).isEqualTo("/home/alice");
+        assertThat(second.systemProperties().get("user.home")).hasValue("/home/alice");
         assertThat(second.environment().get("CUSTOM")).contains("value");
     }
 
@@ -373,7 +374,8 @@ class PlatformPresetTest {
 
             assertThat(platform.fileSystem()).isSameAs(zip);
             assertThat(platform.directories().home())
-                    .isEqualTo(zip.getPath(preset.systemProperties().userHome()));
+                    .isEqualTo(zip.getPath(
+                            preset.systemProperties().get("user.home").orElseThrow()));
             assertThat(allPaths(platform.directories()))
                     .isNotEmpty()
                     .allSatisfy(path -> assertThat(path.getFileSystem()).isSameAs(zip));
@@ -391,7 +393,7 @@ class PlatformPresetTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> builder.home(blank))
                 .withMessageContaining("home");
-        assertThat(builder.build().systemProperties().userHome()).isEqualTo("/home/test");
+        assertThat(builder.build().systemProperties().get("user.home")).hasValue("/home/test");
     }
 
     @Test

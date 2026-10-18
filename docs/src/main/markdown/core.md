@@ -84,7 +84,8 @@ Each is a functional interface, so a lambda that opens a stream makes one.
 [`SystemProperties`](api:be.imgn.gaia.core.system.SystemProperties) and
 [`Environment`](api:be.imgn.gaia.core.system.Environment) read system properties and environment variables from the
 running JVM, or from fixed values in tests. `SystemProperties` has a typed method for each standard Java property,
-such as `userHome()` or `javaVersion()`.
+such as `userHome()` or `javaVersion()`. Paths come back as `Path`s of the default file system. For the directories
+of an application, or paths in a file system a test provides, the [platform](platform.md) is often the better fit.
 
 ## Text
 

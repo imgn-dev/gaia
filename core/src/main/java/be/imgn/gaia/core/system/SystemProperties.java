@@ -6,6 +6,8 @@ import static java.util.Objects.requireNonNull;
 import be.imgn.gaia.core.text.Splitter;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +26,10 @@ import java.util.OptionalInt;
  * every Java runtime must define are returned as is, and throw {@link NoSuchElementException} if the source lacks them,
  * which only a fixed source can. The others are returned as an {@link Optional}, or as an empty list for paths.
  *
- * <p>Paths are returned as strings: which {@link java.nio.file.FileSystem} they belong to is for the caller to decide.
- * Path lists, such as {@link #javaClassPath()}, are split on the path separator of the same source, with empty entries
- * skipped.
+ * <p>Paths are returned in the default file system, as {@link Path#of(String, String...)} makes them. Path lists, such
+ * as {@link #javaClassPath()}, are split on the path separator of the same source, with empty entries skipped. A
+ * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate for paths: its directories are in the file system
+ * it was given, which tests can replace. {@link #get(String)} still gives any value as a string.
  */
 @FunctionalInterface
 public interface SystemProperties {
@@ -115,11 +118,16 @@ public interface SystemProperties {
     /**
      * Returns the installation directory of Java: the {@code java.home} property.
      *
+     * <p>The path is in the default file system, as {@link Path#of(String, String...)} makes it. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: its paths are in the file system it was
+     * given, which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws InvalidPathException if the value is not a path of the default file system
      */
-    default String javaHome() {
-        return required("java.home");
+    default Path javaHome() {
+        return Path.of(required("java.home"));
     }
 
     /**
@@ -245,11 +253,16 @@ public interface SystemProperties {
     /**
      * Returns the class path, split on the path separator: the {@code java.class.path} property.
      *
+     * <p>The paths are in the default file system, as {@link Path#of(String, String...)} makes them. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: its paths are in the file system it was
+     * given, which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property or the {@code path.separator} property is not set
      * @throws IllegalArgumentException if the {@code path.separator} property is empty
+     * @throws InvalidPathException if an entry is not a path of the default file system
      */
-    default List<String> javaClassPath() {
+    default List<Path> javaClassPath() {
         return paths(required("java.class.path"));
     }
 
@@ -257,22 +270,32 @@ public interface SystemProperties {
      * Returns the paths searched when loading libraries, split on the path separator: the {@code java.library.path}
      * property.
      *
+     * <p>The paths are in the default file system, as {@link Path#of(String, String...)} makes them. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: its paths are in the file system it was
+     * given, which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property or the {@code path.separator} property is not set
      * @throws IllegalArgumentException if the {@code path.separator} property is empty
+     * @throws InvalidPathException if an entry is not a path of the default file system
      */
-    default List<String> javaLibraryPath() {
+    default List<Path> javaLibraryPath() {
         return paths(required("java.library.path"));
     }
 
     /**
      * Returns the default temporary file directory: the {@code java.io.tmpdir} property.
      *
+     * <p>The path is in the default file system, as {@link Path#of(String, String...)} makes it. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: its paths are in the file system it was
+     * given, which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws InvalidPathException if the value is not a path of the default file system
      */
-    default String javaIoTmpdir() {
-        return required("java.io.tmpdir");
+    default Path javaIoTmpdir() {
+        return Path.of(required("java.io.tmpdir"));
     }
 
     /**
@@ -348,21 +371,32 @@ public interface SystemProperties {
     /**
      * Returns the home directory of the user: the {@code user.home} property.
      *
+     * <p>The path is in the default file system, as {@link Path#of(String, String...)} makes it. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: the
+     * {@link be.imgn.gaia.core.platform.Directories#home() home} of its directories is in the file system it was given,
+     * which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws InvalidPathException if the value is not a path of the default file system
      */
-    default String userHome() {
-        return required("user.home");
+    default Path userHome() {
+        return Path.of(required("user.home"));
     }
 
     /**
      * Returns the current working directory of the user: the {@code user.dir} property.
      *
+     * <p>The path is in the default file system, as {@link Path#of(String, String...)} makes it. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: its paths are in the file system it was
+     * given, which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property is not set
+     * @throws InvalidPathException if the value is not a path of the default file system
      */
-    default String userDir() {
-        return required("user.dir");
+    default Path userDir() {
+        return Path.of(required("user.dir"));
     }
 
     /**
@@ -408,11 +442,16 @@ public interface SystemProperties {
      *
      * <p>Supported by the JDK, not required by the Java SE specification.
      *
+     * <p>The paths are in the default file system, as {@link Path#of(String, String...)} makes them. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: its paths are in the file system it was
+     * given, which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property is set but the {@code path.separator} property is not
      * @throws IllegalArgumentException if the property is set but the {@code path.separator} property is empty
+     * @throws InvalidPathException if an entry is not a path of the default file system
      */
-    default List<String> jdkModulePath() {
+    default List<Path> jdkModulePath() {
         return get("jdk.module.path").map(this::paths).orElse(List.of());
     }
 
@@ -422,11 +461,16 @@ public interface SystemProperties {
      *
      * <p>Supported by the JDK, not required by the Java SE specification.
      *
+     * <p>The paths are in the default file system, as {@link Path#of(String, String...)} makes them. A
+     * {@link be.imgn.gaia.core.platform.Platform} may be more appropriate: its paths are in the file system it was
+     * given, which tests can replace.
+     *
      * @return the value
      * @throws NoSuchElementException if the property is set but the {@code path.separator} property is not
      * @throws IllegalArgumentException if the property is set but the {@code path.separator} property is empty
+     * @throws InvalidPathException if an entry is not a path of the default file system
      */
-    default List<String> jdkModuleUpgradePath() {
+    default List<Path> jdkModuleUpgradePath() {
         return get("jdk.module.upgrade.path").map(this::paths).orElse(List.of());
     }
 
@@ -476,7 +520,9 @@ public interface SystemProperties {
         return get(name).orElseThrow(() -> new NoSuchElementException("System property " + name + " is not set"));
     }
 
-    private List<String> paths(String value) {
-        return Splitter.on(pathSeparator()).omitEmptyStrings().split(value);
+    private List<Path> paths(String value) {
+        return Splitter.on(pathSeparator()).omitEmptyStrings().split(value).stream()
+                .map(Path::of)
+                .toList();
     }
 }
