@@ -52,6 +52,8 @@
     <module>core-tests</module>
     <module>platform-tests</module>
     <module>processing-tests</module>
+    <!-- Not published: the guide, which goes to GitHub Pages. -->
+    <module>docs</module>
   </modules>
 
   <properties>

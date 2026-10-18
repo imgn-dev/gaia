@@ -1,9 +1,10 @@
 name: API docs
 
 # Publishes or removes the API documentation of a released version on the
-# gh-pages branch, served at https://imgn-dev.github.io/gaia/api/. The release
-# workflow calls it; run it by hand to publish an older version again or to
-# remove one that was never published to Maven Central.
+# gh-pages branch, served at https://imgn-dev.github.io/gaia/api/, and publishes
+# the guide of the newest version at https://imgn-dev.github.io/gaia/. The
+# release workflow calls it; run it by hand to publish an older version again
+# or to remove one that was never published to Maven Central.
 on:
   workflow_dispatch:
     inputs:
@@ -77,6 +78,18 @@ jobs:
         name: Build the documentation
         run: main/scripts/javadoc.sh source "$RUNNER_TEMP/javadoc"
 
+      # Versions before 0.1.2 have no guide.
+      - if: env.ACTION == 'publish'
+        name: Build the guide
+        working-directory: source
+        run: |
+          if [[ -d docs ]]; then
+            ./mvnw -B -ntp package -pl docs -am -DskipTests
+            echo "GUIDE=$PWD/docs/target/guide" >>"$GITHUB_ENV"
+          else
+            echo 'This version has no guide.'
+          fi
+
       - name: Check out gh-pages
         working-directory: main
         run: |
@@ -93,6 +106,9 @@ jobs:
         run: |
           if [[ $ACTION == publish ]]; then
             main/scripts/docs-site.sh publish site "$VERSION" "$RUNNER_TEMP/javadoc" $REPLACE
+            if [[ -n ${GUIDE:-} ]]; then
+              main/scripts/docs-site.sh guide site "$VERSION" "$GUIDE"
+            fi
           else
             main/scripts/docs-site.sh remove site "$VERSION"
           fi
@@ -106,7 +122,7 @@ jobs:
             exit 0
           fi
           if [[ $ACTION == publish ]]; then
-            git commit -m "docs: publish the API of $VERSION"
+            git commit -m "docs: publish the documentation of $VERSION"
           else
             git commit -m "docs: remove the API of $VERSION"
           fi

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.imgn.gaia</groupId>
+    <artifactId>gaia-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>gaia-docs</artifactId>
+
+  <name>Gaia Documentation</name>
+  <description>The guide published at https://imgn-dev.github.io/gaia/, and the generator that turns its Markdown into HTML. Not published.</description>
+
+  <properties>
+    <!-- Never installed or deployed: the guide goes to GitHub Pages. -->
+    <maven.install.skip>true</maven.install.skip>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <gpg.skip>true</gpg.skip>
+
+    <commonmark.version>0.30.1</commonmark.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
+      <version>${commonmark.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.commonmark</groupId>
+      <artifactId>commonmark-ext-gfm-tables</artifactId>
+      <version>${commonmark.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+    <!-- The libraries the guide links to: an api: link must name one of their
+         classes, which the generator loads to check it. -->
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-core</artifactId>
+      <version>${revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-core-testing</artifactId>
+      <version>${revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-memfs</artifactId>
+      <version>${revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-platform</artifactId>
+      <version>${revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-platform-testing</artifactId>
+      <version>${revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-processing</artifactId>
+      <version>${revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-processing-testing</artifactId>
+      <version>${revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Keeps the jar out of the Central bundle under -Prelease. -->
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <configuration>
+            <excludeArtifacts>
+              <excludeArtifact>${project.artifactId}</excludeArtifact>
+            </excludeArtifacts>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <!-- Writes the guide to target/guide. It fails the build on a broken
+           link, so every build checks the guide. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-guide</id>
+            <phase>package</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>be.imgn.gaia.docs.SiteGenerator</mainClass>
+              <!-- The test class path: AssertJ, a dependency of
+                   gaia-processing-testing that this module also declares for
+                   its tests, is test-scoped here, and the classes the guide
+                   links to need it to load. -->
+              <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>${project.basedir}/src/main/markdown</argument>
+                <argument>${project.basedir}/src/main/theme</argument>
+                <argument>${project.build.directory}/guide</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

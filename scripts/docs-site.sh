@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 #
-# Maintains the API documentation in a checkout of the gh-pages branch, served
-# at https://imgn-dev.github.io/gaia/:
+# Maintains the documentation in a checkout of the gh-pages branch, served at
+# https://imgn-dev.github.io/gaia/:
 #
-#   api/<version>/   the documentation of each released version, never changed
-#                    once published, unless explicitly replaced
+#   api/<version>/   the API documentation of each released version, never
+#                    changed once published, unless explicitly replaced
 #   api/latest/      a copy of the newest version, rebuilt from scratch every
 #                    time, so that nothing of an earlier version lingers in it
 #   api/index.html   the list of versions, newest first
+#   everything else  the guide of the newest version (docs/target/guide),
+#                    replaced as a whole, so that no page of an earlier guide
+#                    lingers
 #
 # Usage:  scripts/docs-site.sh publish <site> <version> <javadoc> [--replace]
 #         scripts/docs-site.sh remove  <site> <version>
+#         scripts/docs-site.sh guide   <site> <version> <guide>
 
 set -euo pipefail
 
@@ -21,7 +25,8 @@ die() {
 
 usage() {
     die "Usage: $0 publish <site> <version> <javadoc> [--replace]
-       $0 remove  <site> <version>"
+       $0 remove  <site> <version>
+       $0 guide   <site> <version> <guide>"
 }
 
 VERSION_PATTERN='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
@@ -94,6 +99,20 @@ publish)
     mkdir -p "$site/api"
     rm -rf "$site/api/$version"
     cp -R "$javadoc" "$site/api/$version"
+    ;;
+guide)
+    [[ $# -eq 4 ]] || usage
+    guide=$4
+    [[ -f $guide/index.html ]] || die "$guide has no index.html."
+    # Publishing an older version again must not bring back its guide.
+    newest=$(versions | tail -n 1)
+    if [[ $version != "$newest" ]]; then
+        printf 'The guide of %s is not published: the newest version is %s.\n' "$version" "${newest:-none}"
+        exit 0
+    fi
+    find "$site" -mindepth 1 -maxdepth 1 ! -name api ! -name .nojekyll ! -name .git -exec rm -rf {} +
+    cp -R "$guide"/. "$site"/
+    exit 0
     ;;
 remove)
     [[ $# -eq 3 ]] || usage
