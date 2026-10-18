@@ -91,17 +91,22 @@ expression, with optional trimming, omission of empty parts and a limit:</p>
 Splitter.on(&quot;::&quot;).split(&quot;a::b&quot;);                                           // [a, b]
 </code></pre>
 <p>Unlike <code>String.split</code>, a string separator is literal, and nothing is dropped unless asked.</p>
-<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Case.html"><code>Case</code></a> converts names between cases: <code>LOWER_CAMEL</code>, <code>UPPER_CAMEL</code>, <code>KEBAB</code>,
-<code>SNAKE</code>, <code>UPPER_SNAKE</code> and <code>DOT</code>:</p>
-<pre><code class="language-java">Case.LOWER_CAMEL.to(Case.KEBAB, &quot;timeoutSeconds&quot;);   // timeout-seconds
-Case.UPPER_SNAKE.to(Case.KEBAB, &quot;TIMEOUT_SECONDS&quot;);  // timeout-seconds
-Case.KEBAB.to(Case.UPPER_CAMEL, &quot;http-url&quot;);         // HttpUrl
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html"><code>NamingConvention</code></a> converts names between naming conventions:
+<code>LOWER_CAMEL</code>, <code>UPPER_CAMEL</code>, <code>LOWER_HYPHEN</code>, <code>LOWER_UNDERSCORE</code>, <code>UPPER_UNDERSCORE</code> and <code>LOWER_DOT</code>:</p>
+<pre><code class="language-java">NamingConvention.LOWER_CAMEL.toLowerHyphen(&quot;timeoutSeconds&quot;);       // timeout-seconds
+NamingConvention.UPPER_UNDERSCORE.toLowerHyphen(&quot;TIMEOUT_SECONDS&quot;);  // timeout-seconds
+NamingConvention.LOWER_HYPHEN.toUpperCamel(&quot;http-url&quot;);              // HttpUrl
+NamingConvention.LOWER_HYPHEN.from(&quot;TIMEOUT_SECONDS&quot;);               // timeout-seconds
 </code></pre>
-<p>A conversion splits the text into words, then joins them in the target case, whatever the default locale. In camel
-case, a word starts at an uppercase letter after a lowercase letter or a digit, and at the last uppercase letter of a
-run followed by a lowercase letter: <code>httpURLPath</code> gives <code>http-url-path</code>, <code>ipv4Address</code> gives <code>ipv4-address</code>, and
+<p><code>source.to(target, text)</code> converts to a convention chosen at run time, and <code>from</code> converts text that follows any
+convention. Text that several conventions accept, such as <code>name</code>, is a single word, so it converts the same from any
+of them.</p>
+<p>A conversion splits the text into words, then joins them in the target convention, whatever the default locale. In
+camel case, a word starts at an uppercase letter after a lowercase letter or a digit, and at the last uppercase letter
+of a run followed by a lowercase letter: <code>httpURLPath</code> gives <code>http-url-path</code>, <code>ipv4Address</code> gives <code>ipv4-address</code>, and
 <code>utf8</code> stays one word. Joined in camel case, a word keeps only its first letter in uppercase, so <code>http-url</code> gives
-<code>httpUrl</code>. Text that isn't written in the case it is converted from throws <code>IllegalArgumentException</code>.</p>
+<code>httpUrl</code>. Text that doesn't follow the convention it is converted from, or no convention at all for <code>from</code>, throws
+<code>IllegalArgumentException</code>.</p>
 <h2 id="time">Time</h2>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html"><code>Stopwatch</code></a> measures elapsed time on a monotonic
 <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html"><code>Ticker</code></a>, with <code>start()</code>, <code>stop()</code> and <code>reset()</code>. Its <code>toString()</code> reads like
