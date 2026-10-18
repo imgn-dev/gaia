@@ -57,9 +57,60 @@ views and a <code>reversed()</code> view.</li>
 </ul>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreCollectors.html"><code>MoreCollectors</code></a> has <code>onlyElement()</code>, which collects the only element
 of a stream, and <code>toOptional()</code>, which collects zero or one element.</p>
-<p>On Java 24 and later, <code>MoreGatherers.instanceOf(type)</code> keeps the elements of a stream that are of a type, cast to it:</p>
+<p>On Java 24 and later, <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html"><code>MoreGatherers</code></a> has the gatherers the JDK
+lacks:</p>
 <pre><code class="language-java">Stream&lt;Circle&gt; circles = shapes.stream().gather(MoreGatherers.instanceOf(Circle.class));
+lines.stream().gather(MoreGatherers.takeWhileInclusive(line -&gt; !line.equals(&quot;END&quot;)));  // up to and including END
+scores.stream().gather(MoreGatherers.max(3, Comparator.naturalOrder()));               // the top three, greatest first
 </code></pre>
+<table>
+<thead>
+<tr>
+<th>Gatherer</th>
+<th>Keeps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>instanceOf(type)</code></td>
+<td>The elements of a type, cast to it</td>
+</tr>
+<tr>
+<td><code>distinctBy(key)</code></td>
+<td>The first element of each key</td>
+</tr>
+<tr>
+<td><code>distinctAdjacent()</code>, <code>distinctAdjacentBy(key)</code></td>
+<td>The elements that differ from the one right before, or whose key does</td>
+</tr>
+<tr>
+<td><code>takeWhileInclusive(predicate)</code></td>
+<td>The elements while the predicate holds, and the first that fails it</td>
+</tr>
+<tr>
+<td><code>groupRuns(key)</code></td>
+<td>The runs of consecutive elements with equal keys, as lists</td>
+</tr>
+<tr>
+<td><code>takeLast(n)</code>, <code>dropLast(n)</code></td>
+<td>The last <code>n</code> elements, or all but them</td>
+</tr>
+<tr>
+<td><code>mapWithIndex(mapper)</code>, <code>filterWithIndex(predicate)</code></td>
+<td>The elements mapped, or filtered, with their index</td>
+</tr>
+<tr>
+<td><code>everyNth(n)</code></td>
+<td>The elements at index 0, <code>n</code>, <code>2n</code>, and so on</td>
+</tr>
+<tr>
+<td><code>max(n, comparator)</code>, <code>min(n, comparator)</code></td>
+<td>The <code>n</code> greatest or least elements, in order</td>
+</tr>
+</tbody>
+</table>
+<p>They accept <code>null</code> elements, as streams do. In a parallel stream, <code>instanceOf</code>, <code>takeWhileInclusive</code>, <code>takeLast</code>,
+<code>max</code> and <code>min</code> run in parallel; the others depend on the elements before each one, so they run sequentially.</p>
 <p><code>gaia-core</code> is a multi-release jar that adds <code>MoreGatherers</code> on Java 24. Tools that validate multi-release jars
 strictly, such as <code>jar --validate</code>, report it as a public class missing from the Java 21 version. That doesn't affect
 compiling or running.</p>
