@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core · Gaia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<a class="brand" href="index.html">Gaia</a>
+<a href="api/latest/">API</a>
+<a href="https://github.com/imgn-dev/gaia">GitHub</a>
+</header>
+<div class="layout">
+<nav aria-label="Guide">
+<ul>
+<li><a href="index.html">Gaia</a></li>
+<li><a href="core.html" aria-current="page">Core</a></li>
+<li><a href="memfs.html">Memory file system</a></li>
+<li><a href="platform.html">Platform</a></li>
+<li><a href="processing.html">Annotation processing</a></li>
+<li><a href="testing.html">Testing</a></li>
+<li><a href="maven-plugin.html">Maven plugin</a></li>
+</ul>
+</nav>
+<main>
+<h1 id="core">Core</h1>
+<p><code>gaia-core</code> extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
+system properties, text and time.</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
+  &lt;artifactId&gt;gaia-core&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="preconditions">Preconditions</h2>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/base/Preconditions.html"><code>Preconditions</code></a> has <code>checkArgument</code> and <code>checkState</code>, which throw
+<code>IllegalArgumentException</code> or <code>IllegalStateException</code> when a check fails, with an optional message or
+<code>String.format</code> message format:</p>
+<pre><code class="language-java">checkArgument(count &gt;= 0, &quot;count must not be negative: %d&quot;, count);
+</code></pre>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/base/Throwables.html"><code>Throwables</code></a> creates such exceptions from the exception that caused them:</p>
+<pre><code class="language-java">throw Throwables.illegalArgument(e, &quot;Not a port: %s&quot;, text);
+</code></pre>
+<h2 id="collections">Collections</h2>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Sets.html"><code>Sets</code></a> makes unmodifiable sets that keep the order their elements are given in.
+<code>set(...)</code> and <code>setCopy(...)</code> behave like <code>Set.of</code> and <code>Set.copyOf</code>, and the <code>toSet()</code> collector like
+<code>Collectors.toUnmodifiableSet()</code>, except for iteration order.</p>
+<p>A <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html"><code>Multiset</code></a> counts the occurrences of each element, with <code>count</code>,
+<code>add(element, n)</code>, <code>remove(element, n)</code>, <code>setCount</code>, and live <code>elementSet()</code> and <code>entrySet()</code> views:</p>
+<ul>
+<li><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html"><code>HashMultiset</code></a><code>.create()</code> is backed by a hash map.</li>
+<li><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html"><code>TreeMultiset</code></a><code>.create()</code> keeps its elements sorted, as a
+<a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html"><code>SortedMultiset</code></a> with first, last and nearest entries, live range
+views and a <code>reversed()</code> view.</li>
+<li><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multisets.html"><code>Multisets</code></a><code>.multiset(...)</code>, <code>multisetCopy(...)</code> and the
+<code>toMultiset()</code> collector make unmodifiable multisets that iterate in the order their elements first appear.</li>
+</ul>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreCollectors.html"><code>MoreCollectors</code></a> has <code>onlyElement()</code>, which collects the only element
+of a stream, and <code>toOptional()</code>, which collects zero or one element.</p>
+<p>On Java 24 and later, <code>MoreGatherers.instanceOf(type)</code> keeps the elements of a stream that are of a type, cast to it:</p>
+<pre><code class="language-java">Stream&lt;Circle&gt; circles = shapes.stream().gather(MoreGatherers.instanceOf(Circle.class));
+</code></pre>
+<p><code>gaia-core</code> is a multi-release jar that adds <code>MoreGatherers</code> on Java 24. Tools that validate multi-release jars
+strictly, such as <code>jar --validate</code>, report it as a public class missing from the Java 21 version. That doesn't affect
+compiling or running.</p>
+<h2 id="files-and-streams">Files and streams</h2>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/io/AtomicFiles.html"><code>AtomicFiles</code></a> writes a file so that readers, or the next run after a crash,
+see either its old content or its new one, never a part of it. The file keeps its permissions:</p>
+<pre><code class="language-java">AtomicFiles.writeString(file, text);
+AtomicFiles.write(file, out -&gt; ImageIO.write(image, &quot;png&quot;, out));
+</code></pre>
+<p>The callback form commits the file only if the callback returns normally.</p>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html"><code>ByteSource</code></a>, <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html"><code>CharSource</code></a>,
+<a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html"><code>ByteSink</code></a> and <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html"><code>CharSink</code></a> are files, URLs,
+arrays or strings to read or write as a whole, each read or write opening and closing its own stream:</p>
+<pre><code class="language-java">List&lt;String&gt; lines = CharSource.of(file, UTF_8).readLines();
+byte[] magic = ByteSource.of(uri).slice(0, 4).read();
+CharSink.of(file, UTF_8).writeLines(lines);
+</code></pre>
+<p>Each is a functional interface, so a lambda that opens a stream makes one.</p>
+<h2 id="system-properties-and-environment-variables">System properties and environment variables</h2>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html"><code>SystemProperties</code></a> and
+<a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html"><code>Environment</code></a> read system properties and environment variables from the
+running JVM, or from fixed values in tests. <code>SystemProperties</code> has a typed method for each standard Java property,
+such as <code>userHome()</code> or <code>javaVersion()</code>.</p>
+<h2 id="text">Text</h2>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html"><code>Splitter</code></a> splits text on a character, a literal string or a regular
+expression, with optional trimming, omission of empty parts and a limit:</p>
+<pre><code class="language-java">Splitter.on(',').trimResults().omitEmptyStrings().split(&quot; a, ,b ,, c &quot;);  // [a, b, c]
+Splitter.on(&quot;::&quot;).split(&quot;a::b&quot;);                                           // [a, b]
+</code></pre>
+<p>Unlike <code>String.split</code>, a string separator is literal, and nothing is dropped unless asked.</p>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Case.html"><code>Case</code></a> converts names between cases: <code>LOWER_CAMEL</code>, <code>UPPER_CAMEL</code>, <code>KEBAB</code>,
+<code>SNAKE</code>, <code>UPPER_SNAKE</code> and <code>DOT</code>:</p>
+<pre><code class="language-java">Case.LOWER_CAMEL.to(Case.KEBAB, &quot;timeoutSeconds&quot;);   // timeout-seconds
+Case.UPPER_SNAKE.to(Case.KEBAB, &quot;TIMEOUT_SECONDS&quot;);  // timeout-seconds
+Case.KEBAB.to(Case.UPPER_CAMEL, &quot;http-url&quot;);         // HttpUrl
+</code></pre>
+<p>A conversion splits the text into words, then joins them in the target case, whatever the default locale. In camel
+case, a word starts at an uppercase letter after a lowercase letter or a digit, and at the last uppercase letter of a
+run followed by a lowercase letter: <code>httpURLPath</code> gives <code>http-url-path</code>, <code>ipv4Address</code> gives <code>ipv4-address</code>, and
+<code>utf8</code> stays one word. Joined in camel case, a word keeps only its first letter in uppercase, so <code>http-url</code> gives
+<code>httpUrl</code>. Text that isn't written in the case it is converted from throws <code>IllegalArgumentException</code>.</p>
+<h2 id="time">Time</h2>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html"><code>Stopwatch</code></a> measures elapsed time on a monotonic
+<a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html"><code>Ticker</code></a>, with <code>start()</code>, <code>stop()</code> and <code>reset()</code>. Its <code>toString()</code> reads like
+<code>1.234 s</code>:</p>
+<pre><code class="language-java">Stopwatch stopwatch = Stopwatch.started();
+load();
+log.log(INFO, &quot;Loaded in {0}&quot;, stopwatch);
+</code></pre>
+<p>In tests, a <a href="testing.html#gaia-core-testing"><code>FakeTicker</code></a> makes timing code exact and instant.</p>
+
+</main>
+</div>
+</body>
+</html>

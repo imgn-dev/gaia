@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maven plugin · Gaia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<a class="brand" href="index.html">Gaia</a>
+<a href="api/latest/">API</a>
+<a href="https://github.com/imgn-dev/gaia">GitHub</a>
+</header>
+<div class="layout">
+<nav aria-label="Guide">
+<ul>
+<li><a href="index.html">Gaia</a></li>
+<li><a href="core.html">Core</a></li>
+<li><a href="memfs.html">Memory file system</a></li>
+<li><a href="platform.html">Platform</a></li>
+<li><a href="processing.html">Annotation processing</a></li>
+<li><a href="testing.html">Testing</a></li>
+<li><a href="maven-plugin.html" aria-current="page">Maven plugin</a></li>
+</ul>
+</nav>
+<main>
+<h1 id="maven-plugin">Maven plugin</h1>
+<p><code>gaia-maven-plugin</code> has one goal, <code>register-services</code>, for projects that run on the module path.</p>
+<h2 id="registering-service-providers">Registering service providers</h2>
+<p>An annotation processor can list the service providers it generates in <code>META-INF/services</code>, which <code>ServiceLoader</code>
+reads on the class path. On the module path, <code>ServiceLoader</code> only finds the providers that <code>module-info.java</code> declares
+with <code>provides</code>, which a processor cannot add. The <code>register-services</code> goal adds them to the compiled
+<code>module-info.class</code>, after compilation:</p>
+<pre><code class="language-xml">&lt;plugin&gt;
+  &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
+  &lt;artifactId&gt;gaia-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;${gaia.version}&lt;/version&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;register-services&lt;/goal&gt;
+      &lt;/goals&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;
+</code></pre>
+<p>It runs in the <code>process-classes</code> phase:</p>
+<ul>
+<li>It reads every file in <code>META-INF/services</code> of the compiled classes, in the format of <code>ServiceLoader</code>: one provider
+per line, with <code>#</code> comments and blank lines ignored.</li>
+<li>For each service, the providers in its file replace those that <code>module-info.java</code> declares, if any. The <code>provides</code>
+directives of other services stay as they are.</li>
+<li>Running it again changes nothing, and it never writes to the sources.</li>
+<li>Each provider must be a class of the module, or the build fails: the JVM would refuse to start a module that
+provides a class it doesn't contain.</li>
+<li>Without <code>module-info.class</code>, it does nothing: on the class path, <code>ServiceLoader</code> reads <code>META-INF/services</code> itself.</li>
+</ul>
+<p>The module still needs a <code>uses</code> directive where it calls <code>ServiceLoader.load</code>.</p>
+<p>A processor built on <a href="processing.html#service-files"><code>gaia-processing</code></a> that relies on the goal calls
+<code>skipModuleCheck(service)</code>, so that it doesn't warn about the missing <code>provides</code> directive.</p>
+<h2 id="parameters">Parameters</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>classesDirectory</code></td>
+<td></td>
+<td><code>${project.build.outputDirectory}</code></td>
+<td>The compiled classes, with <code>module-info.class</code></td>
+</tr>
+<tr>
+<td><code>services</code></td>
+<td></td>
+<td>every file in <code>META-INF/services</code></td>
+<td>The binary names of the services to register</td>
+</tr>
+<tr>
+<td><code>skip</code></td>
+<td><code>gaia.registerServices.skip</code></td>
+<td><code>false</code></td>
+<td>Whether to skip the goal</td>
+</tr>
+</tbody>
+</table>
+<p>To register only some services:</p>
+<pre><code class="language-xml">&lt;configuration&gt;
+  &lt;services&gt;
+    &lt;service&gt;com.example.Plugin&lt;/service&gt;
+  &lt;/services&gt;
+&lt;/configuration&gt;
+</code></pre>
+<p>The plugin requires Maven 3.9.16 or later, and Java 21 or later.</p>
+
+</main>
+</div>
+</body>
+</html>

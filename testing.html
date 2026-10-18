@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testing · Gaia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<a class="brand" href="index.html">Gaia</a>
+<a href="api/latest/">API</a>
+<a href="https://github.com/imgn-dev/gaia">GitHub</a>
+</header>
+<div class="layout">
+<nav aria-label="Guide">
+<ul>
+<li><a href="index.html">Gaia</a></li>
+<li><a href="core.html">Core</a></li>
+<li><a href="memfs.html">Memory file system</a></li>
+<li><a href="platform.html">Platform</a></li>
+<li><a href="processing.html">Annotation processing</a></li>
+<li><a href="testing.html" aria-current="page">Testing</a></li>
+<li><a href="maven-plugin.html">Maven plugin</a></li>
+</ul>
+</nav>
+<main>
+<h1 id="testing">Testing</h1>
+<p>Each library has a testing library, for the tests of the code that uses it. Declare them in the test scope:</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
+  &lt;artifactId&gt;gaia-platform-testing&lt;/artifactId&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>The testing libraries work with any test framework, and their assertions are AssertJ assertions.
+<code>gaia-processing-testing</code> also has a JUnit extension.</p>
+<p>For code that works on files, the <a href="memfs.html">memory file system</a> gives each test a file system of its own.</p>
+<h2 id="gaia-core-testing">gaia-core-testing</h2>
+<p><a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html"><code>FakeTicker</code></a> is a <code>Ticker</code> that only moves when told to, so that tests of
+timing code are exact and instant:</p>
+<pre><code class="language-java">FakeTicker ticker = new FakeTicker();
+Stopwatch stopwatch = Stopwatch.started(ticker);
+ticker.advance(Duration.ofSeconds(2));
+assertThat(stopwatch.elapsed()).isEqualTo(Duration.ofSeconds(2));
+</code></pre>
+<h2 id="gaia-platform-testing">gaia-platform-testing</h2>
+<p>Code that receives a <a href="platform.html"><code>Platform</code></a> can be tested on any operating system, whatever the one the tests run
+on, in two ways.</p>
+<p><a href="api/latest/be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakePlatform.html"><code>FakePlatform</code></a> has the operating system of your choice and its
+directories under a root directory, such as a test's temporary directory, so the real ones are never touched:</p>
+<pre><code class="language-java">Platform platform = FakePlatform.newBuilder(OperatingSystem.WINDOWS, temporaryDirectory).build();
+</code></pre>
+<p>Its directories are a <a href="api/latest/be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/FakeDirectories.html"><code>FakeDirectories</code></a> unless others are
+given; its builder sets each directory on its own.</p>
+<p><a href="api/latest/be.imgn.gaia.platform.testing/be/imgn/gaia/platform/testing/PlatformPreset.html"><code>PlatformPreset</code></a> instead runs the real detection of the
+directories of an operating system, from the system properties and environment variables a JVM typically has there:</p>
+<pre><code class="language-java">PlatformPreset windows = PlatformPreset.newBuilder(OperatingSystem.WINDOWS).userName(&quot;alice&quot;).build();
+Platform platform = Platform.newBuilder()
+        .systemProperties(windows.systemProperties())
+        .environment(windows.environment())
+        .fileSystem(fileSystem)
+        .detect();
+</code></pre>
+<p>Its builder changes the user name and home directory, sets the XDG variables, and adds or removes system properties
+and environment variables.</p>
+<h2 id="gaia-processing-testing">gaia-processing-testing</h2>
+<p><a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/TestCompiler.html"><code>TestCompiler</code></a> compiles in-memory sources with javac, in process,
+running the given annotation processors, and returns a
+<a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/Compilation.html"><code>Compilation</code></a> with the diagnostics and the generated files:</p>
+<pre><code class="language-java">Compilation compilation = TestCompiler.javac()
+        .withProcessors(new MapperProcessor())
+        .withOptions(&quot;-Xlint:all,-processing&quot;, &quot;-Werror&quot;)
+        .compile(TestCompiler.source(&quot;example.Foo&quot;, &quot;&quot;&quot;
+                package example;
+
+                @Mapper(target = Bar.class)
+                interface Foo {}
+                &quot;&quot;&quot;));
+</code></pre>
+<p><a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationAssert.html"><code>CompilationAssert</code></a> asserts on it:</p>
+<pre><code class="language-java">assertThat(compilation).succeeded().hadNoWarnings();
+assertThat(compilation).hadErrorContaining(&quot;must be a class&quot;).inFile(&quot;example/Foo.java&quot;).onLine(3);
+</code></pre>
+<p><a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/ProcessorAssert.html"><code>ProcessorAssert</code></a> checks that javac can find a processor,
+through <code>META-INF/services</code> or <code>module-info.java</code>: <code>assertThat(MapperProcessor.class).isRegistered()</code>.</p>
+<p><a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationExtension.html"><code>CompilationExtension</code></a> gives JUnit tests the <code>Elements</code>
+and <code>Types</code> of a running compilation, to test code that works on <code>javax.lang.model</code> without writing a processor
+around it:</p>
+<pre><code class="language-java">@ExtendWith(CompilationExtension.class)
+class TypesTest {
+    @Test
+    void stringIsACharSequence(Elements elements, Types types) {
+        TypeMirror string = elements.getTypeElement(&quot;java.lang.String&quot;).asType();
+        TypeMirror charSequence = elements.getTypeElement(&quot;java.lang.CharSequence&quot;).asType();
+        assertThat(types.isAssignable(string, charSequence)).isTrue();
+    }
+}
+</code></pre>
+<p>Each test gets its own compilation, unless the class is annotated with
+<a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/SharedCompilation.html"><code>@SharedCompilation</code></a>.</p>
+
+</main>
+</div>
+</body>
+</html>

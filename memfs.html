@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory file system · Gaia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<a class="brand" href="index.html">Gaia</a>
+<a href="api/latest/">API</a>
+<a href="https://github.com/imgn-dev/gaia">GitHub</a>
+</header>
+<div class="layout">
+<nav aria-label="Guide">
+<ul>
+<li><a href="index.html">Gaia</a></li>
+<li><a href="core.html">Core</a></li>
+<li><a href="memfs.html" aria-current="page">Memory file system</a></li>
+<li><a href="platform.html">Platform</a></li>
+<li><a href="processing.html">Annotation processing</a></li>
+<li><a href="testing.html">Testing</a></li>
+<li><a href="maven-plugin.html">Maven plugin</a></li>
+</ul>
+</nav>
+<main>
+<h1 id="memory-file-system">Memory file system</h1>
+<p><code>gaia-memfs</code> is a file system that lives in memory until it is closed, for tests or scratch work. It supports the
+whole <code>java.nio.file</code> API, so code written against <code>Path</code> and <code>Files</code> runs on it unchanged.</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
+  &lt;artifactId&gt;gaia-memfs&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="creating-a-file-system">Creating a file system</h2>
+<p><a href="api/latest/be.imgn.gaia.memfs/be/imgn/gaia/memfs/MemoryFileSystems.html"><code>MemoryFileSystems</code></a> creates file systems. Their files are gone once they
+are closed:</p>
+<pre><code class="language-java">try (FileSystem fileSystem = MemoryFileSystems.newFileSystem()) {
+    Path file = fileSystem.getPath(&quot;/work/hello.txt&quot;);
+    Files.createDirectories(file.getParent());
+    Files.writeString(file, &quot;Hello&quot;);
+}
+</code></pre>
+<p>Each file system has a name, unique unless given, and its paths have URIs of the <code>mem</code> scheme with that name:
+<code>mem://test/work/hello.txt</code> for the path <code>/work/hello.txt</code> of the file system <code>test</code>, or
+<code>mem://test/C:/work/hello.txt</code> for <code>C:\work\hello.txt</code> on a Windows-style one. While the file system is open,
+<code>Path.of(uri)</code> finds its paths from such URIs, and <code>FileSystems.getFileSystem(URI.create(&quot;mem://test&quot;))</code> finds it.
+<code>FileSystems.newFileSystem(URI.create(&quot;mem://test&quot;), env)</code> creates one too, given its configuration under the key
+<code>&quot;configuration&quot;</code>.</p>
+<p>Everything is supported, except <code>Path.toFile()</code> and <code>FileChannel.map()</code>, which can't work on files in memory:</p>
+<ul>
+<li>byte channels, file channels with locks, and asynchronous file channels;</li>
+<li>symbolic and hard links;</li>
+<li>secure directory streams;</li>
+<li>the <code>basic</code>, <code>owner</code>, <code>posix</code>, <code>unix</code>, <code>dos</code>, <code>acl</code> and <code>user</code> attribute views;</li>
+<li>glob and regex path matchers;</li>
+<li>a watch service, which polls for changes.</li>
+</ul>
+<p>The file systems are thread-safe.</p>
+<h2 id="configuration">Configuration</h2>
+<p>A <a href="api/latest/be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html"><code>Configuration</code></a> sets how a file system behaves. Three presets look like
+real systems:</p>
+<table>
+<thead>
+<tr>
+<th>Preset</th>
+<th>Root</th>
+<th>Working directory</th>
+<th>Names</th>
+<th>Attribute views</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unix()</code></td>
+<td><code>/</code></td>
+<td><code>/work</code></td>
+<td>matched exactly</td>
+<td><code>basic</code>, <code>owner</code>, <code>posix</code>, <code>unix</code></td>
+</tr>
+<tr>
+<td><code>macOS()</code></td>
+<td><code>/</code></td>
+<td><code>/work</code></td>
+<td>case ignored, Unicode normalized to NFD</td>
+<td><code>basic</code>, <code>owner</code>, <code>posix</code>, <code>unix</code></td>
+</tr>
+<tr>
+<td><code>windows()</code></td>
+<td><code>C:\</code></td>
+<td><code>C:\work</code></td>
+<td>case ignored</td>
+<td><code>basic</code>, <code>owner</code>, <code>dos</code>, <code>acl</code>, <code>user</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>forCurrentPlatform()</code> picks the one that looks like the operating system the JVM runs on.</p>
+<p><code>toBuilder()</code> changes a configuration, and <code>newBuilder(PathStyle)</code> starts one from scratch:</p>
+<pre><code class="language-java">Configuration small = Configuration.windows().toBuilder()
+        .roots(&quot;C:\\&quot;, &quot;D:\\&quot;)
+        .maxSize(16 * 1024 * 1024)
+        .currentUser(&quot;alice&quot;, &quot;staff&quot;)
+        .build();
+FileSystem fileSystem = MemoryFileSystems.newFileSystem(small);
+</code></pre>
+<p>The builder sets:</p>
+<ul>
+<li>the roots: drives and UNC shares on Windows;</li>
+<li>the working directory, which relative paths are resolved against;</li>
+<li>the block size and the capacity, which fill as files grow (8 KiB and 4 GiB unless set);</li>
+<li>how names are matched (<a href="api/latest/be.imgn.gaia.memfs/be/imgn/gaia/memfs/NameMatching.html"><code>NameMatching</code></a>), their Unicode normalization, and
+their maximum length;</li>
+<li>the attribute views and the default attributes of new files;</li>
+<li>the clock that file times are taken from;</li>
+<li>the polling interval of the watch service;</li>
+<li>the optional <a href="api/latest/be.imgn.gaia.memfs/be/imgn/gaia/memfs/Feature.html"><code>Feature</code></a>s: hard links, symbolic links, secure directory streams and
+file channels.</li>
+</ul>
+<h2 id="permissions">Permissions</h2>
+<p>Permissions are always stored. They are enforced only when a current user is configured, with
+<code>currentUser(&quot;alice&quot;, &quot;staff&quot;)</code>: then the POSIX permissions of the <code>posix</code> view, the read-only flag of the <code>dos</code> view
+and the entries of a non-empty access control list of the <code>acl</code> view are checked against that user and their groups,
+and a denied operation throws <code>AccessDeniedException</code>. The user <code>root</code> is never denied.</p>
+
+</main>
+</div>
+</body>
+</html>

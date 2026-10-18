@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Annotation processing · Gaia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<a class="brand" href="index.html">Gaia</a>
+<a href="api/latest/">API</a>
+<a href="https://github.com/imgn-dev/gaia">GitHub</a>
+</header>
+<div class="layout">
+<nav aria-label="Guide">
+<ul>
+<li><a href="index.html">Gaia</a></li>
+<li><a href="core.html">Core</a></li>
+<li><a href="memfs.html">Memory file system</a></li>
+<li><a href="platform.html">Platform</a></li>
+<li><a href="processing.html" aria-current="page">Annotation processing</a></li>
+<li><a href="testing.html">Testing</a></li>
+<li><a href="maven-plugin.html">Maven plugin</a></li>
+</ul>
+</nav>
+<main>
+<h1 id="annotation-processing">Annotation processing</h1>
+<p><code>gaia-processing</code> is for writing annotation processors: it handles the rounds, reads annotations, reports errors,
+generates code and registers services.</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
+  &lt;artifactId&gt;gaia-processing&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="steps">Steps</h2>
+<p>A <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/StepProcessor.html"><code>StepProcessor</code></a> is a list of <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html"><code>Step</code></a>s,
+each processing the elements annotated with some annotations, or with any annotation that carries one of its
+<code>metaAnnotations()</code>:</p>
+<pre><code class="language-java">public final class MapperProcessor extends StepProcessor {
+    @Override
+    protected List&lt;Step&gt; steps(ProcessingContext context) {
+        return List.of(new MapperStep(context));
+    }
+}
+
+final class MapperStep implements Step {
+    private final ProcessingContext context;
+
+    MapperStep(ProcessingContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public Set&lt;String&gt; annotations() {
+        return Set.of(&quot;com.example.Mapper&quot;);
+    }
+
+    @Override
+    public Set&lt;? extends Element&gt; process(AnnotatedElements elements) {
+        for (Element mapper : elements.annotatedWith(&quot;com.example.Mapper&quot;)) {
+            AnnotationReader annotation = context.annotation(mapper, &quot;com.example.Mapper&quot;).orElseThrow();
+            TypeMirror target = annotation.type(&quot;target&quot;);
+            if (target.getKind() != TypeKind.DECLARED) {
+                context.diagnostics().on(mapper).annotation(&quot;com.example.Mapper&quot;).attribute(&quot;target&quot;)
+                        .error(&quot;must be a class or an interface&quot;);
+            }
+            // generate the mapper
+        }
+        return Set.of();
+    }
+}
+</code></pre>
+<p>Rounds are handled for you. An element whose types another processor has yet to generate is held back until they
+exist, and reported as an error if they never do. A step can also hand elements back for the next round, by returning
+them, and finish in <code>processingOver()</code> once all rounds are done.</p>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotatedElements.html"><code>AnnotatedElements</code></a> are the elements a step gets in a round, by
+annotation and by meta-annotation. <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html"><code>ProcessingContext</code></a> is everything
+a step works with: elements, types, the filer, options, and the helpers below.</p>
+<p>With <code>-Agaia.debug</code>, every step processor notes what each step did in each round, and how long it took, naming each
+step by its <code>name()</code>.</p>
+<h2 id="reading-annotations">Reading annotations</h2>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html"><code>AnnotationReader</code></a> reads annotation values with their types, defaults
+included. <code>Class</code> values come back as types, without <code>MirroredTypeException</code>. The context finds annotations with
+repeated annotations unwrapped from their container, by meta-annotation (such as qualifiers), or inherited through
+<code>@Inherited</code>.</p>
+<h2 id="reporting-errors">Reporting errors</h2>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/Diagnostics.html"><code>Diagnostics</code></a> reports errors, warnings and notes on an element, one of its
+annotations, or one attribute of it, and counts the errors. A step can also throw a
+<a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingException.html"><code>ProcessingException</code></a>, reported as an error before processing goes
+on with the next element (<code>context.forEach(...)</code>) or the next step.</p>
+<h2 id="options">Options</h2>
+<p>A <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessorOption.html"><code>ProcessorOption</code></a> is a typed processor option (<code>-Aname=value</code>) with
+a default: text, boolean, integer or enum. Declare the options in <code>StepProcessor.options()</code> and read them with
+<code>context.option(...)</code>. An invalid value is reported as an error.</p>
+<h2 id="generating-code">Generating code</h2>
+<p>The <code>source</code> package models code: <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html"><code>Type</code></a> (classes, interfaces, enums,
+records, annotation types, sealed hierarchies, anonymous classes), <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html"><code>Method</code></a>,
+<a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.html"><code>Field</code></a>, <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/Parameter.html"><code>Parameter</code></a>,
+<a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html"><code>Annotation</code></a> and
+<a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.html"><code>CodeBlock</code></a>, with type names as
+<a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeName.html"><code>TypeName</code></a>s, type annotations such as <code>@Nullable</code> included:</p>
+<pre><code class="language-java">Type point = Type.newRecordBuilder(&quot;Point&quot;)
+        .addModifiers(Modifier.PUBLIC)
+        .addRecordComponent(int.class, &quot;x&quot;)
+        .addRecordComponent(int.class, &quot;y&quot;)
+        .addMethod(Method.newCompactConstructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .beginControlFlow(&quot;if (x &lt; 0 || y &lt; 0)&quot;)
+                .addStatement(&quot;throw new $T($S)&quot;, IllegalArgumentException.class, &quot;negative&quot;)
+                .endControlFlow()
+                .build())
+        .build();
+context.sources().write(JavaFile.newBuilder(&quot;com.example&quot;, point).build(), originatingElement);
+</code></pre>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html"><code>JavaFile</code></a> writes the code with the imports worked out, qualifying
+names only where they would clash, including with the member types a supertype brings. It uses static imports, wraps
+long lines at <code>$W</code>, and indents multi-line statements. Outside a processor, <code>writeTo(directory)</code> writes it under a
+source root.</p>
+<ul>
+<li><code>Method.overriding(...)</code> starts an override from an element.</li>
+<li><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/NameAllocator.html"><code>NameAllocator</code></a> hands out identifiers that don't clash.</li>
+<li><code>TypeName.of(...)</code> names a <code>Class</code>, a <code>TypeMirror</code> or a generic <code>java.lang.reflect.Type</code>.</li>
+</ul>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html"><code>GeneratedSources</code></a> writes the generated files, as a <code>JavaFile</code> or as
+text:</p>
+<ul>
+<li>It adds <code>@Generated</code> only where the generated code can see it, so a module that doesn't read <code>java.compiler</code> still
+compiles.</li>
+<li>It qualifies the <code>java.lang</code> types that a type of the same package hides.</li>
+<li>Writing the same file twice returns <code>false</code> instead of failing.</li>
+<li>Files are written in ASCII, other characters as Unicode escapes, so they compile the same under any <code>-encoding</code>.</li>
+</ul>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html"><code>ClassName</code></a><code>.generatedNameWithSuffix(&quot;Mapper&quot;)</code> names a generated
+type after its source type, as <code>Outer_Inner_Mapper</code> (<code>generatedNameWithPrefix(&quot;Generated&quot;)</code> gives
+<code>Generated_Outer_Inner</code>), and <code>isAvailable(name)</code> tells whether a type has that name already.</p>
+<h2 id="service-files">Service files</h2>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/ServiceFiles.html"><code>ServiceFiles</code></a> registers generated service providers:
+<code>context.services().add(service, implementation)</code> collects <code>META-INF/services</code> entries over all rounds. They are
+checked, merged with the file already in the class output (minus classes that no longer exist), and written after the
+last round. <code>discard(service)</code> withdraws a service's entries, so that its file isn't written.</p>
+<p>On the module path, a provider must also be declared in <code>module-info.java</code>, which a processor cannot write. The
+<a href="maven-plugin.html">Maven plugin</a> adds the <code>provides</code> directives after compilation; a processor that relies on it calls
+<code>skipModuleCheck(service)</code>, which silences the warning about the missing directive.</p>
+<h2 id="types-and-elements">Types and elements</h2>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html"><code>MoreTypes</code></a>, <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html"><code>MoreElements</code></a> and
+<a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/TypeKey.html"><code>TypeKey</code></a>:</p>
+<ul>
+<li>check a type against a class or a name;</li>
+<li>navigate to an element's package or enclosing type;</li>
+<li>cast an element or a type, with a clear error if it is of another kind;</li>
+<li>tell inner classes from static nested ones;</li>
+<li>tell whether generated code can access an element: its <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/Visibility.html"><code>Visibility</code></a>,
+protected access from a subclass, and module exports;</li>
+<li>use types as keys in sets and maps.</li>
+</ul>
+<p>The context works with types too:</p>
+<ul>
+<li><code>context.type(List.class, String.class)</code> builds <code>List&lt;String&gt;</code>.</li>
+<li><code>context.isSameType(...)</code> compares types, ignoring type annotations such as <code>@Nullable</code>.</li>
+<li><code>context.isSubtype(type, List.class)</code> checks subtypes, ignoring type arguments, and
+<code>context.asSupertype(type, List.class)</code> gives the supertype with the type arguments the hierarchy gives it, such as
+<code>List&lt;String&gt;</code>.</li>
+<li><code>context.superclass(type)</code> gives the direct superclass with its type arguments, leaving out <code>Object</code>.</li>
+<li><code>context.asMemberOf(type, variable)</code> gives a field or a parameter the type it has as a member of a type.</li>
+<li><code>context.methods(type)</code> lists a type's methods as the compiler sees them, inherited ones included, and
+<code>context.abstractMethods(type)</code> the ones an implementation still has to write.</li>
+<li><code>context.isFromSource(element)</code> tells code compiled from this compilation's sources, generated ones included, from
+code compiled before.</li>
+</ul>
+<p><code>MoreElements.firstUnresolvedType(element)</code> names a type javac could not resolve in an element's signature, and
+<code>MoreTypes.isCastFromObjectUnchecked(type)</code> tells whether generated code casting to a type needs a reason it is safe.</p>
+<h2 id="using-a-processor">Using a processor</h2>
+<p>The applications that use a processor put it on their annotation processor path, not their class path, so
+<code>gaia-processing</code> runs inside javac and never ships with them:</p>
+<pre><code class="language-xml">&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+  &lt;configuration&gt;
+    &lt;annotationProcessorPaths&gt;
+      &lt;path&gt;
+        &lt;groupId&gt;com.example&lt;/groupId&gt;
+        &lt;artifactId&gt;example-processor&lt;/artifactId&gt;
+        &lt;version&gt;1.0.0&lt;/version&gt;
+      &lt;/path&gt;
+    &lt;/annotationProcessorPaths&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre>
+<p>Since <code>maven-compiler-plugin</code> 3.12.0, the version can come from <code>dependencyManagement</code> instead of being repeated:
+add <code>&lt;annotationProcessorPathsUseDepMgmt&gt;true&lt;/annotationProcessorPathsUseDepMgmt&gt;</code> to the configuration and leave
+out <code>&lt;version&gt;</code>. Declare the processor path explicitly rather than relying on processors found on the class path:
+since JDK 23, javac no longer runs those unless asked to with <code>-proc:full</code>.</p>
+<p>The processor itself registers so that javac finds it: list it in
+<code>META-INF/services/javax.annotation.processing.Processor</code>, and on the module path also declare
+<code>provides javax.annotation.processing.Processor with com.example.MapperProcessor;</code> in <code>module-info.java</code>.</p>
+<p>Its tests compile sources through it with <a href="testing.html#gaia-processing-testing"><code>gaia-processing-testing</code></a>.</p>
+
+</main>
+</div>
+</body>
+</html>
