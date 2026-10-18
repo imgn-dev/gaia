@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import be.imgn.gaia.core.base.Charsets;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FilterReader;
@@ -168,6 +169,15 @@ class CharSourceTest {
     }
 
     @Test
+    void readsATextFileInTheDefaultCharset() throws IOException {
+        var file = Files.writeString(directory.resolve("text"), "café ✓", Charsets.DEFAULT_CHARSET);
+
+        assertThat(CharSource.of(file).read()).isEqualTo("café ✓");
+        assertThat(CharSource.of(file.toUri().toURL()).read()).isEqualTo("café ✓");
+        assertThat(CharSource.of(file.toUri()).read()).isEqualTo("café ✓");
+    }
+
+    @Test
     void rejectsAUriThatIsNotAUrl() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> CharSource.of(URI.create("relative/path"), StandardCharsets.UTF_8));
@@ -218,6 +228,13 @@ class CharSourceTest {
         var source = CharSource.wrap("café ✓ 😀").asByteSource(StandardCharsets.UTF_8);
 
         assertThat(source.read()).isEqualTo("café ✓ 😀".getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void encodesCharactersInTheDefaultCharset() throws IOException {
+        var source = CharSource.wrap("café ✓ 😀").asByteSource();
+
+        assertThat(source.read()).isEqualTo("café ✓ 😀".getBytes(Charsets.DEFAULT_CHARSET));
     }
 
     @Test

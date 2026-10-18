@@ -3,6 +3,7 @@ package be.imgn.gaia.core.io;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.OpenOptions;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -92,6 +93,19 @@ public interface ByteSink {
         try (var out = openStream()) {
             return in.transferTo(out);
         }
+    }
+
+    /**
+     * Returns a sink that writes characters to this one, encoded in the {@linkplain Charsets#DEFAULT_CHARSET current
+     * default charset}. Writing to it fails with a {@link java.nio.charset.CharacterCodingException} on characters that
+     * charset cannot encode, or on a malformed surrogate pair, rather than replace them.
+     *
+     * @return a sink of characters
+     * @see #asCharSink(Charset)
+     * @since 0.1.2
+     */
+    default CharSink asCharSink() {
+        return asCharSink(Charsets.DEFAULT_CHARSET);
     }
 
     /**

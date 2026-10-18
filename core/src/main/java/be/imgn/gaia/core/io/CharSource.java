@@ -3,6 +3,7 @@ package be.imgn.gaia.core.io;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.CharSequenceSource;
 import be.imgn.gaia.core.io.internal.ConcatenatedCharSource;
 import be.imgn.gaia.core.io.internal.EncodingInputStream;
@@ -71,6 +72,20 @@ public interface CharSource {
     }
 
     /**
+     * Returns a source that reads a text file encoded in the {@linkplain Charsets#DEFAULT_CHARSET current default
+     * charset}.
+     *
+     * @param file the file to read
+     * @param options how to open the file, as for {@link java.nio.file.Files#newInputStream(Path, OpenOption...)}
+     * @return a source of the content of {@code file}
+     * @see #of(Path, Charset, OpenOption...)
+     * @since 0.1.2
+     */
+    static CharSource of(Path file, OpenOption... options) {
+        return of(file, Charsets.DEFAULT_CHARSET, options);
+    }
+
+    /**
      * Returns a source that reads a text file.
      *
      * @param file the file to read
@@ -84,6 +99,19 @@ public interface CharSource {
     }
 
     /**
+     * Returns a source that reads the text a URL points to, such as a resource from {@link Class#getResource(String)},
+     * encoded in the {@linkplain Charsets#DEFAULT_CHARSET current default charset}.
+     *
+     * @param url the URL to read
+     * @return a source of the content at {@code url}
+     * @see #of(URL, Charset)
+     * @since 0.1.2
+     */
+    static CharSource of(URL url) {
+        return of(url, Charsets.DEFAULT_CHARSET);
+    }
+
+    /**
      * Returns a source that reads the text a URL points to, such as a resource from {@link Class#getResource(String)}.
      *
      * @param url the URL to read
@@ -93,6 +121,20 @@ public interface CharSource {
      */
     static CharSource of(URL url, Charset charset) {
         return ByteSource.of(url).asCharSource(charset);
+    }
+
+    /**
+     * Returns a source that reads the text a URI points to, through the URL it converts to, encoded in the
+     * {@linkplain Charsets#DEFAULT_CHARSET current default charset}.
+     *
+     * @param uri the URI to read
+     * @return a source of the content at {@code uri}
+     * @throws IllegalArgumentException if {@code uri} is not absolute, or has a scheme no URL protocol handler supports
+     * @see #of(URI, Charset)
+     * @since 0.1.2
+     */
+    static CharSource of(URI uri) {
+        return of(uri, Charsets.DEFAULT_CHARSET);
     }
 
     /**
@@ -294,6 +336,19 @@ public interface CharSource {
                 var out = sink.openStream()) {
             return in.transferTo(out);
         }
+    }
+
+    /**
+     * Returns a source of the bytes that encode these characters in the {@linkplain Charsets#DEFAULT_CHARSET current
+     * default charset}. Reading it fails with a {@link java.nio.charset.CharacterCodingException} on characters that
+     * charset cannot encode, or on a malformed surrogate pair, rather than replace them.
+     *
+     * @return a source of the encoded bytes
+     * @see #asByteSource(Charset)
+     * @since 0.1.2
+     */
+    default ByteSource asByteSource() {
+        return asByteSource(Charsets.DEFAULT_CHARSET);
     }
 
     /**

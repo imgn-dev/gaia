@@ -3,6 +3,7 @@ package be.imgn.gaia.core.io;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Charsets;
 import java.io.BufferedOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -12,7 +13,6 @@ import java.nio.CharBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemException;
@@ -100,17 +100,19 @@ public final class AtomicFiles {
     }
 
     /**
-     * Writes text to a file atomically in UTF-8, creating it or replacing its content.
+     * Writes text to a file atomically in the {@linkplain Charsets#DEFAULT_CHARSET current default charset}, creating
+     * it or replacing its content.
      *
      * @param file the file to write
      * @param text the new content of the file
      * @throws IOException if the file cannot be written, which leaves it as it was
-     * @throws java.nio.charset.CharacterCodingException if the text contains a malformed surrogate pair
+     * @throws java.nio.charset.CharacterCodingException if the text contains a character that charset cannot encode, or
+     *     a malformed surrogate pair
      */
     public static void writeString(Path file, CharSequence text) throws IOException {
         requireNonNull(file, "file");
         requireNonNull(text, "text");
-        writeString(file, text, StandardCharsets.UTF_8);
+        writeString(file, text, Charsets.DEFAULT_CHARSET);
     }
 
     /**

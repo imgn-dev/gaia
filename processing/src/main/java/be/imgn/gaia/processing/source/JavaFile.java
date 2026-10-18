@@ -3,12 +3,12 @@ package be.imgn.gaia.processing.source;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.processing.internal.UnicodeEscapes;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -162,7 +162,8 @@ public final class JavaFile {
 
     /**
      * Writes the file under a source root, as {@code <directory>/com/example/Foo.java} for {@code com.example.Foo}, in
-     * UTF-8. The folders of the package are created as needed, and an existing file is replaced.
+     * the {@linkplain Charsets#DEFAULT_CHARSET current default charset}. The folders of the package are created as
+     * needed, and an existing file is replaced.
      *
      * <p>The file cannot tell which types its package declares, so a type of {@code java.lang} that one of them hides,
      * such as {@code Override} next to a {@code com.example.Override} the file does not refer to, is written by its
@@ -174,7 +175,7 @@ public final class JavaFile {
      */
     public Path writeTo(Path directory) throws IOException {
         requireNonNull(directory, "directory");
-        return writeTo(directory, StandardCharsets.UTF_8);
+        return writeTo(directory, Charsets.DEFAULT_CHARSET);
     }
 
     /**

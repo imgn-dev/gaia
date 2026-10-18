@@ -2,6 +2,7 @@ package be.imgn.gaia.core.io;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.DecodingOutputStream;
 import be.imgn.gaia.core.io.internal.Streams;
 import java.io.BufferedWriter;
@@ -31,6 +32,21 @@ import java.util.stream.Stream;
  */
 @FunctionalInterface
 public interface CharSink {
+
+    /**
+     * Returns a sink that writes a text file in the {@linkplain Charsets#DEFAULT_CHARSET current default charset}. By
+     * default, each write creates the file or replaces its content, but it is not atomic: see {@link AtomicFiles} for
+     * that.
+     *
+     * @param file the file to write
+     * @param options how to open the file, as for {@link java.nio.file.Files#newOutputStream(Path, OpenOption...)}
+     * @return a sink that writes {@code file}
+     * @see #of(Path, Charset, OpenOption...)
+     * @since 0.1.2
+     */
+    static CharSink of(Path file, OpenOption... options) {
+        return of(file, Charsets.DEFAULT_CHARSET, options);
+    }
 
     /**
      * Returns a sink that writes a text file. By default, each write creates the file or replaces its content, but it
@@ -157,6 +173,20 @@ public interface CharSink {
         try (var out = openStream()) {
             return Streams.copy(readable, out);
         }
+    }
+
+    /**
+     * Returns a sink that writes bytes to this one, decoded from the {@linkplain Charsets#DEFAULT_CHARSET current
+     * default charset}. Writing to it fails with a {@link java.nio.charset.CharacterCodingException} on bytes that are
+     * not valid in that charset, rather than replace them. Bytes that end in the middle of a character are reported
+     * when the stream is closed.
+     *
+     * @return a sink of bytes
+     * @see #asByteSink(Charset)
+     * @since 0.1.2
+     */
+    default ByteSink asByteSink() {
+        return asByteSink(Charsets.DEFAULT_CHARSET);
     }
 
     /**

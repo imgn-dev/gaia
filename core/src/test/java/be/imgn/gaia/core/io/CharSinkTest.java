@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import be.imgn.gaia.core.base.Charsets;
 import java.io.BufferedWriter;
 import java.io.FilterWriter;
 import java.io.IOException;
@@ -111,6 +112,24 @@ class CharSinkTest {
     }
 
     @Test
+    void writesATextFileInTheDefaultCharset() throws IOException {
+        var file = Files.writeString(directory.resolve("text"), "previous content");
+
+        CharSink.of(file).write("café ✓");
+
+        assertThat(file).hasBinaryContent("café ✓".getBytes(Charsets.DEFAULT_CHARSET));
+    }
+
+    @Test
+    void appendsToATextFileInTheDefaultCharset() throws IOException {
+        var file = Files.writeString(directory.resolve("text"), "a", Charsets.DEFAULT_CHARSET);
+
+        CharSink.of(file, StandardOpenOption.APPEND).write("✓");
+
+        assertThat(file).hasBinaryContent("a✓".getBytes(Charsets.DEFAULT_CHARSET));
+    }
+
+    @Test
     void appendsToATextFile() throws IOException {
         var file = Files.writeString(directory.resolve("text"), "a");
 
@@ -124,6 +143,16 @@ class CharSinkTest {
         var sink = new TrackedSink();
 
         sink.asByteSink(StandardCharsets.UTF_8).write("café ✓ 😀".getBytes(StandardCharsets.UTF_8));
+
+        assertThat(sink.out).hasToString("café ✓ 😀");
+        assertThat(sink.closed).isEqualTo(1);
+    }
+
+    @Test
+    void decodesBytesInTheDefaultCharset() throws IOException {
+        var sink = new TrackedSink();
+
+        sink.asByteSink().write("café ✓ 😀".getBytes(Charsets.DEFAULT_CHARSET));
 
         assertThat(sink.out).hasToString("café ✓ 😀");
         assertThat(sink.closed).isEqualTo(1);

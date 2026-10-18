@@ -2,6 +2,7 @@ package be.imgn.gaia.core.io;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.ByteArraySource;
 import be.imgn.gaia.core.io.internal.ConcatenatedByteSource;
 import be.imgn.gaia.core.io.internal.PathSource;
@@ -260,6 +261,19 @@ public interface ByteSource {
                     "The offset and length must not be negative: offset " + offset + ", length " + length);
         }
         return new SlicedByteSource(this, offset, length);
+    }
+
+    /**
+     * Returns a source of the characters these bytes encode in the {@linkplain Charsets#DEFAULT_CHARSET current default
+     * charset}. Reading it fails with a {@link java.nio.charset.CharacterCodingException} on bytes that are not valid
+     * in that charset, rather than replace them.
+     *
+     * @return a source of the decoded characters
+     * @see #asCharSource(Charset)
+     * @since 0.1.2
+     */
+    default CharSource asCharSource() {
+        return asCharSource(Charsets.DEFAULT_CHARSET);
     }
 
     /**

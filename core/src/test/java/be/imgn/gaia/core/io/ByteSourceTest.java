@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import be.imgn.gaia.core.base.Charsets;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -317,6 +318,13 @@ class ByteSourceTest {
         var source = ByteSource.wrap("café ✓".getBytes(StandardCharsets.UTF_8));
 
         assertThat(source.asCharSource(StandardCharsets.UTF_8).read()).isEqualTo("café ✓");
+    }
+
+    @Test
+    void decodesCharactersInTheDefaultCharset() throws IOException {
+        var source = ByteSource.wrap("café ✓".getBytes(Charsets.DEFAULT_CHARSET));
+
+        assertThat(source.asCharSource().read()).isEqualTo("café ✓");
     }
 
     @Test

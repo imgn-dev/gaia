@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import be.imgn.gaia.core.base.Charsets;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -90,6 +91,16 @@ class ByteSinkTest {
         sink.asCharSink(StandardCharsets.UTF_8).write("café ✓");
 
         assertThat(sink.out.toByteArray()).isEqualTo("café ✓".getBytes(StandardCharsets.UTF_8));
+        assertThat(sink.closed).isEqualTo(1);
+    }
+
+    @Test
+    void encodesCharactersInTheDefaultCharset() throws IOException {
+        var sink = new TrackedSink();
+
+        sink.asCharSink().write("café ✓");
+
+        assertThat(sink.out.toByteArray()).isEqualTo("café ✓".getBytes(Charsets.DEFAULT_CHARSET));
         assertThat(sink.closed).isEqualTo(1);
     }
 
