@@ -43,6 +43,9 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   in a set, without duplicates. `HashListMultimap.create()` and `HashSetMultimap.create()` are backed by a hash map.
   `Multimaps.listMultimapCopy(...)`, `setMultimapCopy(...)` and the `toListMultimap(...)` and `toSetMultimap(...)`
   collectors make unmodifiable multimaps that iterate in the order their keys first appear.
+- **`collect.Range`**: an interval of comparable values, such as `Range.closedOpen(0, 10)`, with `contains`,
+  `encloses`, `isConnected`, `intersection` and `span`. Its bounds are closed, open or unbounded, as a sealed
+  `Range.Bound` that `switch` can match.
 - **`collect.MoreCollectors`**: `onlyElement()` collects the only element of a stream, and `toOptional()` collects
   zero or one element.
 - **`collect.MoreGatherers`** (Java 24+): gatherers the JDK lacks. `instanceOf(type)` keeps the elements of a type,

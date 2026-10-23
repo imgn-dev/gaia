@@ -68,6 +68,20 @@ ListMultimap<Character, String> byInitial = Stream.of("bob", "alice", "bill")
 byInitial.get('b'); // [bob, bill]
 ```
 
+A [`Range`](api:be.imgn.gaia.core.collect.Range) is an interval of comparable values. `closed`, `open`, `closedOpen`,
+`openClosed`, `atLeast`, `greaterThan`, `atMost`, `lessThan` and `all` make one, and `contains`, `encloses`,
+`isConnected`, `intersection` and `span` compare it with values and other ranges:
+
+```java
+Range<Integer> digits = Range.closedOpen(0, 10);
+digits.contains(9);                       // true
+digits.intersection(Range.atLeast(5));    // Optional[[5, 10)]
+digits.span(Range.closed(20, 30));        // [0, 30]
+```
+
+Its `lower()` and `upper()` bounds are a sealed [`Range.Bound`](api:be.imgn.gaia.core.collect.Range.Bound): `Closed`,
+`Open` or `Unbounded`, which a `switch` can match.
+
 [`MoreCollectors`](api:be.imgn.gaia.core.collect.MoreCollectors) has `onlyElement()`, which collects the only element
 of a stream, and `toOptional()`, which collects zero or one element.
 
