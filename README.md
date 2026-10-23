@@ -37,6 +37,12 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   a hash map. `TreeMultiset.create()` keeps its elements sorted, as a `SortedMultiset` with first, last and nearest
   entries, live range views and a `reversed()` view. `Multisets.multiset(...)`, `multisetCopy(...)` and the
   `toMultiset()` collector make unmodifiable multisets that iterate in the order their elements first appear.
+- **`collect.Multimap`**: a collection that maps keys to several values, with `get(key)` as a live view of the values
+  of a key, `put`, `remove(key, value)`, `removeAll(key)`, `replaceValues`, and live `keySet()`, `values()`,
+  `entries()` and `asMap()` views. A `ListMultimap` keeps the values of a key in a list, in order, and a `SetMultimap`
+  in a set, without duplicates. `HashListMultimap.create()` and `HashSetMultimap.create()` are backed by a hash map.
+  `Multimaps.listMultimapCopy(...)`, `setMultimapCopy(...)` and the `toListMultimap(...)` and `toSetMultimap(...)`
+  collectors make unmodifiable multimaps that iterate in the order their keys first appear.
 - **`collect.MoreCollectors`**: `onlyElement()` collects the only element of a stream, and `toOptional()` collects
   zero or one element.
 - **`collect.MoreGatherers`** (Java 24+): gatherers the JDK lacks. `instanceOf(type)` keeps the elements of a type,

@@ -49,6 +49,25 @@ A [`Multiset`](api:be.imgn.gaia.core.collect.Multiset) counts the occurrences of
 - [`Multisets`](api:be.imgn.gaia.core.collect.Multisets)`.multiset(...)`, `multisetCopy(...)` and the
   `toMultiset()` collector make unmodifiable multisets that iterate in the order their elements first appear.
 
+A [`Multimap`](api:be.imgn.gaia.core.collect.Multimap) maps keys to several values. `get(key)` is a live view of the
+values of a key, empty if the key is absent, and `put`, `remove(key, value)`, `removeAll(key)` and `replaceValues`
+change them. Its `keySet()`, `values()`, `entries()` and `asMap()` views are live too:
+
+- A [`ListMultimap`](api:be.imgn.gaia.core.collect.ListMultimap) keeps the values of a key in a list, in the order
+  they were added, and [`HashListMultimap`](api:be.imgn.gaia.core.collect.HashListMultimap)`.create()` makes one
+  backed by a hash map.
+- A [`SetMultimap`](api:be.imgn.gaia.core.collect.SetMultimap) keeps them in a set, without duplicates, and
+  [`HashSetMultimap`](api:be.imgn.gaia.core.collect.HashSetMultimap)`.create()` makes one backed by a hash map.
+- [`Multimaps`](api:be.imgn.gaia.core.collect.Multimaps)`.listMultimapCopy(...)`, `setMultimapCopy(...)` and the
+  `toListMultimap(...)` and `toSetMultimap(...)` collectors make unmodifiable multimaps that iterate in the order their
+  keys first appear.
+
+```java
+ListMultimap<Character, String> byInitial = Stream.of("bob", "alice", "bill")
+        .collect(Multimaps.toListMultimap(name -> name.charAt(0), name -> name));
+byInitial.get('b'); // [bob, bill]
+```
+
 [`MoreCollectors`](api:be.imgn.gaia.core.collect.MoreCollectors) has `onlyElement()`, which collects the only element
 of a stream, and `toOptional()`, which collects zero or one element.
 
