@@ -29,6 +29,9 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`collect.Sets`**: unmodifiable sets that keep the order their elements are given in. `set(...)` and
   `setCopy(...)` behave like `Set.of` and `Set.copyOf`, and the `toSet()` collector like
   `Collectors.toUnmodifiableSet()`, except for iteration order.
+- **`collect.Maps`**: unmodifiable maps that keep the order their keys are given in. `map(...)`, `mapOfEntries(...)`
+  and `mapCopy(...)` behave like `Map.of`, `Map.ofEntries` and `Map.copyOf`, and the `toMap(...)` collectors like
+  `Collectors.toUnmodifiableMap(...)`, except for iteration order.
 - **`collect.Multiset`**: a collection that counts the occurrences of each element, with `count`, `add(element, n)`,
   `remove(element, n)`, `setCount` and live `elementSet()` and `entrySet()` views. `HashMultiset.create()` is backed by
   a hash map. `TreeMultiset.create()` keeps its elements sorted, as a `SortedMultiset` with first, last and nearest

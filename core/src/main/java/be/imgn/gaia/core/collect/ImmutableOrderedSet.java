@@ -73,8 +73,11 @@ final class ImmutableOrderedSet<E> extends AbstractSet<E> implements Serializabl
         return create(elements, Set.copyOf(elements));
     }
 
+    /**
+     * Wraps distinct elements and a set to look them up in, which throws on {@code contains(null)} like {@code Set.of}.
+     */
     @SuppressWarnings("unchecked")
-    private static <E> Set<E> create(List<E> elements, Set<E> lookup) {
+    static <E> Set<E> create(List<E> elements, Set<E> lookup) {
         return elements.isEmpty() ? (Set<E>) EMPTY : new ImmutableOrderedSet<>(elements, lookup);
     }
 

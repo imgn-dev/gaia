@@ -30,7 +30,14 @@ throw Throwables.illegalArgument(e, "Not a port: %s", text);
 
 [`Sets`](api:be.imgn.gaia.core.collect.Sets) makes unmodifiable sets that keep the order their elements are given in.
 `set(...)` and `setCopy(...)` behave like `Set.of` and `Set.copyOf`, and the `toSet()` collector like
-`Collectors.toUnmodifiableSet()`, except for iteration order.
+`Collectors.toUnmodifiableSet()`, except for iteration order. [`Maps`](api:be.imgn.gaia.core.collect.Maps) does the
+same for maps: `map(...)`, `mapOfEntries(...)` and `mapCopy(...)` behave like `Map.of`, `Map.ofEntries` and
+`Map.copyOf`, and the `toMap(...)` collectors like `Collectors.toUnmodifiableMap(...)`, except for iteration order.
+
+```java
+Map<String, Integer> ports = Maps.map("http", 80, "https", 443, "ssh", 22);
+ports.keySet(); // [http, https, ssh], in that order
+```
 
 A [`Multiset`](api:be.imgn.gaia.core.collect.Multiset) counts the occurrences of each element, with `count`,
 `add(element, n)`, `remove(element, n)`, `setCount`, and live `elementSet()` and `entrySet()` views:
