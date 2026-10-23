@@ -77,9 +77,25 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a>&lt;E&gt;</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a>&lt;K,<wbr>V&gt;</div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A modifiable list multimap backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a> from each key to a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link"><code>ArrayList</code></a> of its values.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a>&lt;E&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A modifiable multiset backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a>, the multiset counterpart of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html" title="class or interface in java.util" class="external-link"><code>HashSet</code></a>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A modifiable set multimap backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a> from each key to a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html" title="class or interface in java.util" class="external-link"><code>HashSet</code></a> of its values.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="ListMultimap.html" title="interface in be.imgn.gaia.core.collect">ListMultimap</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">A multimap that keeps the values of each key in a list, in the order they were added, duplicates included.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Maps.html" title="class in be.imgn.gaia.core.collect">Maps</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Static factories and collectors for unmodifiable maps that iterate in the order their keys are given.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="MoreCollectors.html" title="class in be.imgn.gaia.core.collect">MoreCollectors</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -97,6 +113,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">A predicate of an element and its index in a stream.</div>
 </div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Multimap.html" title="interface in be.imgn.gaia.core.collect">Multimap</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">A collection that maps keys to values, like a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a>, but where a key may have several values: its entries are
+key-value pairs, and a key is in the multimap as long as it has a value.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Multimaps.html" title="class in be.imgn.gaia.core.collect">Multimaps</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Static factories and collectors for unmodifiable multimaps that iterate over their keys in the order they first
+appear, and over the values of a key in the order they are given.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Multiset.html" title="interface in be.imgn.gaia.core.collect">Multiset</a>&lt;E&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">A collection that counts how many times it contains each element: its occurrences.</div>
@@ -111,17 +137,22 @@ loadScripts(document, 'script');</script>
 with all occurrences of an element in a row: <code>multiset("foo", "bar", "foo")</code> iterates over <code>foo, foo,
 bar</code>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Sets.html" title="class in be.imgn.gaia.core.collect">Sets</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="SetMultimap.html" title="interface in be.imgn.gaia.core.collect">SetMultimap</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">A multimap that keeps the values of each key in a set, without duplicates: adding an entry it already contains leaves
+it unchanged.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Sets.html" title="class in be.imgn.gaia.core.collect">Sets</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Static factories and a collector for unmodifiable sets that iterate in the order their elements are given.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="SortedMultiset.html" title="interface in be.imgn.gaia.core.collect">SortedMultiset</a>&lt;E&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="SortedMultiset.html" title="interface in be.imgn.gaia.core.collect">SortedMultiset</a>&lt;E&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">A multiset that keeps its elements sorted, by their natural ordering or by a comparator: the multiset counterpart of
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NavigableSet.html" title="class or interface in java.util" class="external-link"><code>NavigableSet</code></a>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a>&lt;E&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a>&lt;E&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A modifiable sorted multiset backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html" title="class or interface in java.util" class="external-link"><code>TreeMap</code></a>, the multiset counterpart of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html" title="class or interface in java.util" class="external-link"><code>TreeSet</code></a>.</div>
 </div>
 </div>
