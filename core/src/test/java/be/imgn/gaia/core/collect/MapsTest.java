@@ -362,6 +362,27 @@ class MapsTest {
                     .isThrownBy(() -> Stream.of("a").collect(Maps.toMap(s -> s, s -> null, (left, right) -> left)))
                     .withMessage("value");
         }
+
+        // Passing null is the point.
+        @Test
+        @SuppressWarnings("NullAway")
+        void rejectsNullFunctions() {
+            assertThatNullPointerException()
+                    .isThrownBy(() -> Maps.toMap(null, Function.identity()))
+                    .withMessage("keyMapper");
+            assertThatNullPointerException()
+                    .isThrownBy(() -> Maps.toMap(Function.identity(), null))
+                    .withMessage("valueMapper");
+            assertThatNullPointerException()
+                    .isThrownBy(() -> Maps.toMap(null, Function.identity(), (left, right) -> left))
+                    .withMessage("keyMapper");
+            assertThatNullPointerException()
+                    .isThrownBy(() -> Maps.toMap(Function.identity(), null, (left, right) -> left))
+                    .withMessage("valueMapper");
+            assertThatNullPointerException()
+                    .isThrownBy(() -> Maps.toMap(Function.identity(), Function.identity(), null))
+                    .withMessage("merger");
+        }
     }
 
     @Nested

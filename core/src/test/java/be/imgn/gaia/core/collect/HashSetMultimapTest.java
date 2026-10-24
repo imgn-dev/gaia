@@ -6,6 +6,7 @@ import static be.imgn.gaia.core.collect.HashListMultimapTest.serialize;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import java.io.IOException;
 import java.util.ConcurrentModificationException;
@@ -118,6 +119,15 @@ class HashSetMultimapTest {
                 .isThrownBy(() -> requireNonNull(multimap.asMap().get("a")).add(2));
         assertThat(requireNonNull(multimap.asMap().get("a")).remove(1)).isTrue();
         assertThat(multimap.isEmpty()).isTrue();
+    }
+
+    // Passing null is the point.
+    @Test
+    @SuppressWarnings("NullAway")
+    void rejectsANullMultimapToCopy() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> HashSetMultimap.create(null))
+                .withMessage("multimap");
     }
 
     @Test

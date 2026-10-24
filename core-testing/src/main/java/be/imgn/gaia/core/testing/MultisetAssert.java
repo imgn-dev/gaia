@@ -83,8 +83,11 @@ public final class MultisetAssert<E>
      */
     public MultisetAssert<E> containsExactlyCounts(Map<? extends E, Integer> counts) {
         requireNonNull(counts, "counts");
-        counts.forEach(
-                (element, count) -> checkArgument(count > 0, "count of %s must be positive: %s", element, count));
+        counts.forEach((element, count) -> {
+            requireNonNull(element, "counts contains a null element");
+            requireNonNull(count, "counts contains a null count");
+            checkArgument(count > 0, "count of %s must be positive: %s", element, count);
+        });
         isNotNull();
         var matches = actual.elementSet().size() == counts.size();
         for (var entry : counts.entrySet()) {

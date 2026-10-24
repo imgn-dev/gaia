@@ -209,6 +209,10 @@ class HashListMultimapTest {
     @Test
     @SuppressWarnings("NullAway")
     void rejectsNullKeysAndValuesButNotNullQueries() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> HashListMultimap.create(null))
+                .withMessage("multimap");
+        assertThatNullPointerException().isThrownBy(() -> multimap.putAll(null)).withMessage("multimap");
         assertThatNullPointerException().isThrownBy(() -> multimap.put(null, 1)).withMessage("key");
         assertThatNullPointerException()
                 .isThrownBy(() -> multimap.put("a", null))
@@ -230,6 +234,7 @@ class HashListMultimapTest {
         assertThat(multimap.removeAll(null)).isEmpty();
         assertThat(multimap.get("a").contains(null)).isFalse();
         assertThat(multimap.asMap().get(null)).isNull();
+        assertThat(multimap.asMap().containsValue(null)).isFalse();
     }
 
     @Nested

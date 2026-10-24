@@ -506,6 +506,14 @@ abstract class AbstractMapMultimap<K, V, C extends Collection<V>> implements Mul
         }
 
         @Override
+        public boolean containsValue(@Nullable Object value) {
+            checkQuery(value);
+            // The values are lists or sets, whose equality is well defined, unlike that of their Collection bound.
+            Map<?, ?> map = map();
+            return map.containsValue(value);
+        }
+
+        @Override
         public @Nullable C get(@Nullable Object key) {
             return containsKey(key) ? view(requireNonNull(key), null) : null;
         }

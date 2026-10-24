@@ -2,6 +2,7 @@ package be.imgn.gaia.core.tests;
 
 import static be.imgn.gaia.core.testing.MultimapAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import be.imgn.gaia.core.collect.HashSetMultimap;
 import be.imgn.gaia.core.collect.ListMultimap;
@@ -71,5 +72,32 @@ class MultimapAssertTest {
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat(scores()).hasValues("alice", 3))
                 .withMessage("Expected the values of alice in {alice=[3, 5], bob=[4]} to be [3], but they were [3, 5]");
+    }
+
+    // Passing null is the point.
+    @Test
+    @SuppressWarnings("NullAway")
+    void failsOnANullMultimapAndRejectsNullArguments() {
+        assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(
+                        () -> assertThat((ListMultimap<String, Integer>) null).isEmpty());
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(scores()).containsKeys("alice", null))
+                .withMessage("keys[1]");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(scores()).doesNotContainKeys((String[]) null))
+                .withMessage("keys");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(scores()).containsEntry(null, 3))
+                .withMessage("key");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(scores()).doesNotContainEntry("bob", null))
+                .withMessage("value");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(scores()).hasValues(null))
+                .withMessage("key");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(scores()).hasValues("alice", 3, null))
+                .withMessage("values[1]");
     }
 }

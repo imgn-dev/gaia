@@ -3,9 +3,11 @@ package be.imgn.gaia.core.tests;
 import static be.imgn.gaia.core.testing.MultisetAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import be.imgn.gaia.core.collect.Multiset;
 import be.imgn.gaia.core.collect.Multisets;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -58,5 +60,30 @@ class MultisetAssertTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> assertThat(WORDS).containsExactlyCounts(Map.of("foo", 0)))
                 .withMessage("count of foo must be positive: 0");
+    }
+
+    // Passing null is the point.
+    @Test
+    @SuppressWarnings("NullAway")
+    void failsOnANullMultisetAndRejectsNullArguments() {
+        var nullElement = new HashMap<String, Integer>();
+        nullElement.put(null, 1);
+        var nullCount = new HashMap<String, Integer>();
+        nullCount.put("foo", null);
+
+        assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat((Multiset<String>) null).hasCount("foo", 2));
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(WORDS).hasCount(null, 1))
+                .withMessage("element");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(WORDS).containsExactlyCounts(null))
+                .withMessage("counts");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(WORDS).containsExactlyCounts(nullElement))
+                .withMessage("counts contains a null element");
+        assertThatNullPointerException()
+                .isThrownBy(() -> assertThat(WORDS).containsExactlyCounts(nullCount))
+                .withMessage("counts contains a null count");
     }
 }

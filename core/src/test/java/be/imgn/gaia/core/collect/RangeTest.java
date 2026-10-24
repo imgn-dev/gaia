@@ -83,9 +83,23 @@ class RangeTest {
     @SuppressWarnings("NullAway")
     void rejectsNull() {
         assertThatNullPointerException().isThrownBy(() -> Range.closed(null, 2)).withMessage("endpoint");
-        assertThatNullPointerException().isThrownBy(() -> new Range<>(null, new Bound.Unbounded<Integer>()));
-        assertThatNullPointerException().isThrownBy(() -> Range.closed(1, 2).contains(null));
-        assertThatNullPointerException().isThrownBy(() -> Range.closed(1, 2).encloses(null));
+        assertThatNullPointerException().isThrownBy(() -> Range.open(1, null)).withMessage("endpoint");
+        assertThatNullPointerException()
+                .isThrownBy(() -> new Range<>(null, new Bound.Unbounded<Integer>()))
+                .withMessage("lower");
+        assertThatNullPointerException()
+                .isThrownBy(() -> new Range<>(new Bound.Unbounded<Integer>(), null))
+                .withMessage("upper");
+        var range = Range.closed(1, 2);
+        assertThatNullPointerException().isThrownBy(() -> range.contains(null)).withMessage("value");
+        assertThatNullPointerException().isThrownBy(() -> range.encloses(null)).withMessage("other");
+        assertThatNullPointerException()
+                .isThrownBy(() -> range.isConnected(null))
+                .withMessage("other");
+        assertThatNullPointerException()
+                .isThrownBy(() -> range.intersection(null))
+                .withMessage("other");
+        assertThatNullPointerException().isThrownBy(() -> range.span(null)).withMessage("other");
     }
 
     @Test

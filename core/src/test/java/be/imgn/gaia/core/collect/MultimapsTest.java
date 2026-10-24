@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Nested;
@@ -129,6 +130,8 @@ class MultimapsTest {
         assertThatNullPointerException().isThrownBy(() -> multimap.entries().contains(null));
         assertThatNullPointerException().isThrownBy(() -> multimap.asMap().get(null));
         assertThatNullPointerException().isThrownBy(() -> multimap.asMap().containsKey(null));
+        Map<?, ?> asMap = multimap.asMap();
+        assertThatNullPointerException().isThrownBy(() -> asMap.containsValue(null));
     }
 
     @Test
@@ -203,6 +206,27 @@ class MultimapsTest {
         assertThatNullPointerException()
                 .isThrownBy(() -> Multimaps.listMultimapCopy(null))
                 .withMessage("multimap");
+        assertThatNullPointerException()
+                .isThrownBy(() -> Multimaps.setMultimapCopy(null))
+                .withMessage("multimap");
+    }
+
+    // Passing null is the point.
+    @Test
+    @SuppressWarnings("NullAway")
+    void rejectNullFunctions() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> Multimaps.toListMultimap(null, Function.identity()))
+                .withMessage("keyMapper");
+        assertThatNullPointerException()
+                .isThrownBy(() -> Multimaps.toListMultimap(Function.identity(), null))
+                .withMessage("valueMapper");
+        assertThatNullPointerException()
+                .isThrownBy(() -> Multimaps.toSetMultimap(null, Function.identity()))
+                .withMessage("keyMapper");
+        assertThatNullPointerException()
+                .isThrownBy(() -> Multimaps.toSetMultimap(Function.identity(), null))
+                .withMessage("valueMapper");
     }
 
     @Nested
