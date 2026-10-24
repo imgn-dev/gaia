@@ -97,6 +97,10 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   system, to give `Platform.newBuilder()` so that tests run the real detection of its directories.
 - **`RangeAssert`**: AssertJ assertions on a `Range`:
   `assertThat(range).contains(0, 9).doesNotContain(10).encloses(Range.closed(2, 5))`.
+- **`MultisetAssert`**: AssertJ's collection assertions on a `Multiset`, plus `hasCount(element, n)`,
+  `hasDistinctSize(n)` and `containsExactlyCounts(Map.of("foo", 2, "bar", 1))`.
+- **`MultimapAssert`**: AssertJ assertions on a `Multimap`: `hasSize`, `containsKeys`, `containsEntry` and
+  `hasValues(key, values...)`, in order for a `ListMultimap`.
 
 ### `gaia-memfs`
 

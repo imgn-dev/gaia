@@ -72,6 +72,23 @@ assertThat(Range.closedOpen(0, 10))
         .isConnectedTo(Range.atLeast(10));
 ```
 
+[`MultisetAssert`](api:be.imgn.gaia.core.testing.MultisetAssert) has AssertJ's assertions on collections, where the
+size counts occurrences, and assertions on the count of each element:
+
+```java
+assertThat(words).hasCount("foo", 2).hasDistinctSize(3).containsExactlyCounts(Map.of("foo", 2, "bar", 1, "baz", 1));
+```
+
+[`MultimapAssert`](api:be.imgn.gaia.core.testing.MultimapAssert) checks the keys, entries and values of a
+`Multimap`. `hasValues` compares the values of a key in order in a `ListMultimap`, and in any order in a
+`SetMultimap`:
+
+```java
+assertThat(scores).hasSize(3).containsKeys("alice", "bob").hasValues("alice", 3, 5).containsEntry("bob", 4);
+```
+
+Statically import each `assertThat` next to AssertJ's: Java picks the most specific one for each argument.
+
 ## gaia-processing-testing
 
 [`TestCompiler`](api:be.imgn.gaia.processing.testing.TestCompiler) compiles in-memory sources with javac, in process,
