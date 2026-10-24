@@ -44,7 +44,12 @@ system properties, the <a href="#platform">platform</a> the JVM runs on, text an
 <h2 id="collections">Collections</h2>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Sets.html"><code>Sets</code></a> makes unmodifiable sets that keep the order their elements are given in.
 <code>set(...)</code> and <code>setCopy(...)</code> behave like <code>Set.of</code> and <code>Set.copyOf</code>, and the <code>toSet()</code> collector like
-<code>Collectors.toUnmodifiableSet()</code>, except for iteration order.</p>
+<code>Collectors.toUnmodifiableSet()</code>, except for iteration order. <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Maps.html"><code>Maps</code></a> does the
+same for maps: <code>map(...)</code>, <code>mapOfEntries(...)</code> and <code>mapCopy(...)</code> behave like <code>Map.of</code>, <code>Map.ofEntries</code> and
+<code>Map.copyOf</code>, and the <code>toMap(...)</code> collectors like <code>Collectors.toUnmodifiableMap(...)</code>, except for iteration order.</p>
+<pre><code class="language-java">Map&lt;String, Integer&gt; ports = Maps.map(&quot;http&quot;, 80, &quot;https&quot;, 443, &quot;ssh&quot;, 22);
+ports.keySet(); // [http, https, ssh], in that order
+</code></pre>
 <p>A <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html"><code>Multiset</code></a> counts the occurrences of each element, with <code>count</code>,
 <code>add(element, n)</code>, <code>remove(element, n)</code>, <code>setCount</code>, and live <code>elementSet()</code> and <code>entrySet()</code> views:</p>
 <ul>
@@ -55,6 +60,33 @@ views and a <code>reversed()</code> view.</li>
 <li><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multisets.html"><code>Multisets</code></a><code>.multiset(...)</code>, <code>multisetCopy(...)</code> and the
 <code>toMultiset()</code> collector make unmodifiable multisets that iterate in the order their elements first appear.</li>
 </ul>
+<p>A <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multimap.html"><code>Multimap</code></a> maps keys to several values. <code>get(key)</code> is a live view of the
+values of a key, empty if the key is absent, and <code>put</code>, <code>remove(key, value)</code>, <code>removeAll(key)</code> and <code>replaceValues</code>
+change them. Its <code>keySet()</code>, <code>values()</code>, <code>entries()</code> and <code>asMap()</code> views are live too:</p>
+<ul>
+<li>A <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/ListMultimap.html"><code>ListMultimap</code></a> keeps the values of a key in a list, in the order
+they were added, and <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html"><code>HashListMultimap</code></a><code>.create()</code> makes one
+backed by a hash map.</li>
+<li>A <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/SetMultimap.html"><code>SetMultimap</code></a> keeps them in a set, without duplicates, and
+<a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html"><code>HashSetMultimap</code></a><code>.create()</code> makes one backed by a hash map.</li>
+<li><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multimaps.html"><code>Multimaps</code></a><code>.listMultimapCopy(...)</code>, <code>setMultimapCopy(...)</code> and the
+<code>toListMultimap(...)</code> and <code>toSetMultimap(...)</code> collectors make unmodifiable multimaps that iterate in the order their
+keys first appear.</li>
+</ul>
+<pre><code class="language-java">ListMultimap&lt;Character, String&gt; byInitial = Stream.of(&quot;bob&quot;, &quot;alice&quot;, &quot;bill&quot;)
+        .collect(Multimaps.toListMultimap(name -&gt; name.charAt(0), name -&gt; name));
+byInitial.get('b'); // [bob, bill]
+</code></pre>
+<p>A <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html"><code>Range</code></a> is an interval of comparable values. <code>closed</code>, <code>open</code>, <code>closedOpen</code>,
+<code>openClosed</code>, <code>atLeast</code>, <code>greaterThan</code>, <code>atMost</code>, <code>lessThan</code> and <code>all</code> make one, and <code>contains</code>, <code>encloses</code>,
+<code>isConnected</code>, <code>intersection</code> and <code>span</code> compare it with values and other ranges:</p>
+<pre><code class="language-java">Range&lt;Integer&gt; digits = Range.closedOpen(0, 10);
+digits.contains(9);                       // true
+digits.intersection(Range.atLeast(5));    // Optional[[5, 10)]
+digits.span(Range.closed(20, 30));        // [0, 30]
+</code></pre>
+<p>Its <code>lower()</code> and <code>upper()</code> bounds are a sealed <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.html"><code>Range.Bound</code></a>: <code>Closed</code>,
+<code>Open</code> or <code>Unbounded</code>, which a <code>switch</code> can match.</p>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreCollectors.html"><code>MoreCollectors</code></a> has <code>onlyElement()</code>, which collects the only element
 of a stream, and <code>toOptional()</code>, which collects zero or one element.</p>
 <p>On Java 24 and later, <code>MoreGatherers</code> has the gatherers the JDK lacks:</p>

@@ -64,6 +64,25 @@ Platform platform = Platform.newBuilder()
 </code></pre>
 <p>Its builder changes the user name and home directory, sets the XDG variables, and adds or removes system properties
 and environment variables.</p>
+<h3 id="assertions">Assertions</h3>
+<p><a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/RangeAssert.html"><code>RangeAssert</code></a> has AssertJ assertions on a <a href="core.html#collections"><code>Range</code></a>,
+which report the values or ranges that fail:</p>
+<pre><code class="language-java">assertThat(Range.closedOpen(0, 10))
+        .contains(0, 9)
+        .doesNotContain(10)
+        .encloses(Range.closed(2, 5))
+        .isConnectedTo(Range.atLeast(10));
+</code></pre>
+<p><a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/MultisetAssert.html"><code>MultisetAssert</code></a> has AssertJ's assertions on collections, where the
+size counts occurrences, and assertions on the count of each element:</p>
+<pre><code class="language-java">assertThat(words).hasCount(&quot;foo&quot;, 2).hasDistinctSize(3).containsExactlyCounts(Map.of(&quot;foo&quot;, 2, &quot;bar&quot;, 1, &quot;baz&quot;, 1));
+</code></pre>
+<p><a href="api/latest/be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/MultimapAssert.html"><code>MultimapAssert</code></a> checks the keys, entries and values of a
+<code>Multimap</code>. <code>hasValues</code> compares the values of a key in order in a <code>ListMultimap</code>, and in any order in a
+<code>SetMultimap</code>:</p>
+<pre><code class="language-java">assertThat(scores).hasSize(3).containsKeys(&quot;alice&quot;, &quot;bob&quot;).hasValues(&quot;alice&quot;, 3, 5).containsEntry(&quot;bob&quot;, 4);
+</code></pre>
+<p>Statically import each <code>assertThat</code> next to AssertJ's: Java picks the most specific one for each argument.</p>
 <h2 id="gaia-processing-testing">gaia-processing-testing</h2>
 <p><a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/TestCompiler.html"><code>TestCompiler</code></a> compiles in-memory sources with javac, in process,
 running the given annotation processors, and returns a
