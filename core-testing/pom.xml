@@ -26,6 +26,12 @@
       <groupId>org.jspecify</groupId>
       <artifactId>jspecify</artifactId>
     </dependency>
+    <!-- RangeAssert extends AssertJ. AssertJ is allowed in every *-testing
+         module: it works with any test framework. -->
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

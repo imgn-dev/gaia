@@ -59,6 +59,19 @@ Platform platform = Platform.newBuilder()
 Its builder changes the user name and home directory, sets the XDG variables, and adds or removes system properties
 and environment variables.
 
+### Assertions
+
+[`RangeAssert`](api:be.imgn.gaia.core.testing.RangeAssert) has AssertJ assertions on a [`Range`](core.md#collections),
+which report the values or ranges that fail:
+
+```java
+assertThat(Range.closedOpen(0, 10))
+        .contains(0, 9)
+        .doesNotContain(10)
+        .encloses(Range.closed(2, 5))
+        .isConnectedTo(Range.atLeast(10));
+```
+
 ## gaia-processing-testing
 
 [`TestCompiler`](api:be.imgn.gaia.processing.testing.TestCompiler) compiles in-memory sources with javac, in process,

@@ -95,6 +95,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   operating system.
 - **`PlatformPreset`**: the system properties and environment variables a JVM typically has on each operating
   system, to give `Platform.newBuilder()` so that tests run the real detection of its directories.
+- **`RangeAssert`**: AssertJ assertions on a `Range`:
+  `assertThat(range).contains(0, 9).doesNotContain(10).encloses(Range.closed(2, 5))`.
 
 ### `gaia-memfs`
 
