@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.imgn.gaia</groupId>
+    <artifactId>gaia-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>gaia-events</artifactId>
+
+  <name>Gaia Events</name>
+  <description>An event bus whose @Subscribe methods are wired by code that gaia-events-processor generates, without reflection.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-core</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>

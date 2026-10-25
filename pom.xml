@@ -41,6 +41,8 @@
     <module>bom</module>
     <module>core</module>
     <module>core-testing</module>
+    <module>events</module>
+    <module>events-processor</module>
     <module>memfs</module>
     <module>processing</module>
     <module>processing-testing</module>
@@ -48,6 +50,7 @@
     <module>maven-plugin</module>
     <!-- Not published: tests that exercise X through X-testing. -->
     <module>core-tests</module>
+    <module>events-tests</module>
     <module>processing-tests</module>
     <!-- Not published: the guide, which goes to GitHub Pages. -->
     <module>docs</module>

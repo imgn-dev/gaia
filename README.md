@@ -14,6 +14,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 |---------------------------|-----------------------------------|-------------------------------------------------------------|
 | `gaia-core`               | `be.imgn.gaia.core`               | Extensions to the JDK, and the platform the JVM runs on     |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | Test helpers for code using `gaia-core`                     |
+| `gaia-events`             | `be.imgn.gaia.events`             | An event bus whose `@Subscribe` methods need no reflection  |
+| `gaia-events-processor`   | `be.imgn.gaia.events.processor`   | The annotation processor of `gaia-events`                   |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | An in-memory file system for the `mem:` URI scheme          |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | Helpers for writing annotation processors                   |
 | `gaia-processing-testing` | `be.imgn.gaia.processing.testing` | Compile sources through annotation processors in tests      |
@@ -101,6 +103,19 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `hasDistinctSize(n)` and `containsExactlyCounts(Map.of("foo", 2, "bar", 1))`.
 - **`MultimapAssert`**: AssertJ assertions on a `Multimap`: `hasSize`, `containsKeys`, `containsEntry` and
   `hasValues(key, values...)`, in order for a `ListMultimap`.
+
+### `gaia-events`
+
+- **`EventBus`**: delivers each event to the subscribers of its class and of all its supertypes, the most specific
+  first. `subscribe(OrderPlaced.class, order -> ...)` subscribes a `Consumer`, and `register(listener)` the
+  `@Subscribe` methods of a listener; both return a `Subscription`, which unsubscribes when closed. Events are
+  delivered on the thread that publishes them, an event published by a subscriber once the current one is delivered,
+  or in one task per event of an executor: `EventBus.newBuilder().executor(...)`. The exceptions of subscribers go to
+  an exception handler, which logs them by default.
+- **`@Subscribe`**: marks a method that receives events once its listener is registered. `gaia-events-processor`, on
+  the annotation processor path, generates the code that subscribes these methods and calls them directly, without
+  reflection, and reports at compile time the methods it cannot call. It registers that code as a service provider;
+  on the module path, the `register-services` goal of `gaia-maven-plugin` declares it in `module-info.class`.
 
 ### `gaia-memfs`
 
