@@ -23,6 +23,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import org.jspecify.annotations.Nullable;
 
@@ -38,12 +39,13 @@ import org.jspecify.annotations.Nullable;
  * }</pre>
  *
  * <p>Each round, each step gets the elements annotated with its annotations, or with annotations that its
- * {@linkplain Step#metaAnnotations() meta-annotations} annotate, grouped by annotation. An element whose signature
- * still has a type javac could not resolve, typically one another processor has yet to generate, is held back until a
- * later round resolves it. So is an element a step gives back. An element still held back after the last round is
- * reported as an error, with the type that blocked it. Then each step {@linkplain Step#processingOver() finishes}, and
- * the processor writes the service files its steps registered with {@link ProcessingContext#services()}, whatever
- * errors were reported.
+ * {@linkplain Step#metaAnnotations() meta-annotations} annotate, grouped by annotation, and the root elements of the
+ * round if it {@linkplain Step#processesRootElements() processes them}. An element whose signature still has a type
+ * javac could not resolve, typically one another processor has yet to generate, is held back until a later round
+ * resolves it. So is an element a step gives back. An element still held back after the last round is reported as an
+ * error, with the type that blocked it. Then each step {@linkplain Step#processingOver() finishes}, and the processor
+ * writes the service files its steps registered with {@link ProcessingContext#services()}, whatever errors were
+ * reported.
  *
  * <p>A {@link ProcessingException} that escapes a step is reported as an error, at the place it names, and the
  * processor goes on with the next step: the elements of that step in that round are done, none is given back to it. To
@@ -51,8 +53,9 @@ import org.jspecify.annotations.Nullable;
  * java.util.function.Consumer)}. The same goes for {@link Step#processingOver()}. Any other exception propagates: javac
  * stops and reports it, with its stack trace, as a crash of the processor.
  *
- * <p>The processor supports the annotations of its steps, or all annotations if a step has meta-annotations, and the
- * latest source version. It never claims the annotations, so other processors see them too.
+ * <p>The processor supports the annotations of its steps, or all annotations if a step has meta-annotations or
+ * processes root elements, and the latest source version. It never claims the annotations, so other processors see them
+ * too.
  *
  * <p>Every step processor accepts the boolean option {@code gaia.debug}, as {@code -Agaia.debug} or
  * {@code -Agaia.debug=true}, which turns on its debug output: javac notes, each starting with the simple name of the
@@ -133,13 +136,15 @@ public abstract class StepProcessor extends AbstractProcessor {
     /**
      * Returns the annotations of the steps; or {@code *}, all annotations, if a step has
      * {@linkplain Step#metaAnnotations() meta-annotations}, since the annotations they annotate are not known in
-     * advance. The processor never claims annotations either way.
+     * advance, or if a step {@linkplain Step#processesRootElements() processes root elements}, which javac only gives
+     * to the processors that support {@code *} when none is annotated. The processor never claims annotations either
+     * way.
      *
      * @return the fully qualified names of the annotation types of the steps, or {@code *} alone
      */
     @Override
     public final Set<String> getSupportedAnnotationTypes() {
-        if (!metaAnnotations().isEmpty()) {
+        if (!metaAnnotations().isEmpty() || steps.stream().anyMatch(Step::processesRootElements)) {
             return Set.of("*");
         }
         return steps.stream().flatMap(step -> step.annotations().stream()).collect(Sets.toSet());
@@ -217,6 +222,9 @@ public abstract class StepProcessor extends AbstractProcessor {
             log.stepStarted(index, current.diagnostics().errorCount());
         }
         Batch batch = new Batch(step, metaAnnotated);
+        if (step.processesRootElements()) {
+            roundEnv.getRootElements().forEach(batch::offerRoot);
+        }
         for (ElementKey key : deferred.getOrDefault(step, Set.of())) {
             Element element = key.resolve(current.elements());
             if (element != null) {
@@ -232,16 +240,18 @@ public abstract class StepProcessor extends AbstractProcessor {
         batch.offerMetaAnnotated();
         Set<ElementKey> next = new LinkedHashSet<>(batch.heldBack);
         int heldBack = next.size();
-        if (!batch.byAnnotation.isEmpty()) {
-            processBatch(current, step, new AnnotatedElements(batch.byAnnotation, batch.byMetaAnnotation)).stream()
+        if (!batch.byAnnotation.isEmpty() || !batch.roots.isEmpty()) {
+            processBatch(current, step, new AnnotatedElements(batch.byAnnotation, batch.byMetaAnnotation, batch.roots))
+                    .stream()
                     .map(ElementKey::of)
                     .flatMap(Optional::stream)
                     .forEach(next::add);
         }
         deferred.put(step, next);
         if (log != null) {
-            List<String> processed = batch.byAnnotation.values().stream()
-                    .flatMap(Set::stream)
+            List<String> processed = Stream.concat(
+                            batch.roots.stream(),
+                            batch.byAnnotation.values().stream().flatMap(Set::stream))
                     .distinct()
                     .map(DebugLog::name)
                     .toList();
@@ -304,13 +314,14 @@ public abstract class StepProcessor extends AbstractProcessor {
     }
 
     /**
-     * The elements a step gets in a round, by annotation and by meta-annotation, and those held back because a type in
-     * their signature is not resolved.
+     * The elements a step gets in a round, by annotation and by meta-annotation, its root elements, and those held back
+     * because a type in their signature is not resolved.
      */
     private static final class Batch {
 
         private final Map<String, Set<Element>> byAnnotation = new LinkedHashMap<>();
         private final Map<String, Set<Element>> byMetaAnnotation = new LinkedHashMap<>();
+        private final Set<Element> roots = new LinkedHashSet<>();
         private final Set<ElementKey> heldBack = new LinkedHashSet<>();
         private final Map<Element, Boolean> resolved = new HashMap<>();
         private final Step step;
@@ -323,8 +334,12 @@ public abstract class StepProcessor extends AbstractProcessor {
             this.metaAnnotated = metaAnnotated;
         }
 
-        // An element of an earlier round, with the annotations of the step it still has.
+        // An element of an earlier round, with the annotations of the step it still has, and as a root element again if
+        // it is one and the step processes them.
         void offerAgain(ProcessingContext current, Element element) {
+            if (step.processesRootElements() && isRoot(element)) {
+                offerRoot(element);
+            }
             Set<String> annotations = step.annotations();
             current.elements().getAllAnnotationMirrors(element).stream()
                     .map(MetaAnnotated::qualifiedName)
@@ -358,11 +373,14 @@ public abstract class StepProcessor extends AbstractProcessor {
             }
         }
 
+        void offerRoot(Element element) {
+            if (isResolved(element)) {
+                roots.add(element);
+            }
+        }
+
         void offer(Element element, String annotation, Set<String> annotationMetaAnnotations) {
-            boolean isResolved = resolved.computeIfAbsent(
-                    element, candidate -> Resolution.firstUnresolved(candidate).isEmpty());
-            if (!isResolved) {
-                ElementKey.of(element).ifPresent(heldBack::add);
+            if (!isResolved(element)) {
                 return;
             }
             byAnnotation
@@ -371,6 +389,26 @@ public abstract class StepProcessor extends AbstractProcessor {
             annotationMetaAnnotations.forEach(meta -> byMetaAnnotation
                     .computeIfAbsent(meta, ignored -> new LinkedHashSet<>())
                     .add(element));
+        }
+
+        // Holds an element back if it is not resolved.
+        private boolean isResolved(Element element) {
+            boolean isResolved = resolved.computeIfAbsent(
+                    element, candidate -> Resolution.firstUnresolved(candidate).isEmpty());
+            if (!isResolved) {
+                ElementKey.of(element).ifPresent(heldBack::add);
+            }
+            return isResolved;
+        }
+
+        // A top-level type, a package or a module.
+        private static boolean isRoot(Element element) {
+            ElementKind kind = element.getKind();
+            if (kind == ElementKind.PACKAGE || kind == ElementKind.MODULE) {
+                return true;
+            }
+            Element enclosing = element.getEnclosingElement();
+            return kind.isDeclaredType() && enclosing != null && enclosing.getKind() == ElementKind.PACKAGE;
         }
     }
 }

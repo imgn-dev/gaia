@@ -6,7 +6,8 @@ import javax.lang.model.element.Element;
 
 /**
  * One unit of work of a {@link StepProcessor}: the processing of the elements annotated with some annotations, or with
- * annotations that some {@linkplain #metaAnnotations() meta-annotations} annotate.
+ * annotations that some {@linkplain #metaAnnotations() meta-annotations} annotate, and optionally of
+ * {@linkplain #processesRootElements() every root element}.
  *
  * <pre>{@code
  * final class MapperStep implements Step {
@@ -98,11 +99,51 @@ public interface Step {
     }
 
     /**
+     * Returns whether this step also gets the root elements of each round, annotated or not, with
+     * {@link AnnotatedElements#rootElements()}, such as to process the classes that implement an interface.
+     *
+     * <pre>{@code
+     * public Set<String> annotations() {
+     *     return Set.of();
+     * }
+     *
+     * public boolean processesRootElements() {
+     *     return true;
+     * }
+     *
+     * public Set<Element> process(AnnotatedElements elements) {
+     *     for (TypeElement type : ElementFilter.typesIn(elements.rootElements())) {
+     *         ...
+     *     }
+     *     return Set.of();
+     * }
+     * }</pre>
+     *
+     * <p>The root elements are those of {@link javax.annotation.processing.RoundEnvironment#getRootElements()}: the
+     * top-level types of the sources and classes new in the round, and the packages and modules their
+     * {@code package-info} and {@code module-info} files declare. Nested types are among the enclosed elements of their
+     * top-level type. The sources a round generates are root elements of the next one, including those this step
+     * generates.
+     *
+     * <p>As with {@link #annotations()}, a root element whose signature, or the signature of one of its members, has a
+     * type javac could not resolve yet is held back until a later round resolves it.
+     *
+     * <p>A {@link StepProcessor} with a step that processes root elements supports all annotations, {@code *}, and so
+     * takes part in every round. It still claims none, so that other processors see them.
+     *
+     * @return {@code true} to get the root elements; {@code false} by default
+     */
+    default boolean processesRootElements() {
+        return false;
+    }
+
+    /**
      * Processes the elements annotated with this step's annotations that are ready: every type in their signature is
-     * resolved. The others are kept for a later round, and given to this step once they are ready.
+     * resolved. The others are kept for a later round, and given to this step once they are ready. The same goes for
+     * the root elements, if this step {@linkplain #processesRootElements() processes them}.
      *
      * @param elements the ready elements, in source order, by each of this step's annotations they have, and by each of
-     *     its meta-annotations their annotations have
+     *     its meta-annotations their annotations have; and the ready root elements, if this step processes them
      * @return the elements to give to this step again in the next round, for example because a type they need is not
      *     generated yet; an element still deferred after the last round is reported as an error
      * @throws ProcessingException if an element is invalid: the {@link StepProcessor} reports the error, and gives none

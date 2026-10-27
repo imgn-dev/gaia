@@ -56,8 +56,30 @@ Rounds are handled for you. An element whose types another processor has yet to 
 exist, and reported as an error if they never do. A step can also hand elements back for the next round, by returning
 them, and finish in `processingOver()` once all rounds are done.
 
+A step that returns `true` from `processesRootElements()` also gets every root element of each round, annotated or
+not: the top-level types, and the packages and modules declared in `package-info` and `module-info` files. That
+suits the processing of classes found by what they implement or extend rather than by an annotation:
+
+```java
+@Override
+public boolean processesRootElements() {
+    return true;
+}
+
+@Override
+public Set<? extends Element> process(AnnotatedElements elements) {
+    TypeMirror view = context.elements().getTypeElement("com.example.View").asType();
+    for (TypeElement type : ElementFilter.typesIn(elements.rootElements())) {
+        if (context.types().isAssignable(type.asType(), view)) {
+            // process the view
+        }
+    }
+    return Set.of();
+}
+```
+
 [`AnnotatedElements`](api:be.imgn.gaia.processing.AnnotatedElements) are the elements a step gets in a round, by
-annotation and by meta-annotation. [`ProcessingContext`](api:be.imgn.gaia.processing.ProcessingContext) is everything
+annotation and by meta-annotation, and its root elements. [`ProcessingContext`](api:be.imgn.gaia.processing.ProcessingContext) is everything
 a step works with: elements, types, the filer, options, and the helpers below.
 
 With `-Agaia.debug`, every step processor notes what each step did in each round, and how long it took, naming each

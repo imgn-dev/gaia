@@ -10,7 +10,8 @@ import javax.lang.model.element.Element;
 
 /**
  * The elements a {@link Step} gets in a round, by annotation, and by meta-annotation for the step's
- * {@linkplain Step#metaAnnotations() meta-annotations}.
+ * {@linkplain Step#metaAnnotations() meta-annotations}; and the root elements of the round, if the step
+ * {@linkplain Step#processesRootElements() processes them}.
  *
  * <pre>{@code
  * for (Element mapper : elements.annotatedWith("com.example.Mapper")) {
@@ -26,11 +27,15 @@ public final class AnnotatedElements {
 
     private final Map<String, Set<Element>> byAnnotation;
     private final Map<String, Set<Element>> byMetaAnnotation;
+    private final Set<Element> rootElements;
 
     AnnotatedElements(
-            Map<String, ? extends Set<Element>> byAnnotation, Map<String, ? extends Set<Element>> byMetaAnnotation) {
+            Map<String, ? extends Set<Element>> byAnnotation,
+            Map<String, ? extends Set<Element>> byMetaAnnotation,
+            Set<Element> rootElements) {
         this.byAnnotation = copy(byAnnotation);
         this.byMetaAnnotation = copy(byMetaAnnotation);
+        this.rootElements = Sets.setCopy(rootElements);
     }
 
     private static Map<String, Set<Element>> copy(Map<String, ? extends Set<Element>> elements) {
@@ -66,7 +71,19 @@ public final class AnnotatedElements {
     }
 
     /**
-     * Returns every element, whatever its annotation, each once.
+     * Returns the root elements of the round, annotated or not, if the step {@linkplain Step#processesRootElements()
+     * processes them}: its top-level types, and the packages and modules its {@code package-info} and
+     * {@code module-info} files declare.
+     *
+     * @return the root elements, in the order javac gives them; empty if the step does not process them
+     */
+    public Set<Element> rootElements() {
+        return rootElements;
+    }
+
+    /**
+     * Returns every annotated element, whatever its annotation, each once. The {@linkplain #rootElements() root
+     * elements} are not among them, unless they are annotated.
      *
      * @return the elements, by annotation and then in source order
      */
@@ -86,14 +103,14 @@ public final class AnnotatedElements {
     /**
      * Returns whether there is no element.
      *
-     * @return {@code true} if no element is annotated
+     * @return {@code true} if no element is annotated, and there is no {@linkplain #rootElements() root element}
      */
     public boolean isEmpty() {
-        return byAnnotation.isEmpty();
+        return byAnnotation.isEmpty() && rootElements.isEmpty();
     }
 
     @Override
     public String toString() {
-        return byAnnotation.toString();
+        return rootElements.isEmpty() ? byAnnotation.toString() : byAnnotation + ", root elements " + rootElements;
     }
 }
