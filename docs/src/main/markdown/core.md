@@ -189,6 +189,12 @@ Two overloads name the application more fully, for the operating systems that us
 - `applicationDirectories("foo", "bar", "Quuz")` adds the vendor's qualifier, its top-level domain, which macOS names
   the directories after: `~/Library/Application Support/foo.bar.Quuz`.
 
+Each name must be valid on every operating system, whichever the JVM runs on: not blank, `.` or `..`, without leading
+or trailing whitespace, control characters or any of `/ \ : < > " | ? *`. To check a name before it reaches the
+platform, such as one an annotation gives to an annotation processor, call
+[`ApplicationDirectories.checkName`](api:be.imgn.gaia.core.platform.ApplicationDirectories), which throws the same
+`IllegalArgumentException`.
+
 ### Base directories
 
 [`Directories`](api:be.imgn.gaia.core.platform.Directories) are the base directories, shared by all applications, as

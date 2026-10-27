@@ -58,19 +58,37 @@ public final class ApplicationDirectories {
         return xdg(directories, application);
     }
 
-    // A name must be valid on every platform, not only on the one the JVM runs on. Windows is the strictest: it forbids
-    // control characters, a trailing space and FORBIDDEN_CHARACTERS in a file name.
-    private static void checkName(String name, String role) {
+    /**
+     * Checks a name as the overloads of {@link Platform#applicationDirectories(String)} do: the name of an application,
+     * of its vendor, or of its vendor's qualifier. A name must be valid on every platform, not only on the one the JVM
+     * runs on, so that code can check it before it runs, such as an annotation processor checking the names an
+     * annotation gives.
+     *
+     * <pre>{@code
+     * ApplicationDirectories.checkName("Quuz", "application");
+     * }</pre>
+     *
+     * @param name the name to check
+     * @param role what the name is, such as {@code vendor}, which the message of the exception starts with: {@code The
+     *     vendor must not start or end with whitespace: " bar"}
+     * @throws IllegalArgumentException if the name is blank, {@code .} or {@code ..}, starts or ends with whitespace,
+     *     or contains a control character or any of {@code / \ : < > " | ? *}, which some platform forbids in a file
+     *     name
+     */
+    public static void checkName(String name, String role) {
+        requireNonNull(role, "role");
         requireNonNull(name, role);
+        // Windows is the strictest: it forbids control characters, a trailing space and FORBIDDEN_CHARACTERS in a file
+        // name.
         checkArgument(
                 !name.isBlank() && !".".equals(name) && !"..".equals(name),
-                "The %s must be a name, not '%s'",
+                "The %s must be a name, not \"%s\"",
                 role,
                 name);
-        checkArgument(name.strip().equals(name), "The %s must not start or end with whitespace: '%s'", role, name);
+        checkArgument(name.strip().equals(name), "The %s must not start or end with whitespace: \"%s\"", role, name);
         checkArgument(
                 name.chars().noneMatch(c -> Character.isISOControl(c) || FORBIDDEN_CHARACTERS.indexOf(c) >= 0),
-                "The %s must not contain a control character or any of %s: %s",
+                "The %s must not contain a control character or any of %s: \"%s\"",
                 role,
                 FORBIDDEN_CHARACTERS,
                 name);

@@ -2,6 +2,8 @@ package be.imgn.gaia.core.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import be.imgn.gaia.core.platform.ApplicationDirectories;
 import be.imgn.gaia.core.platform.Platform;
@@ -190,5 +192,42 @@ class ApplicationDirectoriesTest {
                     .isThrownBy(() -> platform.applicationDirectories(name, "bar", "Quuz"))
                     .withMessageContaining("qualifier");
         }
+    }
+
+    @Test
+    void acceptsANameEveryPlatformAllows() {
+        assertThatNoException().isThrownBy(() -> ApplicationDirectories.checkName("Quuz 2", "application"));
+    }
+
+    @Test
+    void rejectsWhatIsNotANameNamingItsRole() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("..", "vendor"))
+                .withMessage("The vendor must be a name, not \"..\"");
+    }
+
+    @Test
+    void rejectsLeadingOrTrailingWhitespaceNamingItsRole() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName(" bar", "vendor"))
+                .withMessage("The vendor must not start or end with whitespace: \" bar\"");
+    }
+
+    @Test
+    void rejectsForbiddenCharactersNamingItsRole() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("a?b", "qualifier"))
+                .withMessage("The qualifier must not contain a control character or any of /\\:<>\"|?*: \"a?b\"");
+    }
+
+    @Test
+    @SuppressWarnings("NullAway")
+    void rejectsANullNameOrRole() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> ApplicationDirectories.checkName(null, "vendor"))
+                .withMessage("vendor");
+        assertThatNullPointerException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("bar", null))
+                .withMessage("role");
     }
 }
