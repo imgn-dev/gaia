@@ -22,6 +22,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ModuleElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
@@ -136,6 +137,77 @@ class RootElementStepTest {
                 .containsExactly(
                         List.of("example.Mark", "example.Generate", "example.Seed"),
                         List.of("example.Generated", "example.Seed"));
+    }
+
+    @Test
+    void reportsANestedTypeGivenBack() {
+        Roots roots = new Roots(elements -> Set.copyOf(elements.stream()
+                .flatMap(element -> ElementFilter.typesIn(element.getEnclosedElements()).stream())
+                .toList()));
+        Compilation compilation =
+                javac().withProcessors(new TestProcessor(roots)).compile(PLAIN);
+
+        assertThat(compilation)
+                .failed()
+                .hadErrorCount(1)
+                .hadErrorContaining("Could not give example.Plain.Nested back to Roots: a step only gets root elements"
+                        + " and elements with its annotations")
+                .inFile("example/Plain.java")
+                .onLine(4);
+        assertThat(roots.rounds).containsExactly(List.of("example.Plain"));
+    }
+
+    @Test
+    void leavesTheTypeARootElementMissesToJavac() {
+        Roots roots = new Roots(elements -> Set.of());
+        Compilation compilation =
+                javac().withProcessors(new TestProcessor(roots)).compile(PLAIN, source("example.Broken", """
+                        package example;
+
+                        class Broken {
+                            Missing missing;
+                        }
+                        """));
+
+        assertThat(compilation)
+                .failed()
+                .hadErrorCount(1)
+                .hadErrorContaining("Missing")
+                .inFile("example/Broken.java");
+        assertThat(roots.rounds).containsExactly(List.of("example.Plain"));
+    }
+
+    @Test
+    void reportsAnAnnotatedRootElementThatStaysUnresolved() {
+        Compilation compilation = javac().withProcessors(new TestProcessor(new Step() {
+                    @Override
+                    public Set<String> annotations() {
+                        return Set.of("example.Mark");
+                    }
+
+                    @Override
+                    public boolean processesRootElements() {
+                        return true;
+                    }
+
+                    @Override
+                    public Set<? extends Element> process(AnnotatedElements elements) {
+                        return Set.of();
+                    }
+                }))
+                .compile(ANNOTATIONS, source("example.Broken", """
+                        package example;
+
+                        @Mark
+                        class Broken {
+                            Missing missing;
+                        }
+                        """));
+
+        assertThat(compilation)
+                .failed()
+                .hadErrorCount(2)
+                .hadErrorContaining("Could not process example.Broken: type Missing could not be resolved");
     }
 
     @Test

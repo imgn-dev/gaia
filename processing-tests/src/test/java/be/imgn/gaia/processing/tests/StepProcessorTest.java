@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
@@ -194,6 +195,29 @@ class StepProcessorTest {
         assertThat(compilation)
                 .failed()
                 .hadErrorContaining("Could not process example.Marked: it was still deferred after the last round");
+    }
+
+    @Test
+    void reportsAnElementGivenBackThatTheStepWouldNotGetAgain() {
+        Recorder recorder = new Recorder(
+                elements -> Set.of(requireNonNull(elements.iterator().next().getEnclosingElement())));
+        Compilation compilation =
+                javac().withProcessors(new TestProcessor(recorder)).compile(ANNOTATIONS, source("example.Marked", """
+                        package example;
+
+                        class Marked {
+                            @Mark void run() {}
+                        }
+                        """));
+
+        assertThat(compilation)
+                .failed()
+                .hadErrorCount(1)
+                .hadErrorContaining("Could not give example.Marked back to Recorder: a step only gets elements"
+                        + " with its annotations")
+                .inFile("example/Marked.java")
+                .onLine(3);
+        assertThat(recorder.rounds).containsExactly(Map.of("example.Mark", List.of("run()")));
     }
 
     @Test

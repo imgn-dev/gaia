@@ -54,11 +54,13 @@ final class MapperStep implements Step {
 
 Rounds are handled for you. An element whose types another processor has yet to generate is held back until they
 exist, and reported as an error if they never do. A step can also hand elements back for the next round, by returning
-them, and finish in `processingOver()` once all rounds are done.
+them, as long as it would get them again: elements with its annotations, or its root elements. It finishes in
+`processingOver()` once all rounds are done.
 
 A step that returns `true` from `processesRootElements()` also gets every root element of each round, annotated or
 not: the top-level types, and the packages and modules declared in `package-info` and `module-info` files. That
-suits the processing of classes found by what they implement or extend rather than by an annotation:
+suits the processing of classes found by what they implement or extend rather than by an annotation. A root element
+whose types never exist is not reported by the processor: javac already reports them.
 
 ```java
 @Override

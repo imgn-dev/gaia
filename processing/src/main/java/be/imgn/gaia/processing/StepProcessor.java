@@ -42,10 +42,11 @@ import org.jspecify.annotations.Nullable;
  * {@linkplain Step#metaAnnotations() meta-annotations} annotate, grouped by annotation, and the root elements of the
  * round if it {@linkplain Step#processesRootElements() processes them}. An element whose signature still has a type
  * javac could not resolve, typically one another processor has yet to generate, is held back until a later round
- * resolves it. So is an element a step gives back. An element still held back after the last round is reported as an
- * error, with the type that blocked it. Then each step {@linkplain Step#processingOver() finishes}, and the processor
- * writes the service files its steps registered with {@link ProcessingContext#services()}, whatever errors were
- * reported.
+ * resolves it. So is an element a step gives back, which must be one the step gets: an element a step would not get
+ * again is reported as an error instead. An element still held back after the last round is reported as an error, with
+ * the type that blocked it, unless only its being a root element held it back: javac reports its unresolved type
+ * itself. Then each step {@linkplain Step#processingOver() finishes}, and the processor writes the service files its
+ * steps registered with {@link ProcessingContext#services()}, whatever errors were reported.
  *
  * <p>A {@link ProcessingException} that escapes a step is reported as an error, at the place it names, and the
  * processor goes on with the next step: the elements of that step in that round are done, none is given back to it. To
@@ -72,6 +73,9 @@ public abstract class StepProcessor extends AbstractProcessor {
     private static final ProcessorOption<Boolean> DEBUG = ProcessorOption.ofBoolean("gaia.debug", false);
 
     private final Map<Step, Set<ElementKey>> deferred = new LinkedHashMap<>();
+    // The deferred elements reported if still deferred after the last round: not those held back only as root elements,
+    // whose unresolved type javac reports itself.
+    private final Map<Step, Set<ElementKey>> reportedIfDeferred = new LinkedHashMap<>();
     private @Nullable ProcessingContext context;
     private List<Step> steps = List.of();
     private @Nullable DebugLog debug;
@@ -223,12 +227,13 @@ public abstract class StepProcessor extends AbstractProcessor {
         }
         Batch batch = new Batch(step, metaAnnotated);
         if (step.processesRootElements()) {
-            roundEnv.getRootElements().forEach(batch::offerRoot);
+            roundEnv.getRootElements().forEach(element -> batch.offerRoot(element, false));
         }
+        Set<ElementKey> reported = reportedIfDeferred.getOrDefault(step, Set.of());
         for (ElementKey key : deferred.getOrDefault(step, Set.of())) {
             Element element = key.resolve(current.elements());
             if (element != null) {
-                batch.offerAgain(current, element);
+                batch.offerAgain(current, element, reported.contains(key));
             }
         }
         for (String name : step.annotations()) {
@@ -239,15 +244,19 @@ public abstract class StepProcessor extends AbstractProcessor {
         }
         batch.offerMetaAnnotated();
         Set<ElementKey> next = new LinkedHashSet<>(batch.heldBack);
+        Set<ElementKey> nextReported = new LinkedHashSet<>(batch.reported);
         int heldBack = next.size();
         if (!batch.byAnnotation.isEmpty() || !batch.roots.isEmpty()) {
-            processBatch(current, step, new AnnotatedElements(batch.byAnnotation, batch.byMetaAnnotation, batch.roots))
-                    .stream()
-                    .map(ElementKey::of)
-                    .flatMap(Optional::stream)
-                    .forEach(next::add);
+            for (Element element : processBatch(
+                    current, step, new AnnotatedElements(batch.byAnnotation, batch.byMetaAnnotation, batch.roots))) {
+                giveBack(current, step, batch, element).ifPresent(key -> {
+                    next.add(key);
+                    nextReported.add(key);
+                });
+            }
         }
         deferred.put(step, next);
+        reportedIfDeferred.put(step, nextReported);
         if (log != null) {
             List<String> processed = Stream.concat(
                             batch.roots.stream(),
@@ -275,6 +284,26 @@ public abstract class StepProcessor extends AbstractProcessor {
         }
     }
 
+    // An element the step would not get again is reported rather than given back, so that it is not lost silently.
+    private static Optional<ElementKey> giveBack(ProcessingContext current, Step step, Batch batch, Element element) {
+        if (!batch.getsAgain(current, element)) {
+            current.diagnostics()
+                    .on(element)
+                    .error("Could not give " + element + " back to " + step.name() + ": a step only gets "
+                            + (step.processesRootElements() ? "root elements and " : "")
+                            + "elements with its annotations");
+            return Optional.empty();
+        }
+        Optional<ElementKey> key = ElementKey.of(element);
+        if (key.isEmpty()) {
+            current.diagnostics()
+                    .on(element)
+                    .error("Could not give " + element + " back to " + step.name()
+                            + ": it cannot be found again in a later round");
+        }
+        return key;
+    }
+
     // In the debug output, the step's processingOver counts in its time and its errors, as part of the last round.
     private void finishStep(ProcessingContext current, int index) {
         DebugLog log = debug;
@@ -294,8 +323,12 @@ public abstract class StepProcessor extends AbstractProcessor {
     // Returns the number of elements reported.
     private int reportDeferred(ProcessingContext current) {
         int reported = 0;
-        for (Set<ElementKey> keys : deferred.values()) {
-            for (ElementKey key : keys) {
+        for (Map.Entry<Step, Set<ElementKey>> entry : deferred.entrySet()) {
+            Set<ElementKey> toReport = reportedIfDeferred.getOrDefault(entry.getKey(), Set.of());
+            for (ElementKey key : entry.getValue()) {
+                if (!toReport.contains(key)) {
+                    continue;
+                }
                 Element element = key.resolve(current.elements());
                 if (element != null) {
                     current.diagnostics()
@@ -310,6 +343,7 @@ public abstract class StepProcessor extends AbstractProcessor {
             }
         }
         deferred.clear();
+        reportedIfDeferred.clear();
         return reported;
     }
 
@@ -323,6 +357,7 @@ public abstract class StepProcessor extends AbstractProcessor {
         private final Map<String, Set<Element>> byMetaAnnotation = new LinkedHashMap<>();
         private final Set<Element> roots = new LinkedHashSet<>();
         private final Set<ElementKey> heldBack = new LinkedHashSet<>();
+        private final Set<ElementKey> reported = new LinkedHashSet<>();
         private final Map<Element, Boolean> resolved = new HashMap<>();
         private final Step step;
         private final Set<String> metaAnnotations;
@@ -336,9 +371,9 @@ public abstract class StepProcessor extends AbstractProcessor {
 
         // An element of an earlier round, with the annotations of the step it still has, and as a root element again if
         // it is one and the step processes them.
-        void offerAgain(ProcessingContext current, Element element) {
+        void offerAgain(ProcessingContext current, Element element, boolean report) {
             if (step.processesRootElements() && isRoot(element)) {
-                offerRoot(element);
+                offerRoot(element, report);
             }
             Set<String> annotations = step.annotations();
             current.elements().getAllAnnotationMirrors(element).stream()
@@ -352,6 +387,24 @@ public abstract class StepProcessor extends AbstractProcessor {
                     offerMetaAnnotated(element, type, scan.of(type));
                 }
             }
+        }
+
+        // Whether offerAgain would offer the element, if it is resolved.
+        boolean getsAgain(ProcessingContext current, Element element) {
+            if (step.processesRootElements() && isRoot(element)) {
+                return true;
+            }
+            Set<String> annotations = step.annotations();
+            if (current.elements().getAllAnnotationMirrors(element).stream()
+                    .map(MetaAnnotated::qualifiedName)
+                    .anyMatch(annotations::contains)) {
+                return true;
+            }
+            MetaAnnotated scan = metaAnnotated;
+            return scan != null
+                    && scan.annotationsOf(element).stream()
+                            .flatMap(annotation -> scan.of(MetaAnnotated.typeOf(annotation)).stream())
+                            .anyMatch(metaAnnotations::contains);
         }
 
         // The elements of the round annotated with an annotation that one of the step's meta-annotations annotates.
@@ -373,14 +426,14 @@ public abstract class StepProcessor extends AbstractProcessor {
             }
         }
 
-        void offerRoot(Element element) {
-            if (isResolved(element)) {
+        void offerRoot(Element element, boolean report) {
+            if (isResolved(element, report)) {
                 roots.add(element);
             }
         }
 
         void offer(Element element, String annotation, Set<String> annotationMetaAnnotations) {
-            if (!isResolved(element)) {
+            if (!isResolved(element, true)) {
                 return;
             }
             byAnnotation
@@ -391,12 +444,17 @@ public abstract class StepProcessor extends AbstractProcessor {
                     .add(element));
         }
 
-        // Holds an element back if it is not resolved.
-        private boolean isResolved(Element element) {
+        // Holds an element back if it is not resolved, to report it if it is still held back after the last round.
+        private boolean isResolved(Element element, boolean report) {
             boolean isResolved = resolved.computeIfAbsent(
                     element, candidate -> Resolution.firstUnresolved(candidate).isEmpty());
             if (!isResolved) {
-                ElementKey.of(element).ifPresent(heldBack::add);
+                ElementKey.of(element).ifPresent(key -> {
+                    heldBack.add(key);
+                    if (report) {
+                        reported.add(key);
+                    }
+                });
             }
             return isResolved;
         }

@@ -126,7 +126,8 @@ public interface Step {
      * generates.
      *
      * <p>As with {@link #annotations()}, a root element whose signature, or the signature of one of its members, has a
-     * type javac could not resolve yet is held back until a later round resolves it.
+     * type javac could not resolve yet is held back until a later round resolves it. If none does, the processor does
+     * not report it: javac reports the unresolved type itself.
      *
      * <p>A {@link StepProcessor} with a step that processes root elements supports all annotations, {@code *}, and so
      * takes part in every round. It still claims none, so that other processors see them.
@@ -145,7 +146,9 @@ public interface Step {
      * @param elements the ready elements, in source order, by each of this step's annotations they have, and by each of
      *     its meta-annotations their annotations have; and the ready root elements, if this step processes them
      * @return the elements to give to this step again in the next round, for example because a type they need is not
-     *     generated yet; an element still deferred after the last round is reported as an error
+     *     generated yet: elements with its annotations, or with annotations its meta-annotations annotate, and root
+     *     elements if it processes them; any other element is reported as an error, as is an element still deferred
+     *     after the last round
      * @throws ProcessingException if an element is invalid: the {@link StepProcessor} reports the error, and gives none
      *     of these elements to this step again
      */
