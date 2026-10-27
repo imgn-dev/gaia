@@ -661,7 +661,9 @@ class FilesTest {
 
             assertThat(Files.isSameFile(path("a"), path("link"))).isTrue();
             assertThat(Files.isSameFile(path("a"), path("b"))).isFalse();
-            assertThat(Files.isSameFile(path("missing"), path("missing"))).isTrue();
+            // Two equal paths, rather than one path twice: isSameFile compares them before looking for the file.
+            Path missing = path("missing");
+            assertThat(Files.isSameFile(missing, path("missing"))).isTrue();
             assertThat(Files.isSameFile(path("a"), Path.of("a"))).isFalse();
             assertThatExceptionOfType(NoSuchFileException.class)
                     .isThrownBy(() -> Files.isSameFile(path("a"), path("missing")));

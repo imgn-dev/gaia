@@ -58,4 +58,4 @@ To register only some services:
 </configuration>
 ```
 
-The plugin requires Maven 3.9.16 or later, and Java 21 or later.
+The plugin requires Maven 3.10.0 or later, and Java 21 or later.
