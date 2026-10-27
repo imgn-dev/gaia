@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#annotations()" tabindex="0">annotations()</a></li>
 <li><a href="#metaAnnotations()" tabindex="0">metaAnnotations()</a></li>
+<li><a href="#processesRootElements()" tabindex="0">processesRootElements()</a></li>
 <li><a href="#process(be.imgn.gaia.processing.AnnotatedElements)" tabindex="0">process(AnnotatedElements)</a></li>
 <li><a href="#processingOver()" tabindex="0">processingOver()</a></li>
 <li><a href="#name()" tabindex="0">name()</a></li>
@@ -76,7 +77,8 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Step</span></div>
 <div class="block">One unit of work of a <a href="StepProcessor.html" title="class in be.imgn.gaia.processing"><code>StepProcessor</code></a>: the processing of the elements annotated with some annotations, or with
-annotations that some <a href="#metaAnnotations()">meta-annotations</a> annotate.
+annotations that some <a href="#metaAnnotations()">meta-annotations</a> annotate, and optionally of
+<a href="#processesRootElements()">every root element</a>.
 
 <pre><code>final class MapperStep implements Step {
     public Set&lt;String&gt; annotations() {
@@ -144,9 +146,15 @@ on.</div>
 <div class="block">Processes the elements annotated with this step's annotations that are ready: every type in their signature is
 resolved.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#processingOver()" class="member-name-link">processingOver</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#processesRootElements()" class="member-name-link">processesRootElements</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Returns whether this step also gets the root elements of each round, annotated or not, with
+<a href="AnnotatedElements.html#rootElements()"><code>AnnotatedElements.rootElements()</code></a>, such as to process the classes that implement an interface.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#processingOver()" class="member-name-link">processingOver</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Finishes this step once all rounds are done: to check what they produced together, to report a summary, or to
 register or <a href="ServiceFiles.html#discard(be.imgn.gaia.processing.source.ClassName)">discard</a> the
 implementations of a service before its file is written.</div>
@@ -231,16 +239,59 @@ takes part in every round. It still claims none, so that other processors see th
 </section>
 </li>
 <li>
+<section class="detail" id="processesRootElements()">
+<h3>processesRootElements</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">processesRootElements</span>()</div>
+<div class="block">Returns whether this step also gets the root elements of each round, annotated or not, with
+<a href="AnnotatedElements.html#rootElements()"><code>AnnotatedElements.rootElements()</code></a>, such as to process the classes that implement an interface.
+
+<pre><code>public Set&lt;String&gt; annotations() {
+    return Set.of();
+}
+
+public boolean processesRootElements() {
+    return true;
+}
+
+public Set&lt;Element&gt; process(AnnotatedElements elements) {
+    for (TypeElement type : ElementFilter.typesIn(elements.rootElements())) {
+        ...
+    }
+    return Set.of();
+}
+</code></pre>
+
+<p>The root elements are those of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/RoundEnvironment.html#getRootElements()" title="class or interface in javax.annotation.processing" class="external-link"><code>RoundEnvironment.getRootElements()</code></a>: the
+top-level types of the sources and classes new in the round, and the packages and modules their
+<code>package-info</code> and <code>module-info</code> files declare. Nested types are among the enclosed elements of their
+top-level type. The sources a round generates are root elements of the next one, including those this step
+generates.
+
+<p>As with <a href="#annotations()"><code>annotations()</code></a>, a root element whose signature, or the signature of one of its members, has a
+type javac could not resolve yet is held back until a later round resolves it.
+
+<p>A <a href="StepProcessor.html" title="class in be.imgn.gaia.processing"><code>StepProcessor</code></a> with a step that processes root elements supports all annotations, <code>*</code>, and so
+takes part in every round. It still claims none, so that other processors see them.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> to get the root elements; <code>false</code> by default</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="process(be.imgn.gaia.processing.AnnotatedElements)">
 <h3>process</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</span>&nbsp;<span class="element-name">process</span><wbr><span class="parameters">(<a href="AnnotatedElements.html" title="class in be.imgn.gaia.processing">AnnotatedElements</a>&nbsp;elements)</span></div>
 <div class="block">Processes the elements annotated with this step's annotations that are ready: every type in their signature is
-resolved. The others are kept for a later round, and given to this step once they are ready.</div>
+resolved. The others are kept for a later round, and given to this step once they are ready. The same goes for
+the root elements, if this step <a href="#processesRootElements()">processes them</a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>elements</code> - the ready elements, in source order, by each of this step's annotations they have, and by each of
-    its meta-annotations their annotations have</dd>
+    its meta-annotations their annotations have; and the ready root elements, if this step processes them</dd>
 <dt>Returns:</dt>
 <dd>the elements to give to this step again in the next round, for example because a type they need is not
     generated yet; an element still deferred after the last round is reported as an error</dd>

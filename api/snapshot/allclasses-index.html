@@ -58,7 +58,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotatedElements.html" title="class in be.imgn.gaia.processing">AnnotatedElements</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The elements a <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html" title="interface in be.imgn.gaia.processing"><code>Step</code></a> gets in a round, by annotation, and by meta-annotation for the step's
-<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html#metaAnnotations()">meta-annotations</a>.</div>
+<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html#metaAnnotations()">meta-annotations</a>; and the root elements of the round, if the step
+<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html#processesRootElements()">processes them</a>.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html" title="class in be.imgn.gaia.processing.source">Annotation</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -162,6 +163,14 @@ attribute of that annotation.</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A source of environment variables: the running JVM's, or fixed ones for tests.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events">EventBus</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Delivers each event it is given to the subscribers of the event's class and of all its supertypes.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Builds an <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events"><code>EventBus</code></a>.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -439,7 +448,8 @@ name the types it refers to.</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html" title="interface in be.imgn.gaia.processing">Step</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">One unit of work of a <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/StepProcessor.html" title="class in be.imgn.gaia.processing"><code>StepProcessor</code></a>: the processing of the elements annotated with some annotations, or with
-annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html#metaAnnotations()">meta-annotations</a> annotate.</div>
+annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html#metaAnnotations()">meta-annotations</a> annotate, and optionally of
+<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html#processesRootElements()">every root element</a>.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/StepProcessor.html" title="class in be.imgn.gaia.processing">StepProcessor</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -448,6 +458,26 @@ annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/S
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Measures elapsed time, on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time"><code>Ticker</code></a> rather than on the wall clock.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab6"><a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events">Subscribe</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab6">
+<div class="block">Marks a method that receives events once its listener is <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#register(java.lang.Object)">registered</a>: the
+events of the type of its parameter, and of the subtypes of that type.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.html" title="interface in be.imgn.gaia.events.spi">SubscriberIndex</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Subscribes the <a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> methods a class declares: implemented by the code
+<code>gaia-events-processor</code> generates for that class, and found by
+<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.Registrar.html" title="interface in be.imgn.gaia.events.spi">SubscriberIndex.Registrar</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Subscribes the methods of a listener, on behalf of the event bus.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscription.html" title="class in be.imgn.gaia.events">Subscription</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">What <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)"><code>EventBus.subscribe(Class, java.util.function.Consumer)</code></a> or <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> subscribed,
+until it is closed.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">

@@ -104,20 +104,22 @@ loadScripts(document, 'script');</script>
 </code></pre>
 
 <p>Each round, each step gets the elements annotated with its annotations, or with annotations that its
-<a href="Step.html#metaAnnotations()">meta-annotations</a> annotate, grouped by annotation. An element whose signature
-still has a type javac could not resolve, typically one another processor has yet to generate, is held back until a
-later round resolves it. So is an element a step gives back. An element still held back after the last round is
-reported as an error, with the type that blocked it. Then each step <a href="Step.html#processingOver()">finishes</a>, and
-the processor writes the service files its steps registered with <a href="ProcessingContext.html#services()"><code>ProcessingContext.services()</code></a>, whatever
-errors were reported.
+<a href="Step.html#metaAnnotations()">meta-annotations</a> annotate, grouped by annotation, and the root elements of the
+round if it <a href="Step.html#processesRootElements()">processes them</a>. An element whose signature still has a type
+javac could not resolve, typically one another processor has yet to generate, is held back until a later round
+resolves it. So is an element a step gives back. An element still held back after the last round is reported as an
+error, with the type that blocked it. Then each step <a href="Step.html#processingOver()">finishes</a>, and the processor
+writes the service files its steps registered with <a href="ProcessingContext.html#services()"><code>ProcessingContext.services()</code></a>, whatever errors were
+reported.
 
 <p>A <a href="ProcessingException.html" title="class in be.imgn.gaia.processing"><code>ProcessingException</code></a> that escapes a step is reported as an error, at the place it names, and the
 processor goes on with the next step: the elements of that step in that round are done, none is given back to it. To
 go on with the next element instead, a step processes each with <a href="ProcessingContext.html#forEach(java.lang.Iterable,java.util.function.Consumer)"><code>ProcessingContext.forEach(Iterable, java.util.function.Consumer)</code></a>. The same goes for <a href="Step.html#processingOver()"><code>Step.processingOver()</code></a>. Any other exception propagates: javac
 stops and reports it, with its stack trace, as a crash of the processor.
 
-<p>The processor supports the annotations of its steps, or all annotations if a step has meta-annotations, and the
-latest source version. It never claims the annotations, so other processors see them too.
+<p>The processor supports the annotations of its steps, or all annotations if a step has meta-annotations or
+processes root elements, and the latest source version. It never claims the annotations, so other processors see them
+too.
 
 <p>Every step processor accepts the boolean option <code>gaia.debug</code>, as <code>-Agaia.debug</code> or
 <code>-Agaia.debug=true</code>, which turns on its debug output: javac notes, each starting with the simple name of the
@@ -174,7 +176,8 @@ same. The rounds are those the processor takes part in.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the annotations of the steps; or <code>*</code>, all annotations, if a step has
 <a href="Step.html#metaAnnotations()">meta-annotations</a>, since the annotations they annotate are not known in
-advance.</div>
+advance, or if a step <a href="Step.html#processesRootElements()">processes root elements</a>, which javac only gives
+to the processors that support <code>*</code> when none is annotated.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSupportedOptions()" class="member-name-link">getSupportedOptions</a>()</code></div>
@@ -314,7 +317,9 @@ option no processor accepts. The processor also accepts <code>gaia.debug</code>,
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getSupportedAnnotationTypes</span>()</div>
 <div class="block">Returns the annotations of the steps; or <code>*</code>, all annotations, if a step has
 <a href="Step.html#metaAnnotations()">meta-annotations</a>, since the annotations they annotate are not known in
-advance. The processor never claims annotations either way.</div>
+advance, or if a step <a href="Step.html#processesRootElements()">processes root elements</a>, which javac only gives
+to the processors that support <code>*</code> when none is annotated. The processor never claims annotations either
+way.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/Processor.html#getSupportedAnnotationTypes()" title="class or interface in javax.annotation.processing" class="external-link">getSupportedAnnotationTypes</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/Processor.html" title="class or interface in javax.annotation.processing" class="external-link">Processor</a></code></dd>

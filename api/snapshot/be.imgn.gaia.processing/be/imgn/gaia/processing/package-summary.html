@@ -102,7 +102,8 @@ types, written out as a <a href="source/JavaFile.html" title="class in be.imgn.g
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="AnnotatedElements.html" title="class in be.imgn.gaia.processing">AnnotatedElements</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">The elements a <a href="Step.html" title="interface in be.imgn.gaia.processing"><code>Step</code></a> gets in a round, by annotation, and by meta-annotation for the step's
-<a href="Step.html#metaAnnotations()">meta-annotations</a>.</div>
+<a href="Step.html#metaAnnotations()">meta-annotations</a>; and the root elements of the round, if the step
+<a href="Step.html#processesRootElements()">processes them</a>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="AnnotationReader.html" title="class in be.imgn.gaia.processing">AnnotationReader</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -152,7 +153,8 @@ name the types it refers to.</div>
 <div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Step.html" title="interface in be.imgn.gaia.processing">Step</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">One unit of work of a <a href="StepProcessor.html" title="class in be.imgn.gaia.processing"><code>StepProcessor</code></a>: the processing of the elements annotated with some annotations, or with
-annotations that some <a href="Step.html#metaAnnotations()">meta-annotations</a> annotate.</div>
+annotations that some <a href="Step.html#metaAnnotations()">meta-annotations</a> annotate, and optionally of
+<a href="Step.html#processesRootElements()">every root element</a>.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="StepProcessor.html" title="class in be.imgn.gaia.processing">StepProcessor</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">

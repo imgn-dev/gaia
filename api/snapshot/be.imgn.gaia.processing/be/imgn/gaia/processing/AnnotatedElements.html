@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#annotatedWith(java.lang.String)" tabindex="0">annotatedWith(String)</a></li>
 <li><a href="#withAnnotationsAnnotatedWith(java.lang.String)" tabindex="0">withAnnotationsAnnotatedWith(String)</a></li>
+<li><a href="#rootElements()" tabindex="0">rootElements()</a></li>
 <li><a href="#all()" tabindex="0">all()</a></li>
 <li><a href="#annotations()" tabindex="0">annotations()</a></li>
 <li><a href="#isEmpty()" tabindex="0">isEmpty()</a></li>
@@ -81,7 +82,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">AnnotatedElements</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The elements a <a href="Step.html" title="interface in be.imgn.gaia.processing"><code>Step</code></a> gets in a round, by annotation, and by meta-annotation for the step's
-<a href="Step.html#metaAnnotations()">meta-annotations</a>.
+<a href="Step.html#metaAnnotations()">meta-annotations</a>; and the root elements of the round, if the step
+<a href="Step.html#processesRootElements()">processes them</a>.
 
 <pre><code>for (Element mapper : elements.annotatedWith("com.example.Mapper")) {
     ...
@@ -109,7 +111,7 @@ both <code>withAnnotationsAnnotatedWith("javax.inject.Qualifier")</code> and <co
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#all()" class="member-name-link">all</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns every element, whatever its annotation, each once.</div>
+<div class="block">Returns every annotated element, whatever its annotation, each once.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#annotatedWith(java.lang.String)" class="member-name-link">annotatedWith</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;qualifiedName)</code></div>
@@ -126,12 +128,18 @@ both <code>withAnnotationsAnnotatedWith("javax.inject.Qualifier")</code> and <co
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns whether there is no element.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withAnnotationsAnnotatedWith(java.lang.String)" class="member-name-link">withAnnotationsAnnotatedWith</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;metaAnnotation)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#rootElements()" class="member-name-link">rootElements</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the root elements of the round, annotated or not, if the step <a href="Step.html#processesRootElements()">processes them</a>: its top-level types, and the packages and modules its <code>package-info</code> and
+<code>module-info</code> files declare.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withAnnotationsAnnotatedWith(java.lang.String)" class="member-name-link">withAnnotationsAnnotatedWith</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;metaAnnotation)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the elements annotated with an annotation whose type is annotated with a meta-annotation of the step:
 with <code>javax.inject.Qualifier</code>, the elements annotated with a qualifier, such as <code>@Named("primary")</code>.</div>
 </div>
@@ -187,11 +195,26 @@ Only the meta-annotations of the annotation type itself count, as for
 </section>
 </li>
 <li>
+<section class="detail" id="rootElements()">
+<h3>rootElements</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</span>&nbsp;<span class="element-name">rootElements</span>()</div>
+<div class="block">Returns the root elements of the round, annotated or not, if the step <a href="Step.html#processesRootElements()">processes them</a>: its top-level types, and the packages and modules its <code>package-info</code> and
+<code>module-info</code> files declare.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the root elements, in the order javac gives them; empty if the step does not process them</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="all()">
 <h3>all</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&gt;</span>&nbsp;<span class="element-name">all</span>()</div>
-<div class="block">Returns every element, whatever its annotation, each once.</div>
+<div class="block">Returns every annotated element, whatever its annotation, each once. The <a href="#rootElements()">root
+elements</a> are not among them, unless they are annotated.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the elements, by annotation and then in source order</dd>
@@ -220,7 +243,7 @@ Only the meta-annotations of the annotation type itself count, as for
 <div class="block">Returns whether there is no element.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd><code>true</code> if no element is annotated</dd>
+<dd><code>true</code> if no element is annotated, and there is no <a href="#rootElements()">root element</a></dd>
 </dl>
 </div>
 </section>

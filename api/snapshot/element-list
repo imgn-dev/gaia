@@ -8,6 +8,10 @@ be.imgn.gaia.core.text
 be.imgn.gaia.core.time
 module:be.imgn.gaia.core.testing
 be.imgn.gaia.core.testing
+module:be.imgn.gaia.events
+be.imgn.gaia.events
+be.imgn.gaia.events.spi
+module:be.imgn.gaia.events.processor
 module:be.imgn.gaia.memfs
 be.imgn.gaia.memfs
 module:be.imgn.gaia.processing
