@@ -107,6 +107,18 @@ Compilation compilation = TestCompiler.javac()
                 """));
 ```
 
+`withResource` gives the compilation a file a processor reads with `Filer.getResource`, in the class output, where a
+build tool copies the resources before compiling, or in the source path:
+
+```java
+Compilation compilation = TestCompiler.javac()
+        .withProcessors(new ViewProcessor())
+        .withResource(StandardLocation.CLASS_OUTPUT, "example/MainView.toml", """
+                title = "Main"
+                """)
+        .compile(TestCompiler.source("example.MainView", "..."));
+```
+
 [`CompilationAssert`](api:be.imgn.gaia.processing.testing.CompilationAssert) asserts on it:
 
 ```java

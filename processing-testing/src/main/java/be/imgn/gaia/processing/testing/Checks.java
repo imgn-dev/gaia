@@ -2,6 +2,7 @@ package be.imgn.gaia.processing.testing;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.lang.model.SourceVersion;
 
@@ -62,6 +63,23 @@ final class Checks {
         if (relativePath.isEmpty() || relativePath.startsWith("/")) {
             throw new IllegalArgumentException(
                     "Not a path relative to a location, such as example/Foo.java: \"" + relativePath + "\"");
+        }
+    }
+
+    /**
+     * Checks the path of a resource relative to a location, which must name a file inside that location.
+     *
+     * @param relativePath the path to check
+     * @throws IllegalArgumentException if {@code relativePath} is empty, starts or ends with {@code /}, contains
+     *     {@code \}, or has an empty, {@code .} or {@code ..} segment
+     */
+    static void checkResourcePath(String relativePath) {
+        boolean valid = !relativePath.contains("\\")
+                && Arrays.stream(relativePath.split("/", -1))
+                        .noneMatch(segment -> segment.isEmpty() || segment.equals(".") || segment.equals(".."));
+        if (!valid) {
+            throw new IllegalArgumentException(
+                    "Not a path to a file relative to a location, such as example/Foo.toml: \"" + relativePath + "\"");
         }
     }
 }

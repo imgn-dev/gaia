@@ -12,12 +12,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -42,17 +45,19 @@ import javax.tools.ToolProvider;
  * {@code module-info.java} read what it requires. Generated sources, class files and resources are written to temporary
  * directories, read back into the {@link Compilation}, and the directories are deleted.
  *
- * <p>A {@code TestCompiler} is immutable: {@link #withProcessors(Processor...)} and {@link #withOptions(String...)}
- * return a new one.
+ * <p>A {@code TestCompiler} is immutable: {@link #withProcessors(Processor...)}, {@link #withOptions(String...)} and
+ * {@link #withResource(JavaFileManager.Location, String, String)} return a new one.
  */
 public final class TestCompiler {
 
     private final List<Processor> processors;
     private final List<String> options;
+    private final List<Resource> resources;
 
-    private TestCompiler(List<Processor> processors, List<String> options) {
+    private TestCompiler(List<Processor> processors, List<String> options, List<Resource> resources) {
         this.processors = processors;
         this.options = options;
+        this.resources = resources;
     }
 
     /**
@@ -61,7 +66,7 @@ public final class TestCompiler {
      * @return a compiler
      */
     public static TestCompiler javac() {
-        return new TestCompiler(List.of(), List.of());
+        return new TestCompiler(List.of(), List.of(), List.of());
     }
 
     /**
@@ -97,7 +102,7 @@ public final class TestCompiler {
      */
     public TestCompiler withProcessors(Processor... processors) {
         requireNonNull(processors, "processors");
-        return new TestCompiler(Checks.copyOfNonNull(Arrays.asList(processors), "processors"), options);
+        return new TestCompiler(Checks.copyOfNonNull(Arrays.asList(processors), "processors"), options, resources);
     }
 
     /**
@@ -116,7 +121,55 @@ public final class TestCompiler {
      */
     public TestCompiler withOptions(String... options) {
         requireNonNull(options, "options");
-        return new TestCompiler(processors, Checks.copyOfNonNull(Arrays.asList(options), "options"));
+        return new TestCompiler(processors, Checks.copyOfNonNull(Arrays.asList(options), "options"), resources);
+    }
+
+    /**
+     * Returns a compiler that also gives the compilation a resource, such as a file an annotation processor reads with
+     * {@link javax.annotation.processing.Filer#getResource}, besides the resources this one gives. It replaces the
+     * resource this one gives at the same location and path, if any.
+     *
+     * <pre>{@code
+     * Compilation compilation = TestCompiler.javac()
+     *         .withProcessors(new ViewProcessor())
+     *         .withResource(StandardLocation.CLASS_OUTPUT, "example/MainView.toml", """
+     *                 title = "Main"
+     *                 """)
+     *         .compile(TestCompiler.source("example.MainView", "..."));
+     * }</pre>
+     *
+     * <p>A resource in {@link StandardLocation#CLASS_OUTPUT} is there before javac starts, as are the resources a build
+     * tool copies to the class output before compiling. It is not among the {@linkplain Compilation#generatedFiles()
+     * generated files}, unless the compilation writes other content to it. A resource in
+     * {@link StandardLocation#SOURCE_PATH} is in a source path of its own, so the options must not give one.
+     *
+     * @param location {@link StandardLocation#CLASS_OUTPUT} or {@link StandardLocation#SOURCE_PATH}
+     * @param relativePath the path of the resource relative to the location, separated by {@code /}, such as
+     *     {@code example/MainView.toml}
+     * @param text the content of the resource, written in UTF-8
+     * @return a compiler giving that resource too
+     * @throws IllegalArgumentException if {@code location} is another location, or if {@code relativePath} is empty,
+     *     starts or ends with {@code /}, contains {@code \}, or has an empty, {@code .} or {@code ..} segment
+     */
+    public TestCompiler withResource(JavaFileManager.Location location, String relativePath, String text) {
+        requireNonNull(location, "location");
+        requireNonNull(relativePath, "relativePath");
+        requireNonNull(text, "text");
+        if (location != StandardLocation.CLASS_OUTPUT && location != StandardLocation.SOURCE_PATH) {
+            throw new IllegalArgumentException(
+                    "A resource must be in CLASS_OUTPUT or SOURCE_PATH, not in " + location.getName());
+        }
+        Checks.checkResourcePath(relativePath);
+        StandardLocation standard = location == StandardLocation.CLASS_OUTPUT
+                ? StandardLocation.CLASS_OUTPUT
+                : StandardLocation.SOURCE_PATH;
+        List<Resource> all = new ArrayList<>();
+        resources.stream()
+                .filter(resource -> resource.location() != standard
+                        || !resource.relativePath().equals(relativePath))
+                .forEach(all::add);
+        all.add(new Resource(standard, relativePath, text));
+        return new TestCompiler(processors, options, List.copyOf(all));
     }
 
     /**
@@ -124,13 +177,15 @@ public final class TestCompiler {
      *
      * @param sources the compilation units, such as the ones {@link #source(String, String)} returns
      * @return the outcome; a compilation error is reported in it, not thrown
-     * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, or if
-     *     javac rejects an option: unknown, without its argument, or with an invalid value
+     * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, if javac
+     *     rejects an option: unknown, without its argument, or with an invalid value, or if the options give a source
+     *     path while a {@linkplain #withResource(JavaFileManager.Location, String, String) resource} is in
+     *     {@link StandardLocation#SOURCE_PATH}
      * @throws IllegalStateException if the running Java has no system compiler, or if javac finds options that cannot
      *     be used together
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
-     * @throws UncheckedIOException if the temporary output directories cannot be written, read or deleted
+     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted
      */
     public Compilation compile(JavaFileObject... sources) {
         requireNonNull(sources, "sources");
@@ -142,13 +197,15 @@ public final class TestCompiler {
      *
      * @param sources the compilation units, such as the ones {@link #source(String, String)} returns
      * @return the outcome; a compilation error is reported in it, not thrown
-     * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, or if
-     *     javac rejects an option: unknown, without its argument, or with an invalid value
+     * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, if javac
+     *     rejects an option: unknown, without its argument, or with an invalid value, or if the options give a source
+     *     path while a {@linkplain #withResource(JavaFileManager.Location, String, String) resource} is in
+     *     {@link StandardLocation#SOURCE_PATH}
      * @throws IllegalStateException if the running Java has no system compiler, or if javac finds options that cannot
      *     be used together
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
-     * @throws UncheckedIOException if the temporary output directories cannot be written, read or deleted
+     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted
      */
     public Compilation compile(List<? extends JavaFileObject> sources) {
         List<JavaFileObject> units = Checks.copyOfNonNull(sources, "sources");
@@ -160,6 +217,12 @@ public final class TestCompiler {
                 throw new IllegalArgumentException("Not a source file: " + unit.getName());
             }
         }
+        Map<String, byte[]> classOutputResources = resourcesIn(StandardLocation.CLASS_OUTPUT);
+        Map<String, byte[]> sourcePathResources = resourcesIn(StandardLocation.SOURCE_PATH);
+        if (!sourcePathResources.isEmpty() && givesSourcePath()) {
+            throw new IllegalArgumentException(
+                    "The options give a source path, which would hide the resources given in SOURCE_PATH");
+        }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             throw new IllegalStateException("No system Java compiler: run the tests on a JDK, not a JRE");
@@ -167,23 +230,54 @@ public final class TestCompiler {
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         Path classOutput = createTempDirectory("class-output");
         Path sourceOutput = createTempDirectory("source-output");
+        Path sourcePath = createTempDirectory("source-path");
         try (StandardJavaFileManager fileManager =
                 compiler.getStandardFileManager(diagnostics, Locale.ROOT, StandardCharsets.UTF_8)) {
+            write(classOutput, classOutputResources);
+            write(sourcePath, sourcePathResources);
             fileManager.setLocationFromPaths(StandardLocation.CLASS_OUTPUT, List.of(classOutput));
             fileManager.setLocationFromPaths(StandardLocation.SOURCE_OUTPUT, List.of(sourceOutput));
+            if (!sourcePathResources.isEmpty()) {
+                fileManager.setLocationFromPaths(StandardLocation.SOURCE_PATH, List.of(sourcePath));
+            }
             JavaCompiler.CompilationTask task =
                     compiler.getTask(null, fileManager, diagnostics, javacOptions(units), null, units);
             task.setProcessors(processors);
             boolean success = task.call();
             List<JavaFileObject> generated = new ArrayList<>();
-            generated.addAll(readBack(StandardLocation.CLASS_OUTPUT, classOutput));
-            generated.addAll(readBack(StandardLocation.SOURCE_OUTPUT, sourceOutput));
+            generated.addAll(readBack(StandardLocation.CLASS_OUTPUT, classOutput, classOutputResources));
+            generated.addAll(readBack(StandardLocation.SOURCE_OUTPUT, sourceOutput, Map.of()));
             return new Compilation(success, diagnostics.getDiagnostics(), generated);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } finally {
             deleteRecursively(classOutput);
             deleteRecursively(sourceOutput);
+            deleteRecursively(sourcePath);
+        }
+    }
+
+    private Map<String, byte[]> resourcesIn(StandardLocation location) {
+        Map<String, byte[]> contents = new LinkedHashMap<>();
+        resources.stream()
+                .filter(resource -> resource.location() == location)
+                .forEach(resource ->
+                        contents.put(resource.relativePath(), resource.text().getBytes(StandardCharsets.UTF_8)));
+        return contents;
+    }
+
+    private boolean givesSourcePath() {
+        return options.stream()
+                .anyMatch(option -> option.equals("-sourcepath")
+                        || option.equals("--source-path")
+                        || option.startsWith("--source-path="));
+    }
+
+    private static void write(Path root, Map<String, byte[]> files) throws IOException {
+        for (Map.Entry<String, byte[]> file : files.entrySet()) {
+            Path path = root.resolve(file.getKey());
+            Files.createDirectories(path.getParent());
+            Files.write(path, file.getValue());
         }
     }
 
@@ -206,14 +300,20 @@ public final class TestCompiler {
         return all;
     }
 
-    private static List<JavaFileObject> readBack(StandardLocation location, Path root) throws IOException {
+    // The resources given in the location are left out, unless the compilation changed them.
+    private static List<JavaFileObject> readBack(StandardLocation location, Path root, Map<String, byte[]> given)
+            throws IOException {
         List<JavaFileObject> files = new ArrayList<>();
         try (Stream<Path> paths = Files.walk(root)) {
             for (Path path : paths.filter(Files::isRegularFile).sorted().toList()) {
                 String relative = root.relativize(path)
                         .toString()
                         .replace(path.getFileSystem().getSeparator(), "/");
-                files.add(new GeneratedFile(location.getName() + "/" + relative, Files.readAllBytes(path)));
+                byte[] content = Files.readAllBytes(path);
+                byte[] original = given.get(relative);
+                if (original == null || !Arrays.equals(original, content)) {
+                    files.add(new GeneratedFile(location.getName() + "/" + relative, content));
+                }
             }
         }
         return files;
@@ -236,4 +336,7 @@ public final class TestCompiler {
             throw new UncheckedIOException(e);
         }
     }
+
+    /** A resource given to the compilation. */
+    private record Resource(StandardLocation location, String relativePath, String text) {}
 }

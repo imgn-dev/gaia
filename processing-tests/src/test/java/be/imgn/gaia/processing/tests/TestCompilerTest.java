@@ -8,10 +8,17 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import be.imgn.gaia.processing.testing.Compilation;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.net.URI;
+import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -19,6 +26,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
+import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardLocation;
@@ -308,11 +316,207 @@ class TestCompilerTest {
     }
 
     @Test
+    void givesAResourceInTheClassOutput() {
+        ResourceReader reader = new ResourceReader(StandardLocation.CLASS_OUTPUT);
+        Compilation compilation = javac().withProcessors(reader)
+                .withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", "title = \"Foo\"\n")
+                .compile(FOO);
+
+        assertThat(compilation).succeeded();
+        assertThat(reader.texts).containsExactly("title = \"Foo\"\n");
+        assertThat(compilation.generatedFile(StandardLocation.CLASS_OUTPUT, "example/Foo.toml"))
+                .isEmpty();
+    }
+
+    @Test
+    void givesAResourceInTheSourcePath() {
+        ResourceReader reader = new ResourceReader(StandardLocation.SOURCE_PATH);
+        Compilation compilation = javac().withProcessors(reader)
+                .withResource(StandardLocation.SOURCE_PATH, "example/Foo.toml", "title = \"Foo\"\n")
+                .compile(FOO);
+
+        assertThat(compilation).succeeded();
+        assertThat(reader.texts).containsExactly("title = \"Foo\"\n");
+    }
+
+    @Test
+    void givesAResourceToTheCompilationOfAModule() {
+        ResourceReader reader = new ResourceReader(StandardLocation.CLASS_OUTPUT);
+        Compilation compilation = javac().withProcessors(reader)
+                .withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", "é")
+                .compile(FOO, source("module-info", "module example {}"));
+
+        assertThat(compilation).succeeded();
+        assertThat(reader.texts).containsExactly("é");
+    }
+
+    @Test
+    void reportsAResourceTheCompilationRewrites() {
+        Compilation compilation = javac().withProcessors(new ResourceWriter("title = \"Bar\"\n"))
+                .withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", "title = \"Foo\"\n")
+                .compile(FOO);
+
+        assertThat(compilation)
+                .succeeded()
+                .generatedFile(StandardLocation.CLASS_OUTPUT, "example/Foo.toml")
+                .isEqualTo("title = \"Bar\"\n");
+    }
+
+    @Test
+    void replacesTheResourceAtTheSameLocationAndPath() {
+        var compiler = javac().withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", "first");
+        ResourceReader reader = new ResourceReader(StandardLocation.CLASS_OUTPUT);
+        ResourceReader sourcePathReader = new ResourceReader(StandardLocation.SOURCE_PATH);
+
+        Compilation compilation = compiler.withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", "second")
+                .withResource(StandardLocation.SOURCE_PATH, "example/Foo.toml", "elsewhere")
+                .withProcessors(reader, sourcePathReader)
+                .compile(FOO);
+
+        assertThat(compilation).succeeded();
+        assertThat(reader.texts).containsExactly("second");
+        assertThat(sourcePathReader.texts).containsExactly("elsewhere");
+    }
+
+    @Test
+    void leavesTheOriginalCompilerWithoutTheResource() {
+        var compiler = javac();
+        ResourceReader reader = new ResourceReader(StandardLocation.CLASS_OUTPUT);
+
+        compiler.withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", "title = \"Foo\"\n");
+        compiler.withProcessors(reader).compile(FOO);
+
+        assertThat(reader.texts).containsExactly("missing");
+    }
+
+    @Test
+    void rejectsAResourceElsewhereThanInTheClassOutputOrTheSourcePath() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> javac().withResource(StandardLocation.SOURCE_OUTPUT, "example/Foo.toml", ""))
+                .withMessage("A resource must be in CLASS_OUTPUT or SOURCE_PATH, not in SOURCE_OUTPUT");
+    }
+
+    @Test
+    void rejectsWhatCannotNameAResource() {
+        for (String path : List.of(
+                "",
+                "/",
+                "/example/Foo.toml",
+                "example/",
+                "example//Foo.toml",
+                "./Foo.toml",
+                "example/../Foo.toml",
+                "..",
+                "example\\Foo.toml")) {
+            assertThatIllegalArgumentException()
+                    .as(path)
+                    .isThrownBy(() -> javac().withResource(StandardLocation.CLASS_OUTPUT, path, ""))
+                    .withMessage("Not a path to a file relative to a location, such as example/Foo.toml: \"%s\"", path);
+        }
+    }
+
+    @Test
+    void rejectsASourcePathOptionWithResourcesInTheSourcePath() {
+        var compiler = javac().withResource(StandardLocation.SOURCE_PATH, "example/Foo.toml", "");
+
+        for (List<String> options :
+                List.of(List.of("-sourcepath", "src"), List.of("--source-path", "src"), List.of("--source-path=src"))) {
+            assertThatIllegalArgumentException()
+                    .as(options.toString())
+                    .isThrownBy(() ->
+                            compiler.withOptions(options.toArray(String[]::new)).compile(FOO))
+                    .withMessage("The options give a source path, which would hide the resources given in SOURCE_PATH");
+        }
+    }
+
+    @Test
+    @SuppressWarnings("NullAway")
+    void rejectsANullResourceArgument() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> javac().withResource(null, "example/Foo.toml", ""))
+                .withMessage("location");
+        assertThatNullPointerException()
+                .isThrownBy(() -> javac().withResource(StandardLocation.CLASS_OUTPUT, null, ""))
+                .withMessage("relativePath");
+        assertThatNullPointerException()
+                .isThrownBy(() -> javac().withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", null))
+                .withMessage("text");
+    }
+
+    @Test
     void failsEveryAssertionOnANullCompilation() {
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat((Compilation) null).succeeded());
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat((Compilation) null).hadErrorContaining("error"));
+    }
+
+    /** Reads {@code example/Foo.toml} from a location in the first round, or notes that it is missing. */
+    @SupportedAnnotationTypes("*")
+    private static final class ResourceReader extends AbstractProcessor {
+
+        private final List<String> texts = new ArrayList<>();
+        private final JavaFileManager.Location location;
+
+        ResourceReader(JavaFileManager.Location location) {
+            this.location = location;
+        }
+
+        @Override
+        public SourceVersion getSupportedSourceVersion() {
+            return SourceVersion.latestSupported();
+        }
+
+        @Override
+        public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+            if (texts.isEmpty()) {
+                try {
+                    texts.add(processingEnv
+                            .getFiler()
+                            .getResource(location, "example", "Foo.toml")
+                            .getCharContent(false)
+                            .toString());
+                } catch (FileNotFoundException | NoSuchFileException e) {
+                    texts.add("missing");
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+            return false;
+        }
+    }
+
+    /** Writes {@code example/Foo.toml} to the class output in the first round. */
+    @SupportedAnnotationTypes("*")
+    private static final class ResourceWriter extends AbstractProcessor {
+
+        private final String text;
+        private boolean written;
+
+        ResourceWriter(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public SourceVersion getSupportedSourceVersion() {
+            return SourceVersion.latestSupported();
+        }
+
+        @Override
+        public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+            if (!written) {
+                written = true;
+                try (Writer writer = processingEnv
+                        .getFiler()
+                        .createResource(StandardLocation.CLASS_OUTPUT, "example", "Foo.toml")
+                        .openWriter()) {
+                    writer.write(text);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+            return false;
+        }
     }
 
     @SupportedAnnotationTypes("*")
