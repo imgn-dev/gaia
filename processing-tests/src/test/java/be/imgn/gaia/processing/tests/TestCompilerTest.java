@@ -12,12 +12,14 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import be.imgn.gaia.processing.testing.Compilation;
+import be.imgn.gaia.processing.testing.TestCompiler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +33,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class TestCompilerTest {
 
@@ -427,6 +430,36 @@ class TestCompilerTest {
                             compiler.withOptions(options.toArray(String[]::new)).compile(FOO))
                     .withMessage("The options give a source path, which would hide the resources given in SOURCE_PATH");
         }
+    }
+
+    @Test
+    void logsWhatJavacWritesBesidesItsDiagnostics() {
+        Compilation compilation = javac().withOptions("-verbose").compile(FOO);
+
+        assertThat(compilation).succeeded();
+        assertThat(RecordingLoggerFinder.records(TestCompiler.class.getName()))
+                .singleElement()
+                .satisfies(record -> assertThat(record).startsWith("INFO ").contains("[parsing started"));
+    }
+
+    @Test
+    void rejectsAModuleInfoSourceWithResourcesInTheSourcePath() {
+        var compiler = javac().withResource(StandardLocation.SOURCE_PATH, "example/Foo.toml", "");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> compiler.compile(FOO, source("module-info", "module example {}")))
+                .withMessage("A module-info source cannot be compiled with resources given in SOURCE_PATH");
+    }
+
+    @Test
+    void throwsWithTheOutputOfJavacWhenItFailsWithoutAnError(@TempDir Path sourcePath) {
+        // javac crashes looking for a source held in memory in the source path of a module.
+        var compiler = javac().withOptions("--source-path", sourcePath.toString());
+
+        assertThatIllegalStateException()
+                .isThrownBy(() -> compiler.compile(FOO, source("module-info", "module example {}")))
+                .withMessageStartingWith("javac failed without reporting an error:\n")
+                .withMessageContaining("java.lang.IllegalArgumentException");
     }
 
     @Test

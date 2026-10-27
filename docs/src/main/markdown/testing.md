@@ -108,7 +108,7 @@ Compilation compilation = TestCompiler.javac()
 ```
 
 `withResource` gives the compilation a file a processor reads with `Filer.getResource`, in the class output, where a
-build tool copies the resources before compiling, or in the source path:
+build tool copies the resources before compiling, or in the source path, which rules out compiling a `module-info`:
 
 ```java
 Compilation compilation = TestCompiler.javac()

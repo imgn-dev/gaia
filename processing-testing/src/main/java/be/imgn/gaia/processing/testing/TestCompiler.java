@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.processing.testing.internal.GeneratedFile;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
+import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
@@ -49,6 +51,8 @@ import javax.tools.ToolProvider;
  * {@link #withResource(JavaFileManager.Location, String, String)} return a new one.
  */
 public final class TestCompiler {
+
+    private static final System.Logger LOGGER = System.getLogger(TestCompiler.class.getName());
 
     private final List<Processor> processors;
     private final List<String> options;
@@ -141,7 +145,8 @@ public final class TestCompiler {
      * <p>A resource in {@link StandardLocation#CLASS_OUTPUT} is there before javac starts, as are the resources a build
      * tool copies to the class output before compiling. It is not among the {@linkplain Compilation#generatedFiles()
      * generated files}, unless the compilation writes other content to it. A resource in
-     * {@link StandardLocation#SOURCE_PATH} is in a source path of its own, so the options must not give one.
+     * {@link StandardLocation#SOURCE_PATH} is in a source path of its own, so the options must not give one, and the
+     * sources must not have a {@code module-info}: javac would then look for them in that source path.
      *
      * @param location {@link StandardLocation#CLASS_OUTPUT} or {@link StandardLocation#SOURCE_PATH}
      * @param relativePath the path of the resource relative to the location, separated by {@code /}, such as
@@ -175,14 +180,19 @@ public final class TestCompiler {
     /**
      * Compiles {@code sources}.
      *
+     * <p>What javac writes besides its diagnostics, such as the output of {@code -verbose}, is logged at
+     * {@link System.Logger.Level#INFO} with {@link System.Logger}.
+     *
      * @param sources the compilation units, such as the ones {@link #source(String, String)} returns
      * @return the outcome; a compilation error is reported in it, not thrown
      * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, if javac
      *     rejects an option: unknown, without its argument, or with an invalid value, or if the options give a source
      *     path while a {@linkplain #withResource(JavaFileManager.Location, String, String) resource} is in
+     *     {@link StandardLocation#SOURCE_PATH}, or if the sources have a {@code module-info} while a resource is in
      *     {@link StandardLocation#SOURCE_PATH}
-     * @throws IllegalStateException if the running Java has no system compiler, or if javac finds options that cannot
-     *     be used together
+     * @throws IllegalStateException if the running Java has no system compiler, if javac finds options that cannot be
+     *     used together, or if javac fails without reporting an error, as when it crashes, with the output of javac as
+     *     its message
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
      * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted
@@ -195,14 +205,19 @@ public final class TestCompiler {
     /**
      * Compiles {@code sources}.
      *
+     * <p>What javac writes besides its diagnostics, such as the output of {@code -verbose}, is logged at
+     * {@link System.Logger.Level#INFO} with {@link System.Logger}.
+     *
      * @param sources the compilation units, such as the ones {@link #source(String, String)} returns
      * @return the outcome; a compilation error is reported in it, not thrown
      * @throws IllegalArgumentException if {@code sources} is empty or holds a file that is not a source file, if javac
      *     rejects an option: unknown, without its argument, or with an invalid value, or if the options give a source
      *     path while a {@linkplain #withResource(JavaFileManager.Location, String, String) resource} is in
+     *     {@link StandardLocation#SOURCE_PATH}, or if the sources have a {@code module-info} while a resource is in
      *     {@link StandardLocation#SOURCE_PATH}
-     * @throws IllegalStateException if the running Java has no system compiler, or if javac finds options that cannot
-     *     be used together
+     * @throws IllegalStateException if the running Java has no system compiler, if javac finds options that cannot be
+     *     used together, or if javac fails without reporting an error, as when it crashes, with the output of javac as
+     *     its message
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
      * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted
@@ -219,9 +234,8 @@ public final class TestCompiler {
         }
         Map<String, byte[]> classOutputResources = resourcesIn(StandardLocation.CLASS_OUTPUT);
         Map<String, byte[]> sourcePathResources = resourcesIn(StandardLocation.SOURCE_PATH);
-        if (!sourcePathResources.isEmpty() && givesSourcePath()) {
-            throw new IllegalArgumentException(
-                    "The options give a source path, which would hide the resources given in SOURCE_PATH");
+        if (!sourcePathResources.isEmpty()) {
+            checkSourcePath(units);
         }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
@@ -240,10 +254,11 @@ public final class TestCompiler {
             if (!sourcePathResources.isEmpty()) {
                 fileManager.setLocationFromPaths(StandardLocation.SOURCE_PATH, List.of(sourcePath));
             }
+            StringWriter output = new StringWriter();
             JavaCompiler.CompilationTask task =
-                    compiler.getTask(null, fileManager, diagnostics, javacOptions(units), null, units);
+                    compiler.getTask(output, fileManager, diagnostics, javacOptions(units), null, units);
             task.setProcessors(processors);
-            boolean success = task.call();
+            boolean success = call(task, diagnostics, output);
             List<JavaFileObject> generated = new ArrayList<>();
             generated.addAll(readBack(StandardLocation.CLASS_OUTPUT, classOutput, classOutputResources));
             generated.addAll(readBack(StandardLocation.SOURCE_OUTPUT, sourceOutput, Map.of()));
@@ -255,6 +270,34 @@ public final class TestCompiler {
             deleteRecursively(sourceOutput);
             deleteRecursively(sourcePath);
         }
+    }
+
+    // The source path that holds the resources given in SOURCE_PATH must be the one javac uses.
+    private void checkSourcePath(List<JavaFileObject> units) {
+        if (givesSourcePath()) {
+            throw new IllegalArgumentException(
+                    "The options give a source path, which would hide the resources given in SOURCE_PATH");
+        }
+        // javac looks for the sources of a module in its source path, where it cannot find sources held in memory.
+        if (units.stream().anyMatch(unit -> unit.isNameCompatible("module-info", JavaFileObject.Kind.SOURCE))) {
+            throw new IllegalArgumentException(
+                    "A module-info source cannot be compiled with resources given in SOURCE_PATH");
+        }
+    }
+
+    // javac reports a crash only in its output, which would otherwise leave a failure without a cause.
+    private static boolean call(
+            JavaCompiler.CompilationTask task, DiagnosticCollector<JavaFileObject> diagnostics, StringWriter output) {
+        boolean success = task.call();
+        if (!success
+                && diagnostics.getDiagnostics().stream()
+                        .noneMatch(diagnostic -> diagnostic.getKind() == Diagnostic.Kind.ERROR)) {
+            throw new IllegalStateException("javac failed without reporting an error:\n" + output);
+        }
+        if (!output.getBuffer().isEmpty()) {
+            LOGGER.log(System.Logger.Level.INFO, output.toString());
+        }
+        return success;
     }
 
     private Map<String, byte[]> resourcesIn(StandardLocation location) {
