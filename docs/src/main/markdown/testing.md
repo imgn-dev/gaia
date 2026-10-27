@@ -119,6 +119,8 @@ Compilation compilation = TestCompiler.javac()
         .compile(TestCompiler.source("example.MainView", "..."));
 ```
 
+An overload takes the content as bytes, for a binary resource such as an image.
+
 [`CompilationAssert`](api:be.imgn.gaia.processing.testing.CompilationAssert) asserts on it:
 
 ```java

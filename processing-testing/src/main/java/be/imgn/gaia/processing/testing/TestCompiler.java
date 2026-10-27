@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +49,7 @@ import javax.tools.ToolProvider;
  * directories, read back into the {@link Compilation}, and the directories are deleted.
  *
  * <p>A {@code TestCompiler} is immutable: {@link #withProcessors(Processor...)}, {@link #withOptions(String...)} and
- * {@link #withResource(JavaFileManager.Location, String, String)} return a new one.
+ * the {@code withResource} overloads return a new one.
  */
 public final class TestCompiler {
 
@@ -160,6 +161,36 @@ public final class TestCompiler {
         requireNonNull(location, "location");
         requireNonNull(relativePath, "relativePath");
         requireNonNull(text, "text");
+        return with(location, relativePath, text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Returns a compiler that also gives the compilation a binary resource, such as an image, as
+     * {@link #withResource(JavaFileManager.Location, String, String)} does with text.
+     *
+     * <pre>{@code
+     * Compilation compilation = TestCompiler.javac()
+     *         .withProcessors(new ViewProcessor())
+     *         .withResource(StandardLocation.CLASS_OUTPUT, "example/main.png", Files.readAllBytes(icon))
+     *         .compile(TestCompiler.source("example.MainView", "..."));
+     * }</pre>
+     *
+     * @param location {@link StandardLocation#CLASS_OUTPUT} or {@link StandardLocation#SOURCE_PATH}
+     * @param relativePath the path of the resource relative to the location, separated by {@code /}, such as
+     *     {@code example/main.png}
+     * @param content the content of the resource, which is copied
+     * @return a compiler giving that resource too
+     * @throws IllegalArgumentException if {@code location} is another location, or if {@code relativePath} is empty,
+     *     starts or ends with {@code /}, contains {@code \}, or has an empty, {@code .} or {@code ..} segment
+     */
+    public TestCompiler withResource(JavaFileManager.Location location, String relativePath, byte[] content) {
+        requireNonNull(location, "location");
+        requireNonNull(relativePath, "relativePath");
+        requireNonNull(content, "content");
+        return with(location, relativePath, content.clone());
+    }
+
+    private TestCompiler with(JavaFileManager.Location location, String relativePath, byte[] content) {
         if (location != StandardLocation.CLASS_OUTPUT && location != StandardLocation.SOURCE_PATH) {
             throw new IllegalArgumentException(
                     "A resource must be in CLASS_OUTPUT or SOURCE_PATH, not in " + location.getName());
@@ -173,7 +204,7 @@ public final class TestCompiler {
                 .filter(resource -> resource.location() != standard
                         || !resource.relativePath().equals(relativePath))
                 .forEach(all::add);
-        all.add(new Resource(standard, relativePath, text));
+        all.add(new Resource(standard, relativePath, ByteBuffer.wrap(content).asReadOnlyBuffer()));
         return new TestCompiler(processors, options, List.copyOf(all));
     }
 
@@ -302,10 +333,12 @@ public final class TestCompiler {
 
     private Map<String, byte[]> resourcesIn(StandardLocation location) {
         Map<String, byte[]> contents = new LinkedHashMap<>();
-        resources.stream()
-                .filter(resource -> resource.location() == location)
-                .forEach(resource ->
-                        contents.put(resource.relativePath(), resource.text().getBytes(StandardCharsets.UTF_8)));
+        resources.stream().filter(resource -> resource.location() == location).forEach(resource -> {
+            ByteBuffer content = resource.content().duplicate();
+            byte[] bytes = new byte[content.remaining()];
+            content.get(bytes);
+            contents.put(resource.relativePath(), bytes);
+        });
         return contents;
     }
 
@@ -381,5 +414,5 @@ public final class TestCompiler {
     }
 
     /** A resource given to the compilation. */
-    private record Resource(StandardLocation location, String relativePath, String text) {}
+    private record Resource(StandardLocation location, String relativePath, ByteBuffer content) {}
 }

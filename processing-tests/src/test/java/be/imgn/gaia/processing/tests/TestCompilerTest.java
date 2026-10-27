@@ -15,12 +15,14 @@ import be.imgn.gaia.processing.testing.Compilation;
 import be.imgn.gaia.processing.testing.TestCompiler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -28,6 +30,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
+import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
@@ -332,6 +335,26 @@ class TestCompilerTest {
     }
 
     @Test
+    void givesABinaryResource() {
+        // The PNG signature, which is not UTF-8.
+        byte[] content = {(byte) 0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'};
+        ResourceReader classOutputReader = new ResourceReader(StandardLocation.CLASS_OUTPUT, true);
+        ResourceReader sourcePathReader = new ResourceReader(StandardLocation.SOURCE_PATH, true);
+        var compiler = javac().withProcessors(classOutputReader, sourcePathReader)
+                .withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", content)
+                .withResource(StandardLocation.SOURCE_PATH, "example/Foo.toml", content);
+        content[0] = 0;
+
+        Compilation compilation = compiler.compile(FOO);
+
+        assertThat(compilation).succeeded();
+        assertThat(classOutputReader.texts).containsExactly("89504e470d0a1a0a");
+        assertThat(sourcePathReader.texts).containsExactly("89504e470d0a1a0a");
+        assertThat(compilation.generatedFile(StandardLocation.CLASS_OUTPUT, "example/Foo.toml"))
+                .isEmpty();
+    }
+
+    @Test
     void givesAResourceInTheSourcePath() {
         ResourceReader reader = new ResourceReader(StandardLocation.SOURCE_PATH);
         Compilation compilation = javac().withProcessors(reader)
@@ -472,8 +495,19 @@ class TestCompilerTest {
                 .isThrownBy(() -> javac().withResource(StandardLocation.CLASS_OUTPUT, null, ""))
                 .withMessage("relativePath");
         assertThatNullPointerException()
-                .isThrownBy(() -> javac().withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", null))
+                .isThrownBy(
+                        () -> javac().withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", (String) null))
                 .withMessage("text");
+        assertThatNullPointerException()
+                .isThrownBy(() -> javac().withResource(null, "example/Foo.toml", new byte[0]))
+                .withMessage("location");
+        assertThatNullPointerException()
+                .isThrownBy(() -> javac().withResource(StandardLocation.CLASS_OUTPUT, null, new byte[0]))
+                .withMessage("relativePath");
+        assertThatNullPointerException()
+                .isThrownBy(
+                        () -> javac().withResource(StandardLocation.CLASS_OUTPUT, "example/Foo.toml", (byte[]) null))
+                .withMessage("content");
     }
 
     @Test
@@ -490,9 +524,16 @@ class TestCompilerTest {
 
         private final List<String> texts = new ArrayList<>();
         private final JavaFileManager.Location location;
+        private final boolean binary;
 
         ResourceReader(JavaFileManager.Location location) {
+            this(location, false);
+        }
+
+        // A binary resource is read as its bytes in hexadecimal.
+        ResourceReader(JavaFileManager.Location location, boolean binary) {
             this.location = location;
+            this.binary = binary;
         }
 
         @Override
@@ -504,11 +545,14 @@ class TestCompilerTest {
         public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
             if (texts.isEmpty()) {
                 try {
-                    texts.add(processingEnv
-                            .getFiler()
-                            .getResource(location, "example", "Foo.toml")
-                            .getCharContent(false)
-                            .toString());
+                    FileObject resource = processingEnv.getFiler().getResource(location, "example", "Foo.toml");
+                    if (binary) {
+                        try (InputStream in = resource.openInputStream()) {
+                            texts.add(HexFormat.of().formatHex(in.readAllBytes()));
+                        }
+                    } else {
+                        texts.add(resource.getCharContent(false).toString());
+                    }
                 } catch (FileNotFoundException | NoSuchFileException e) {
                     texts.add("missing");
                 } catch (IOException e) {
