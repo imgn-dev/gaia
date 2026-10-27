@@ -70,7 +70,8 @@ public final class ApplicationDirectories {
      *
      * @param name the name to check
      * @param role what the name is, such as {@code vendor}, which the message of the exception starts with: {@code The
-     *     vendor must not start or end with whitespace: " bar"}
+     *     vendor must not start or end with whitespace: " bar"}; a control character of the name is written in the
+     *     message as a Unicode escape, as <code>&#92;u0009</code> for a tab
      * @throws IllegalArgumentException if the name is blank, {@code .} or {@code ..}, starts or ends with whitespace,
      *     or contains a control character or any of {@code / \ : < > " | ? *}, which some platform forbids in a file
      *     name
@@ -82,16 +83,28 @@ public final class ApplicationDirectories {
         // name.
         checkArgument(
                 !name.isBlank() && !".".equals(name) && !"..".equals(name),
-                "The %s must be a name, not \"%s\"",
+                "The %s must be a name, not %s",
                 role,
-                name);
-        checkArgument(name.strip().equals(name), "The %s must not start or end with whitespace: \"%s\"", role, name);
+                quoted(name));
+        checkArgument(
+                name.strip().equals(name), "The %s must not start or end with whitespace: %s", role, quoted(name));
         checkArgument(
                 name.chars().noneMatch(c -> Character.isISOControl(c) || FORBIDDEN_CHARACTERS.indexOf(c) >= 0),
-                "The %s must not contain a control character or any of %s: \"%s\"",
+                "The %s must not contain a control character or any of %s: %s",
                 role,
                 FORBIDDEN_CHARACTERS,
-                name);
+                quoted(name));
+    }
+
+    // A control character would end up raw in the message, and in whatever shows it, such as a compiler diagnostic.
+    private static String quoted(String name) {
+        StringBuilder quoted = new StringBuilder("\"");
+        name.chars()
+                .forEach(c -> quoted.append(
+                        Character.isISOControl(c)
+                                ? String.format(Locale.ROOT, "\\u%04x", c)
+                                : String.valueOf((char) c)));
+        return quoted.append('"').toString();
     }
 
     // Roaming data follows the user across machines; state and cache stay on this one.

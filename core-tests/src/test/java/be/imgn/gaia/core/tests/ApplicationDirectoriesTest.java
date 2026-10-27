@@ -221,6 +221,19 @@ class ApplicationDirectoriesTest {
     }
 
     @Test
+    void escapesControlCharactersInTheMessage() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("a\u0000b", "vendor"))
+                .withMessage("The vendor must not contain a control character or any of /\\:<>\"|?*: \"a\\u0000b\"");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("\t", "vendor"))
+                .withMessage("The vendor must be a name, not \"\\u0009\"");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("bar\n", "vendor"))
+                .withMessage("The vendor must not start or end with whitespace: \"bar\\u000a\"");
+    }
+
+    @Test
     @SuppressWarnings("NullAway")
     void rejectsANullNameOrRole() {
         assertThatNullPointerException()
