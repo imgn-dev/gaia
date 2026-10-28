@@ -117,6 +117,9 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   the annotation processor path, generates the code that subscribes these methods and calls them directly, without
   reflection, and reports at compile time the methods it cannot call. It registers that code as a service provider;
   on the module path, the `register-services` goal of `gaia-maven-plugin` declares it in `module-info.class`.
+- **`@SubscribingAnnotation`**: turns an annotation such as `@OnEdt` into one that subscribes methods as `@Subscribe`
+  does, and has their events delivered through the executor class it names, such as one that calls `EventQueue.invokeLater`. The bus
+  creates that executor itself; `newBuilder().executor(OnEdt.class, ...)` replaces it.
 
 ### `gaia-memfs`
 

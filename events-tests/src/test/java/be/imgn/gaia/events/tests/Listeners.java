@@ -70,6 +70,32 @@ final class Listeners {
         }
     }
 
+    static class QueuedListener extends Recording {
+        @Subscribe
+        void onPlaced(OrderPlaced event) {
+            record("placed " + event.id());
+        }
+
+        @Queued
+        void onQueued(OrderPlaced event) {
+            record("queued " + event.id());
+        }
+    }
+
+    static class OtherQueuedListener extends Recording {
+        @Queued
+        void onCancelled(OrderCancelled event) {
+            record("cancelled " + event.id());
+        }
+    }
+
+    static class FailingQueuedListener {
+        @Queued
+        void onPlaced(OrderPlaced event) {
+            throw new IllegalStateException("failed " + event.id());
+        }
+    }
+
     static class Outer<T> extends Recording {
         class Inner {
             @Subscribe

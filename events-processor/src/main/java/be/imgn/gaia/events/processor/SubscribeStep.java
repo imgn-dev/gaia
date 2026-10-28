@@ -1,6 +1,8 @@
 package be.imgn.gaia.events.processor;
 
 import be.imgn.gaia.processing.AnnotatedElements;
+import be.imgn.gaia.processing.AnnotationReader;
+import be.imgn.gaia.processing.Diagnostics;
 import be.imgn.gaia.processing.MoreElements;
 import be.imgn.gaia.processing.MoreTypes;
 import be.imgn.gaia.processing.ProcessingContext;
@@ -13,26 +15,34 @@ import be.imgn.gaia.processing.source.ParameterizedTypeName;
 import be.imgn.gaia.processing.source.Type;
 import be.imgn.gaia.processing.source.TypeName;
 import be.imgn.gaia.processing.source.WildcardTypeName;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.ModuleElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.ElementFilter;
 
-/** Checks the {@code @Subscribe} methods of each class, and generates the index that subscribes them. */
+/**
+ * Checks the {@code @Subscribe} methods of each class, and those with a subscribing annotation, and generates the index
+ * that subscribes them. Checks the declarations of subscribing annotations too.
+ */
 final class SubscribeStep implements Step {
 
     private static final String SUBSCRIBE = "be.imgn.gaia.events.Subscribe";
+    private static final String SUBSCRIBING_ANNOTATION = "be.imgn.gaia.events.SubscribingAnnotation";
     private static final ClassName SUBSCRIBER_INDEX = ClassName.of("be.imgn.gaia.events.spi", "SubscriberIndex");
     private static final ClassName REGISTRAR = SUBSCRIBER_INDEX.nested("Registrar");
 
@@ -46,12 +56,27 @@ final class SubscribeStep implements Step {
 
     @Override
     public Set<String> annotations() {
-        return Set.of(SUBSCRIBE);
+        return Set.of(SUBSCRIBE, SUBSCRIBING_ANNOTATION);
+    }
+
+    @Override
+    public Set<String> metaAnnotations() {
+        return Set.of(SUBSCRIBING_ANNOTATION);
     }
 
     @Override
     public Set<? extends Element> process(AnnotatedElements elements) {
-        var annotated = elements.annotatedWith(SUBSCRIBE);
+        context.forEach(ElementFilter.typesIn(elements.annotatedWith(SUBSCRIBING_ANNOTATION)), this::checkDeclaration);
+        var annotated = new LinkedHashSet<Element>(elements.annotatedWith(SUBSCRIBE));
+        for (var element : elements.withAnnotationsAnnotatedWith(SUBSCRIBING_ANNOTATION)) {
+            if (element.getKind() == ElementKind.METHOD) {
+                annotated.add(element);
+            } else {
+                context.diagnostics()
+                        .on(element)
+                        .error(String.join(" and ", subscribingAnnotations(element)) + " can only annotate methods");
+            }
+        }
         var classes = new LinkedHashSet<TypeElement>();
         for (var method : annotated) {
             classes.add(MoreElements.enclosingType(method).orElseThrow());
@@ -73,8 +98,9 @@ final class SubscribeStep implements Step {
     private void generate(TypeElement type, List<ExecutableElement> methods) {
         var errors = context.diagnostics().errorCount();
         var packageName = MoreElements.packageOf(type).getQualifiedName().toString();
+        var module = context.elements().getModuleOf(type);
         for (var method : methods) {
-            check(type, method, packageName);
+            check(type, method, packageName, module);
         }
         if (context.diagnostics().errorCount() > errors) {
             return;
@@ -94,10 +120,21 @@ final class SubscribeStep implements Step {
             var eventType = MoreTypes.asTypeElement(
                             method.getParameters().getFirst().asType())
                     .orElseThrow();
-            subscribe.addStatement(
-                    "registrar.subscribe($T.class, l::$N)",
-                    eventType,
-                    method.getSimpleName().toString());
+            var subscribing = context.annotationsAnnotatedWith(method, SUBSCRIBING_ANNOTATION);
+            if (subscribing.isEmpty()) {
+                subscribe.addStatement(
+                        "registrar.subscribe($T.class, l::$N)",
+                        eventType,
+                        method.getSimpleName().toString());
+            } else {
+                var annotation = annotationType(subscribing.getFirst());
+                subscribe.addStatement(
+                        "registrar.subscribe($T.class, $T.class, $T::new, l::$N)",
+                        eventType,
+                        annotation,
+                        MoreTypes.asTypeElement(executor(annotation)).orElseThrow(),
+                        method.getSimpleName().toString());
+            }
         }
         var index = Type.newClassBuilder(name)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -114,38 +151,162 @@ final class SubscribeStep implements Step {
         context.services().add(SUBSCRIBER_INDEX, name, type);
     }
 
-    private void check(TypeElement type, ExecutableElement method, String packageName) {
+    private void check(TypeElement type, ExecutableElement method, String packageName, ModuleElement module) {
         var report = context.diagnostics().on(method);
+        var names = subscribingAnnotations(method);
+        var name = names.getFirst();
+        if (names.size() > 1) {
+            report.error("A method can have one subscribing annotation only, but this one has "
+                    + String.join(" and ", names));
+        }
         if (type.getKind().isInterface()) {
-            report.error("@Subscribe methods must be in a class, not an interface");
+            report.error(name + " methods must be in a class, not an interface");
             return;
         }
         if (method.getModifiers().contains(Modifier.STATIC)) {
-            report.error("@Subscribe methods must not be static");
+            report.error(name + " methods must not be static");
         }
         if (MoreElements.visibility(method) == Visibility.PRIVATE) {
-            report.error("@Subscribe methods must not be private");
+            report.error(name + " methods must not be private");
         } else if (!MoreElements.isAccessible(method, packageName)) {
-            report.error("@Subscribe methods must be accessible from their package, but " + privateEnclosingType(method)
+            report.error(name + " methods must be accessible from their package, but " + privateEnclosingType(method)
                     + " is private");
         }
         if (method.getParameters().size() != 1) {
-            report.error("@Subscribe methods must take exactly one parameter, the event");
+            report.error(name + " methods must take exactly one parameter, the event");
         } else {
             checkEventType(method.getParameters().getFirst(), packageName);
         }
         if (method.getReturnType().getKind() != TypeKind.VOID) {
-            report.error("@Subscribe methods must return void");
+            report.error(name + " methods must return void");
         }
         for (var thrown : method.getThrownTypes()) {
             if (!context.isSubtype(thrown, RuntimeException.class) && !context.isSubtype(thrown, Error.class)) {
-                report.error("@Subscribe methods must not declare checked exceptions: " + thrown);
+                report.error(name + " methods must not declare checked exceptions: " + thrown);
             }
         }
+        for (var subscribing : context.annotationsAnnotatedWith(method, SUBSCRIBING_ANNOTATION)) {
+            checkAnnotation(report, annotationType(subscribing), packageName, module);
+        }
         overriddenSubscriber(type, method)
-                .ifPresent(overridden -> report.error("This method overrides the @Subscribe method of "
+                .ifPresent(overridden -> report.error("This method overrides the "
+                        + subscribingAnnotations(overridden).getFirst()
+                        + " method of "
                         + overridden.getEnclosingElement()
-                        + ", which delivers the events to it already: remove @Subscribe"));
+                        + ", which delivers the events to it already: remove "
+                        + name));
+    }
+
+    /** Reports what keeps the generated code from referring to a subscribing annotation and creating its executor. */
+    private void checkAnnotation(
+            Diagnostics.Report report, TypeElement annotation, String packageName, ModuleElement module) {
+        var where = "accessible from " + describe(packageName);
+        if (!MoreElements.isAccessible(annotation, packageName)) {
+            report.error("@" + annotation.getSimpleName() + " must be " + where + ", where the generated code refers to"
+                    + " it");
+        }
+        checkExecutor(report, annotation, element -> MoreElements.isAccessible(element, packageName), where)
+                .filter(executor -> !MoreElements.isExportedTo(executor, module))
+                .ifPresent(executor -> report.error(executorOf(annotation, executor) + " must be exported to "
+                        + (module.isUnnamed() ? "the unnamed module" : "module " + module.getQualifiedName())));
+    }
+
+    /**
+     * Reports what keeps the generated code from creating the executor of a subscribing annotation, wherever the
+     * annotation can be used: from any package if it is public, from its own package otherwise.
+     */
+    private void checkDeclaration(TypeElement annotation) {
+        var report = context.diagnostics().on(annotation);
+        context.annotation(annotation, "java.lang.annotation.Retention")
+                .filter(retention -> retention.enumConstant("value").equals("SOURCE"))
+                .ifPresent(retention -> report.annotation(retention.mirror())
+                        .error("A subscribing annotation must be kept in class files, with a retention of CLASS or"
+                                + " RUNTIME, so that the processor sees it on the methods of classes compiled before"));
+        var executor = report.annotation(SUBSCRIBING_ANNOTATION).attribute("executor");
+        if (MoreElements.effectiveVisibility(annotation) == Visibility.PUBLIC) {
+            checkExecutor(
+                    executor,
+                    annotation,
+                    element -> MoreElements.effectiveVisibility(element) == Visibility.PUBLIC,
+                    "public");
+        } else {
+            var packageName =
+                    MoreElements.packageOf(annotation).getQualifiedName().toString();
+            checkExecutor(
+                    executor,
+                    annotation,
+                    element -> MoreElements.isAccessible(element, packageName),
+                    "accessible from " + describe(packageName));
+        }
+    }
+
+    /**
+     * Reports what keeps code from creating the executor of a subscribing annotation, where {@code accessible} says
+     * what the code can access, as {@code where} describes it.
+     *
+     * @return the executor, if it is a type
+     */
+    private Optional<TypeElement> checkExecutor(
+            Diagnostics.Report report, TypeElement annotation, Predicate<Element> accessible, String where) {
+        var type = executor(annotation);
+        var found = MoreTypes.asTypeElement(type);
+        if (found.isEmpty()) {
+            report.error("The executor of @" + annotation.getSimpleName() + ", " + type + ", cannot be found");
+            return found;
+        }
+        var executor = found.get();
+        var prefix = executorOf(annotation, executor);
+        if (!executor.getKind().isClass() || executor.getKind() == ElementKind.ENUM) {
+            report.error(prefix + " must be a class");
+            return found;
+        }
+        if (executor.getModifiers().contains(Modifier.ABSTRACT)) {
+            report.error(prefix + " must not be abstract");
+        }
+        if (MoreElements.isInnerClass(executor)) {
+            report.error(prefix + " must not be an inner class");
+        }
+        if (!accessible.test(executor)) {
+            report.error(prefix + " must be " + where);
+        } else if (ElementFilter.constructorsIn(executor.getEnclosedElements()).stream()
+                .noneMatch(constructor -> constructor.getParameters().isEmpty() && accessible.test(constructor))) {
+            report.error(prefix + " must have a constructor without parameters that is " + where);
+        }
+        return found;
+    }
+
+    private static String executorOf(TypeElement annotation, TypeElement executor) {
+        return "The executor of @" + annotation.getSimpleName() + ", " + executor.getQualifiedName() + ",";
+    }
+
+    /** Returns the class a subscribing annotation names as its executor. */
+    private TypeMirror executor(TypeElement annotation) {
+        return context.annotation(annotation, SUBSCRIBING_ANNOTATION)
+                .orElseThrow()
+                .type("executor");
+    }
+
+    /**
+     * Returns the annotations that subscribe a method, as written in messages: {@code @Subscribe}, then those whose
+     * type has {@code @SubscribingAnnotation}.
+     */
+    private List<String> subscribingAnnotations(Element method) {
+        var names = new ArrayList<String>();
+        if (MoreElements.isAnnotatedWith(method, SUBSCRIBE)) {
+            names.add("@Subscribe");
+        }
+        for (var subscribing : context.annotationsAnnotatedWith(method, SUBSCRIBING_ANNOTATION)) {
+            names.add("@" + annotationType(subscribing).getSimpleName());
+        }
+        return names;
+    }
+
+    private static TypeElement annotationType(AnnotationReader annotation) {
+        return MoreElements.asType(annotation.mirror().getAnnotationType().asElement());
+    }
+
+    private static String describe(String packageName) {
+        return packageName.isEmpty() ? "the unnamed package" : "package " + packageName;
     }
 
     private void checkEventType(VariableElement parameter, String packageName) {
@@ -163,8 +324,7 @@ final class SubscribeStep implements Step {
                 report.error("The event type must not be parameterized: " + eventType);
             } else if (!MoreElements.isAccessible(
                     MoreTypes.asTypeElement(eventType).orElseThrow(), packageName)) {
-                report.error("The event type " + eventType + " must be accessible from "
-                        + (packageName.isEmpty() ? "the unnamed package" : "package " + packageName));
+                report.error("The event type " + eventType + " must be accessible from " + describe(packageName));
             }
         }
     }
@@ -195,12 +355,12 @@ final class SubscribeStep implements Step {
         return current;
     }
 
-    /** Returns the {@code @Subscribe} method of a superclass that a method overrides, if any. */
+    /** Returns the method of a superclass with a subscribing annotation that a method overrides, if any. */
     private Optional<ExecutableElement> overriddenSubscriber(TypeElement type, ExecutableElement method) {
         for (var superclass = superclass(type); superclass.isPresent(); superclass = superclass(superclass.get())) {
             for (var member : superclass.get().getEnclosedElements()) {
                 if (member.getKind() == ElementKind.METHOD
-                        && MoreElements.isAnnotatedWith(member, SUBSCRIBE)
+                        && !subscribingAnnotations(member).isEmpty()
                         && context.elements().overrides(method, MoreElements.asExecutable(member), type)) {
                     return Optional.of(MoreElements.asExecutable(member));
                 }

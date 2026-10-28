@@ -1,9 +1,12 @@
 import be.imgn.gaia.events.spi.SubscriberIndex;
 import be.imgn.gaia.events.tests.$$Listeners$BaseListener$Subscribers;
 import be.imgn.gaia.events.tests.$$Listeners$ExtendingListener$Subscribers;
+import be.imgn.gaia.events.tests.$$Listeners$FailingQueuedListener$Subscribers;
 import be.imgn.gaia.events.tests.$$Listeners$GenericListener$Subscribers;
 import be.imgn.gaia.events.tests.$$Listeners$OrderListener$Subscribers;
+import be.imgn.gaia.events.tests.$$Listeners$OtherQueuedListener$Subscribers;
 import be.imgn.gaia.events.tests.$$Listeners$Outer$Inner$Subscribers;
+import be.imgn.gaia.events.tests.$$Listeners$QueuedListener$Subscribers;
 import be.imgn.gaia.events.tests.RecordingLoggerFinder;
 import javax.annotation.processing.Processor;
 
@@ -31,9 +34,12 @@ open module be.imgn.gaia.events.tests {
     provides SubscriberIndex with
             $$Listeners$BaseListener$Subscribers,
             $$Listeners$ExtendingListener$Subscribers,
+            $$Listeners$FailingQueuedListener$Subscribers,
             $$Listeners$GenericListener$Subscribers,
             $$Listeners$OrderListener$Subscribers,
-            $$Listeners$Outer$Inner$Subscribers;
+            $$Listeners$OtherQueuedListener$Subscribers,
+            $$Listeners$Outer$Inner$Subscribers,
+            $$Listeners$QueuedListener$Subscribers;
     provides System.LoggerFinder with
             RecordingLoggerFinder;
 }

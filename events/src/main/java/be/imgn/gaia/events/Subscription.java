@@ -27,7 +27,9 @@ public final class Subscription implements AutoCloseable {
 
     /**
      * Unsubscribes what this subscription subscribed, so that it receives no event published from then on. An event
-     * being delivered meanwhile may still reach it. Closing the subscription again does nothing.
+     * being delivered meanwhile may still reach it, but not a method with a {@linkplain SubscribingAnnotation
+     * subscribing annotation}: the tasks its executor runs from then on do not call it. Closing the subscription again
+     * does nothing.
      */
     @Override
     public void close() {

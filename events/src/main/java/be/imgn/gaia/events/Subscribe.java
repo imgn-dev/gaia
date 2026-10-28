@@ -31,9 +31,11 @@ import java.lang.annotation.Target;
  *       type variable or a parameterized type, or of a type that is not accessible from the package of the class;
  *   <li>a method that does not return {@code void};
  *   <li>a method that declares checked exceptions;
- *   <li>a method that overrides a {@code @Subscribe} method: registering the listener subscribes the overridden method,
- *       which calls the overriding one, so annotating both would deliver each event twice. Overriding a
- *       {@code @Subscribe} method without the annotation is enough.
+ *   <li>a method that overrides a {@code @Subscribe} method, or one with a {@linkplain SubscribingAnnotation
+ *       subscribing annotation}: registering the listener subscribes the overridden method, which calls the overriding
+ *       one, so annotating both would deliver each event twice. Overriding such a method without the annotation is
+ *       enough;
+ *   <li>a method that also has a subscribing annotation.
  * </ul>
  *
  * <p>javac hands annotation processors no method of a local or anonymous class, so the processor cannot report the

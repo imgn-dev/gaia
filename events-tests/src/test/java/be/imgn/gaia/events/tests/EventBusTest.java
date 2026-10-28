@@ -172,6 +172,12 @@ class EventBusTest {
                 .isThrownBy(() -> EventBus.newBuilder().executor(null))
                 .withMessage("executor");
         assertThatNullPointerException()
+                .isThrownBy(() -> EventBus.newBuilder().executor(null, Runnable::run))
+                .withMessage("annotation");
+        assertThatNullPointerException()
+                .isThrownBy(() -> EventBus.newBuilder().executor(Queued.class, null))
+                .withMessage("executor");
+        assertThatNullPointerException()
                 .isThrownBy(() -> EventBus.newBuilder().exceptionHandler(null))
                 .withMessage("exceptionHandler");
         assertThatIllegalArgumentException()

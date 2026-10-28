@@ -69,12 +69,14 @@ For each class with such methods, the processor generates an index that calls th
 `com.example.$$OrderListener$Subscribers` for `com.example.OrderListener`, `$$Outer$Inner$Subscribers` for a nested
 class. `register` finds the indexes of the listener's class and of the classes it extends with `ServiceLoader`, and
 subscribes the methods of a superclass before those of its subclasses, and those of one class in the order they are
-declared. A method that overrides a `@Subscribe` method receives its events without the annotation.
+declared. A method that overrides a `@Subscribe` method receives its events without the annotation, and so does one
+that overrides a method with a [subscribing annotation](#subscribing-annotations).
 
 The processor reports an error for a method that the generated code cannot call: one that is private, or in a private
 nested class; static; in an interface; without exactly one parameter, or whose parameter is primitive, an array, a
 type variable, a parameterized type or a type the package of the class cannot access; that returns a value; that
-declares checked exceptions; or that overrides a `@Subscribe` method, which would deliver each event twice.
+declares checked exceptions; or that overrides a `@Subscribe` method, or one with a subscribing annotation, which
+would deliver each event twice.
 
 javac hands annotation processors no method of a local or anonymous class, so the processor cannot see `@Subscribe`
 there: registering an instance of such a class subscribes the methods of the classes it extends only. A listener
@@ -97,6 +99,60 @@ EventBus bus = EventBus.newBuilder().executor(Executors.newVirtualThreadPerTaskE
 An exception thrown by a subscriber goes to the exception handler, and the event goes on to its other subscribers.
 The default handler logs it at `ERROR` with `System.Logger`; `newBuilder().exceptionHandler((event, exception) -> ...)`
 replaces it. An `Error` propagates.
+
+## Subscribing annotations
+
+An annotation marked [`@SubscribingAnnotation`](api:be.imgn.gaia.events.SubscribingAnnotation) subscribes the methods
+it annotates, as `@Subscribe` does, and has their events delivered through the executor it names, such as on the
+event dispatch thread of Swing:
+
+```java
+@SubscribingAnnotation(executor = EdtExecutor.class)
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.METHOD)
+public @interface OnEdt {}
+
+public final class EdtExecutor implements Executor {
+    @Override
+    public void execute(Runnable task) {
+        EventQueue.invokeLater(task);
+    }
+}
+```
+
+A listener then needs only the annotation, and the bus nothing more:
+
+```java
+class Window {
+    @OnEdt
+    void onPlaced(OrderPlaced event) {
+        ...
+    }
+}
+
+EventBus bus = EventBus.create();
+bus.register(new Window());
+```
+
+The generated index calls `registrar.subscribe(OrderPlaced.class, OnEdt.class, EdtExecutor::new, l::onPlaced)`. The
+first time a bus registers a method with the annotation, it creates the executor, and shares it among all the
+listeners it registers. `newBuilder().executor(OnEdt.class, Runnable::run)` gives the bus another executor for the
+annotation instead, such as in tests, and the bus then never creates the one the annotation names.
+
+During the delivery of an event, the bus hands the executor a task that calls the method, and goes on to the other
+subscribers without waiting for it. The tasks are handed over in the order the events are delivered; whether they run
+in that order depends on the executor. A task does not call the method if its subscription was closed meanwhile. An
+exception thrown by the method, or by the executor when it is handed the task, goes to the exception handler.
+
+The processor checks these methods as it checks `@Subscribe` ones, and reports a method with more than one subscribing
+annotation, `@Subscribe` included. It also reports what keeps the generated code from referring to the annotation and
+creating the executor: the executor must be a class, neither abstract nor an inner class, with a constructor without
+parameters, all accessible from the package of the listener, and exported to its module. On the declaration of the
+annotation, it checks the executor from wherever the annotation can be used, and reports a retention of `SOURCE`: the
+annotation must be kept in class files, so that the processor sees it on the methods of classes compiled before.
+
+A module that declares such an annotation exports the package of the executor, and requires `be.imgn.gaia.events`
+transitively, as javac's `exports` lint asks: the annotation of an exported type is part of its API.
 
 ## On the module path
 

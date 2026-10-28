@@ -5,8 +5,10 @@ import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.events.spi.SubscriberIndex;
 import java.lang.System.Logger.Level;
+import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -41,10 +44,17 @@ import org.jspecify.annotations.Nullable;
  * in the order they were published. A bus with an executor hands it one task per event, which delivers the event to its
  * subscribers in order; separate events may be delivered concurrently.
  *
+ * <p>A method with a {@linkplain SubscribingAnnotation subscribing annotation} gets its events through the executor of
+ * the annotation instead: the delivery hands that executor a task that calls the method, and goes on to the other
+ * subscribers without waiting for it. The tasks are handed over in the order the events are delivered; whether they run
+ * in that order depends on the executor. A task does not call the method if its subscription was closed meanwhile.
+ *
  * <p>An exception thrown by a subscriber goes to the {@linkplain Builder#exceptionHandler(BiConsumer) exception
- * handler}, and the event goes on to its other subscribers. By default, the handler logs the exception at
- * {@link Level#ERROR} with {@link System.Logger}. An {@link Error} is not caught, nor is an exception thrown by the
- * handler: it propagates from the delivery, and the events queued meanwhile on the thread are dropped.
+ * handler}, and the event goes on to its other subscribers. So does an exception thrown by the executor of a
+ * subscribing annotation when it is handed a task, such as a {@link java.util.concurrent.RejectedExecutionException}.
+ * By default, the handler logs the exception at {@link Level#ERROR} with {@link System.Logger}. An {@link Error} is not
+ * caught, nor is an exception thrown by the handler: it propagates from the delivery, and the events queued meanwhile
+ * on the thread are dropped.
  *
  * <p>A bus is thread-safe. Subscribers can be added and removed while events are delivered: each delivery goes to the
  * subscribers a type had when the delivery reached it.
@@ -83,9 +93,13 @@ public final class EventBus {
     private final BiConsumer<Object, Exception> exceptionHandler;
     private final ConcurrentMap<Class<?>, List<Registration<?>>> registrations = new ConcurrentHashMap<>();
 
+    /** The executors of subscribing annotations: those the bus was built with, and those it created since. */
+    private final ConcurrentMap<Class<? extends Annotation>, Executor> executors;
+
     private EventBus(Builder builder) {
         this.executor = builder.executor;
         this.exceptionHandler = builder.exceptionHandler;
+        this.executors = new ConcurrentHashMap<>(builder.executors);
     }
 
     /**
@@ -117,7 +131,7 @@ public final class EventBus {
      * @throws IllegalArgumentException if {@code eventType} is primitive: no event is
      */
     public <E> Subscription subscribe(Class<E> eventType, Consumer<? super E> subscriber) {
-        var registration = registration(eventType, subscriber);
+        var registration = registration(eventType, subscriber, null);
         add(registration);
         return new Subscription(() -> remove(registration));
     }
@@ -129,9 +143,14 @@ public final class EventBus {
      * module: such a module declares the generated classes with {@code provides}, as the {@code register-services} goal
      * of {@code gaia-maven-plugin} adds.
      *
+     * <p>The methods with a {@linkplain SubscribingAnnotation subscribing annotation} are subscribed too. The first
+     * time the bus registers such a method, it creates the executor the annotation names, unless it was
+     * {@linkplain Builder#executor(Class, Executor) built with one} for the annotation; an exception thrown meanwhile
+     * propagates, and subscribes nothing.
+     *
      * <p>The methods of a superclass are subscribed before those of its subclasses, and those of one class in the order
-     * they are declared. A method that overrides a {@code @Subscribe} method receives its events, without the
-     * annotation.
+     * they are declared. A method that overrides a {@code @Subscribe} method, or one with a subscribing annotation,
+     * receives its events, without the annotation.
      *
      * @param listener the listener
      * @return the subscription of all its methods, which unsubscribes them when closed
@@ -149,7 +168,19 @@ public final class EventBus {
         var registrar = new SubscriberIndex.Registrar() {
             @Override
             public <E> void subscribe(Class<E> eventType, Consumer<? super E> subscriber) {
-                registered.add(registration(eventType, subscriber));
+                registered.add(registration(eventType, subscriber, null));
+            }
+
+            @Override
+            public <E> void subscribe(
+                    Class<E> eventType,
+                    Class<? extends Annotation> annotation,
+                    Supplier<? extends Executor> executor,
+                    Consumer<? super E> subscriber) {
+                requireNonNull(annotation, "annotation");
+                requireNonNull(executor, "executor");
+                var created = executors.computeIfAbsent(annotation, key -> executor.get());
+                registered.add(registration(eventType, subscriber, created));
             }
         };
         for (var index : indexes) {
@@ -190,14 +221,27 @@ public final class EventBus {
         }
     }
 
-    // Whatever a subscriber throws goes to the handler, checked exceptions thrown sneakily included, so that one
-    // subscriber cannot keep an event from the others.
+    // Whatever a subscriber or an executor throws goes to the handler, checked exceptions thrown sneakily included, so
+    // that one subscriber cannot keep an event from the others.
     @SuppressWarnings("checkstyle:IllegalCatch")
     private void deliver(Object event) {
         for (var type : SUPERTYPES.get(event.getClass())) {
             for (var registration : registrations.getOrDefault(type, List.of())) {
                 try {
-                    registration.deliver(event);
+                    var executor = registration.executor;
+                    if (executor == null) {
+                        registration.deliver(event);
+                    } else {
+                        executor.execute(() -> {
+                            try {
+                                if (registration.subscribed) {
+                                    registration.deliver(event);
+                                }
+                            } catch (Exception exception) {
+                                exceptionHandler.accept(event, exception);
+                            }
+                        });
+                    }
                 } catch (Exception exception) {
                     exceptionHandler.accept(event, exception);
                 }
@@ -217,6 +261,7 @@ public final class EventBus {
     }
 
     private void remove(Registration<?> registration) {
+        registration.subscribed = false;
         registrations.computeIfPresent(registration.eventType, (type, current) -> {
             var updated = new ArrayList<>(current);
             updated.remove(registration);
@@ -224,11 +269,12 @@ public final class EventBus {
         });
     }
 
-    private static <E> Registration<E> registration(Class<E> eventType, Consumer<? super E> subscriber) {
+    private static <E> Registration<E> registration(
+            Class<E> eventType, Consumer<? super E> subscriber, @Nullable Executor executor) {
         requireNonNull(eventType, "eventType");
         requireNonNull(subscriber, "subscriber");
         checkArgument(!eventType.isPrimitive(), "eventType must not be primitive: %s", eventType);
-        return new Registration<>(eventType, subscriber);
+        return new Registration<>(eventType, subscriber, executor);
     }
 
     private static void log(Object event, Exception exception) {
@@ -303,6 +349,7 @@ public final class EventBus {
 
         private @Nullable Executor executor;
         private BiConsumer<Object, Exception> exceptionHandler = EventBus::log;
+        private final Map<Class<? extends Annotation>, Executor> executors = new HashMap<>();
 
         private Builder() {}
 
@@ -318,6 +365,26 @@ public final class EventBus {
          */
         public Builder executor(Executor executor) {
             this.executor = requireNonNull(executor, "executor");
+            return this;
+        }
+
+        /**
+         * Makes the bus deliver the events of the methods with a {@linkplain SubscribingAnnotation subscribing
+         * annotation} through an executor, rather than through the one the annotation names, which the bus then never
+         * creates: to deliver them right away in tests, for instance.
+         *
+         * <pre>{@code
+         * EventBus bus = EventBus.newBuilder().executor(OnEdt.class, Runnable::run).build();
+         * }</pre>
+         *
+         * @param annotation the annotation, whose type has {@link SubscribingAnnotation}
+         * @param executor the executor, which runs one task per event and method
+         * @return this builder
+         */
+        public Builder executor(Class<? extends Annotation> annotation, Executor executor) {
+            requireNonNull(annotation, "annotation");
+            requireNonNull(executor, "executor");
+            executors.put(annotation, executor);
             return this;
         }
 
@@ -342,15 +409,23 @@ public final class EventBus {
         }
     }
 
-    /** A subscriber of the events of a type. Compared by identity, so that each subscription removes its own. */
+    /**
+     * A subscriber of the events of a type, and the executor that delivers them, if not the thread that delivers the
+     * event. Compared by identity, so that each subscription removes its own.
+     */
     private static final class Registration<E> {
 
         private final Class<E> eventType;
         private final Consumer<? super E> subscriber;
+        private final @Nullable Executor executor;
 
-        Registration(Class<E> eventType, Consumer<? super E> subscriber) {
+        /** Whether the registration was not removed, which a task handed to the executor checks. */
+        private volatile boolean subscribed = true;
+
+        Registration(Class<E> eventType, Consumer<? super E> subscriber, @Nullable Executor executor) {
             this.eventType = eventType;
             this.subscriber = subscriber;
+            this.executor = executor;
         }
 
         void deliver(Object event) {

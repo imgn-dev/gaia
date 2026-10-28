@@ -1,9 +1,13 @@
 package be.imgn.gaia.events.spi;
 
+import java.lang.annotation.Annotation;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
- * Subscribes the {@link be.imgn.gaia.events.Subscribe @Subscribe} methods a class declares: implemented by the code
+ * Subscribes the {@link be.imgn.gaia.events.Subscribe @Subscribe} methods a class declares, and those with a
+ * {@linkplain be.imgn.gaia.events.SubscribingAnnotation subscribing annotation}: implemented by the code
  * {@code gaia-events-processor} generates for that class, and found by
  * {@link be.imgn.gaia.events.EventBus#register(Object)} with {@link java.util.ServiceLoader}.
  *
@@ -47,5 +51,22 @@ public interface SubscriberIndex {
          * @throws IllegalArgumentException if {@code eventType} is primitive
          */
         <E> void subscribe(Class<E> eventType, Consumer<? super E> subscriber);
+
+        /**
+         * Subscribes a method with a {@linkplain be.imgn.gaia.events.SubscribingAnnotation subscribing annotation} to
+         * the events of a type and of its subtypes, delivered through the executor of the annotation.
+         *
+         * @param eventType the type of the events
+         * @param annotation the subscribing annotation of the method
+         * @param executor what creates the executor the annotation names, if the bus has none for it yet
+         * @param subscriber the method, as a method reference
+         * @param <E> the type of the events
+         * @throws IllegalArgumentException if {@code eventType} is primitive
+         */
+        <E> void subscribe(
+                Class<E> eventType,
+                Class<? extends Annotation> annotation,
+                Supplier<? extends Executor> executor,
+                Consumer<? super E> subscriber);
     }
 }
