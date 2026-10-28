@@ -1,7 +1,7 @@
 # Core
 
 `gaia-core` extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
-system properties, the [platform](#platform) the JVM runs on, text and time.
+system properties, the [platform](#platform) the JVM runs on, text, [versions](#versions) and time.
 
 ```xml
 <dependency>
@@ -248,6 +248,25 @@ of a run followed by a lowercase letter: `httpURLPath` gives `http-url-path`, `i
 `utf8` stays one word. Joined in camel case, a word keeps only its first letter in uppercase, so `http-url` gives
 `httpUrl`. Text that doesn't follow the convention it is converted from, or no convention at all for `from`, throws
 `IllegalArgumentException`.
+
+## Versions
+
+[`Version`](api:be.imgn.gaia.core.base.Version) is a version number as
+[Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html) defines it: a major, minor and patch version, then
+optional pre-release identifiers and build metadata.
+
+```java
+Version version = Version.parse("1.4.0-rc.1+build.5");
+version.preRelease();                // [rc, 1]
+Version.tryParse("v1.4.0");          // Optional.empty: not a semantic version
+Version.of(1, 4, 0).isPreRelease();  // false
+```
+
+`parse` throws `IllegalArgumentException` saying what is wrong with the text, and `tryParse` returns an empty
+`Optional` instead. Versions are `Comparable` by precedence, exactly as the specification defines it:
+`1.0.0-alpha < 1.0.0-alpha.1 < 1.0.0-beta < 1.0.0-rc.1 < 1.0.0 < 1.0.1`. Build metadata doesn't count, so `1.0.0+a` and
+`1.0.0+b` compare as equal while not being `equals`: a sorted set keeps only one of them. The major, minor and patch
+versions are `long`s, so a larger number is rejected, although the specification sets no limit.
 
 ## Time
 
