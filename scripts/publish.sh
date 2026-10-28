@@ -2,17 +2,17 @@
 #
 # Walks through publishing be.imgn.gaia to Maven Central.
 #
-# One reactor build publishes ten artifacts as ONE deployment:
+# One reactor build publishes nine artifacts as ONE deployment:
 #
 #   be.imgn.gaia:gaia-parent               the parent POM the libraries inherit
 #   be.imgn.gaia:gaia-bom                  the bill of materials
 #   be.imgn.gaia:gaia-core                 and gaia-core-testing
-#   be.imgn.gaia:gaia-events               and gaia-events-processor
 #   be.imgn.gaia:gaia-maven-plugin         the Maven plugin
 #   be.imgn.gaia:gaia-memfs                the in-memory file system
 #   be.imgn.gaia:gaia-processing           and gaia-processing-testing
+#   be.imgn.gaia:gaia-processor            the annotation processor of gaia-core
 #
-# The three *-tests modules are built and run, but neither installed nor
+# The two *-tests modules are built and run, but neither installed nor
 # deployed.
 #
 # Safe to re-run: every step detects what is already done and skips it. Nothing
@@ -121,13 +121,13 @@ version_is_after() {
 
 # What the deployment in the Central portal must hold. Shared with release.sh.
 portal_contents() {
-    info "Expect ONE deployment, be.imgn.gaia:$RELEASE_VERSION, holding ten components:"
+    info "Expect ONE deployment, be.imgn.gaia:$RELEASE_VERSION, holding nine components:"
     info '  gaia-parent, gaia-bom               pom only'
-    info '  gaia-core, gaia-core-testing, gaia-events,'
-    info '  gaia-events-processor, gaia-maven-plugin,'
-    info '  gaia-memfs, gaia-processing,'
-    info '  gaia-processing-testing             jar, sources, javadoc'
-    info 'No gaia-core-tests, gaia-events-tests or gaia-processing-tests: they are never deployed.'
+    info '  gaia-core, gaia-core-testing,'
+    info '  gaia-maven-plugin, gaia-memfs,'
+    info '  gaia-processing, gaia-processing-testing,'
+    info '  gaia-processor                      jar, sources, javadoc'
+    info 'No gaia-core-tests or gaia-processing-tests: they are never deployed.'
 }
 
 # --- steps --------------------------------------------------------------------
@@ -330,9 +330,9 @@ run_release() {
     info "Release version : $RELEASE_VERSION"
     info "Next version    : $NEXT_VERSION-SNAPSHOT"
     info "Artifacts       : be.imgn.gaia:gaia-parent, gaia-bom, gaia-core,"
-    info "                  gaia-core-testing, gaia-events, gaia-events-processor,"
-    info "                  gaia-maven-plugin, gaia-memfs, gaia-processing,"
-    info "                  gaia-processing-testing"
+    info "                  gaia-core-testing, gaia-maven-plugin, gaia-memfs,"
+    info "                  gaia-processing, gaia-processing-testing,"
+    info "                  gaia-processor"
     info 'This publishes signed artifacts to Central, tags the commit and pushes.'
     info 'Nothing becomes public until you press Publish in the portal.'
     confirm 'Start the release workflow?'

@@ -2,7 +2,7 @@
 
 index.md
 core.md
-events.md
+event-bus.md
 memfs.md
 processing.md
 testing.md

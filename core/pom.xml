@@ -14,7 +14,7 @@
   <artifactId>gaia-core</artifactId>
 
   <name>Gaia Core</name>
-  <description>JDK extensions with no dependencies besides JSpecify and the Error Prone annotations.</description>
+  <description>JDK extensions and an event bus, with no dependencies besides JSpecify and the Error Prone annotations.</description>
 
   <dependencies>
     <!-- The only dependencies gaia-core may have: annotations that are part

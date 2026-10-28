@@ -76,16 +76,6 @@
       </dependency>
       <dependency>
         <groupId>be.imgn.gaia</groupId>
-        <artifactId>gaia-events</artifactId>
-        <version>${revision}</version>
-      </dependency>
-      <dependency>
-        <groupId>be.imgn.gaia</groupId>
-        <artifactId>gaia-events-processor</artifactId>
-        <version>${revision}</version>
-      </dependency>
-      <dependency>
-        <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-memfs</artifactId>
         <version>${revision}</version>
       </dependency>
@@ -97,6 +87,11 @@
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-processing-testing</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.imgn.gaia</groupId>
+        <artifactId>gaia-processor</artifactId>
         <version>${revision}</version>
       </dependency>
     </dependencies>

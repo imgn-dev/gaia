@@ -11,10 +11,10 @@ the [API documentation](https://imgn-dev.github.io/gaia/api/latest/).
 
 | Artifact                  | Module                            | What it does                                           |
 |---------------------------|-----------------------------------|--------------------------------------------------------|
-| `gaia-core`               | `be.imgn.gaia.core`               | [Extensions to the JDK](core.md), including [the platform the JVM runs on](core.md#platform) |
-| `gaia-events`             | `be.imgn.gaia.events`             | [An event bus without reflection](events.md)           |
+| `gaia-core`               | `be.imgn.gaia.core`               | [Extensions to the JDK](core.md), including [the platform the JVM runs on](core.md#platform) and [an event bus](event-bus.md) |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | [An in-memory file system](memfs.md)                   |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | [Helpers for writing annotation processors](processing.md) |
+| `gaia-processor`          | `be.imgn.gaia.processor`          | [The annotation processor of the event bus](event-bus.md) |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | [Test helpers for `gaia-core`](testing.md#gaia-core-testing) |
 | `gaia-processing-testing` | `be.imgn.gaia.processing.testing` | [Compiling through annotation processors in tests](testing.md#gaia-processing-testing) |
 

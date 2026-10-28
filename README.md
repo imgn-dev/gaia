@@ -13,13 +13,12 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 
 | Artifact                  | Module                            | What it does                                                |
 |---------------------------|-----------------------------------|-------------------------------------------------------------|
-| `gaia-core`               | `be.imgn.gaia.core`               | Extensions to the JDK, and the platform the JVM runs on     |
+| `gaia-core`               | `be.imgn.gaia.core`               | JDK extensions, the platform the JVM runs on, an event bus  |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | Test helpers for code using `gaia-core`                     |
-| `gaia-events`             | `be.imgn.gaia.events`             | An event bus whose `@Subscribe` methods need no reflection  |
-| `gaia-events-processor`   | `be.imgn.gaia.events.processor`   | The annotation processor of `gaia-events`                   |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | An in-memory file system for the `mem:` URI scheme          |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | Helpers for writing annotation processors                   |
 | `gaia-processing-testing` | `be.imgn.gaia.processing.testing` | Compile sources through annotation processors in tests      |
+| `gaia-processor`          | `be.imgn.gaia.processor`          | The annotation processor of `gaia-core`'s event bus         |
 
 ### `gaia-core`
 
@@ -57,6 +56,22 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `groupRuns(key)` groups consecutive elements with equal keys; `takeLast(n)` and `dropLast(n)` work at the end of a
   stream; `mapWithIndex` and `filterWithIndex` see each element's index; `everyNth(n)` samples; and `max(n, comparator)`
   and `min(n, comparator)` keep the greatest or least elements in one pass.
+- **`event.EventBus`**: delivers each event to the subscribers of its class and of all its supertypes, the most
+  specific first. `subscribe(OrderPlaced.class, order -> ...)` subscribes a `Consumer`, and `register(listener)` the
+  `@Subscribe` methods of a listener; both return a `Subscription`, which unsubscribes when closed. Events are
+  delivered on the thread that publishes them, an event published by a subscriber once the current one is delivered,
+  or in one task per event of an executor: `EventBus.newBuilder().executor(...)`. The exceptions of subscribers go to
+  an exception handler, which logs them by default.
+- **`@event.Subscribe`**: marks a method that receives events once its listener is registered. `gaia-processor`, on
+  the annotation processor path, generates the code that subscribes these methods and calls them directly, without
+  reflection, and reports at compile time the methods it cannot call. It registers that code as a service provider; on
+  the module path, the `register-services` goal of `gaia-maven-plugin` declares it in `module-info.class`.
+- **`@event.SubscribingAnnotation`**: turns an annotation such as `@OnEdt` into one that subscribes methods as
+  `@Subscribe` does, and has their events delivered through the executor class it names, such as one that calls
+  `EventQueue.invokeLater`. The bus creates that executor itself;
+  `newBuilder().executor(OnEdt.class, ...)` replaces it.
+- **`@event.OnVirtualThread`**: a subscribing annotation that delivers each event on a new virtual thread, with
+  `VirtualThreadExecutor`.
 - **`io.AtomicFiles`**: writes a file so that readers, or the next run after a crash, see either its old content or
   its new one, never a part of it: `write(file, bytes)`, `writeString(file, text)`, or
   `write(file, out -> ImageIO.write(image, "png", out))`. The file keeps its permissions.
@@ -104,24 +119,6 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `hasDistinctSize(n)` and `containsExactlyCounts(Map.of("foo", 2, "bar", 1))`.
 - **`MultimapAssert`**: AssertJ assertions on a `Multimap`: `hasSize`, `containsKeys`, `containsEntry` and
   `hasValues(key, values...)`, in order for a `ListMultimap`.
-
-### `gaia-events`
-
-- **`EventBus`**: delivers each event to the subscribers of its class and of all its supertypes, the most specific
-  first. `subscribe(OrderPlaced.class, order -> ...)` subscribes a `Consumer`, and `register(listener)` the
-  `@Subscribe` methods of a listener; both return a `Subscription`, which unsubscribes when closed. Events are
-  delivered on the thread that publishes them, an event published by a subscriber once the current one is delivered,
-  or in one task per event of an executor: `EventBus.newBuilder().executor(...)`. The exceptions of subscribers go to
-  an exception handler, which logs them by default.
-- **`@Subscribe`**: marks a method that receives events once its listener is registered. `gaia-events-processor`, on
-  the annotation processor path, generates the code that subscribes these methods and calls them directly, without
-  reflection, and reports at compile time the methods it cannot call. It registers that code as a service provider;
-  on the module path, the `register-services` goal of `gaia-maven-plugin` declares it in `module-info.class`.
-- **`@SubscribingAnnotation`**: turns an annotation such as `@OnEdt` into one that subscribes methods as `@Subscribe`
-  does, and has their events delivered through the executor class it names, such as one that calls `EventQueue.invokeLater`. The bus
-  creates that executor itself; `newBuilder().executor(OnEdt.class, ...)` replaces it.
-- **`@OnVirtualThread`**: a subscribing annotation that delivers each event on a new virtual thread, with
-  `VirtualThreadExecutor`.
 
 ### `gaia-memfs`
 
