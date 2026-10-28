@@ -151,6 +151,11 @@ parameters, all accessible from the package of the listener, and exported to its
 annotation, it checks the executor from wherever the annotation can be used, and reports a retention of `SOURCE`: the
 annotation must be kept in class files, so that the processor sees it on the methods of classes compiled before.
 
+`gaia-events` has one, [`@OnVirtualThread`](api:be.imgn.gaia.events.OnVirtualThread), which delivers each event on
+a new virtual thread with [`VirtualThreadExecutor`](api:be.imgn.gaia.events.VirtualThreadExecutor). The events then
+reach the method in no particular order, and the method can run on several threads at once: the listener must be
+thread-safe.
+
 A module that declares such an annotation exports the package of the executor, and requires `be.imgn.gaia.events`
 transitively, as javac's `exports` lint asks: the annotation of an exported type is part of its API.
 

@@ -1,8 +1,11 @@
 package be.imgn.gaia.events.tests;
 
+import be.imgn.gaia.events.OnVirtualThread;
 import be.imgn.gaia.events.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /** Listeners compiled through gaia-events-processor, each recording what it receives. */
 final class Listeners {
@@ -91,6 +94,33 @@ final class Listeners {
 
     static class FailingQueuedListener {
         @Queued
+        void onPlaced(OrderPlaced event) {
+            throw new IllegalStateException("failed " + event.id());
+        }
+    }
+
+    static class VirtualThreadListener {
+        private final CountDownLatch delivered = new CountDownLatch(1);
+        private volatile boolean onVirtualThread;
+
+        @OnVirtualThread
+        void onPlaced(OrderPlaced event) {
+            onVirtualThread = Thread.currentThread().isVirtual();
+            delivered.countDown();
+        }
+
+        /** Returns whether an event was delivered within ten seconds. */
+        boolean awaitDelivery() throws InterruptedException {
+            return delivered.await(10, TimeUnit.SECONDS);
+        }
+
+        boolean onVirtualThread() {
+            return onVirtualThread;
+        }
+    }
+
+    static class FailingVirtualThreadListener {
+        @OnVirtualThread
         void onPlaced(OrderPlaced event) {
             throw new IllegalStateException("failed " + event.id());
         }

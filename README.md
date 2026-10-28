@@ -120,6 +120,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`@SubscribingAnnotation`**: turns an annotation such as `@OnEdt` into one that subscribes methods as `@Subscribe`
   does, and has their events delivered through the executor class it names, such as one that calls `EventQueue.invokeLater`. The bus
   creates that executor itself; `newBuilder().executor(OnEdt.class, ...)` replaces it.
+- **`@OnVirtualThread`**: a subscribing annotation that delivers each event on a new virtual thread, with
+  `VirtualThreadExecutor`.
 
 ### `gaia-memfs`
 
