@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#executor(java.util.concurrent.Executor)" tabindex="0">executor(Executor)</a></li>
+<li><a href="#executor(java.lang.Class,java.util.concurrent.Executor)" tabindex="0">executor(Class, Executor)</a></li>
 <li><a href="#exceptionHandler(java.util.function.BiConsumer)" tabindex="0">exceptionHandler(BiConsumer)</a></li>
 <li><a href="#build()" tabindex="0">build()</a></li>
 </ol>
@@ -113,8 +114,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets what handles an exception thrown by a subscriber, instead of logging it.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#executor(java.util.concurrent.Executor)" class="member-name-link">executor</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html" title="class or interface in java.util.concurrent" class="external-link">Executor</a>&nbsp;executor)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#executor(java.lang.Class,java.util.concurrent.Executor)" class="member-name-link">executor</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;&nbsp;annotation,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html" title="class or interface in java.util.concurrent" class="external-link">Executor</a>&nbsp;executor)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Makes the bus deliver the events of the methods with a <a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing
+annotation</a> through an executor, rather than through the one the annotation names, which the bus then never
+creates: to deliver them right away in tests, for instance.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#executor(java.util.concurrent.Executor)" class="member-name-link">executor</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html" title="class or interface in java.util.concurrent" class="external-link">Executor</a>&nbsp;executor)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Makes the bus deliver each event in a task of an executor, rather than on the thread that publishes it.</div>
 </div>
 </div>
@@ -146,6 +155,28 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>executor</code> - the executor, which runs one task per event</dd>
+<dt>Returns:</dt>
+<dd>this builder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="executor(java.lang.Class,java.util.concurrent.Executor)">
+<h3>executor</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></span>&nbsp;<span class="element-name">executor</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;&nbsp;annotation,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html" title="class or interface in java.util.concurrent" class="external-link">Executor</a>&nbsp;executor)</span></div>
+<div class="block">Makes the bus deliver the events of the methods with a <a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing
+annotation</a> through an executor, rather than through the one the annotation names, which the bus then never
+creates: to deliver them right away in tests, for instance.
+
+<pre><code>EventBus bus = EventBus.newBuilder().executor(OnEdt.class, Runnable::run).build();
+</code></pre></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>annotation</code> - the annotation, whose type has <a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events"><code>SubscribingAnnotation</code></a></dd>
+<dd><code>executor</code> - the executor, which runs one task per event and method</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
 </dl>

@@ -67,7 +67,8 @@ loadScripts(document, 'script');</script>
 </span>package <span class="element-name">be.imgn.gaia.events</span></div>
 <section class="package-description" id="package-description">
 <div class="block">An event bus: <a href="EventBus.html" title="class in be.imgn.gaia.events"><code>EventBus</code></a>, the <a href="Subscription.html" title="class in be.imgn.gaia.events"><code>Subscription</code></a>s it hands out, and
-<a href="Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> for the methods of listeners.</div>
+<a href="Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> for the methods of listeners, as are the annotations that
+<a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events"><code>@SubscribingAnnotation</code></a> marks.</div>
 </section>
 </div>
 <section class="summary">
@@ -100,15 +101,29 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Builds an <a href="EventBus.html" title="class in be.imgn.gaia.events"><code>EventBus</code></a>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab6"><a href="Subscribe.html" title="annotation interface in be.imgn.gaia.events">Subscribe</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab6"><a href="OnVirtualThread.html" title="annotation interface in be.imgn.gaia.events">OnVirtualThread</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab6">
+<div class="block">Subscribes a method as <a href="Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> does, but has each of its events delivered on a new virtual
+thread, with <a href="VirtualThreadExecutor.html" title="class in be.imgn.gaia.events"><code>VirtualThreadExecutor</code></a>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab6"><a href="Subscribe.html" title="annotation interface in be.imgn.gaia.events">Subscribe</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab6">
 <div class="block">Marks a method that receives events once its listener is <a href="EventBus.html#register(java.lang.Object)">registered</a>: the
 events of the type of its parameter, and of the subtypes of that type.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab6"><a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">SubscribingAnnotation</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab6">
+<div class="block">Marks an annotation that subscribes the methods it annotates as <a href="Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> does, and has the bus
+deliver their events through an executor, such as on a given thread.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Subscription.html" title="class in be.imgn.gaia.events">Subscription</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">What <a href="EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)"><code>EventBus.subscribe(Class, java.util.function.Consumer)</code></a> or <a href="EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> subscribed,
 until it is closed.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="VirtualThreadExecutor.html" title="class in be.imgn.gaia.events">VirtualThreadExecutor</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Runs each task on a new virtual thread: the executor of <a href="OnVirtualThread.html" title="annotation interface in be.imgn.gaia.events"><code>@OnVirtualThread</code></a>.</div>
 </div>
 </div>
 </div>

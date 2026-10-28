@@ -134,7 +134,8 @@ until it is closed. The bus holds its subscribers strongly: closing the subscrip
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">close</span>()</div>
 <div class="block">Unsubscribes what this subscription subscribed, so that it receives no event published from then on. An event
-being delivered meanwhile may still reach it. Closing the subscription again does nothing.</div>
+being delivered meanwhile may still reach it, but not a method with a <a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a>: the tasks its executor runs from then on do not call it. Closing the subscription again
+does nothing.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/AutoCloseable.html#close()" title="class or interface in java.lang" class="external-link">close</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code></dd>

@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#subscribe(java.lang.Class,java.util.function.Consumer)" tabindex="0">subscribe(Class, Consumer)</a></li>
+<li><a href="#subscribe(java.lang.Class,java.lang.Class,java.util.function.Supplier,java.util.function.Consumer)" tabindex="0">subscribe(Class, Class, Supplier, Consumer)</a></li>
 </ol>
 </li>
 </ol>
@@ -97,9 +98,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;E&gt;&nbsp;void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subscribe(java.lang.Class,java.util.function.Consumer)" class="member-name-link">subscribe</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;eventType,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subscribe(java.lang.Class,java.lang.Class,java.util.function.Supplier,java.util.function.Consumer)" class="member-name-link">subscribe</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;eventType,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;&nbsp;annotation,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html" title="class or interface in java.util.concurrent" class="external-link">Executor</a>&gt;&nbsp;executor,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super E&gt;&nbsp;subscriber)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Subscribes a method with a <a href="../SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a> to
+the events of a type and of its subtypes, delivered through the executor of the annotation.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;E&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subscribe(java.lang.Class,java.util.function.Consumer)" class="member-name-link">subscribe</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;eventType,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super E&gt;&nbsp;subscriber)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Subscribes a method to the events of a type and of its subtypes.</div>
 </div>
 </div>
@@ -128,6 +138,30 @@ loadScripts(document, 'script');</script>
 <dd><span id="subscribe(java.lang.Class,java.util.function.Consumer)-type-param-E"><code>E</code> - the type of the events</span></dd>
 <dt>Parameters:</dt>
 <dd><code>eventType</code> - the type of the events</dd>
+<dd><code>subscriber</code> - the method, as a method reference</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>eventType</code> is primitive</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="subscribe(java.lang.Class,java.lang.Class,java.util.function.Supplier,java.util.function.Consumer)">
+<h3>subscribe</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="type-parameters">&lt;E&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">subscribe</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;eventType,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;&nbsp;annotation,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html" title="class or interface in java.util.concurrent" class="external-link">Executor</a>&gt;&nbsp;executor,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super E&gt;&nbsp;subscriber)</span></div>
+<div class="block">Subscribes a method with a <a href="../SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a> to
+the events of a type and of its subtypes, delivered through the executor of the annotation.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="subscribe(java.lang.Class,java.lang.Class,java.util.function.Supplier,java.util.function.Consumer)-type-param-E"><code>E</code> - the type of the events</span></dd>
+<dt>Parameters:</dt>
+<dd><code>eventType</code> - the type of the events</dd>
+<dd><code>annotation</code> - the subscribing annotation of the method</dd>
+<dd><code>executor</code> - what creates the executor the annotation names, if the bus has none for it yet</dd>
 <dd><code>subscriber</code> - the method, as a method reference</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>eventType</code> is primitive</dd>

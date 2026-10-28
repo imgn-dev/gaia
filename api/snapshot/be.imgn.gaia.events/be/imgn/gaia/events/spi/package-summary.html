@@ -81,7 +81,8 @@ Applications do not use it.</div>
 <div class="col-first even-row-color"><a href="../package-summary.html">be.imgn.gaia.events</a></div>
 <div class="col-last even-row-color">
 <div class="block">An event bus: <a href="../EventBus.html" title="class in be.imgn.gaia.events"><code>EventBus</code></a>, the <a href="../Subscription.html" title="class in be.imgn.gaia.events"><code>Subscription</code></a>s it hands out, and
-<a href="../Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> for the methods of listeners.</div>
+<a href="../Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> for the methods of listeners, as are the annotations that
+<a href="../SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events"><code>@SubscribingAnnotation</code></a> marks.</div>
 </div>
 </div>
 </div>
@@ -94,7 +95,8 @@ Applications do not use it.</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="SubscriberIndex.html" title="interface in be.imgn.gaia.events.spi">SubscriberIndex</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab1">
-<div class="block">Subscribes the <a href="../Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> methods a class declares: implemented by the code
+<div class="block">Subscribes the <a href="../Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> methods a class declares, and those with a
+<a href="../SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a>: implemented by the code
 <code>gaia-events-processor</code> generates for that class, and found by
 <a href="../EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a>.</div>
 </div>

@@ -99,10 +99,17 @@ for that thread, and delivered once the event being delivered has reached all it
 in the order they were published. A bus with an executor hands it one task per event, which delivers the event to its
 subscribers in order; separate events may be delivered concurrently.
 
+<p>A method with a <a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a> gets its events through the executor of
+the annotation instead: the delivery hands that executor a task that calls the method, and goes on to the other
+subscribers without waiting for it. The tasks are handed over in the order the events are delivered; whether they run
+in that order depends on the executor. A task does not call the method if its subscription was closed meanwhile.
+
 <p>An exception thrown by a subscriber goes to the <a href="EventBus.Builder.html#exceptionHandler(java.util.function.BiConsumer)">exception
-handler</a>, and the event goes on to its other subscribers. By default, the handler logs the exception at
-<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.Level.html#ERROR" title="class or interface in java.lang" class="external-link"><code>System.Logger.Level.ERROR</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.html" title="class or interface in java.lang" class="external-link"><code>System.Logger</code></a>. An <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Error.html" title="class or interface in java.lang" class="external-link"><code>Error</code></a> is not caught, nor is an exception thrown by the
-handler: it propagates from the delivery, and the events queued meanwhile on the thread are dropped.
+handler</a>, and the event goes on to its other subscribers. So does an exception thrown by the executor of a
+subscribing annotation when it is handed a task, such as a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/RejectedExecutionException.html" title="class or interface in java.util.concurrent" class="external-link"><code>RejectedExecutionException</code></a>.
+By default, the handler logs the exception at <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.Level.html#ERROR" title="class or interface in java.lang" class="external-link"><code>System.Logger.Level.ERROR</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.html" title="class or interface in java.lang" class="external-link"><code>System.Logger</code></a>. An <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Error.html" title="class or interface in java.lang" class="external-link"><code>Error</code></a> is not
+caught, nor is an exception thrown by the handler: it propagates from the delivery, and the events queued meanwhile
+on the thread are dropped.
 
 <p>A bus is thread-safe. Subscribers can be added and removed while events are delivered: each delivery goes to the
 subscribers a type had when the delivery reached it.</div>
@@ -246,9 +253,14 @@ with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/
 module: such a module declares the generated classes with <code>provides</code>, as the <code>register-services</code> goal
 of <code>gaia-maven-plugin</code> adds.
 
+<p>The methods with a <a href="SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a> are subscribed too. The first
+time the bus registers such a method, it creates the executor the annotation names, unless it was
+<a href="EventBus.Builder.html#executor(java.lang.Class,java.util.concurrent.Executor)">built with one</a> for the annotation; an exception thrown meanwhile
+propagates, and subscribes nothing.
+
 <p>The methods of a superclass are subscribed before those of its subclasses, and those of one class in the order
-they are declared. A method that overrides a <code>@Subscribe</code> method receives its events, without the
-annotation.</div>
+they are declared. A method that overrides a <code>@Subscribe</code> method, or one with a subscribing annotation,
+receives its events, without the annotation.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>listener</code> - the listener</dd>

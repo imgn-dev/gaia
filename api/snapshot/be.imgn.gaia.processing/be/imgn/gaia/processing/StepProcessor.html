@@ -107,10 +107,11 @@ loadScripts(document, 'script');</script>
 <a href="Step.html#metaAnnotations()">meta-annotations</a> annotate, grouped by annotation, and the root elements of the
 round if it <a href="Step.html#processesRootElements()">processes them</a>. An element whose signature still has a type
 javac could not resolve, typically one another processor has yet to generate, is held back until a later round
-resolves it. So is an element a step gives back. An element still held back after the last round is reported as an
-error, with the type that blocked it. Then each step <a href="Step.html#processingOver()">finishes</a>, and the processor
-writes the service files its steps registered with <a href="ProcessingContext.html#services()"><code>ProcessingContext.services()</code></a>, whatever errors were
-reported.
+resolves it. So is an element a step gives back, which must be one the step gets: an element a step would not get
+again is reported as an error instead. An element still held back after the last round is reported as an error, with
+the type that blocked it, unless only its being a root element held it back: javac reports its unresolved type
+itself. Then each step <a href="Step.html#processingOver()">finishes</a>, and the processor writes the service files its
+steps registered with <a href="ProcessingContext.html#services()"><code>ProcessingContext.services()</code></a>, whatever errors were reported.
 
 <p>A <a href="ProcessingException.html" title="class in be.imgn.gaia.processing"><code>ProcessingException</code></a> that escapes a step is reported as an error, at the place it names, and the
 processor goes on with the next step: the elements of that step in that round are done, none is given back to it. To

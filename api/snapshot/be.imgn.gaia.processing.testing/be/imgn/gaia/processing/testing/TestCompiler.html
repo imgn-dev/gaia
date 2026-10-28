@@ -62,6 +62,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#withProcessors(javax.annotation.processing.Processor...)" tabindex="0">withProcessors(Processor...)</a></li>
 <li><a href="#withOptions(java.lang.String...)" tabindex="0">withOptions(String...)</a></li>
 <li><a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)" tabindex="0">withResource(JavaFileManager.Location, String, String)</a></li>
+<li><a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,byte%5B%5D)" tabindex="0">withResource(JavaFileManager.Location, String, byte[])</a></li>
 <li><a href="#compile(javax.tools.JavaFileObject...)" tabindex="0">compile(JavaFileObject...)</a></li>
 <li><a href="#compile(java.util.List)" tabindex="0">compile(List)</a></li>
 </ol>
@@ -98,7 +99,7 @@ module path of their own. Sources outside a module read every module of that pat
 directories, read back into the <a href="Compilation.html" title="class in be.imgn.gaia.processing.testing"><code>Compilation</code></a>, and the directories are deleted.
 
 <p>A <code>TestCompiler</code> is immutable: <a href="#withProcessors(javax.annotation.processing.Processor...)"><code>withProcessors(Processor...)</code></a>, <a href="#withOptions(java.lang.String...)"><code>withOptions(String...)</code></a> and
-<a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)"><code>withResource(JavaFileManager.Location, String, String)</code></a> return a new one.</div>
+the <code>withResource</code> overloads return a new one.</div>
 </div>
 </section>
 <section class="summary">
@@ -146,10 +147,18 @@ directories, read back into the <a href="Compilation.html" title="class in be.im
 <div class="block">Returns a compiler that runs <code>processors</code>, instead of the processors this one runs.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TestCompiler.html" title="class in be.imgn.gaia.processing.testing">TestCompiler</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)" class="member-name-link">withResource</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/JavaFileManager.Location.html" title="class or interface in javax.tools" class="external-link">JavaFileManager.Location</a>&nbsp;location,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,byte%5B%5D)" class="member-name-link">withResource</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/JavaFileManager.Location.html" title="class or interface in javax.tools" class="external-link">JavaFileManager.Location</a>&nbsp;location,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;relativePath,
+ byte[]&nbsp;content)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns a compiler that also gives the compilation a binary resource, such as an image, as
+<a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)"><code>withResource(JavaFileManager.Location, String, String)</code></a> does with text.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TestCompiler.html" title="class in be.imgn.gaia.processing.testing">TestCompiler</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)" class="member-name-link">withResource</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/JavaFileManager.Location.html" title="class or interface in javax.tools" class="external-link">JavaFileManager.Location</a>&nbsp;location,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;relativePath,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a compiler that also gives the compilation a resource, such as a file an annotation processor reads with
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/Filer.html#getResource(javax.tools.JavaFileManager.Location,java.lang.CharSequence,java.lang.CharSequence)" title="class or interface in javax.annotation.processing" class="external-link"><code>Filer.getResource(JavaFileManager.Location, CharSequence, CharSequence)</code></a>, besides the resources this one gives.</div>
 </div>
@@ -265,7 +274,8 @@ resource this one gives at the same location and path, if any.
 
 <p>A resource in <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#CLASS_OUTPUT" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.CLASS_OUTPUT</code></a> is there before javac starts, as are the resources a build
 tool copies to the class output before compiling. It is not among the <a href="Compilation.html#generatedFiles()">generated files</a>, unless the compilation writes other content to it. A resource in
-<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a> is in a source path of its own, so the options must not give one.</div>
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a> is in a source path of its own, so the options must not give one, and the
+sources must not have a <code>module-info</code>: javac would then look for them in that source path.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>location</code> - <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#CLASS_OUTPUT" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.CLASS_OUTPUT</code></a> or <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a></dd>
@@ -282,11 +292,44 @@ tool copies to the class output before compiling. It is not among the <a href="C
 </section>
 </li>
 <li>
+<section class="detail" id="withResource(javax.tools.JavaFileManager.Location,java.lang.String,byte[])">
+<h3>withResource</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="TestCompiler.html" title="class in be.imgn.gaia.processing.testing">TestCompiler</a></span>&nbsp;<span class="element-name">withResource</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/JavaFileManager.Location.html" title="class or interface in javax.tools" class="external-link">JavaFileManager.Location</a>&nbsp;location,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;relativePath,
+ byte[]&nbsp;content)</span></div>
+<div class="block">Returns a compiler that also gives the compilation a binary resource, such as an image, as
+<a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)"><code>withResource(JavaFileManager.Location, String, String)</code></a> does with text.
+
+<pre><code>Compilation compilation = TestCompiler.javac()
+        .withProcessors(new ViewProcessor())
+        .withResource(StandardLocation.CLASS_OUTPUT, "example/main.png", Files.readAllBytes(icon))
+        .compile(TestCompiler.source("example.MainView", "..."));
+</code></pre></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>location</code> - <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#CLASS_OUTPUT" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.CLASS_OUTPUT</code></a> or <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a></dd>
+<dd><code>relativePath</code> - the path of the resource relative to the location, separated by <code>/</code>, such as
+    <code>example/main.png</code></dd>
+<dd><code>content</code> - the content of the resource, which is copied</dd>
+<dt>Returns:</dt>
+<dd>a compiler giving that resource too</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>location</code> is another location, or if <code>relativePath</code> is empty,
+    starts or ends with <code>/</code>, contains <code>\</code>, or has an empty, <code>.</code> or <code>..</code> segment</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="compile(javax.tools.JavaFileObject...)">
 <h3>compile</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Compilation.html" title="class in be.imgn.gaia.processing.testing">Compilation</a></span>&nbsp;<span class="element-name">compile</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/JavaFileObject.html" title="class or interface in javax.tools" class="external-link">JavaFileObject</a>...&nbsp;sources)</span></div>
-<div class="block">Compiles <code>sources</code>.</div>
+<div class="block">Compiles <code>sources</code>.
+
+<p>What javac writes besides its diagnostics, such as the output of <code>-verbose</code>, is logged at
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.Level.html#INFO" title="class or interface in java.lang" class="external-link"><code>System.Logger.Level.INFO</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.html" title="class or interface in java.lang" class="external-link"><code>System.Logger</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>sources</code> - the compilation units, such as the ones <a href="#source(java.lang.String,java.lang.String)"><code>source(String, String)</code></a> returns</dd>
@@ -296,9 +339,11 @@ tool copies to the class output before compiling. It is not among the <a href="C
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>sources</code> is empty or holds a file that is not a source file, if javac
     rejects an option: unknown, without its argument, or with an invalid value, or if the options give a source
     path while a <a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)">resource</a> is in
+    <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a>, or if the sources have a <code>module-info</code> while a resource is in
     <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a></dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the running Java has no system compiler, or if javac finds options that cannot
-    be used together</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the running Java has no system compiler, if javac finds options that cannot be
+    used together, or if javac fails without reporting an error, as when it crashes, with the output of javac as
+    its message</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></code> - if an annotation processor, or a file given to javac, throws an exception, which is the
     cause of the one thrown</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the temporary directories cannot be written, read or deleted</dd>
@@ -311,7 +356,10 @@ tool copies to the class output before compiling. It is not among the <a href="C
 <h3>compile</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Compilation.html" title="class in be.imgn.gaia.processing.testing">Compilation</a></span>&nbsp;<span class="element-name">compile</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/JavaFileObject.html" title="class or interface in javax.tools" class="external-link">JavaFileObject</a>&gt;&nbsp;sources)</span></div>
-<div class="block">Compiles <code>sources</code>.</div>
+<div class="block">Compiles <code>sources</code>.
+
+<p>What javac writes besides its diagnostics, such as the output of <code>-verbose</code>, is logged at
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.Level.html#INFO" title="class or interface in java.lang" class="external-link"><code>System.Logger.Level.INFO</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.Logger.html" title="class or interface in java.lang" class="external-link"><code>System.Logger</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>sources</code> - the compilation units, such as the ones <a href="#source(java.lang.String,java.lang.String)"><code>source(String, String)</code></a> returns</dd>
@@ -321,9 +369,11 @@ tool copies to the class output before compiling. It is not among the <a href="C
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>sources</code> is empty or holds a file that is not a source file, if javac
     rejects an option: unknown, without its argument, or with an invalid value, or if the options give a source
     path while a <a href="#withResource(javax.tools.JavaFileManager.Location,java.lang.String,java.lang.String)">resource</a> is in
+    <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a>, or if the sources have a <code>module-info</code> while a resource is in
     <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/tools/StandardLocation.html#SOURCE_PATH" title="class or interface in javax.tools" class="external-link"><code>StandardLocation.SOURCE_PATH</code></a></dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the running Java has no system compiler, or if javac finds options that cannot
-    be used together</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the running Java has no system compiler, if javac finds options that cannot be
+    used together, or if javac fails without reporting an error, as when it crashes, with the output of javac as
+    its message</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></code> - if an annotation processor, or a file given to javac, throws an exception, which is the
     cause of the one thrown</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the temporary directories cannot be written, read or deleted</dd>
