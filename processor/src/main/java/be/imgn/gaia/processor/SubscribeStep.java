@@ -105,7 +105,8 @@ final class SubscribeStep implements Step {
         if (context.diagnostics().errorCount() > errors) {
             return;
         }
-        var name = indexName(type, packageName);
+        // The event bus finds the index by this name.
+        var name = ClassName.of(type).generatedName("Subscribers");
         if (!context.sources().isAvailable(name)) {
             context.diagnostics().on(type).error("Cannot generate " + name + ": a type has that name already");
             return;
@@ -327,17 +328,6 @@ final class SubscribeStep implements Step {
                 report.error("The event type " + eventType + " must be accessible from " + describe(packageName));
             }
         }
-    }
-
-    /**
-     * Returns the name of the index of a class: in its package, its binary name without the package, preceded by
-     * {@code $$} and followed by {@code $Subscribers}, as {@code $$Outer$Inner$Subscribers}, which the event bus finds
-     * it by.
-     */
-    private ClassName indexName(TypeElement type, String packageName) {
-        var binaryName = context.elements().getBinaryName(type).toString();
-        var simpleNames = packageName.isEmpty() ? binaryName : binaryName.substring(packageName.length() + 1);
-        return ClassName.of(packageName, "$$" + simpleNames + "$Subscribers");
     }
 
     private static boolean isParameterized(DeclaredType type) {

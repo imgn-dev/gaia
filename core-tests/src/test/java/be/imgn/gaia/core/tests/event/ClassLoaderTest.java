@@ -49,19 +49,58 @@ class ClassLoaderTest {
                         """));
         assertThat(compilation)
                 .succeeded()
-                .generatedSourceFile("example.$$Outer$Listener$Subscribers")
+                .generatedSourceFile("example.$Outer$Listener$$Subscribers")
                 .isNotEmpty();
         SubscribeProcessorTest.write(compilation, classes);
-        var bus = EventBus.create();
 
+        assertThat(receive(classes, "example.Outer$Listener")).isEqualTo(List.of("hello"));
+    }
+
+    @Test
+    void findsTheIndexOfAClassWithADollarSignInItsName(@TempDir Path classes) throws Exception {
+        var compilation = TestCompiler.javac()
+                .withProcessors(SubscribeProcessorTest.processor())
+                .compile(TestCompiler.source("example.Dollar$Listener", """
+                        package example;
+
+                        import be.imgn.gaia.core.event.Subscribe;
+                        import java.util.ArrayList;
+                        import java.util.List;
+                        import java.util.function.Supplier;
+
+                        public class Dollar$Listener implements Supplier<List<String>> {
+                            private final List<String> received = new ArrayList<>();
+
+                            @Subscribe
+                            void onText(String text) {
+                                received.add(text);
+                            }
+
+                            @Override
+                            public List<String> get() {
+                                return received;
+                            }
+                        }
+                        """));
+        assertThat(compilation)
+                .succeeded()
+                .generatedSourceFile("example.$Dollar$0Listener$$Subscribers")
+                .isNotEmpty();
+        SubscribeProcessorTest.write(compilation, classes);
+
+        assertThat(receive(classes, "example.Dollar$Listener")).isEqualTo(List.of("hello"));
+    }
+
+    // Registers a new listener of a class loaded from the classes, publishes "hello", and returns what it received.
+    private Object receive(Path classes, String binaryName) throws Exception {
+        var bus = EventBus.create();
         try (var loader = new URLClassLoader(
                 new URL[] {classes.toUri().toURL()}, getClass().getClassLoader())) {
-            var listener = (Supplier<?>)
-                    loader.loadClass("example.Outer$Listener").getConstructor().newInstance();
+            var listener =
+                    (Supplier<?>) loader.loadClass(binaryName).getConstructor().newInstance();
             bus.register(listener);
             bus.publish("hello");
-
-            assertThat(listener.get()).isEqualTo(List.of("hello"));
+            return listener.get();
         }
     }
 }

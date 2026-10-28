@@ -1,14 +1,14 @@
 import be.imgn.gaia.core.event.spi.SubscriberIndex;
-import be.imgn.gaia.core.tests.event.$$Listeners$BaseListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$ExtendingListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$FailingQueuedListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$FailingVirtualThreadListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$GenericListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$OrderListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$OtherQueuedListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$Outer$Inner$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$QueuedListener$Subscribers;
-import be.imgn.gaia.core.tests.event.$$Listeners$VirtualThreadListener$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$BaseListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$ExtendingListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$FailingQueuedListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$FailingVirtualThreadListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$GenericListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$OrderListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$OtherQueuedListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$Outer$Inner$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$QueuedListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$VirtualThreadListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.RecordingLoggerFinder;
 import javax.annotation.processing.Processor;
 
@@ -36,16 +36,16 @@ open module be.imgn.gaia.core.tests {
     uses Processor;
 
     provides SubscriberIndex with
-            $$Listeners$BaseListener$Subscribers,
-            $$Listeners$ExtendingListener$Subscribers,
-            $$Listeners$FailingQueuedListener$Subscribers,
-            $$Listeners$FailingVirtualThreadListener$Subscribers,
-            $$Listeners$GenericListener$Subscribers,
-            $$Listeners$OrderListener$Subscribers,
-            $$Listeners$OtherQueuedListener$Subscribers,
-            $$Listeners$Outer$Inner$Subscribers,
-            $$Listeners$QueuedListener$Subscribers,
-            $$Listeners$VirtualThreadListener$Subscribers;
+            $Listeners$BaseListener$$Subscribers,
+            $Listeners$ExtendingListener$$Subscribers,
+            $Listeners$FailingQueuedListener$$Subscribers,
+            $Listeners$FailingVirtualThreadListener$$Subscribers,
+            $Listeners$GenericListener$$Subscribers,
+            $Listeners$OrderListener$$Subscribers,
+            $Listeners$OtherQueuedListener$$Subscribers,
+            $Listeners$Outer$Inner$$Subscribers,
+            $Listeners$QueuedListener$$Subscribers,
+            $Listeners$VirtualThreadListener$$Subscribers;
     provides System.LoggerFinder with
             RecordingLoggerFinder;
 }

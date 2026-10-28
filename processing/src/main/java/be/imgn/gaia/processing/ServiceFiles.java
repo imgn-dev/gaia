@@ -41,7 +41,7 @@ import javax.tools.StandardLocation;
  * <p>A processor registers implementations as it finds or generates them, in any round:
  *
  * <pre>{@code
- * ClassName mapper = ClassName.of(type).generatedNameWithSuffix("Mapper");
+ * ClassName mapper = ClassName.of(type).generatedName("Mapper");
  * context.sources().write(JavaFile.newBuilder(mapper.packageName(), mapperType).build(), type);
  * context.services().add(ClassName.of("com.example", "Mapper"), mapper, type);
  * }</pre>

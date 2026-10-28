@@ -149,9 +149,18 @@ text:
 - Writing the same file twice returns `false` instead of failing.
 - Files are written in ASCII, other characters as Unicode escapes, so they compile the same under any `-encoding`.
 
-[`ClassName`](api:be.imgn.gaia.processing.source.ClassName)`.generatedNameWithSuffix("Mapper")` names a generated
-type after its source type, as `Outer_Inner_Mapper` (`generatedNameWithPrefix("Generated")` gives
-`Generated_Outer_Inner`), and `isAvailable(name)` tells whether a type has that name already.
+[`ClassName`](api:be.imgn.gaia.processing.source.ClassName) names generated types after what they are generated
+for, and `isAvailable(name)` tells whether a type has that name already. Each name ends with `$$` and the kind of the
+generated type:
+
+| For | Call | Name |
+|---|---|---|
+| A type | `ClassName.of(type).generatedName("Mapper")` | `$Outer$Inner$$Mapper` |
+| A package | `ClassName.generatedName("com.example", "Mappers")` | `com.example.$$Mappers` |
+| A method | `ClassName.generatedName(method, "Factory")` | `$Outer$$create$$Factory`, `$Outer$$create$2$$Factory` for the second overload |
+| A type, in another package | `ClassName.of(type).generatedNameIn("org.app", "Impl")` | `org.app.$$com$example$$Named$$Impl` |
+
+No two types, packages, methods or kinds get the same name: a dollar sign within a name is written `$0`.
 
 ## Service files
 

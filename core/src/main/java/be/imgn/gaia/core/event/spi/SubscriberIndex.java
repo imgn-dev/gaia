@@ -12,9 +12,8 @@ import java.util.function.Supplier;
  * {@link be.imgn.gaia.core.event.EventBus#register(Object)} with {@link java.util.ServiceLoader}.
  *
  * <p>Applications do not implement it. For a class {@code com.example.Outer.Listener}, the processor generates
- * {@code com.example.$$Outer$Listener$Subscribers}, the binary name of the class after its package, preceded by
- * {@code $$} and followed by {@code $Subscribers}, and registers it as a provider of this service. The event bus finds
- * it by that name.
+ * {@code com.example.$Outer$Listener$$Subscribers}, named as gaia-processing names a type generated for another, and
+ * registers it as a provider of this service. The event bus finds it by that name.
  *
  * @since 0.1.2
  */

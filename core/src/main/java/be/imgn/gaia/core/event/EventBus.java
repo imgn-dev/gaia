@@ -335,13 +335,17 @@ public final class EventBus {
     }
 
     /**
-     * Returns the binary name of the index generated for a class: in its package, its binary name without the package,
-     * preceded by {@code $$} and followed by {@code $Subscribers}.
+     * Returns the binary name of the index generated for a class, as gaia-processing names a type generated for
+     * another: in its package, {@code $}, the simple names from the top-level class to this one joined by {@code $},
+     * each dollar sign within them written {@code $0}, then {@code $$Subscribers}.
      */
     private static String indexName(Class<?> type) {
+        var names = new StringBuilder();
+        for (Class<?> current = type; current != null; current = current.getEnclosingClass()) {
+            names.insert(0, "$" + current.getSimpleName().replace("$", "$0"));
+        }
         var packageName = type.getPackageName();
-        var prefix = packageName.isEmpty() ? "" : packageName + ".";
-        return prefix + "$$" + type.getName().substring(prefix.length()) + "$Subscribers";
+        return (packageName.isEmpty() ? "" : packageName + ".") + names + "$$Subscribers";
     }
 
     /** Builds an {@link EventBus}. */

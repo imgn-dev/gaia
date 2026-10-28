@@ -77,7 +77,7 @@ class SubscribeProcessorTest {
 
         assertThat(compilation).succeeded().hadNoWarnings();
         assertThat(compilation)
-                .generatedSourceFile("example.$$Listener$Subscribers")
+                .generatedSourceFile("example.$Listener$$Subscribers")
                 .isEqualTo("""
                 package example;
 
@@ -85,7 +85,7 @@ class SubscribeProcessorTest {
                 import javax.annotation.processing.Generated;
 
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
-                public final class $$Listener$Subscribers implements SubscriberIndex {
+                public final class $Listener$$Subscribers implements SubscriberIndex {
                     @Override
                     public Class<?> listenerType() {
                         return Listener.class;
@@ -100,17 +100,17 @@ class SubscribeProcessorTest {
                 }
                 """);
         assertThat(compilation)
-                .generatedSourceFile("example.$$Listener$Generic$Subscribers")
+                .generatedSourceFile("example.$Listener$Generic$$Subscribers")
                 .contains("var l = (Listener.Generic<?>) listener;");
         assertThat(compilation)
-                .generatedSourceFile("example.$$Listener$Generic$Inner$Subscribers")
+                .generatedSourceFile("example.$Listener$Generic$Inner$$Subscribers")
                 .contains("var l = (Listener.Generic<?>.Inner) listener;");
         assertThat(compilation)
                 .generatedFile(StandardLocation.CLASS_OUTPUT, SERVICE_FILE)
                 .isEqualTo("""
-                example.$$Listener$Generic$Inner$Subscribers
-                example.$$Listener$Generic$Subscribers
-                example.$$Listener$Subscribers
+                example.$Listener$$Subscribers
+                example.$Listener$Generic$$Subscribers
+                example.$Listener$Generic$Inner$$Subscribers
                 """);
     }
 
@@ -134,7 +134,7 @@ class SubscribeProcessorTest {
 
         assertThat(compilation).succeeded().hadNoWarnings();
         assertThat(compilation)
-                .generatedSourceFile("example.$$Listener$Subscribers")
+                .generatedSourceFile("example.$Listener$$Subscribers")
                 .isNotEmpty();
     }
 
@@ -273,14 +273,14 @@ class SubscribeProcessorTest {
                             void onText(String text) {}
                         }
                         """),
-                TestCompiler.source("example.$$Listener$Subscribers", """
+                TestCompiler.source("example.$Listener$$Subscribers", """
                         package example;
 
-                        class $$Listener$Subscribers {}
+                        class $Listener$$Subscribers {}
                         """));
 
         assertThat(compilation)
-                .hadErrorContaining("Cannot generate example.$$Listener$Subscribers: a type has that name already")
+                .hadErrorContaining("Cannot generate example.$Listener$$Subscribers: a type has that name already")
                 .inFile("example/Listener.java")
                 .onLine(5);
     }
@@ -329,7 +329,7 @@ class SubscribeProcessorTest {
 
         assertThat(compilation).succeeded().hadNoWarnings();
         assertThat(compilation)
-                .generatedSourceFile("example.$$Listener$Subscribers")
+                .generatedSourceFile("example.$Listener$$Subscribers")
                 .isEqualTo("""
                 package example;
 
@@ -339,7 +339,7 @@ class SubscribeProcessorTest {
                 import javax.annotation.processing.Generated;
 
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
-                public final class $$Listener$Subscribers implements SubscriberIndex {
+                public final class $Listener$$Subscribers implements SubscriberIndex {
                     @Override
                     public Class<?> listenerType() {
                         return Listener.class;

@@ -3,6 +3,7 @@ package be.imgn.gaia.processing.tests;
 import static be.imgn.gaia.processing.testing.CompilationAssert.assertThat;
 import static be.imgn.gaia.processing.testing.TestCompiler.javac;
 import static be.imgn.gaia.processing.testing.TestCompiler.source;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import be.imgn.gaia.processing.AnnotatedElements;
@@ -24,13 +25,15 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.ElementFilter;
 import javax.tools.JavaFileObject;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-/** The names of generated types: {@code ClassName.generatedNameWithSuffix} and {@code GeneratedSources.isAvailable}. */
+/** The names of generated types: {@code ClassName.generatedName} and {@code GeneratedSources.isAvailable}. */
 class GeneratedNamesTest {
 
     private static final String GEN_NAME = "example.Gen";
@@ -81,12 +84,12 @@ class GeneratedNamesTest {
                             }
                         }
                         """),
-                source("example.Snake_Case", """
+                source("example.Dollar$Case", """
                         package example;
 
-                        public class Snake_Case {
+                        public class Dollar$Case {
                             @Gen
-                            public record In_Side() {}
+                            public record In$Side() {}
                         }
                         """),
                 source("example.other.Uses", """
@@ -96,94 +99,72 @@ class GeneratedNamesTest {
 
                         class Uses {
                             Described[] all = {
-                                new example.Outer_Described(),
-                                new example.Outer_Inner_Described(),
-                                new example.Outer_Inner_Deep_Described(),
-                                new example.Outer_Inner_Deep_Deeper_Described(),
-                                new example.Snake_0Case_In_0Side_Described(),
+                                new example.$Outer$$Described(),
+                                new example.$Outer$Inner$$Described(),
+                                new example.$Outer$Inner$Deep$$Described(),
+                                new example.$Outer$Inner$Deep$Deeper$$Described(),
+                                new example.$Dollar$0Case$In$0Side$$Described(),
                             };
                         }
                         """),
                 source("Default", """
                         @example.Gen
                         public class Default {
-                            example.Described described = new Default_Described();
+                            example.Described described = new $Default$$Described();
                         }
                         """));
 
         assertThat(compilation).succeeded().hadNoWarnings();
         assertThat(compilation)
-                .generatedSourceFile("example.Outer_Inner_Deep_Deeper_Described")
+                .generatedSourceFile("example.$Outer$Inner$Deep$Deeper$$Described")
                 .isEqualTo("""
                 package example;
 
                 import javax.annotation.processing.Generated;
 
                 @Generated("%s")
-                public final class Outer_Inner_Deep_Deeper_Described implements Described {
+                public final class $Outer$Inner$Deep$Deeper$$Described implements Described {
                     @Override
                     public String describe() {
                         return "example.Outer.Inner.Deep.Deeper";
                     }
                 }
                 """.formatted(Describing.class.getName()));
-        assertThat(compilation).generatedSourceFile("example.Outer_Described").contains("\"example.Outer\"");
+        assertThat(compilation).generatedSourceFile("example.$Outer$$Described").contains("\"example.Outer\"");
         assertThat(compilation)
-                .generatedSourceFile("example.Outer_Inner_Described")
+                .generatedSourceFile("example.$Outer$Inner$$Described")
                 .isNotEmpty();
         assertThat(compilation)
-                .generatedSourceFile("example.Outer_Inner_Deep_Described")
+                .generatedSourceFile("example.$Outer$Inner$Deep$$Described")
                 .isNotEmpty();
         assertThat(compilation)
-                .generatedSourceFile("example.Snake_0Case_In_0Side_Described")
-                .contains("\"example.Snake_Case.In_Side\"");
+                .generatedSourceFile("example.$Dollar$0Case$In$0Side$$Described")
+                .contains("\"example.Dollar$Case.In$Side\"");
         assertThat(compilation)
-                .generatedSourceFile("Default_Described")
+                .generatedSourceFile("$Default$$Described")
                 .doesNotContain("package")
                 .contains("\"Default\"");
     }
 
     @Test
-    void generatesDistinctTypesForNestedTypesWhoseJoinedNamesAreTheSame() {
-        Compilation compilation = generate(source("example.A_B", """
-                        package example;
-
-                        public class A_B {
-                            @Gen
-                            public static class C {}
-                        }
-                        """), source("example.A", """
-                        package example;
-
-                        public class A {
-                            @Gen
-                            public static class B_C {}
-                        }
-                        """));
-
-        assertThat(compilation).succeeded().hadNoWarnings();
-        assertThat(compilation).generatedSourceFile("example.A_0B_C_Described").contains("\"example.A_B.C\"");
-        assertThat(compilation).generatedSourceFile("example.A_B_0C_Described").contains("\"example.A.B_C\"");
-    }
-
-    @Test
     void reportsATypeTheUserWroteUnderTheGeneratedName() {
-        Compilation compilation = generate(source("example.Outer", """
+        Compilation compilation =
+                generate(source("example.Outer", """
                         package example;
 
                         public class Outer {
                             @Gen
                             public static class Inner {}
                         }
-                        """), source("example.Outer_Inner_Described", """
+                        """), source("example.$Outer$Inner$$Described", """
                         package example;
 
-                        public class Outer_Inner_Described {}
+                        public class $Outer$Inner$$Described {}
                         """));
 
         assertThat(compilation).failed().hadErrorCount(1);
         assertThat(compilation)
-                .hadErrorContaining("Cannot generate example.Outer_Inner_Described for example.Outer.Inner: "
+                .hadErrorContaining("Cannot generate example.$Outer$Inner$$Described for example.Outer.Inner: "
                         + "a type with that name already exists")
                 .inFile("example/Outer.java")
                 .onLine(5);
@@ -202,15 +183,15 @@ class GeneratedNamesTest {
 
                         @Gen
                         public class Outer {}
-                        """), source("example.Outer_Described", """
+                        """), source("example.$Outer$$Described", """
                         package example;
 
-                        public class Outer_Described {}
+                        public class $Outer$$Described {}
                         """));
 
         assertThat(compilation).failed().hadErrorCount(1);
         assertThat(compilation)
-                .hadErrorContaining("Cannot generate example.Outer_Described for example.Outer")
+                .hadErrorContaining("Cannot generate example.$Outer$$Described for example.Outer")
                 .inFile("example/Outer.java");
     }
 
@@ -323,7 +304,7 @@ class GeneratedNamesTest {
         List<Boolean> available = new ArrayList<>();
         Checking checking = new Checking((context, round) -> {
             if (!annotates(context, round) && !round.processingOver()) {
-                available.add(context.sources().isAvailable(ClassName.of("example", "Seed_Described")));
+                available.add(context.sources().isAvailable(ClassName.of("example", "$Seed$$Described")));
             }
         });
         Compilation compilation =
@@ -343,7 +324,7 @@ class GeneratedNamesTest {
         Checking generating = new Checking((context, round) -> {
             if (annotates(context, round)) {
                 context.sources().write("example.Late", scope -> "@Gen\npublic class Late {}\n");
-                context.sources().write("example.Late_Described", scope -> "public class Late_Described {}\n");
+                context.sources().write("example.$Late$$Described", scope -> "public class $Late$$Described {}\n");
             }
         });
         Compilation compilation = javac().withProcessors(generating, new Describing())
@@ -356,10 +337,10 @@ class GeneratedNamesTest {
 
         assertThat(compilation).failed().hadErrorCount(1);
         assertThat(compilation)
-                .hadErrorContaining("Cannot generate example.Late_Described for example.Late: "
+                .hadErrorContaining("Cannot generate example.$Late$$Described for example.Late: "
                         + "a type with that name already exists")
                 .inFile("example/Late.java");
-        assertThat(compilation).generatedSourceFile("example.Seed_Described").isNotEmpty();
+        assertThat(compilation).generatedSourceFile("example.$Seed$$Described").isNotEmpty();
     }
 
     @Test
@@ -374,6 +355,55 @@ class GeneratedNamesTest {
 
         assertThat(compilation).succeeded();
         assertThat(compilation.generatedSourceFiles()).hasSize(1);
+    }
+
+    @Test
+    void namesTypesForMethodsAfterTheirTypeAndThemNumberingOverloads() {
+        List<String> names = new ArrayList<>();
+        Compilation compilation = check(
+                (context, round) -> {
+                    if (annotates(context, round)) {
+                        TypeElement inner = requireNonNull(context.elements().getTypeElement("example.Host.Inner"));
+                        for (ExecutableElement method : ElementFilter.methodsIn(inner.getEnclosedElements())) {
+                            names.add(ClassName.generatedName(method, "Factory").canonicalName());
+                        }
+                        for (ExecutableElement constructor :
+                                ElementFilter.constructorsIn(inner.getEnclosedElements())) {
+                            try {
+                                ClassName.generatedName(constructor, "Factory");
+                            } catch (IllegalArgumentException e) {
+                                names.add(e.getMessage());
+                            }
+                        }
+                    }
+                },
+                source("example.Host", """
+                        package example;
+
+                        @Gen
+                        class Host {
+                            static class Inner {
+                                Inner() {}
+
+                                void create() {}
+
+                                void other() {}
+
+                                void create(int count) {}
+
+                                static void create(String name) {}
+                            }
+                        }
+                        """));
+
+        assertThat(compilation).succeeded();
+        assertThat(names)
+                .containsExactly(
+                        "example.$Host$Inner$$create$1$$Factory",
+                        "example.$Host$Inner$$other$$Factory",
+                        "example.$Host$Inner$$create$2$$Factory",
+                        "example.$Host$Inner$$create$3$$Factory",
+                        "Not a method: Inner()");
     }
 
     // Whether the round has types annotated with @Gen: only the first round has, unless a generated type is annotated.
@@ -401,7 +431,7 @@ class GeneratedNamesTest {
                     for (Element element : elements.annotatedWith(GEN_NAME)) {
                         TypeElement type = (TypeElement) element;
                         ClassName source = ClassName.of(type);
-                        ClassName name = source.generatedNameWithSuffix("Described");
+                        ClassName name = source.generatedName("Described");
                         if (!context.sources().isAvailable(name)) {
                             context.diagnostics()
                                     .on(type)

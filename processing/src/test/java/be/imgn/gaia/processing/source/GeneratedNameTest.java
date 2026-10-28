@@ -5,10 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.lang.model.SourceVersion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,8 +16,11 @@ class GeneratedNameTest {
 
     private static final String PACKAGE = "com.example";
 
-    // Prefixes and suffixes, with underscores where they could merge with the separators.
-    private static final List<String> AFFIXES = List.of("M", "M_", "_M", "A_M", "_", "$", "A");
+    // Kinds, with underscores and digits where they could merge with the names before them.
+    private static final List<String> KINDS = List.of("K", "A", "_", "_K", "K_", "K0");
+
+    // Overload numbers: none, and numbers that could be read as the digits of an escaped dollar sign.
+    private static final List<Integer> NUMBERS = List.of(0, 1, 2, 10);
 
     // Every simple name over a few characters, up to a length, the underscore keyword excepted.
     private static List<String> simpleNames(int maxLength) {
@@ -41,289 +42,202 @@ class GeneratedNameTest {
     }
 
     // Every type of up to two names of up to three characters, and of three names of up to two characters.
-    private static List<ClassName> types() {
+    private static List<ClassName> types(String packageName) {
         List<String> names = simpleNames(3);
         List<String> shortNames = simpleNames(2);
         List<ClassName> types = new ArrayList<>();
         for (String first : names) {
-            types.add(ClassName.of(PACKAGE, first));
+            types.add(ClassName.of(packageName, first));
             for (String second : names) {
-                types.add(ClassName.of(PACKAGE, first, second));
+                types.add(ClassName.of(packageName, first, second));
             }
         }
         for (String first : shortNames) {
             for (String second : shortNames) {
                 for (String third : shortNames) {
-                    types.add(ClassName.of(PACKAGE, first, second, third));
+                    types.add(ClassName.of(packageName, first, second, third));
                 }
             }
         }
         return types;
     }
 
-    private static void collect(Map<ClassName, String> byGenerated, ClassName generated, String source) {
-        String previous = byGenerated.putIfAbsent(generated, source);
+    // Every type of one or two names of up to two characters.
+    private static List<ClassName> shortTypes(String packageName) {
+        List<String> names = simpleNames(2);
+        List<ClassName> types = new ArrayList<>();
+        for (String first : names) {
+            types.add(ClassName.of(packageName, first));
+            for (String second : names) {
+                types.add(ClassName.of(packageName, first, second));
+            }
+        }
+        return types;
+    }
+
+    // The unnamed package, and every package of one or two names of up to two characters.
+    private static List<String> packages() {
+        List<String> names = simpleNames(2);
+        List<String> packages = new ArrayList<>();
+        packages.add("");
+        for (String first : names) {
+            packages.add(first);
+            for (String second : names) {
+                packages.add(first + "." + second);
+            }
+        }
+        return packages;
+    }
+
+    private static void collect(Map<ClassName, String> bySource, ClassName generated, String source) {
+        String previous = bySource.putIfAbsent(generated, source);
         assertThat(previous)
                 .as("%s is generated for both %s and %s", generated, previous, source)
                 .isNull();
     }
 
-    // The names a generated name is made of, in order: the prefix or the suffix, and the simple names of the type.
-    private static void collectParts(
-            Map<ClassName, List<String>> byGenerated, ClassName generated, List<String> parts) {
-        List<String> previous = byGenerated.putIfAbsent(generated, parts);
-        if (previous != null) {
-            assertThat(previous)
-                    .as("%s is generated for both %s and %s", generated, previous, parts)
-                    .isEqualTo(parts);
-        }
-    }
-
     @Test
-    void namesATopLevelTypeAfterItAndTheSuffix() {
-        ClassName generated = ClassName.of(PACKAGE, "Outer").generatedNameWithSuffix("Mapper");
+    void namesATopLevelTypeAfterItAndTheKind() {
+        ClassName generated = ClassName.of(PACKAGE, "Outer").generatedName("Mapper");
 
-        assertThat(generated).isEqualTo(ClassName.of(PACKAGE, "Outer_Mapper"));
-        assertThat(generated.canonicalName()).isEqualTo("com.example.Outer_Mapper");
+        assertThat(generated).isEqualTo(ClassName.of(PACKAGE, "$Outer$$Mapper"));
+        assertThat(generated.canonicalName()).isEqualTo("com.example.$Outer$$Mapper");
     }
 
     @Test
     void namesANestedTypeAfterEachEnclosingTypeAsATopLevelTypeOfTheSamePackage() {
-        ClassName generated = ClassName.of(PACKAGE, "Outer", "Inner").generatedNameWithSuffix("Mapper");
+        ClassName generated = ClassName.of(PACKAGE, "Outer", "Inner").generatedName("Mapper");
 
-        assertThat(generated.canonicalName()).isEqualTo("com.example.Outer_Inner_Mapper");
-        assertThat(generated.packageName()).isEqualTo(PACKAGE);
-        assertThat(generated.simpleNames()).containsExactly("Outer_Inner_Mapper");
+        assertThat(generated.canonicalName()).isEqualTo("com.example.$Outer$Inner$$Mapper");
+        assertThat(generated.simpleNames()).containsExactly("$Outer$Inner$$Mapper");
         assertThat(generated.enclosing()).isEmpty();
+        assertThat(ClassName.of(Map.Entry.class).generatedName("Adapter"))
+                .isEqualTo(ClassName.of("java.util", "$Map$Entry$$Adapter"));
     }
 
     @Test
-    void namesADeeplyNestedTypeAfterAllItsEnclosingTypes() {
-        ClassName generated = ClassName.of(PACKAGE, "A", "B", "C", "D", "E").generatedNameWithSuffix("Builder");
-
-        assertThat(generated).isEqualTo(ClassName.of(PACKAGE, "A_B_C_D_E_Builder"));
-    }
-
-    @Test
-    void keepsTheUnnamedPackage() {
-        ClassName generated = ClassName.of("", "Outer", "Inner").generatedNameWithSuffix("Mapper");
-
-        assertThat(generated.packageName()).isEmpty();
-        assertThat(generated.canonicalName()).isEqualTo("Outer_Inner_Mapper");
-    }
-
-    @Test
-    void namesAJavaClassAfterItsName() {
-        assertThat(ClassName.of(Map.Entry.class).generatedNameWithSuffix("Adapter"))
-                .isEqualTo(ClassName.of("java.util", "Map_Entry_Adapter"));
-    }
-
-    @Test
-    void leavesTheAnnotationsOut() {
-        ClassName annotated = ClassName.of(PACKAGE, "Outer", "Inner")
-                .annotated(Annotation.of(ClassName.of("org.example", "Nullable")));
-
-        assertThat(annotated.generatedNameWithSuffix("Mapper").annotations()).isEmpty();
-    }
-
-    @Test
-    void writesTheUnderscoresOfTheNamesSoThatNestedTypesDoNotClash() {
-        ClassName nestedInUnderscored = ClassName.of(PACKAGE, "A_B", "C");
-        ClassName underscoredNested = ClassName.of(PACKAGE, "A", "B_C");
-        ClassName underscoredTopLevel = ClassName.of(PACKAGE, "A_B_C");
-
-        assertThat(nestedInUnderscored.generatedNameWithSuffix("Mapper").simpleName())
-                .isEqualTo("A_0B_C_Mapper");
-        assertThat(underscoredNested.generatedNameWithSuffix("Mapper").simpleName())
-                .isEqualTo("A_B_0C_Mapper");
-        assertThat(underscoredTopLevel.generatedNameWithSuffix("Mapper").simpleName())
-                .isEqualTo("A_0B_0C_Mapper");
-    }
-
-    @Test
-    void writesLeadingAndTrailingUnderscoresSoThatTheyDoNotMergeWithTheSeparators() {
-        assertThat(ClassName.of(PACKAGE, "A_", "B").generatedNameWithSuffix("M").simpleName())
-                .isEqualTo("A_0_B_M");
-        assertThat(ClassName.of(PACKAGE, "A", "_B").generatedNameWithSuffix("M").simpleName())
-                .isEqualTo("A__0B_M");
-        assertThat(ClassName.of(PACKAGE, "A__B").generatedNameWithSuffix("M").simpleName())
-                .isEqualTo("A_0_0B_M");
-        assertThat(ClassName.of(PACKAGE, "__").generatedNameWithSuffix("M").simpleName())
-                .isEqualTo("_0_0_M");
-    }
-
-    @Test
-    void writesTheUnderscoresOfTheSuffixSoThatSuffixesDoNotClash() {
-        ClassName outer = ClassName.of(PACKAGE, "A");
-
-        assertThat(outer.generatedNameWithSuffix("B_Mapper").simpleName()).isEqualTo("A_B_0Mapper");
-        assertThat(outer.nested("B").generatedNameWithSuffix("Mapper").simpleName())
-                .isEqualTo("A_B_Mapper");
-        assertThat(outer.generatedNameWithSuffix("_").simpleName()).isEqualTo("A__0");
-    }
-
-    @Test
-    void keepsDollarSigns() {
-        assertThat(ClassName.of(PACKAGE, "Outer$Inner")
-                        .generatedNameWithSuffix("Mapper")
-                        .simpleName())
-                .isEqualTo("Outer$Inner_Mapper");
-        assertThat(ClassName.of(PACKAGE, "Outer", "Inner")
-                        .generatedNameWithSuffix("$Proxy")
-                        .simpleName())
-                .isEqualTo("Outer_Inner_$Proxy");
-    }
-
-    @Test
-    void neverGivesTwoTypesOrSuffixesTheSameName() {
-        Map<ClassName, String> byGenerated = new HashMap<>();
-        List<ClassName> types = types();
-        for (String suffix : AFFIXES) {
-            for (ClassName type : types) {
-                collect(byGenerated, type.generatedNameWithSuffix(suffix), type.canonicalName() + " + " + suffix);
-            }
-        }
-
-        assertThat(simpleNames(3)).contains("A_", "_A", "A__", "$_0", "_$");
-        assertThat(byGenerated).hasSize(AFFIXES.size() * types.size());
-    }
-
-    @Test
-    void neverGivesTwoTypesOrPrefixesTheSameName() {
-        Map<ClassName, String> byGenerated = new HashMap<>();
-        List<ClassName> types = types();
-        for (String prefix : AFFIXES) {
-            for (ClassName type : types) {
-                collect(byGenerated, type.generatedNameWithPrefix(prefix), prefix + " + " + type.canonicalName());
-            }
-        }
-
-        assertThat(byGenerated).hasSize(AFFIXES.size() * types.size());
-    }
-
-    @Test
-    void givesAPrefixedAndASuffixedTypeTheSameNameOnlyWhenTheirNamesAreTheSameInOrder() {
-        Map<ClassName, List<String>> byGenerated = new HashMap<>();
-        Set<List<String>> allParts = new HashSet<>();
-        List<ClassName> types = types();
-        for (String affix : AFFIXES) {
-            for (ClassName type : types) {
-                List<String> suffixed = new ArrayList<>(type.simpleNames());
-                suffixed.add(affix);
-                collectParts(byGenerated, type.generatedNameWithSuffix(affix), suffixed);
-                List<String> prefixed = new ArrayList<>();
-                prefixed.add(affix);
-                prefixed.addAll(type.simpleNames());
-                collectParts(byGenerated, type.generatedNameWithPrefix(affix), prefixed);
-                allParts.add(suffixed);
-                allParts.add(prefixed);
-            }
-        }
-
-        // One name per sequence of names; some are shared, such as A with the prefix $ and $ with the suffix A.
-        assertThat(byGenerated).hasSize(allParts.size());
-        assertThat(allParts).hasSizeLessThan(2 * AFFIXES.size() * types.size());
-        assertThat(byGenerated).containsEntry(ClassName.of(PACKAGE, "$_A"), List.of("$", "A"));
-    }
-
-    @Test
-    void namesATopLevelTypeAfterThePrefixAndIt() {
-        ClassName generated = ClassName.of(PACKAGE, "Outer").generatedNameWithPrefix("Generated");
-
-        assertThat(generated).isEqualTo(ClassName.of(PACKAGE, "Generated_Outer"));
-        assertThat(generated.canonicalName()).isEqualTo("com.example.Generated_Outer");
-    }
-
-    @Test
-    void namesANestedTypeAfterThePrefixAndEachEnclosingTypeAsATopLevelTypeOfTheSamePackage() {
-        ClassName generated = ClassName.of(PACKAGE, "Outer", "Inner").generatedNameWithPrefix("Generated");
-
-        assertThat(generated.canonicalName()).isEqualTo("com.example.Generated_Outer_Inner");
-        assertThat(generated.simpleNames()).containsExactly("Generated_Outer_Inner");
-        assertThat(generated.enclosing()).isEmpty();
-        assertThat(ClassName.of(Map.Entry.class).generatedNameWithPrefix("AutoValue"))
-                .isEqualTo(ClassName.of("java.util", "AutoValue_Map_Entry"));
-    }
-
-    @Test
-    void keepsTheUnnamedPackageAndLeavesTheAnnotationsOutWithAPrefix() {
+    void keepsTheUnnamedPackageAndLeavesTheAnnotationsOut() {
         ClassName annotated =
                 ClassName.of("", "Outer", "Inner").annotated(Annotation.of(ClassName.of("org.example", "Nullable")));
 
-        ClassName generated = annotated.generatedNameWithPrefix("Generated");
+        ClassName generated = annotated.generatedName("Mapper");
 
-        assertThat(generated.packageName()).isEmpty();
-        assertThat(generated.canonicalName()).isEqualTo("Generated_Outer_Inner");
+        assertThat(generated.canonicalName()).isEqualTo("$Outer$Inner$$Mapper");
         assertThat(generated.annotations()).isEmpty();
     }
 
     @Test
-    void writesTheUnderscoresOfThePrefixAndTheNamesAsWithASuffix() {
-        assertThat(ClassName.of(PACKAGE, "A_B", "C")
-                        .generatedNameWithPrefix("P")
-                        .simpleName())
-                .isEqualTo("P_A_0B_C");
-        assertThat(ClassName.of(PACKAGE, "A", "B_C")
-                        .generatedNameWithPrefix("P")
-                        .simpleName())
-                .isEqualTo("P_A_B_0C");
-        assertThat(ClassName.of(PACKAGE, "A").generatedNameWithPrefix("P_B").simpleName())
-                .isEqualTo("P_0B_A");
-        assertThat(ClassName.of(PACKAGE, "B", "A").generatedNameWithPrefix("P").simpleName())
-                .isEqualTo("P_B_A");
-        assertThat(ClassName.of(PACKAGE, "_A").generatedNameWithPrefix("_").simpleName())
-                .isEqualTo("_0__0A");
-        assertThat(ClassName.of(PACKAGE, "Inner")
-                        .generatedNameWithPrefix("$Proxy")
-                        .simpleName())
-                .isEqualTo("$Proxy_Inner");
+    void writesTheDollarSignsOfTheNamesSoThatNestedTypesDoNotClash() {
+        assertThat(ClassName.of(PACKAGE, "A$B", "C").generatedName("M").simpleName())
+                .isEqualTo("$A$0B$C$$M");
+        assertThat(ClassName.of(PACKAGE, "A", "B$C").generatedName("M").simpleName())
+                .isEqualTo("$A$B$0C$$M");
+        assertThat(ClassName.of(PACKAGE, "A", "B", "C").generatedName("M").simpleName())
+                .isEqualTo("$A$B$C$$M");
+        assertThat(ClassName.of(PACKAGE, "$").generatedName("M").simpleName()).isEqualTo("$$0$$M");
     }
 
     @Test
-    void givesTheSameNameToAPrefixedAndASuffixedTypeWhoseNamesAreTheSameInOrder() {
-        assertThat(ClassName.of(PACKAGE, "Outer", "Inner").generatedNameWithPrefix("Generated"))
-                .isEqualTo(ClassName.of(PACKAGE, "Generated", "Outer").generatedNameWithSuffix("Inner"));
-        assertThat(ClassName.of(PACKAGE, "Inner").generatedNameWithPrefix("Outer"))
-                .isEqualTo(ClassName.of(PACKAGE, "Outer").generatedNameWithSuffix("Inner"));
-        assertThat(ClassName.of(PACKAGE, "Outer").generatedNameWithPrefix("Inner"))
-                .isNotEqualTo(ClassName.of(PACKAGE, "Outer").generatedNameWithSuffix("Inner"));
+    void namesATypeForAPackageAfterTheKind() {
+        assertThat(ClassName.generatedName(PACKAGE, "Mappers")).isEqualTo(ClassName.of(PACKAGE, "$$Mappers"));
+        assertThat(ClassName.generatedName("", "Mappers").canonicalName()).isEqualTo("$$Mappers");
     }
 
     @Test
-    void acceptsAKeywordOrANonAsciiIdentifierAsPrefix() {
+    void namesATypeForAMethodAfterItsTypeItAndTheKind() {
+        ClassName type = ClassName.of(PACKAGE, "Outer", "Inner");
+
+        assertThat(type.generatedMethodName("create", 0, "Factory").canonicalName())
+                .isEqualTo("com.example.$Outer$Inner$$create$$Factory");
+        assertThat(type.generatedMethodName("create", 2, "Factory").simpleName())
+                .isEqualTo("$Outer$Inner$$create$2$$Factory");
+        assertThat(type.generatedMethodName("a$1", 1, "Factory").simpleName())
+                .isEqualTo("$Outer$Inner$$a$01$1$$Factory");
+    }
+
+    @Test
+    void namesATypeInAnotherPackageAfterThePackageTheTypeAndTheKind() {
+        ClassName named = ClassName.of(PACKAGE, "Outer", "Named");
+
+        assertThat(named.generatedNameIn("org.app", "Impl").canonicalName())
+                .isEqualTo("org.app.$$com$example$$Outer$Named$$Impl");
+        assertThat(named.generatedNameIn("", "Impl").canonicalName()).isEqualTo("$$com$example$$Outer$Named$$Impl");
+        assertThat(ClassName.of("", "Named").generatedNameIn("org.app", "Impl").simpleName())
+                .isEqualTo("$$$$Named$$Impl");
+        assertThat(ClassName.of("a$b", "Named")
+                        .generatedNameIn("org.app", "Impl")
+                        .simpleName())
+                .isEqualTo("$$a$0b$$Named$$Impl");
+    }
+
+    @Test
+    void neverGivesTwoTypesKindsOrMethodsTheSameNameInAPackage() {
+        Map<ClassName, String> bySource = new HashMap<>();
+        for (String kind : KINDS) {
+            collect(bySource, ClassName.generatedName(PACKAGE, kind), "package + " + kind);
+            for (ClassName type : types(PACKAGE)) {
+                collect(bySource, type.generatedName(kind), type.canonicalName() + " + " + kind);
+            }
+        }
+        for (String kind : KINDS.subList(0, 2)) {
+            for (ClassName type : shortTypes(PACKAGE)) {
+                for (String method : simpleNames(2)) {
+                    for (int number : NUMBERS) {
+                        collect(
+                                bySource,
+                                type.generatedMethodName(method, number, kind),
+                                type.canonicalName() + "#" + method + " " + number + " + " + kind);
+                    }
+                }
+            }
+            for (String packageName : packages()) {
+                for (ClassName type : shortTypes(packageName)) {
+                    collect(
+                            bySource,
+                            type.generatedNameIn(PACKAGE, kind),
+                            packageName + " / " + type.canonicalName() + " + " + kind);
+                }
+            }
+        }
+
+        assertThat(simpleNames(3)).contains("A$", "$A", "A$$", "$0", "A$0");
+        assertThat(bySource).containsEntry(ClassName.of(PACKAGE, "$$K"), "package + K");
+    }
+
+    @Test
+    void acceptsAKeywordOrANonAsciiIdentifierAsKind() {
         ClassName outer = ClassName.of(PACKAGE, "Outer");
 
-        assertThat(outer.generatedNameWithPrefix("class").simpleName()).isEqualTo("class_Outer");
-        assertThat(outer.generatedNameWithPrefix("Café").simpleName()).isEqualTo("Café_Outer");
-        assertThat(outer.generatedNameWithPrefix("M2").simpleName()).isEqualTo("M2_Outer");
+        assertThat(outer.generatedName("class").simpleName()).isEqualTo("$Outer$$class");
+        assertThat(outer.generatedName("Café").simpleName()).isEqualTo("$Outer$$Café");
+        assertThat(outer.generatedName("M2").simpleName()).isEqualTo("$Outer$$M2");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "2Mapper", "0", "Map.per", "Map-per", " Mapper", "Mapper ", "Map per", "Map<T>"})
-    void rejectsAPrefixThatIsNotAnIdentifier(String prefix) {
+    @ValueSource(strings = {"", "2Mapper", "Map.per", "Map per", "Map$per", "$"})
+    void rejectsAKindThatIsNotAnIdentifierWithoutADollarSign(String kind) {
         ClassName outer = ClassName.of(PACKAGE, "Outer");
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> outer.generatedNameWithPrefix(prefix))
-                .withMessage("Not a prefix for a generated type name: \"" + prefix + "\"");
+                .isThrownBy(() -> outer.generatedName(kind))
+                .withMessage("Not a kind of generated type: \"" + kind + "\"");
     }
 
     @Test
-    void acceptsAKeywordOrANonAsciiIdentifierAsSuffix() {
-        ClassName outer = ClassName.of(PACKAGE, "Outer");
-
-        assertThat(outer.generatedNameWithSuffix("class").simpleName()).isEqualTo("Outer_class");
-        assertThat(outer.generatedNameWithSuffix("Café").simpleName()).isEqualTo("Outer_Café");
-        assertThat(outer.generatedNameWithSuffix("M2").simpleName()).isEqualTo("Outer_M2");
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", "2Mapper", "0", "Map.per", "Map-per", " Mapper", "Mapper ", "Map per", "Map<T>"})
-    void rejectsASuffixThatIsNotAnIdentifier(String suffix) {
+    void checksTheKindAndThePackageOfEveryName() {
         ClassName outer = ClassName.of(PACKAGE, "Outer");
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> outer.generatedNameWithSuffix(suffix))
-                .withMessage("Not a suffix for a generated type name: \"" + suffix + "\"");
+                .isThrownBy(() -> ClassName.generatedName(PACKAGE, "Map$per"))
+                .withMessage("Not a kind of generated type: \"Map$per\"");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ClassName.generatedName("com..example", "Mappers"))
+                .withMessage("Not a package name: com..example");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> outer.generatedNameIn("org.app", "Map$per"))
+                .withMessage("Not a kind of generated type: \"Map$per\"");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> outer.generatedNameIn("org..app", "Impl"))
+                .withMessage("Not a package name: org..app");
     }
 }

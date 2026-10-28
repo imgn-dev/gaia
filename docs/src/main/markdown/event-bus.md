@@ -66,7 +66,7 @@ Subscription subscription = bus.register(new OrderListener());
 ```
 
 For each class with such methods, the processor generates an index that calls them, named after the class:
-`com.example.$$OrderListener$Subscribers` for `com.example.OrderListener`, `$$Outer$Inner$Subscribers` for a nested
+`com.example.$OrderListener$$Subscribers` for `com.example.OrderListener`, `$Outer$Inner$$Subscribers` for a nested
 class. `register` finds the indexes of the listener's class and of the classes it extends with `ServiceLoader`, and
 subscribes the methods of a superclass before those of its subclasses, and those of one class in the order they are
 declared. A method that overrides a `@Subscribe` method receives its events without the annotation, and so does one

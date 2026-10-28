@@ -153,7 +153,7 @@ public final class GeneratedSources {
      * the element it generates for, or to leave alone a type the user wrote by hand:
      *
      * <pre>{@code
-     * ClassName name = ClassName.of(type).generatedNameWithSuffix("Mapper");
+     * ClassName name = ClassName.of(type).generatedName("Mapper");
      * if (!context.sources().isAvailable(name)) {
      *     context.diagnostics().on(type).error("Cannot generate " + name + ": a type with that name already exists");
      *     return;
@@ -164,7 +164,7 @@ public final class GeneratedSources {
      * <p>Another processor's files of the current round are not known until the next round: writing one of them returns
      * {@code false}. Checking a name does not reserve it.
      *
-     * @param name the name of the type, such as one {@link ClassName#generatedNameWithSuffix(String)} gives
+     * @param name the name of the type, such as one {@link ClassName#generatedName(String)} gives
      * @return {@code true} if no type has that name and this object wrote no file for it
      */
     public boolean isAvailable(ClassName name) {

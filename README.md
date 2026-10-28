@@ -163,10 +163,10 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`GeneratedSources`**: writes generated source files, as a `JavaFile` or as text. It adds `@Generated` only where
   the generated code can see it, so a module that doesn't read `java.compiler` still compiles. It qualifies the
   `java.lang` types that a type of the same package hides. Writing the same file twice returns `false` instead of
-  failing. `ClassName.generatedNameWithSuffix("Mapper")` names a generated type after its source type, as
-  `Outer_Inner_Mapper` (`generatedNameWithPrefix("Generated")` gives `Generated_Outer_Inner`), and
-  `isAvailable(name)` tells whether a type has that name already. Files are written in ASCII, non-ASCII characters
-  as Unicode escapes, so they compile the same under any `-encoding`.
+  failing. `ClassName.generatedName("Mapper")` names a generated type after its source type, as
+  `$Outer$Inner$$Mapper`, with forms for a package (`$$Mappers`), a method (`$Outer$$create$$Factory`) and a type
+  named in another package, and `isAvailable(name)` tells whether a type has that name already. Files are written in
+  ASCII, non-ASCII characters as Unicode escapes, so they compile the same under any `-encoding`.
 - **`ServiceFiles`**: `context.services().add(service, implementation)` collects `META-INF/services` entries over
   all rounds; they are checked, merged with the file already in the class output (minus classes that no longer
   exist), and written after the last round. `skipModuleCheck(service)` silences the warning about a missing

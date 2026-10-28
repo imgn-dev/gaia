@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
 /**
@@ -29,6 +30,9 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
 
     /** {@code java.lang.Object}. */
     public static final ClassName OBJECT = of("java.lang", "Object");
+
+    // Ends the names of types, packages and methods in generated names.
+    private static final String MARKER = "$$";
 
     /**
      * Creates the name.
@@ -230,64 +234,116 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
     }
 
     /**
-     * Returns the name of a top-level type generated for this one, as processors name the code they generate for a
-     * type: in the same package, named after the simple names from the top-level type to this one, then a suffix, all
-     * joined by underscores. For {@code com.example.Outer.Inner} and the suffix {@code Mapper}, it is
-     * {@code com.example.Outer_Inner_Mapper}; for the top-level {@code com.example.Outer}, it is
-     * {@code com.example.Outer_Mapper}. {@link #generatedNameWithPrefix(String)} puts the name of what the type is for
-     * first instead.
+     * Returns the name of a top-level type generated for this one: in the same package, {@code $}, the simple names
+     * from the top-level type to this one joined by {@code $}, then {@code $$} and the kind of the generated type. For
+     * {@code com.example.Outer.Inner} and the kind {@code Mapper}, it is {@code com.example.$Outer$Inner$$Mapper}; for
+     * the top-level {@code com.example.Outer}, it is {@code com.example.$Outer$$Mapper}.
      *
-     * <p>Each type and suffix gets its own name. An underscore within a simple name or the suffix is written
-     * {@code _0}: an underscore followed by {@code 0} is one of the type's, any other one joins two names, as no name
-     * starts with a digit. {@code A_B.C} gives {@code A_0B_C_Mapper} where {@code A.B_C} gives {@code A_B_0C_Mapper},
-     * and {@code A} with the suffix {@code B_Mapper} gives {@code A_B_0Mapper}. Other characters, such as a dollar
-     * sign, are kept as they are. A type that is not generated can still have the name: whether a type has it already
-     * is for {@link be.imgn.gaia.processing.GeneratedSources#isAvailable(ClassName)} to tell.
+     * <p>All the generated names of {@code ClassName}, this one, {@link #generatedName(String, String)},
+     * {@link #generatedName(ExecutableElement, String)} and {@link #generatedNameIn(String, String)}, follow one
+     * scheme, in which each type, package, method and kind gets its own name. {@code $$} ends the names of types,
+     * packages and methods, and the kind, which has no dollar sign, comes last. A dollar sign within a name is written
+     * {@code $0}: {@code $0} is one of the name's, {@code $} followed by another digit numbers an overloaded method,
+     * and any other one joins two names, as no name starts with a digit. {@code A$B.C} gives {@code $A$0B$C$$Mapper}
+     * where the nested {@code A.B.C} gives {@code $A$B$C$$Mapper}. A type that is not generated can still have the
+     * name: whether a type has it already is for
+     * {@link be.imgn.gaia.processing.GeneratedSources#isAvailable(ClassName)} to tell.
      *
-     * @param suffix what the generated type is for this one, such as {@code Mapper}: a Java identifier, which may be a
-     *     keyword
+     * @param kind what the generated type is for this one, such as {@code Mapper}: a Java identifier without a dollar
+     *     sign, which may be a keyword
      * @return the name of the generated type, without annotations
-     * @throws IllegalArgumentException if the suffix is not an identifier: if it is empty, starts with a digit, or has
-     *     a character that cannot be in an identifier, such as a dot or a space
+     * @throws IllegalArgumentException if the kind is not an identifier without a dollar sign: if it is empty, starts
+     *     with a digit, or has a dollar sign or a character that cannot be in an identifier, such as a dot or a space
+     * @since 0.1.2
      */
-    public ClassName generatedNameWithSuffix(String suffix) {
-        requireNonNull(suffix, "suffix");
-        if (!SourceVersion.isIdentifier(suffix)) {
-            throw new IllegalArgumentException("Not a suffix for a generated type name: \"" + suffix + "\"");
-        }
-        return generatedName(Stream.concat(simpleNames.stream(), Stream.of(suffix)));
+    public ClassName generatedName(String kind) {
+        checkKind(kind);
+        return generated(packageName, "$" + join(simpleNames) + MARKER + kind);
     }
 
     /**
-     * Returns the name of a top-level type generated for this one, with a prefix: in the same package, named after a
-     * prefix, then the simple names from the top-level type to this one, all joined by underscores. For
-     * {@code com.example.Outer.Inner} and the prefix {@code Generated}, it is
-     * {@code com.example.Generated_Outer_Inner}; for the top-level {@code com.example.Outer}, it is
-     * {@code com.example.Generated_Outer}.
+     * Returns the name of a type generated for a whole package: in that package, {@code $$} and the kind of the
+     * generated type, such as {@code com.example.$$Mappers} for the package {@code com.example} and the kind
+     * {@code Mappers}. It follows the scheme of {@link #generatedName(String)}.
      *
-     * <p>Underscores are written as {@link #generatedNameWithSuffix(String)} writes them, so that each type and prefix
-     * gets its own name: {@code A_B.C} with the prefix {@code P} gives {@code P_A_0B_C} where {@code A.B_C} gives
-     * {@code P_A_B_0C}, and {@code A} with the prefix {@code P_B} gives {@code P_0B_A}.
-     *
-     * <p>Both methods join the same way, so a name with a prefix is also the name of another type with a suffix when
-     * the prefix followed by the simple names of this type are the simple names of the other type followed by the
-     * suffix, and only then: {@code Outer.Inner} with the prefix {@code Generated} and {@code Generated.Outer} with the
-     * suffix {@code Inner} both give {@code Generated_Outer_Inner}, and so do {@code Inner} with the prefix
-     * {@code Outer} and {@code Outer} with the suffix {@code Inner}. Such a clash needs the prefix to be the simple
-     * name of a top-level type of the package, and the suffix that of a type of the package.
-     *
-     * @param prefix what the generated type is for this one, such as {@code Generated} or {@code AutoValue}: a Java
-     *     identifier, which may be a keyword
-     * @return the name of the generated type, without annotations
-     * @throws IllegalArgumentException if the prefix is not an identifier: if it is empty, starts with a digit, or has
-     *     a character that cannot be in an identifier, such as a dot or a space
+     * @param packageName the package, empty for the unnamed package
+     * @param kind what the generated type is for the package, such as {@code Mappers}: a Java identifier without a
+     *     dollar sign, which may be a keyword
+     * @return the name of the generated type
+     * @throws IllegalArgumentException if the package name is not valid, or the kind is not an identifier without a
+     *     dollar sign
+     * @since 0.1.2
      */
-    public ClassName generatedNameWithPrefix(String prefix) {
-        requireNonNull(prefix, "prefix");
-        if (!SourceVersion.isIdentifier(prefix)) {
-            throw new IllegalArgumentException("Not a prefix for a generated type name: \"" + prefix + "\"");
+    public static ClassName generatedName(String packageName, String kind) {
+        requireNonNull(packageName, "packageName");
+        checkKind(kind);
+        return generated(packageName, MARKER + kind);
+    }
+
+    /**
+     * Returns the name of a top-level type generated for a method: in the package of its type, {@code $}, the simple
+     * names from the top-level type to the method's joined by {@code $}, then {@code $$}, the name of the method,
+     * {@code $$} and the kind of the generated type. For the method {@code create} of {@code com.example.Outer.Inner}
+     * and the kind {@code Factory}, it is {@code com.example.$Outer$Inner$$create$$Factory}. It follows the scheme of
+     * {@link #generatedName(String)}.
+     *
+     * <p>An overloaded method, one whose type declares other methods with its name, has its number after its name: its
+     * position among them in the order they are declared, from 1, such as {@code $Outer$$create$2$$Factory} for the
+     * second {@code create} method. Declaring an overload changes the name of a method that had none.
+     *
+     * @param method the method
+     * @param kind what the generated type is for the method, such as {@code Factory}: a Java identifier without a
+     *     dollar sign, which may be a keyword
+     * @return the name of the generated type
+     * @throws IllegalArgumentException if the element is not a method, such as a constructor, its type is local or
+     *     anonymous, or the kind is not an identifier without a dollar sign
+     * @since 0.1.2
+     */
+    public static ClassName generatedName(ExecutableElement method, String kind) {
+        requireNonNull(method, "method");
+        checkKind(kind);
+        if (method.getKind() != ElementKind.METHOD) {
+            throw new IllegalArgumentException("Not a method: " + method);
         }
-        return generatedName(Stream.concat(Stream.of(prefix), simpleNames.stream()));
+        var type = (TypeElement) requireNonNull(method.getEnclosingElement());
+        var name = method.getSimpleName();
+        var overloads = type.getEnclosedElements().stream()
+                .filter(member -> member.getKind() == ElementKind.METHOD
+                        && member.getSimpleName().contentEquals(name))
+                .toList();
+        int number = overloads.size() == 1 ? 0 : overloads.indexOf(method) + 1;
+        return of(type).generatedMethodName(name.toString(), number, kind);
+    }
+
+    /**
+     * Returns the name of a type generated for this one in another package, such as an implementation of an annotation
+     * type that belongs with the code using it: in that package, {@code $$}, the names of this type's package joined by
+     * {@code $}, {@code $$}, the simple names from the top-level type to this one joined by {@code $}, then {@code $$}
+     * and the kind of the generated type. For {@code com.example.Outer.Named}, the package {@code org.app} and the kind
+     * {@code Impl}, it is {@code org.app.$$com$example$$Outer$Named$$Impl}. It follows the scheme of
+     * {@link #generatedName(String)}.
+     *
+     * @param packageName the package of the generated type, empty for the unnamed package
+     * @param kind what the generated type is for this one, such as {@code Impl}: a Java identifier without a dollar
+     *     sign, which may be a keyword
+     * @return the name of the generated type
+     * @throws IllegalArgumentException if the package name is not valid, or the kind is not an identifier without a
+     *     dollar sign
+     * @since 0.1.2
+     */
+    public ClassName generatedNameIn(String packageName, String kind) {
+        requireNonNull(packageName, "packageName");
+        checkKind(kind);
+        List<String> packageNames =
+                this.packageName.isEmpty() ? List.of() : Splitter.on('.').split(this.packageName);
+        return generated(packageName, MARKER + join(packageNames) + MARKER + join(simpleNames) + MARKER + kind);
+    }
+
+    // The name generated for a method of this type, numbered from 1 if it is overloaded, 0 otherwise.
+    ClassName generatedMethodName(String method, int number, String kind) {
+        checkKind(kind);
+        String overload = number == 0 ? "" : "$" + number;
+        return generated(packageName, "$" + join(simpleNames) + MARKER + escape(method) + overload + MARKER + kind);
     }
 
     /**
@@ -351,9 +407,23 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
         return CodeWriter.standalone(this);
     }
 
-    // Joins the names with underscores, each underscore within a name written _0.
-    private ClassName generatedName(Stream<String> names) {
-        String simpleName = names.map(name -> name.replace("_", "_0")).collect(Collectors.joining("_"));
+    private static void checkKind(String kind) {
+        requireNonNull(kind, "kind");
+        if (!SourceVersion.isIdentifier(kind) || kind.indexOf('$') >= 0) {
+            throw new IllegalArgumentException("Not a kind of generated type: \"" + kind + "\"");
+        }
+    }
+
+    // Joins the names with dollar signs, each dollar sign within a name written $0.
+    private static String join(List<String> names) {
+        return names.stream().map(ClassName::escape).collect(Collectors.joining("$"));
+    }
+
+    private static String escape(String name) {
+        return name.replace("$", "$0");
+    }
+
+    private static ClassName generated(String packageName, String simpleName) {
         return new ClassName(packageName, List.of(simpleName), List.of());
     }
 }
