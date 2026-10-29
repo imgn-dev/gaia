@@ -27,12 +27,14 @@ jobs:
     permissions:
       # To push the release commit and tag, and to create the GitHub release.
       contents: write
+    # The inputs reach the steps through the environment only, never spliced
+    # into a script: the first step checks them, but no step relies on that.
+    env:
+      RELEASE_VERSION: ${{ inputs.releaseVersion }}
+      NEXT_VERSION: ${{ inputs.nextVersion }}
     steps:
       # First, before anything is checked out or published.
       - name: Check version format
-        env:
-          RELEASE_VERSION: ${{ inputs.releaseVersion }}
-          NEXT_VERSION: ${{ inputs.nextVersion }}
         run: |
           pattern='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
           for name in RELEASE_VERSION NEXT_VERSION; do
@@ -81,11 +83,50 @@ jobs:
       # The version lives only in .mvn/maven.config, as -Drevision. Every POM
       # reads ${revision}; flatten-maven-plugin resolves it in the published POMs.
       - name: Set release version
-        run: sed -i -E "s/-Drevision=[^[:space:]]+/-Drevision=${{ inputs.releaseVersion }}/" .mvn/maven.config
+        run: sed -i -E "s/-Drevision=[^[:space:]]+/-Drevision=$RELEASE_VERSION/" .mvn/maven.config
+
+      # As scripts/release.sh does, before the long build: a release whose tag
+      # exists, or whose commits main no longer leads to, would upload to
+      # Central and only then fail to push.
+      - name: Check the tag and main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$auth"
+          remote=$(git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
+            ls-remote origin refs/heads/main "refs/tags/v$RELEASE_VERSION")
+          if git rev-parse -q --verify "refs/tags/v$RELEASE_VERSION" >/dev/null \
+              || [[ -n $(awk '$2 != "refs/heads/main"' <<<"$remote") ]]; then
+            echo "::error::Tag v$RELEASE_VERSION already exists."
+            exit 1
+          fi
+          if [[ $(awk '$2 == "refs/heads/main" {print $1}' <<<"$remote") != "$(git rev-parse HEAD)" ]]; then
+            echo '::error::main has moved since this run started. Run the release again.'
+            exit 1
+          fi
 
       # Every module, the *-tests modules included, on the release version.
       - name: Verify
         run: ./mvnw -B --no-transfer-progress clean verify
+
+      # Again, as main may have moved during the build.
+      - name: Check the tag and main again
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$auth"
+          remote=$(git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
+            ls-remote origin refs/heads/main "refs/tags/v$RELEASE_VERSION")
+          if [[ -n $(awk '$2 != "refs/heads/main"' <<<"$remote") ]]; then
+            echo "::error::Tag v$RELEASE_VERSION already exists."
+            exit 1
+          fi
+          if [[ $(awk '$2 == "refs/heads/main" {print $1}' <<<"$remote") != "$(git rev-parse HEAD)" ]]; then
+            echo '::error::main has moved since this run started. Run the release again.'
+            exit 1
+          fi
 
       # Only now, after the build and its tests have run, so that none of them
       # had the signing key within reach.
@@ -123,32 +164,32 @@ jobs:
         # not fail the run: publishing has already happened by this point.
         run: |
           if git diff --quiet; then
-            echo 'Already at ${{ inputs.releaseVersion }}, nothing to commit.'
+            echo "Already at $RELEASE_VERSION, nothing to commit."
           else
-            git commit -am 'Release ${{ inputs.releaseVersion }}'
+            git commit -am "Release $RELEASE_VERSION"
           fi
-          git tag -a 'v${{ inputs.releaseVersion }}' -m 'Release ${{ inputs.releaseVersion }}'
+          git tag -a "v$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
 
       - name: Start the next development version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          next='${{ inputs.nextVersion }}-SNAPSHOT'
+          next=$NEXT_VERSION-SNAPSHOT
           sed -i -E "s/-Drevision=[^[:space:]]+/-Drevision=$next/" .mvn/maven.config
           git commit -am "Start $next"
           # The token goes to this command only, as the header actions/checkout
           # would have stored in .git/config.
           auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
           echo "::add-mask::$auth"
+          # Atomic: the commits and the tag are pushed together, or none is.
           git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
-            push origin HEAD --follow-tags
+            push --atomic origin HEAD "refs/tags/v$RELEASE_VERSION"
 
       - name: Create the GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create 'v${{ inputs.releaseVersion }}' \
-            --title 'v${{ inputs.releaseVersion }}' --generate-notes
+          gh release create "v$RELEASE_VERSION" --title "v$RELEASE_VERSION" --generate-notes
 
   # Built from the tag, so it does not wait for the deployment to be published
   # in the Central portal. If it never is, remove the documentation with the
