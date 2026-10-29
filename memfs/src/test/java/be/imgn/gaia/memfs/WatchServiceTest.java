@@ -21,6 +21,8 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.InstantSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -73,6 +75,27 @@ class WatchServiceTest {
                             "ENTRY_CREATE created x1", "ENTRY_MODIFY kept x1", "ENTRY_DELETE deleted x1");
             assertThat(key.reset()).isTrue();
             assertThat(watcher.poll()).isNull();
+        }
+    }
+
+    @Test
+    void reportsModificationsWhenTheClockStandsStill() throws Exception {
+        try (FileSystem frozen = MemoryFileSystems.newFileSystem(Configuration.unix().toBuilder()
+                .watchServicePollingInterval(Duration.ofMillis(10))
+                .clock(InstantSource.fixed(Instant.parse("2026-01-01T00:00:00Z")))
+                .build())) {
+            Path watched = frozen.getPath("/watched");
+            Files.createDirectory(watched);
+            Files.writeString(watched.resolve("kept"), "a");
+            try (WatchService watcher = frozen.newWatchService()) {
+                watched.register(watcher, ENTRY_MODIFY);
+
+                Files.writeString(watched.resolve("kept"), "changed", StandardOpenOption.APPEND);
+                WatchKey key = watcher.poll(5, TimeUnit.SECONDS);
+
+                assertThat(key).isNotNull();
+                assertThat(events(key)).containsExactly("ENTRY_MODIFY kept x1");
+            }
         }
     }
 

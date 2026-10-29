@@ -18,6 +18,8 @@ abstract sealed class Node permits Directory, RegularFile, SymbolicLink {
     private FileTime lastAccessTime;
     private FileTime changeTime;
     private int links;
+    // Counts the modifications, which a watch service compares: two can happen at the same time on the clock.
+    private long modifications;
 
     Node(long id, FileTime now) {
         this.id = id;
@@ -53,6 +55,7 @@ abstract sealed class Node permits Directory, RegularFile, SymbolicLink {
             @Nullable FileTime modified, @Nullable FileTime accessed, @Nullable FileTime created, FileTime now) {
         if (modified != null) {
             lastModifiedTime = modified;
+            modifications++;
         }
         if (accessed != null) {
             lastAccessTime = accessed;
@@ -66,6 +69,11 @@ abstract sealed class Node permits Directory, RegularFile, SymbolicLink {
     final synchronized void modified(FileTime now) {
         lastModifiedTime = now;
         changeTime = now;
+        modifications++;
+    }
+
+    final synchronized long modifications() {
+        return modifications;
     }
 
     final synchronized void accessed(FileTime now) {

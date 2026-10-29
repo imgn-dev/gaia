@@ -14,7 +14,6 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.Watchable;
-import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +93,7 @@ final class PollingWatchService implements WatchService {
         Map<String, Entry> entries = new HashMap<>();
         for (Directory.Entry entry : directory.entries()) {
             Node node = entry.node();
-            entries.put(entry.name(), new Entry(node, node.lastModifiedTime()));
+            entries.put(entry.name(), new Entry(node, node.modifications()));
         }
         return entries;
     }
@@ -174,8 +173,8 @@ final class PollingWatchService implements WatchService {
         signalled.add(new Key(fileSystem.workingDirectory(), fileSystem.workingDirectoryNode()));
     }
 
-    /** A file a directory had at the last poll, and when it was last modified then. */
-    private record Entry(Node node, FileTime lastModifiedTime) {}
+    /** A file a directory had at the last poll, and how many times it had been modified then. */
+    private record Entry(Node node, long modifications) {}
 
     /** The registration of a directory: its events since it was last reset. */
     private final class Key implements WatchKey {
@@ -205,7 +204,7 @@ final class PollingWatchService implements WatchService {
                 Entry before = entries.get(now.getKey());
                 if (before == null || before.node() != now.getValue().node()) {
                     event(ENTRY_CREATE, now.getKey());
-                } else if (!before.lastModifiedTime().equals(now.getValue().lastModifiedTime())) {
+                } else if (before.modifications() != now.getValue().modifications()) {
                     event(ENTRY_MODIFY, now.getKey());
                 }
             }
