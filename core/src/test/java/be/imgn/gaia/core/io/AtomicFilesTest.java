@@ -71,6 +71,16 @@ class AtomicFilesTest {
     }
 
     @Test
+    void writesAFileWithALongName() throws IOException {
+        Path file = directory.resolve("a".repeat(240));
+
+        AtomicFiles.writeString(file, "new");
+
+        assertThat(file).hasContent("new");
+        assertThat(entries()).containsExactly(file);
+    }
+
+    @Test
     void writesTextInUtf8ByDefault() throws IOException {
         Path file = directory.resolve("text");
 

@@ -59,6 +59,10 @@ import org.jspecify.annotations.Nullable;
 public final class AtomicFiles {
 
     private static final int RADIX = 36;
+    // Short enough that the name of a temporary file, at most 3 bytes per char in UTF-8, stays within the 255 bytes
+    // most
+    // file systems allow in a name.
+    private static final int MAX_EMBEDDED_NAME_LENGTH = 64;
 
     private AtomicFiles() {}
 
@@ -169,9 +173,10 @@ public final class AtomicFiles {
             readable.addAll(permissions);
             attributes = new FileAttribute<?>[] {PosixFilePermissions.asFileAttribute(readable)};
         }
+        String name = embeddedName(target);
         while (true) {
             String suffix = Long.toUnsignedString(ThreadLocalRandom.current().nextLong(), RADIX);
-            Path temporary = directory.resolve("." + target.getFileName() + "." + suffix + ".tmp");
+            Path temporary = directory.resolve("." + name + "." + suffix + ".tmp");
             try {
                 return new Temporary(
                         temporary,
@@ -183,6 +188,18 @@ public final class AtomicFiles {
                 // Another write took that name: draw another.
             }
         }
+    }
+
+    // The start of the name of the target, enough to tell which file a temporary one left behind belongs to.
+    private static String embeddedName(Path target) {
+        String name = String.valueOf(target.getFileName());
+        if (name.length() <= MAX_EMBEDDED_NAME_LENGTH) {
+            return name;
+        }
+        int end = Character.isHighSurrogate(name.charAt(MAX_EMBEDDED_NAME_LENGTH - 1))
+                ? MAX_EMBEDDED_NAME_LENGTH - 1
+                : MAX_EMBEDDED_NAME_LENGTH;
+        return name.substring(0, end);
     }
 
     // Gives back the permissions the umask removed at creation, and removes the reading added then, without following
