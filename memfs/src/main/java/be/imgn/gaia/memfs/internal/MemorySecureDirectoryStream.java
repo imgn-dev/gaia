@@ -28,9 +28,12 @@ final class MemorySecureDirectoryStream extends MemoryDirectoryStream implements
 
     @Override
     public SecureDirectoryStream<Path> newDirectoryStream(Path path, LinkOption... options) throws IOException {
+        MemoryPath relative = check(path);
+        // Its entries are resolved against this stream's path, as the paths of this stream's entries are.
         return (SecureDirectoryStream<Path>) fileSystem()
                 .operations()
-                .newDirectoryStream(directory(), check(path), entry -> true, Options.followLinks(options));
+                .newDirectoryStream(
+                        directory(), relative, path().resolve(relative), entry -> true, Options.followLinks(options));
     }
 
     @Override

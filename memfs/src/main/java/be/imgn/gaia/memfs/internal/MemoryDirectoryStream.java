@@ -37,6 +37,10 @@ class MemoryDirectoryStream implements DirectoryStream<Path> {
         return fileSystem;
     }
 
+    final MemoryPath path() {
+        return path;
+    }
+
     final Directory directory() {
         return directory;
     }

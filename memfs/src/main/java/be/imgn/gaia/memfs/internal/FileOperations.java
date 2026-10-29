@@ -479,6 +479,17 @@ final class FileOperations {
     DirectoryStream<Path> newDirectoryStream(
             @Nullable Directory base, MemoryPath path, DirectoryStream.Filter<? super Path> filter, boolean followLinks)
             throws IOException {
+        return newDirectoryStream(base, path, path, filter, followLinks);
+    }
+
+    // The stream resolves its entries against streamPath, which is path unless path is relative to another stream.
+    DirectoryStream<Path> newDirectoryStream(
+            @Nullable Directory base,
+            MemoryPath path,
+            MemoryPath streamPath,
+            DirectoryStream.Filter<? super Path> filter,
+            boolean followLinks)
+            throws IOException {
         return reading(() -> {
             Node node = tree.lookup(base, path, followLinks).existing(path);
             if (!(node instanceof Directory directory)) {
@@ -487,8 +498,8 @@ final class FileOperations {
             fileSystem.access().check(directory, path, AccessMode.READ);
             directory.accessed(fileSystem.now());
             return fileSystem.configuration().features().contains(Feature.SECURE_DIRECTORY_STREAM)
-                    ? new MemorySecureDirectoryStream(fileSystem, directory, path, filter)
-                    : new MemoryDirectoryStream(fileSystem, directory, path, filter);
+                    ? new MemorySecureDirectoryStream(fileSystem, directory, streamPath, filter)
+                    : new MemoryDirectoryStream(fileSystem, directory, streamPath, filter);
         });
     }
 

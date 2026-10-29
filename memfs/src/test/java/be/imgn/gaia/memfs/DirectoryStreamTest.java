@@ -170,6 +170,15 @@ class DirectoryStreamTest {
         }
 
         @Test
+        void resolvesTheEntriesOfAStreamItOpensAgainstItsOwnPath() throws IOException {
+            Files.writeString(path("dir/sub/x.txt"), "x");
+            try (SecureDirectoryStream<Path> stream = secure(path("dir"));
+                    SecureDirectoryStream<Path> sub = stream.newDirectoryStream(path("sub"))) {
+                assertThat(names(sub)).containsExactly("dir/sub/x.txt");
+            }
+        }
+
+        @Test
         void worksRelativeToItsDirectoryWhereverItMoves() throws IOException {
             try (SecureDirectoryStream<Path> stream = secure(path("dir"))) {
                 Files.move(path("dir"), path("/elsewhere"));
@@ -181,7 +190,7 @@ class DirectoryStreamTest {
                 stream.deleteFile(path("a.txt"));
                 stream.deleteDirectory(path("sub"));
                 try (SecureDirectoryStream<Path> nested = stream.newDirectoryStream(path("."))) {
-                    assertThat(names(nested)).containsExactly("./b.java", "./new.txt");
+                    assertThat(names(nested)).containsExactly("dir/./b.java", "dir/./new.txt");
                 }
             }
 
