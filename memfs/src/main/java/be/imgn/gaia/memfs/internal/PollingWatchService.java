@@ -105,7 +105,16 @@ final class PollingWatchService implements WatchService {
         for (Key key : watched) {
             if (key.isValid()) {
                 key.compare(snapshot(key.directory));
+                if (key.directory.links() == 0) {
+                    key.deleted();
+                }
             }
+        }
+    }
+
+    private void forget(Key key) {
+        synchronized (keys) {
+            keys.remove(key.directory, key);
         }
     }
 
@@ -152,10 +161,12 @@ final class PollingWatchService implements WatchService {
         open = false;
         scanning.cancel(false);
         poller.shutdownNow();
+        List<Key> registered;
         synchronized (keys) {
-            keys.values().forEach(Key::cancel);
+            registered = new ArrayList<>(keys.values());
             keys.clear();
         }
+        registered.forEach(Key::cancel);
         fileSystem.untrack(this);
         // Wakes up the threads waiting in take(), which then find the service closed, one after the other.
         signalled.add(new Key(fileSystem.workingDirectory(), fileSystem.workingDirectoryNode()));
@@ -241,9 +252,25 @@ final class PollingWatchService implements WatchService {
             return true;
         }
 
+        // Cancels the key of a directory that was deleted, and signals it, so that its thread sees it.
+        void deleted() {
+            synchronized (this) {
+                valid = false;
+                if (ready) {
+                    ready = false;
+                    signalled.add(this);
+                }
+            }
+            forget(this);
+        }
+
+        // Not synchronized as a whole: registering holds the keys, then a key.
         @Override
-        public synchronized void cancel() {
-            valid = false;
+        public void cancel() {
+            synchronized (this) {
+                valid = false;
+            }
+            forget(this);
         }
 
         @Override

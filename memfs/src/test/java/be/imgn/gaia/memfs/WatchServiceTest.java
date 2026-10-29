@@ -124,6 +124,23 @@ class WatchServiceTest {
     }
 
     @Test
+    void cancelsAndSignalsTheKeyOfADeletedDirectory() throws Exception {
+        Files.createDirectory(directory);
+        try (WatchService watcher = fileSystem.newWatchService()) {
+            WatchKey registered = directory.register(watcher, ENTRY_CREATE);
+
+            Files.delete(directory);
+            WatchKey key = watcher.poll(5, TimeUnit.SECONDS);
+
+            assertThat(key).isSameAs(registered);
+            assertThat(key.isValid()).isFalse();
+            assertThat(key.reset()).isFalse();
+            Files.createDirectory(directory);
+            assertThat(directory.register(watcher, ENTRY_CREATE)).isNotSameAs(key);
+        }
+    }
+
+    @Test
     void refusesWhatItCannotWatch() throws Exception {
         Files.createDirectory(directory);
         Path file = Files.createFile(directory.resolve("file"));
