@@ -135,7 +135,8 @@ public final class Method {
 
     /**
      * Returns a builder of a method that overrides another one: the same name, type variables, return type, parameters
-     * and exceptions, annotated with {@code @Override}, and without {@code abstract} or {@code default}.
+     * and exceptions, annotated with {@code @Override}, and without {@code abstract}, {@code default}, {@code native},
+     * {@code synchronized} or {@code strictfp}.
      *
      * @param method the method to override
      * @return a new builder, to add the code to
@@ -172,7 +173,9 @@ public final class Method {
     private static Builder overriding(ExecutableElement method, ExecutableType type) {
         Set<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
         modifiers.addAll(method.getModifiers());
-        modifiers.removeAll(Set.of(Modifier.ABSTRACT, Modifier.DEFAULT));
+        // These describe the implementation, not the signature: an override has its own.
+        modifiers.removeAll(
+                Set.of(Modifier.ABSTRACT, Modifier.DEFAULT, Modifier.NATIVE, Modifier.SYNCHRONIZED, Modifier.STRICTFP));
         Builder builder = newBuilder(method.getSimpleName().toString())
                 .addAnnotation(Override.class)
                 .addModifiers(modifiers.toArray(Modifier[]::new))

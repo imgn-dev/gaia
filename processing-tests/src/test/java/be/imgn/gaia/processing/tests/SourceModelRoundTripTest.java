@@ -408,6 +408,51 @@ class SourceModelRoundTripTest {
     }
 
     @Test
+    void overridesWithoutTheModifiersOfTheImplementation() {
+        List<Set<Modifier>> modifiers = new ArrayList<>();
+        Compilation compilation = javac().withProcessors(new Running((context, type) -> {
+                    Type.Builder subclass = Type.newClassBuilder("Locks").superclass(type.asType());
+                    TypeElement object = context.elements().getTypeElement("java.lang.Object");
+                    List<ExecutableElement> methods =
+                            new ArrayList<>(ElementFilter.methodsIn(type.getEnclosedElements()));
+                    ElementFilter.methodsIn(object.getEnclosedElements()).stream()
+                            .filter(method -> method.getSimpleName().contentEquals("hashCode"))
+                            .forEach(methods::add);
+                    for (ExecutableElement method : methods) {
+                        Method overriding = Method.overriding(method)
+                                .addStatement(method.getReturnType().getKind().isPrimitive() ? "return 0" : "return")
+                                .build();
+                        modifiers.add(overriding.modifiers());
+                        subclass.addMethod(overriding);
+                    }
+                    context.sources()
+                            .write(
+                                    JavaFile.newBuilder("example", subclass.build())
+                                            .build(),
+                                    type);
+                }))
+                .withOptions("-Xlint:all,-processing,-strictfp", "-Werror")
+                .compile(List.of(ANNOTATIONS.getFirst(), source("example.Lock", """
+                        package example;
+
+                        @Mark
+                        public class Lock {
+                            public synchronized long lock() {
+                                return 0;
+                            }
+
+                            protected strictfp double ratio() {
+                                return 0;
+                            }
+                        }
+                        """)));
+
+        assertThat(compilation).succeeded();
+        assertThat(modifiers)
+                .containsExactly(Set.of(Modifier.PUBLIC), Set.of(Modifier.PROTECTED), Set.of(Modifier.PUBLIC));
+    }
+
+    @Test
     void refusesToOverrideMethodsOfFinalTypesAndFinalMethods() {
         List<String> messages = new ArrayList<>();
         process(
