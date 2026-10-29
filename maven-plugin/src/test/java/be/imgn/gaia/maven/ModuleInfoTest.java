@@ -2,6 +2,7 @@ package be.imgn.gaia.maven;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,10 +12,12 @@ import java.lang.module.ModuleDescriptor.Provides;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.tools.ToolProvider;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -100,6 +103,34 @@ class ModuleInfoTest {
         assertThat(ModuleInfo.provide(moduleInfo, providers)).isFalse();
 
         assertThat(moduleInfo).hasBinaryContent(patched);
+    }
+
+    @Test
+    void rejectsAClassFileTooNewForAsm() throws Exception {
+        var moduleInfo = compile("module m { exports p; }");
+        var bytes = Files.readAllBytes(moduleInfo);
+        // The major version, after the magic number and the minor version.
+        bytes[6] = 0;
+        bytes[7] = 99;
+        Files.write(moduleInfo, bytes);
+
+        assertThatExceptionOfType(MojoExecutionException.class)
+                .isThrownBy(() -> ModuleInfo.provide(moduleInfo, Map.of("p.Service", List.of("p.A"))))
+                .withMessageStartingWith("Could not rewrite %s with ASM ", moduleInfo)
+                .withMessageContaining("Unsupported class file version 99")
+                .withCauseInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void rejectsAMalformedClassFile() throws Exception {
+        var moduleInfo = compile("module m { exports p; }");
+        var bytes = Files.readAllBytes(moduleInfo);
+        Files.write(moduleInfo, Arrays.copyOf(bytes, bytes.length / 2));
+
+        assertThatExceptionOfType(MojoExecutionException.class)
+                .isThrownBy(() -> ModuleInfo.provide(moduleInfo, Map.of("p.Service", List.of("p.A"))))
+                .withMessageStartingWith("Could not rewrite %s with ASM ", moduleInfo)
+                .withCauseInstanceOf(RuntimeException.class);
     }
 
     @Test

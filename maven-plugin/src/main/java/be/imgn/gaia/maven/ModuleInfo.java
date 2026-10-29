@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -63,12 +65,26 @@ final class ModuleInfo {
      * @param file the {@code module-info.class} file
      * @param providers the providers of each service, by binary name, possibly none
      * @return whether the file changed
+     * @throws MojoExecutionException if ASM cannot read the file: malformed, or from a Java version newer than ASM
      */
-    static boolean provide(Path file, Map<String, List<String>> providers) throws IOException {
+    static boolean provide(Path file, Map<String, List<String>> providers) throws IOException, MojoExecutionException {
         var original = Files.readAllBytes(file);
         var writer = new ClassWriter(0);
-        new ClassReader(original).accept(new ProvidingClass(writer, providers), 0);
-        var patched = writer.toByteArray();
+        byte[] patched;
+        try {
+            new ClassReader(original).accept(new ProvidingClass(writer, providers), 0);
+            patched = writer.toByteArray();
+        } catch (IllegalArgumentException
+                | IndexOutOfBoundsException
+                | ClassCastException
+                | NegativeArraySizeException e) {
+            // ASM rejects a class file of a Java version it does not support with IllegalArgumentException; a
+            // malformed one fails with whichever of these reading it runs into.
+            var asm = Objects.requireNonNullElse(
+                    ClassReader.class.getPackage().getImplementationVersion(), "(unknown version)");
+            throw new MojoExecutionException(
+                    "Could not rewrite " + file + " with ASM " + asm + ": " + e.getMessage(), e);
+        }
         if (Arrays.equals(original, patched)) {
             return false;
         }
