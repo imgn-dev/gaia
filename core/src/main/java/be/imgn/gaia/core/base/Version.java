@@ -93,7 +93,10 @@ public record Version(long major, long minor, long patch, List<String> preReleas
         requireNonNull(text, "text");
         Parts parts = Parts.of(text);
         String problem = parts.problem();
-        checkArgument(problem == null, "Not a semantic version, %s: %s", problem, quoted(text));
+        // Not checkArgument: it would quote the text on every call, not only on the failing ones.
+        if (problem != null) {
+            throw new IllegalArgumentException("Not a semantic version, " + problem + ": " + quoted(text));
+        }
         return parts.version();
     }
 

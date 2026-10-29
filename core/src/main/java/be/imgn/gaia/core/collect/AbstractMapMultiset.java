@@ -1,6 +1,5 @@
 package be.imgn.gaia.core.collect;
 
-import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.AbstractCollection;
@@ -80,18 +79,16 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
     public int add(E element, int occurrences) {
         checkModifiable();
         requireNonNull(element, "element");
-        checkArgument(occurrences >= 0, "occurrences must not be negative: %s", occurrences);
+        checkNotNegative(occurrences, "occurrences");
         var count = counts().get(element);
         int before = count == null ? 0 : count.get();
         if (occurrences == 0) {
             return before;
         }
-        checkArgument(
-                occurrences <= Integer.MAX_VALUE - before,
-                "Too many occurrences of %s: %s + %s",
-                element,
-                before,
-                occurrences);
+        if (occurrences > Integer.MAX_VALUE - before) {
+            throw new IllegalArgumentException(
+                    "Too many occurrences of " + element + ": " + before + " + " + occurrences);
+        }
         if (count == null) {
             counts().put(element, new Count(occurrences));
         } else {
@@ -109,7 +106,7 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
     @Override
     public int remove(@Nullable Object element, int occurrences) {
         checkModifiable();
-        checkArgument(occurrences >= 0, "occurrences must not be negative: %s", occurrences);
+        checkNotNegative(occurrences, "occurrences");
         var count = counts().get(element);
         if (count == null) {
             return 0;
@@ -129,7 +126,7 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
     public int setCount(E element, int count) {
         checkModifiable();
         requireNonNull(element, "element");
-        checkArgument(count >= 0, "count must not be negative: %s", count);
+        checkNotNegative(count, "count");
         var current = counts().get(element);
         int before = current == null ? 0 : current.get();
         if (count == 0) {
@@ -262,6 +259,13 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
         return string.append(']').toString();
     }
 
+    // Unlike checkArgument, boxes nothing and allocates no array on the calls that pass, which are the common ones.
+    private static void checkNotNegative(int value, String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(name + " must not be negative: " + value);
+        }
+    }
+
     /** Removes every occurrence of an element, and returns whether there was any. */
     final boolean removeAllOccurrences(@Nullable Object element) {
         checkModifiable();
@@ -277,7 +281,9 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
     // iterated, and fail the iteration.
     final int setEntryCount(E element, int count) {
         checkModifiable();
-        checkArgument(count > 0, "count must be positive: %s", count);
+        if (count <= 0) {
+            throw new IllegalArgumentException("count must be positive: " + count);
+        }
         var current = counts().get(element);
         if (current == null) {
             throw new IllegalStateException(element + " is no longer in the multiset");
