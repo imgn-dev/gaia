@@ -249,6 +249,12 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      * name: whether a type has it already is for
      * {@link be.imgn.gaia.processing.GeneratedSources#isAvailable(ClassName)} to tell.
      *
+     * <p>Two limits come from the file systems the generated files go to, not from the scheme. Names that differ only
+     * in case, as those of methods {@code create} and {@code Create}, are distinct names but one file on a file system
+     * that ignores case, as macOS and Windows have by default; javac then reports the second file as one it already
+     * wrote. And a name is a file name: one past the 255 bytes most file systems allow, as deep packages can make with
+     * {@link #generatedNameIn(String, String)}, cannot be written.
+     *
      * @param kind what the generated type is for this one, such as {@code Mapper}: a Java identifier without a dollar
      *     sign, which may be a keyword
      * @return the name of the generated type, without annotations
@@ -289,7 +295,9 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
      *
      * <p>An overloaded method, one whose type declares other methods with its name, has its number after its name: its
      * position among them in the order they are declared, from 1, such as {@code $Outer$$create$2$$Factory} for the
-     * second {@code create} method. Declaring an overload changes the name of a method that had none.
+     * second {@code create} method. Declaring an overload changes the name of a method that had none. The methods the
+     * compiler declares count too, such as the {@code valueOf(String)} of an enum or the accessors of a record, in the
+     * order the type lists them.
      *
      * @param method the method
      * @param kind what the generated type is for the method, such as {@code Factory}: a Java identifier without a
@@ -311,7 +319,11 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
                 .filter(member -> member.getKind() == ElementKind.METHOD
                         && member.getSimpleName().contentEquals(name))
                 .toList();
-        int number = overloads.size() == 1 ? 0 : overloads.indexOf(method) + 1;
+        int index = overloads.indexOf(method);
+        if (index < 0) {
+            throw new IllegalArgumentException(method + " is not among the methods of " + type);
+        }
+        int number = overloads.size() == 1 ? 0 : index + 1;
         return of(type).generatedMethodName(name.toString(), number, kind);
     }
 
