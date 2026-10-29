@@ -3,7 +3,9 @@ package be.imgn.gaia.maven;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,36 @@ final class ModuleInfo {
 
     private static final int API = Opcodes.ASM9;
 
+    private static final String VERSIONS = "META-INF/versions";
+
     private ModuleInfo() {}
+
+    /**
+     * Returns the module descriptors of compiled classes: {@code module-info.class} and, in a multi-release output, the
+     * one of each release in {@code META-INF/versions}.
+     *
+     * @param classes the directory of compiled classes
+     * @return the descriptors, the root one first, then by release
+     */
+    static List<Path> find(Path classes) throws IOException {
+        var descriptors = new ArrayList<Path>();
+        var root = classes.resolve(FILE_NAME);
+        if (Files.isRegularFile(root)) {
+            descriptors.add(root);
+        }
+        var versions = classes.resolve(VERSIONS);
+        if (Files.isDirectory(versions)) {
+            try (var releases = Files.list(versions)) {
+                releases.filter(release -> release.getFileName().toString().matches("[1-9][0-9]*"))
+                        .sorted(Comparator.comparingInt(release ->
+                                Integer.parseInt(release.getFileName().toString())))
+                        .map(release -> release.resolve(FILE_NAME))
+                        .filter(Files::isRegularFile)
+                        .forEach(descriptors::add);
+            }
+        }
+        return descriptors;
+    }
 
     /**
      * Makes a module descriptor provide services with the given providers. The directive of each service, if any, is

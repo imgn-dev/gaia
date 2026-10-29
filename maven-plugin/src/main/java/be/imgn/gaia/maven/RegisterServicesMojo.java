@@ -2,7 +2,7 @@ package be.imgn.gaia.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
@@ -26,6 +26,8 @@ import org.jspecify.annotations.Nullable;
  *   <li>Running the goal again changes nothing, and sources are never written.
  *   <li>Each provider must be a class in {@link #classesDirectory}, or the build fails: the JVM would refuse to start a
  *       module that provides a class it does not contain.
+ *   <li>In a multi-release output, the descriptor of each release in {@code META-INF/versions} gets the same directives
+ *       as {@code module-info.class}.
  *   <li>Without {@code module-info.class}, the goal does nothing: on the class path, {@code ServiceLoader} reads
  *       {@code META-INF/services} itself.
  * </ul>
@@ -63,21 +65,30 @@ public final class RegisterServicesMojo extends AbstractMojo {
             throw new MojoExecutionException("The classesDirectory parameter is missing");
         }
         var classes = classesDirectory.toPath();
-        var moduleInfo = classes.resolve(ModuleInfo.FILE_NAME);
-        if (!Files.isRegularFile(moduleInfo)) {
-            getLog().debug("No " + moduleInfo + ": the class path reads " + ProviderFiles.DIRECTORY + " itself");
-            return;
-        }
         try {
-            var providers = ProviderFiles.read(classes, services);
-            if (providers.isEmpty()) {
-                getLog().debug("No service providers in " + classes.resolve(ProviderFiles.DIRECTORY));
-            } else if (ModuleInfo.provide(moduleInfo, providers)) {
-                getLog().info("Registered the providers of " + String.join(", ", providers.keySet()) + " in "
-                        + moduleInfo);
+            var descriptors = ModuleInfo.find(classes);
+            if (descriptors.isEmpty()) {
+                getLog().debug("No " + ModuleInfo.FILE_NAME + " in " + classes + ": the class path reads "
+                        + ProviderFiles.DIRECTORY + " itself");
+            } else {
+                register(classes, descriptors);
             }
         } catch (IOException e) {
-            throw new MojoExecutionException("Could not register services in " + moduleInfo, e);
+            throw new MojoExecutionException("Could not register services in " + classes, e);
+        }
+    }
+
+    private void register(Path classes, List<Path> descriptors) throws IOException, MojoExecutionException {
+        var providers = ProviderFiles.read(classes, services);
+        if (providers.isEmpty()) {
+            getLog().debug("No service providers in " + classes.resolve(ProviderFiles.DIRECTORY));
+            return;
+        }
+        for (var descriptor : descriptors) {
+            if (ModuleInfo.provide(descriptor, providers)) {
+                getLog().info("Registered the providers of " + String.join(", ", providers.keySet()) + " in "
+                        + descriptor);
+            }
         }
     }
 }

@@ -102,6 +102,36 @@ class ModuleInfoTest {
         assertThat(moduleInfo).hasBinaryContent(patched);
     }
 
+    @Test
+    void findsTheDescriptorOfEachReleaseOfAMultiReleaseOutput() throws Exception {
+        var classes = directory.resolve("classes");
+        var files = List.of(
+                "module-info.class",
+                "META-INF/versions/21/module-info.class",
+                "META-INF/versions/9/module-info.class",
+                "META-INF/versions/11/p/A.class",
+                "META-INF/versions/latest/module-info.class",
+                "p/module-info.class");
+        for (var file : files) {
+            write(classes.resolve(file), "");
+        }
+
+        assertThat(ModuleInfo.find(classes))
+                .containsExactly(
+                        classes.resolve("module-info.class"),
+                        classes.resolve("META-INF/versions/9/module-info.class"),
+                        classes.resolve("META-INF/versions/21/module-info.class"));
+    }
+
+    @Test
+    void findsNoDescriptorOutsideAModule() throws Exception {
+        var classes = directory.resolve("classes");
+        write(classes.resolve("p/A.class"), "");
+
+        assertThat(ModuleInfo.find(classes)).isEmpty();
+        assertThat(ModuleInfo.find(directory.resolve("missing"))).isEmpty();
+    }
+
     private Path compile(String moduleInfo) throws IOException {
         var sources = directory.resolve("src");
         var files = new ArrayList<String>();
