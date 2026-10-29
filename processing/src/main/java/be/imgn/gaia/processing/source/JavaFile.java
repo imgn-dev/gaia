@@ -36,7 +36,10 @@ import org.jspecify.annotations.Nullable;
  * inside {@code Outer}.
  *
  * <p>Code that refers to a statically imported member through its type, as {@code $T.MINUTES}, is written with the
- * member alone, {@code MINUTES}.
+ * member alone, {@code MINUTES}, when that name surely refers to the same member: the static imports supply it from
+ * that type only, by name or else on demand, as in {@code import static java.util.concurrent.TimeUnit.*}; and neither
+ * {@code Object} nor a type of the file has a method, field, member type or parameter of that name. Members of other
+ * types imported on demand count as possibly supplying it. Any other such reference is written with its type.
  *
  * <p>Files are values: two files written the same are equal.
  */

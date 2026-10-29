@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -64,7 +65,7 @@ class NameResolutionTest {
         }
 
         @Test
-        void coverEveryMemberWithAWildcard() {
+        void leaveMembersThatSeveralWildcardsMaySupplyQualified() {
             Type type = Type.newClassBuilder("Clock")
                     .addMethod(Method.newBuilder("tick")
                             .addStatement("$T.gc()", System.class)
@@ -82,10 +83,12 @@ class NameResolutionTest {
                             import static java.lang.System.*;
                             import static java.util.concurrent.TimeUnit.*;
 
+                            import java.util.concurrent.TimeUnit;
+
                             class Clock {
                                 void tick() {
-                                    gc();
-                                    out.println(HOURS);
+                                    System.gc();
+                                    System.out.println(TimeUnit.HOURS);
                                 }
                             }
                             """);
@@ -167,6 +170,91 @@ class NameResolutionTest {
                             .toString())
                     .contains("com.other.Entry entry;")
                     .doesNotContain("import com.other.Entry;");
+        }
+
+        @Test
+        void qualifyMembersThatTheClassItselfHasByTheSameName() {
+            ClassName objects = ClassName.of(Objects.class);
+            Type type = Type.newClassBuilder("Checks")
+                    .addMethod(Method.newBuilder("check")
+                            .addParameter(Object.class, "a")
+                            .addParameter(Object.class, "b")
+                            .addStatement("$T.toString(a)", objects)
+                            .addStatement("$T.equals(a, b)", objects)
+                            .addStatement("$T.requireNonNull(a)", objects)
+                            .addStatement("$T.hash(a, b)", objects)
+                            .build())
+                    .addMethod(Method.newBuilder("requireNonNull").build())
+                    .build();
+
+            assertThat(file(type).addStaticImport(objects, "*").build().toString())
+                    .contains("Objects.toString(a);")
+                    .contains("Objects.equals(a, b);")
+                    .contains("Objects.requireNonNull(a);")
+                    .contains(" hash(a, b);");
+        }
+
+        @Test
+        void qualifyMembersThatSeveralStaticImportsMaySupply() {
+            Type type = Type.newClassBuilder("Limits")
+                    .addMethod(Method.newBuilder("limits")
+                            .addStatement("int max = $T.MAX_VALUE", Integer.class)
+                            .addStatement("long min = $T.MIN_VALUE", Long.class)
+                            .addStatement("long size = $T.SIZE", Long.class)
+                            .build())
+                    .build();
+
+            assertThat(file(type)
+                            .addStaticImport(Integer.class, "*")
+                            .addStaticImport(Long.class, "*", "SIZE")
+                            .build()
+                            .toString())
+                    .contains("int max = Integer.MAX_VALUE;")
+                    .contains("long min = Long.MIN_VALUE;")
+                    .contains("long size = SIZE;");
+        }
+
+        @Test
+        void qualifyTypesNamedLikeAMemberReachedThroughAWildcard() {
+            Type type = Type.newClassBuilder("Entries")
+                    .addField(ClassName.of("com.other", "Entry"), "entry")
+                    .addMethod(Method.newBuilder("entries")
+                            .addStatement("$T.Entry<String, String> pair = null", Map.class)
+                            .build())
+                    .build();
+
+            assertThat(file(type)
+                            .addStaticImport(ClassName.of(Map.class), "*")
+                            .build()
+                            .toString())
+                    .contains("com.other.Entry entry;")
+                    .contains(" Entry<String, String> pair = null;")
+                    .doesNotContain("import com.other.Entry;");
+        }
+    }
+
+    @Nested
+    class AnonymousClasses {
+
+        @Test
+        void qualifyTypesThatAMemberTypeInheritedByAnAnonymousClassHides() {
+            ClassName state = ClassName.of("com.app", "State");
+            Type thread = Type.newAnonymousClassBuilder("")
+                    .superclass(Thread.class)
+                    .addMethod(Method.newBuilder("run")
+                            .addModifiers(Modifier.PUBLIC)
+                            .addStatement("$T state = null", state)
+                            .build())
+                    .build();
+            Type type = Type.newClassBuilder("Runner")
+                    .addMethod(Method.newBuilder("start")
+                            .addStatement("$L.start()", CodeBlock.of("$L", thread))
+                            .build())
+                    .build();
+
+            assertThat(file(type).build().toString())
+                    .contains("com.app.State state = null;")
+                    .doesNotContain("import com.app.State;");
         }
     }
 

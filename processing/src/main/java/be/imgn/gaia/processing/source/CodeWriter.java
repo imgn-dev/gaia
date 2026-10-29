@@ -34,6 +34,8 @@ final class CodeWriter {
     private static final Set<Modifier> BODY_MODIFIERS = EnumSet.of(Modifier.DEFAULT, Modifier.STATIC, Modifier.PRIVATE);
     private static final Method PUBLIC_CONSTRUCTOR =
             Method.newConstructorBuilder().addModifiers(Modifier.PUBLIC).build();
+    private static final Set<String> OBJECT_METHODS =
+            Set.of("clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait");
 
     private final StringBuilder out = new StringBuilder();
     private final LineWrapper wrapper = new LineWrapper(out, COLUMN_LIMIT);
@@ -41,6 +43,8 @@ final class CodeWriter {
     private final Map<String, ClassName> visible;
     private final @Nullable Set<ClassName> referenced;
     private final Set<String> staticImports;
+    private final Set<String> shadowedMembers;
+    private final Set<String> shortenedMembers;
     private final @Nullable ClassName fileType;
     private final Deque<Scope> scopes = new ArrayDeque<>();
     private int indentLevel;
@@ -56,25 +60,38 @@ final class CodeWriter {
             Map<String, ClassName> visible,
             @Nullable Set<ClassName> referenced,
             Set<String> staticImports,
+            Set<String> shadowedMembers,
+            Set<String> shortenedMembers,
             @Nullable ClassName fileType) {
         this.indentUnit = indentUnit;
         this.visible = visible;
         this.referenced = referenced;
         this.staticImports = staticImports;
+        this.shadowedMembers = shadowedMembers;
+        this.shortenedMembers = shortenedMembers;
         this.fileType = fileType;
     }
 
     static String standalone(Object value) {
-        CodeWriter writer = new CodeWriter("    ", Map.of(), null, Set.of(), null);
+        CodeWriter writer = new CodeWriter("    ", Map.of(), null, Set.of(), Set.of(), new HashSet<>(), null);
         writer.emitLiteral(value);
         return writer.result();
     }
 
     static String write(JavaFile file) {
         Set<ClassName> referenced = new LinkedHashSet<>();
-        new CodeWriter(file.indent(), Map.of(), referenced, file.staticImports(), file.className())
+        Set<String> shadowedMembers = shadowedMembers(file.type());
+        Set<String> shortenedMembers = new HashSet<>();
+        new CodeWriter(
+                        file.indent(),
+                        Map.of(),
+                        referenced,
+                        file.staticImports(),
+                        shadowedMembers,
+                        shortenedMembers,
+                        file.className())
                 .emitFile(file, List.of());
-        Map<String, ClassName> visible = visibleNames(file, referenced);
+        Map<String, ClassName> visible = visibleNames(file, referenced, shortenedMembers);
         List<String> imports = visible.values().stream()
                 .filter(type -> !type.packageName().isEmpty()
                         && !type.packageName().equals(file.packageName())
@@ -82,7 +99,8 @@ final class CodeWriter {
                 .map(ClassName::canonicalName)
                 .sorted()
                 .toList();
-        CodeWriter writer = new CodeWriter(file.indent(), visible, null, file.staticImports(), file.className());
+        CodeWriter writer = new CodeWriter(
+                file.indent(), visible, null, file.staticImports(), shadowedMembers, new HashSet<>(), file.className());
         writer.emitFile(file, imports);
         return writer.result();
     }
@@ -121,9 +139,11 @@ final class CodeWriter {
 
     // A referenced top-level type gets its simple name unless another referenced type has it too, or something else
     // the file declares, inherits or imports statically may have it. The types of the file itself never need an import.
-    private static Map<String, ClassName> visibleNames(JavaFile file, Set<ClassName> referenced) {
+    private static Map<String, ClassName> visibleNames(
+            JavaFile file, Set<ClassName> referenced, Set<String> shortenedMembers) {
         Set<String> taken = new HashSet<>(file.alwaysQualifiedNames());
-        declaredNames(file.type(), taken);
+        taken.addAll(shortenedMembers);
+        types(file.type()).forEach(type -> declaredNames(type, taken));
         file.staticImports().stream()
                 .map(member -> member.substring(member.lastIndexOf('.') + 1))
                 .filter(member -> !member.equals("*"))
@@ -147,8 +167,61 @@ final class CodeWriter {
         names.addAll(type.alwaysQualifiedNames());
         type.typeVariables().forEach(variable -> names.add(variable.name()));
         type.methods().forEach(method -> method.typeVariables().forEach(variable -> names.add(variable.name())));
-        type.types().forEach(nested -> declaredNames(nested, names));
-        type.enumConstants().values().forEach(constant -> declaredNames(constant, names));
+    }
+
+    // The names that a statically imported member cannot go by in the file, because something nearer has them: the
+    // methods of Object, which every class inherits, and whatever the types of the file declare. Members inherited from
+    // other supertypes are unknown, except for member types.
+    private static Set<String> shadowedMembers(Type file) {
+        Set<String> names = new HashSet<>(OBJECT_METHODS);
+        for (Type type : types(file)) {
+            declaredNames(type, names);
+            names.addAll(type.enumConstants().keySet());
+            type.recordComponents().forEach(component -> names.add(component.name()));
+            type.fields().forEach(field -> names.add(field.name()));
+            type.types().forEach(nested -> names.add(requireNonNull(nested.name())));
+            for (Method method : type.methods()) {
+                names.add(method.name());
+                method.parameters().forEach(parameter -> names.add(parameter.name()));
+            }
+        }
+        return names;
+    }
+
+    // The type and every type declared in it: its member types, the bodies of its enum constants, and the anonymous
+    // and local classes in its code.
+    private static List<Type> types(Type type) {
+        List<Type> types = new ArrayList<>();
+        addTypes(type, types);
+        return types;
+    }
+
+    private static void addTypes(Type type, List<Type> types) {
+        types.add(type);
+        type.types().forEach(nested -> addTypes(nested, types));
+        type.enumConstants().values().forEach(constant -> addTypes(constant, types));
+        List<CodeBlock> code = new ArrayList<>();
+        code.add(type.anonymousArguments());
+        code.add(type.staticBlock());
+        code.add(type.initializerBlock());
+        type.fields().forEach(field -> code.add(field.initializer()));
+        type.methods().forEach(method -> {
+            code.add(method.code());
+            code.add(method.defaultValue());
+        });
+        code.forEach(block -> addTypes(block, types));
+    }
+
+    private static void addTypes(CodeBlock code, List<Type> types) {
+        for (CodeBlock.Part part : code.parts()) {
+            if (part instanceof CodeBlock.Argument argument) {
+                if (argument.value() instanceof Type type) {
+                    addTypes(type, types);
+                } else if (argument.value() instanceof CodeBlock block) {
+                    addTypes(block, types);
+                }
+            }
+        }
     }
 
     private static Set<Modifier> nestedTypeImplicit(Type.Kind enclosing, Type.Kind nested) {
@@ -313,7 +386,8 @@ final class CodeWriter {
         }
     }
 
-    // $T followed by ".member", where the member is statically imported, is written "member".
+    // $T followed by ".member" is written "member" when that refers to the same member: when the static imports supply
+    // the member from that type alone, and nothing of the file or of Object goes by that name.
     private @Nullable String staticMemberAccess(CodeBlock.Part part, CodeBlock.Part next) {
         if (!(part instanceof CodeBlock.Argument argument
                 && argument.kind() == 'T'
@@ -325,12 +399,28 @@ final class CodeWriter {
         }
         String rest = text.text().substring(1);
         String member = leadingIdentifier(rest);
-        String canonicalName = type.canonicalName();
-        boolean imported = !member.isEmpty()
-                && !SourceVersion.isKeyword(member)
-                && (staticImports.contains(canonicalName + "." + member)
-                        || staticImports.contains(canonicalName + ".*"));
-        return imported ? rest : null;
+        if (member.isEmpty()
+                || SourceVersion.isKeyword(member)
+                || shadowedMembers.contains(member)
+                || !importedFrom(member).equals(Set.of(type.canonicalName()))) {
+            return null;
+        }
+        shortenedMembers.add(member);
+        return rest;
+    }
+
+    // The types whose static imports may supply a member: those importing it by name, which shadow the imports on
+    // demand, or else those importing all their members, since which members those have is unknown here.
+    private Set<String> importedFrom(String member) {
+        Set<String> byName = importingTypes("." + member);
+        return byName.isEmpty() ? importingTypes(".*") : byName;
+    }
+
+    private Set<String> importingTypes(String suffix) {
+        return staticImports.stream()
+                .filter(staticImport -> staticImport.endsWith(suffix))
+                .map(staticImport -> staticImport.substring(0, staticImport.length() - suffix.length()))
+                .collect(Collectors.toSet());
     }
 
     private static String leadingIdentifier(String text) {
