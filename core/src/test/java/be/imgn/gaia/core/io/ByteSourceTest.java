@@ -8,6 +8,7 @@ import be.imgn.gaia.core.base.Charsets;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -230,6 +231,17 @@ class ByteSourceTest {
             assertThat(in.read()).isEqualTo(Byte.toUnsignedInt(large[10_001]));
             assertThat(in.read()).isEqualTo(Byte.toUnsignedInt(large[10_002]));
             assertThat(in.read()).isEqualTo(-1);
+        }
+    }
+
+    @Test
+    void doesNotSkipBackwardsInASlice() throws IOException {
+        var file = Files.write(directory.resolve("bytes"), bytes(16));
+        ByteSource source = () -> new FileInputStream(file.toFile());
+
+        try (var in = source.slice(8, 3).openStream()) {
+            assertThat(in.skip(-8)).isZero();
+            assertThat(in.readAllBytes()).containsExactly(8, 9, 10);
         }
     }
 

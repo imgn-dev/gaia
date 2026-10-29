@@ -93,6 +93,10 @@ public final class SlicedByteSource implements ByteSource {
 
         @Override
         public long skip(long count) throws IOException {
+            // Some streams, such as a FileInputStream, seek backwards on a negative count, out of the slice.
+            if (count <= 0) {
+                return 0;
+            }
             var skipped = in.skip(Math.min(count, remaining));
             remaining -= skipped;
             return skipped;
