@@ -286,6 +286,27 @@ class CharSourceTest {
     }
 
     @Test
+    void encodesTheCharactersReadAfterTheReaderFails() throws IOException {
+        CharSource source = () -> new FilterReader(new StringReader("ab")) {
+            private boolean failed;
+
+            @Override
+            public int read(char[] buffer, int offset, int length) throws IOException {
+                if (!failed) {
+                    failed = true;
+                    throw new IOException("Failed once");
+                }
+                return super.read(buffer, offset, length);
+            }
+        };
+
+        try (var in = source.asByteSource(StandardCharsets.UTF_8).openStream()) {
+            assertThatExceptionOfType(IOException.class).isThrownBy(in::read).withMessage("Failed once");
+            assertThat(in.readAllBytes()).containsExactly('a', 'b');
+        }
+    }
+
+    @Test
     void closesTheReaderOfTheEncodedBytes() throws IOException {
         var source = new TrackedSource("text");
 

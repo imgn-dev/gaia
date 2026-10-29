@@ -216,6 +216,32 @@ class CharSinkTest {
     }
 
     @Test
+    void decodesTheBytesWrittenAfterTheWriterFails() throws IOException {
+        var out = new StringWriter();
+        CharSink failingOnce = () -> new FilterWriter(out) {
+            private boolean failed;
+
+            @Override
+            public void write(char[] buffer, int offset, int length) throws IOException {
+                if (!failed) {
+                    failed = true;
+                    throw new IOException("Failed once");
+                }
+                super.write(buffer, offset, length);
+            }
+        };
+
+        try (var stream = failingOnce.asByteSink(StandardCharsets.UTF_8).openStream()) {
+            assertThatExceptionOfType(IOException.class)
+                    .isThrownBy(() -> stream.write(new byte[] {'a', 'b'}))
+                    .withMessage("Failed once");
+            stream.write("é".repeat(5_000).getBytes(StandardCharsets.UTF_8));
+        }
+
+        assertThat(out).hasToString("é".repeat(5_000));
+    }
+
+    @Test
     void failsOnBytesThatEndInTheMiddleOfACharacter() {
         var tracked = new TrackedSink();
         var sink = tracked.asByteSink(StandardCharsets.UTF_8);

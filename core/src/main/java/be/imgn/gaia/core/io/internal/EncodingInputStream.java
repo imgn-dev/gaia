@@ -84,8 +84,12 @@ public final class EncodingInputStream extends InputStream {
     private void encodeMore() throws IOException {
         if (!endOfInput) {
             chars.compact();
-            endOfInput = reader.read(chars) == -1;
-            chars.flip();
+            // Flipped even when the reader fails, so that a later read does not encode the empty rest of the buffer.
+            try {
+                endOfInput = reader.read(chars) == -1;
+            } finally {
+                chars.flip();
+            }
         }
         if (!encoded) {
             var result = encoder.encode(chars, bytes, endOfInput);

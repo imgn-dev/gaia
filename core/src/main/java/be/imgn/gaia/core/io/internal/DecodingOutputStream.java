@@ -106,9 +106,13 @@ public final class DecodingOutputStream extends OutputStream {
         }
     }
 
+    // Cleared even when the writer fails: it may have written some of the characters, which must not come again.
     private void writeChars() throws IOException {
         chars.flip();
-        writer.write(chars.array(), chars.arrayOffset() + chars.position(), chars.remaining());
-        chars.clear();
+        try {
+            writer.write(chars.array(), chars.arrayOffset() + chars.position(), chars.remaining());
+        } finally {
+            chars.clear();
+        }
     }
 }
