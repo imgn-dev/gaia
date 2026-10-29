@@ -193,6 +193,18 @@ class CharSinkTest {
     }
 
     @Test
+    void writesTheCharactersBeforeInvalidBytesOnce() {
+        var tracked = new TrackedSink();
+        var sink = tracked.asByteSink(StandardCharsets.UTF_8);
+
+        assertThatExceptionOfType(MalformedInputException.class)
+                .isThrownBy(() -> sink.write(new byte[] {'a', 'b', 'c', (byte) 0xFF}))
+                .satisfies(e -> assertThat(e.getSuppressed()).isEmpty());
+        assertThat(tracked.out).hasToString("abc");
+        assertThat(tracked.closed).isEqualTo(1);
+    }
+
+    @Test
     void failsOnBytesThatEndInTheMiddleOfACharacter() {
         var tracked = new TrackedSink();
         var sink = tracked.asByteSink(StandardCharsets.UTF_8);

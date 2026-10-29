@@ -70,8 +70,13 @@ public final class EncodingInputStream extends InputStream {
     private boolean fill() throws IOException {
         while (!bytes.hasRemaining() && !flushed) {
             bytes.clear();
-            encodeMore();
-            bytes.flip();
+            // Flipped even on a coding error, so that the bytes encoded before it are read rather than the empty
+            // rest of the buffer: the error comes again once they are read.
+            try {
+                encodeMore();
+            } finally {
+                bytes.flip();
+            }
         }
         return bytes.hasRemaining();
     }

@@ -274,6 +274,18 @@ class CharSourceTest {
     }
 
     @Test
+    void readsOnlyTheBytesBeforeACharacterThatFailsToEncode() throws IOException {
+        var source = CharSource.wrap("ab\uD800c").asByteSource(StandardCharsets.UTF_8);
+
+        try (var in = source.openStream()) {
+            assertThatExceptionOfType(MalformedInputException.class).isThrownBy(in::read);
+            assertThat(in.read()).isEqualTo('a');
+            assertThat(in.read()).isEqualTo('b');
+            assertThatExceptionOfType(MalformedInputException.class).isThrownBy(in::read);
+        }
+    }
+
+    @Test
     void closesTheReaderOfTheEncodedBytes() throws IOException {
         var source = new TrackedSource("text");
 

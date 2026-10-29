@@ -24,6 +24,7 @@ public final class DecodingOutputStream extends OutputStream {
     private final ByteBuffer bytes = ByteBuffer.allocate(Streams.BUFFER_SIZE);
     private final CharBuffer chars = CharBuffer.allocate(Streams.BUFFER_SIZE);
     private boolean closed;
+    private boolean failed;
 
     /**
      * Creates a stream that decodes the bytes written to it into characters for a writer.
@@ -73,6 +74,10 @@ public final class DecodingOutputStream extends OutputStream {
         }
         closed = true;
         try (writer) {
+            // The invalid bytes are still buffered and were already reported: decoding them again would fail again.
+            if (failed) {
+                return;
+            }
             decode(true);
             CoderResult result;
             do {
@@ -82,17 +87,23 @@ public final class DecodingOutputStream extends OutputStream {
         }
     }
 
+    // On a coding error, the characters decoded before the invalid bytes are written, and the buffer is compacted
+    // all the same, so that no byte is ever decoded twice.
     private void decode(boolean endOfInput) throws IOException {
         bytes.flip();
-        CoderResult result;
-        do {
-            result = decoder.decode(bytes, chars, endOfInput);
-            if (result.isError()) {
-                result.throwException();
-            }
-            writeChars();
-        } while (result.isOverflow());
-        bytes.compact();
+        try {
+            CoderResult result;
+            do {
+                result = decoder.decode(bytes, chars, endOfInput);
+                writeChars();
+                if (result.isError()) {
+                    failed = true;
+                    result.throwException();
+                }
+            } while (result.isOverflow());
+        } finally {
+            bytes.compact();
+        }
     }
 
     private void writeChars() throws IOException {
