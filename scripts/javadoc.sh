@@ -20,6 +20,11 @@ set -euo pipefail
 # The JDK whose API the documentation links to. Every JDK type gaia uses is in
 # it, including the Java 24 ones of src/main/java24.
 JDK=25
+# The element-list of its documentation, committed beside this script, so that
+# building the documentation does not depend on docs.oracle.com being reachable:
+# with -Werror, javadoc fails when it cannot fetch it. Copied from the JDK's
+# docs/api/element-list; the links still go to docs.oracle.com.
+JDK_ELEMENT_LIST_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/jdk-$JDK
 
 die() {
     printf 'error: %s\n' "$*" >&2
@@ -47,6 +52,7 @@ for descriptor in "$checkout"/*/src/main/java/module-info.java; do
     source_paths+=(--module-source-path "$name=$path")
 done
 [[ ${#modules[@]} -gt 0 ]] || die "No module in $checkout."
+[[ -f $JDK_ELEMENT_LIST_DIR/element-list ]] || die "No $JDK_ELEMENT_LIST_DIR/element-list."
 
 # The third-party modules the gaia modules require, from each module's compile
 # class path. The gaia modules themselves come from their sources: compiling
@@ -67,6 +73,6 @@ javadoc -d "$output" -quiet -notimestamp -Werror -Xdoclint:all,-missing \
     "${source_paths[@]}" \
     --module "$(IFS=,; echo "${modules[*]}")" \
     ${module_path:+--module-path "$module_path"} \
-    -link "https://docs.oracle.com/en/java/javase/$JDK/docs/api/" \
+    -linkoffline "https://docs.oracle.com/en/java/javase/$JDK/docs/api/" "$JDK_ELEMENT_LIST_DIR" \
     -doctitle "Gaia $version API" \
     -windowtitle "Gaia $version API"
