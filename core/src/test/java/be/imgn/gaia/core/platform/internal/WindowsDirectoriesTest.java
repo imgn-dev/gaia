@@ -47,6 +47,34 @@ class WindowsDirectoriesTest {
     }
 
     @Test
+    void ignoresVariablesThatAreNotAbsolutePaths() {
+        WindowsDirectories directories = new WindowsDirectories(
+                FileSystems.getDefault(),
+                USER_HOME.toString(),
+                Environment.of(Map.of(
+                        "APPDATA", ".",
+                        "LOCALAPPDATA", "D:AppData\\Local",
+                        "ProgramData", "\\ProgramData",
+                        "SystemDrive", ".")));
+
+        assertThat(directories.configHome())
+                .isEqualTo(USER_HOME.resolve("AppData").resolve("Roaming"));
+        assertThat(directories.cacheHome())
+                .isEqualTo(USER_HOME.resolve("AppData").resolve("Local"));
+        assertThat(directories.dataDirs()).containsExactly(Path.of("C:\\ProgramData"));
+    }
+
+    @Test
+    void acceptsNetworkPaths() {
+        WindowsDirectories directories = new WindowsDirectories(
+                FileSystems.getDefault(),
+                USER_HOME.toString(),
+                Environment.of(Map.of("APPDATA", "\\\\server\\profiles\\alice")));
+
+        assertThat(directories.configHome()).isEqualTo(Path.of("\\\\server\\profiles\\alice"));
+    }
+
+    @Test
     void defaultsTheSystemDriveToC() {
         assertThat(new WindowsDirectories(FileSystems.getDefault(), USER_HOME.toString(), Environment.of(Map.of()))
                         .configDirs())
