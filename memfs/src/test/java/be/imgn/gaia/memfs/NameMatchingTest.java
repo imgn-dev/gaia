@@ -71,6 +71,17 @@ class NameMatchingTest {
     }
 
     @Test
+    void foldsTheCaseOfEachLetterAlone() throws IOException {
+        try (FileSystem windows = MemoryFileSystems.newFileSystem(Configuration.windows())) {
+            Files.createFile(windows.getPath("stra\u00dfe"));
+
+            assertThat(Files.exists(windows.getPath("STRA\u00dfE"))).isTrue();
+            assertThat(Files.exists(windows.getPath("strasse"))).isFalse();
+            assertThat(Files.exists(windows.getPath("\ufb01le"))).isFalse();
+        }
+    }
+
+    @Test
     void matchesNamesUnderANormalization() throws IOException {
         try (FileSystem macOS = MemoryFileSystems.newFileSystem(Configuration.macOS())) {
             Files.writeString(macOS.getPath(COMPOSED), "content");
