@@ -8,6 +8,7 @@ import be.imgn.gaia.processing.MoreTypes;
 import be.imgn.gaia.processing.ProcessingContext;
 import be.imgn.gaia.processing.Step;
 import be.imgn.gaia.processing.Visibility;
+import be.imgn.gaia.processing.source.Annotation;
 import be.imgn.gaia.processing.source.ClassName;
 import be.imgn.gaia.processing.source.JavaFile;
 import be.imgn.gaia.processing.source.Method;
@@ -148,6 +149,11 @@ final class SubscribeStep implements Step {
             }
         }
         var index = Type.newClassBuilder(name)
+                // Public for ServiceLoader alone: in an exported package, javac would otherwise warn that its supertype
+                // comes from a module the listener's module does not require transitively.
+                .addAnnotation(Annotation.newBuilder(SuppressWarnings.class)
+                        .addMember("value", "$S", "exports")
+                        .build())
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addSuperinterface(SUBSCRIBER_INDEX)
                 .addMethod(Method.newBuilder("listenerType")

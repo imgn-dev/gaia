@@ -90,6 +90,7 @@ class SubscribeProcessorTest {
                 import be.imgn.gaia.core.event.spi.SubscriberIndex;
                 import javax.annotation.processing.Generated;
 
+                @SuppressWarnings("exports")
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
                 public final class $Listener$$Subscribers implements SubscriberIndex {
                     public $Listener$$Subscribers() {
@@ -145,6 +146,29 @@ class SubscribeProcessorTest {
         assertThat(compilation)
                 .generatedSourceFile("example.$Listener$$Subscribers")
                 .isNotEmpty();
+    }
+
+    @Test
+    void generatesAnIndexThatCompilesCleanlyInAnExportedPackage() {
+        var compilation =
+                compile(TestCompiler.source("module-info", """
+                        module example {
+                            requires be.imgn.gaia.core;
+
+                            exports example;
+                        }
+                        """), TestCompiler.source("example.Listener", """
+                        package example;
+
+                        import be.imgn.gaia.core.event.Subscribe;
+
+                        class Listener {
+                            @Subscribe
+                            void onText(String text) {}
+                        }
+                        """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
     }
 
     @Test
@@ -419,6 +443,7 @@ class SubscribeProcessorTest {
                 import example.queue.QueueExecutor;
                 import javax.annotation.processing.Generated;
 
+                @SuppressWarnings("exports")
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
                 public final class $Listener$$Subscribers implements SubscriberIndex {
                     public $Listener$$Subscribers() {
