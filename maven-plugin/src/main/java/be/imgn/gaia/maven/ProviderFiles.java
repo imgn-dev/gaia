@@ -23,14 +23,14 @@ final class ProviderFiles {
     private ProviderFiles() {}
 
     /**
-     * Returns the providers of services, by service name. A service with no file is left out; a file that lists no
-     * provider gives an empty list, so that a directive written from an earlier version of the file can be removed.
+     * Returns the providers of services, by service name. A file that lists no provider gives an empty list, so that a
+     * directive written from an earlier version of the file can be removed.
      *
      * @param classes the directory of compiled classes
      * @param services the names of the services to read, or an empty list to read every file in the directory
      * @return the providers of each service in the order they are listed, without duplicates, sorted by service
-     * @throws MojoExecutionException if a name is not a binary class name, or if a provider is not a class in
-     *     {@code classes}
+     * @throws MojoExecutionException if a name is not a binary class name, if a given service has no file, or if a
+     *     provider is not a class in {@code classes}
      */
     static SortedMap<String, List<String>> read(Path classes, List<String> services)
             throws IOException, MojoExecutionException {
@@ -39,9 +39,12 @@ final class ProviderFiles {
         for (var service : services.isEmpty() ? list(directory) : services) {
             checkName(service, "Not a service name: " + service);
             var file = directory.resolve(service);
-            if (Files.isRegularFile(file)) {
-                providers.put(service, providers(classes, file));
+            // Only a given service can lack its file, and then its name is most likely misspelled.
+            if (!Files.isRegularFile(file)) {
+                throw new MojoExecutionException(
+                        "The service " + service + " listed in <services> has no file " + file);
             }
+            providers.put(service, providers(classes, file));
         }
         return providers;
     }

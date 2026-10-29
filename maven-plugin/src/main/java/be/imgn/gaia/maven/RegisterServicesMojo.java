@@ -41,7 +41,7 @@ public final class RegisterServicesMojo extends AbstractMojo {
 
     /**
      * The binary names of the services to register, such as {@code com.example.Plugin}. By default, every file in
-     * {@code META-INF/services} is registered.
+     * {@code META-INF/services} is registered. Each service listed must have its file, or the build fails.
      */
     @Parameter
     private List<String> services = new ArrayList<>();

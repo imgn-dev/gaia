@@ -70,18 +70,25 @@ class ProviderFilesTest {
     }
 
     @Test
-    void leavesOutServicesWithoutAFile() throws Exception {
+    void rejectsAGivenServiceWithoutAFile() throws Exception {
         classes("p/A");
         service("p.Service", "p.A");
 
-        assertThat(ProviderFiles.read(classes, List.of("p.Service", "p.Missing")))
-                .containsExactly(entry("p.Service", List.of("p.A")));
+        assertThatExceptionOfType(MojoExecutionException.class)
+                .isThrownBy(() -> ProviderFiles.read(classes, List.of("p.Service", "p.Missing")))
+                .withMessage("The service p.Missing listed in <services> has no file %s", serviceFile("p.Missing"));
     }
 
     @Test
     void readsNothingWithoutTheDirectory() throws Exception {
         assertThat(ProviderFiles.read(classes, List.of())).isEmpty();
-        assertThat(ProviderFiles.read(classes, List.of("p.Service"))).isEmpty();
+    }
+
+    @Test
+    void rejectsAGivenServiceWithoutTheDirectory() {
+        assertThatExceptionOfType(MojoExecutionException.class)
+                .isThrownBy(() -> ProviderFiles.read(classes, List.of("p.Service")))
+                .withMessage("The service p.Service listed in <services> has no file %s", serviceFile("p.Service"));
     }
 
     @ParameterizedTest

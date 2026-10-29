@@ -49,7 +49,8 @@ A processor built on [`gaia-processing`](processing.md#service-files) that relie
 | `services`         |                              | every file in `META-INF/services`   | The binary names of the services to register    |
 | `skip`             | `gaia.registerServices.skip` | `false`                             | Whether to skip the goal                        |
 
-To register only some services:
+To register only some services, list them. A listed service without a file in `META-INF/services` fails the build,
+as a misspelled name would otherwise be ignored:
 
 ```xml
 <configuration>
