@@ -10,10 +10,13 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -141,7 +144,9 @@ public final class EventBus {
      * extends, through the code {@code gaia-processor} generated for each of these classes. That code is found with
      * {@link ServiceLoader}, from the class loader of each class, or from its module layer if it is in a named module:
      * such a module declares the generated classes with {@code provides}, as the {@code register-services} goal of
-     * {@code gaia-maven-plugin} adds.
+     * {@code gaia-maven-plugin} adds. A provider that cannot be loaded or instantiated, such as a class still listed in
+     * {@code META-INF/services} after it was deleted, is skipped and logged at {@link Level#WARNING} with
+     * {@link System.Logger}.
      *
      * <p>The methods with a {@linkplain SubscribingAnnotation subscribing annotation} are subscribed too. The first
      * time the bus registers such a method, it creates the executor the annotation names, unless it was
@@ -327,10 +332,40 @@ public final class EventBus {
         var loader = module.isNamed() && layer != null
                 ? ServiceLoader.load(layer, SubscriberIndex.class)
                 : ServiceLoader.load(SubscriberIndex.class, type.getClassLoader());
-        return loader.stream()
-                .map(ServiceLoader.Provider::get)
-                .filter(index -> index.listenerType() == type)
-                .findFirst();
+        // The iterator, unlike the stream, goes on to the next provider after one fails to load: a stale entry in
+        // META-INF/services must not hide the indexes listed after it.
+        return find(loader.iterator(), type);
+    }
+
+    /** Returns the index of a class among providers, skipping those that fail to load. */
+    private static Optional<SubscriberIndex> find(Iterator<SubscriberIndex> providers, Class<?> type) {
+        String previousFailure = null;
+        while (true) {
+            SubscriberIndex index;
+            try {
+                if (!providers.hasNext()) {
+                    return Optional.empty();
+                }
+                index = providers.next();
+            } catch (ServiceConfigurationError error) {
+                // An iterator that cannot get past an error, such as one locating the configuration files, throws it
+                // again and again.
+                if (Objects.equals(error.getMessage(), previousFailure)) {
+                    throw error;
+                }
+                previousFailure = error.getMessage();
+                LOGGER.log(
+                        Level.WARNING,
+                        () -> "Skipped a subscriber index that could not be loaded, looking for that of "
+                                + type.getName(),
+                        error);
+                continue;
+            }
+            if (index.listenerType() == type) {
+                return Optional.of(index);
+            }
+            previousFailure = null;
+        }
     }
 
     /** Builds an {@link EventBus}. */
