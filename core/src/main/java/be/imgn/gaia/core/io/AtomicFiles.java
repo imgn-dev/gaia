@@ -23,6 +23,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.EnumSet;
@@ -48,6 +49,8 @@ import org.jspecify.annotations.Nullable;
  *       {@link java.nio.file.AccessDeniedException}.
  *   <li>A file system that cannot move a file atomically within a directory makes every write fail with an
  *       {@link AtomicMoveNotSupportedException}, rather than replace the file in a way that is not atomic.
+ *   <li>In a directory that other users can write to and that has no sticky bit, they can rename the temporary file and
+ *       put another one in its place before it is moved. Write only to directories other users cannot change.
  * </ul>
  *
  * <pre>{@code
@@ -204,12 +207,17 @@ public final class AtomicFiles {
     }
 
     // Gives back the permissions the umask removed at creation, and removes the reading added then, without following
-    // a link.
+    // a link. Some JDKs follow one all the same, so a link put in place of the file is refused first.
     private static void restorePermissions(Path temporary, @Nullable Set<PosixFilePermission> permissions)
             throws IOException {
-        if (permissions != null
-                && !Files.getPosixFilePermissions(temporary, LinkOption.NOFOLLOW_LINKS)
-                        .equals(permissions)) {
+        if (permissions == null) {
+            return;
+        }
+        var attributes = Files.readAttributes(temporary, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+        if (!attributes.isRegularFile()) {
+            throw new FileSystemException(temporary.toString(), null, "Replaced while being written");
+        }
+        if (!attributes.permissions().equals(permissions)) {
             Files.setAttribute(temporary, "posix:permissions", permissions, LinkOption.NOFOLLOW_LINKS);
         }
     }
