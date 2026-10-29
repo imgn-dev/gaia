@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.ProviderMismatchException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -244,6 +245,14 @@ class PathTest {
             assertThat(path("C:\\Foo\\Bar").endsWith("bar")).isTrue();
             assertThat(path("C:\\a").compareTo(path("c:\\A"))).isZero();
             assertThat(path("C:\\a\\b").relativize(path("c:\\A\\c"))).hasToString("..\\c");
+        }
+
+        @Test
+        void hashesAsItCompares() {
+            // The long s and the dotted capital I match "s" and "i" letter by letter, not as whole strings.
+            assertThat(path("C:\\\u017f")).isEqualTo(path("C:\\s")).hasSameHashCodeAs(path("C:\\s"));
+            assertThat(path("C:\\\u0130")).isEqualTo(path("C:\\i")).hasSameHashCodeAs(path("C:\\i"));
+            assertThat(Set.of(path("C:\\\u017f"))).contains(path("c:\\S"));
         }
 
         @Test

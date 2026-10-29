@@ -13,7 +13,6 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -243,9 +242,14 @@ public final class MemoryPath implements Path {
 
     @Override
     public int hashCode() {
-        return ignoresCase()
-                ? toString().toLowerCase(Locale.ROOT).hashCode()
-                : toString().hashCode();
+        if (!ignoresCase()) {
+            return toString().hashCode();
+        }
+        // Folds each letter as compareToIgnoreCase compares it, so that paths that are equal hash the same.
+        return toString()
+                .codePoints()
+                .map(c -> Character.toLowerCase(Character.toUpperCase(c)))
+                .reduce(0, (hash, c) -> 31 * hash + c);
     }
 
     @Override
