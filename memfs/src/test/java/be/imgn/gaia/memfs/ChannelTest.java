@@ -27,7 +27,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -243,6 +245,41 @@ class ChannelTest {
             try (FileChannel again = FileChannel.open(file, StandardOpenOption.WRITE)) {
                 assertThat(again.tryLock()).isNotNull();
             }
+        }
+
+        @Test
+        void locksWhileOtherChannelsCloseOnOtherThreads() throws Exception {
+            // A deadlock would also block closing its channels, so they get a file system of their own.
+            FileSystem isolated = MemoryFileSystems.newFileSystem();
+            Path shared = Files.createFile(isolated.getPath("shared"));
+            ExecutorService executor =
+                    Executors.newFixedThreadPool(2, Thread.ofPlatform().daemon().factory());
+            try {
+                Future<?> closing = executor.submit(() -> {
+                    for (int i = 0; i < 5_000; i++) {
+                        try (FileChannel channel = FileChannel.open(shared, StandardOpenOption.WRITE)) {
+                            for (int position = 0; position < 10; position++) {
+                                channel.lock(position, 1, false);
+                            }
+                        }
+                    }
+                    return null;
+                });
+                Future<?> locking = executor.submit(() -> {
+                    try (FileChannel channel = FileChannel.open(shared, StandardOpenOption.WRITE)) {
+                        for (int i = 0; i < 50_000; i++) {
+                            channel.lock(100, 1, false).release();
+                        }
+                    }
+                    return null;
+                });
+
+                closing.get(10, TimeUnit.SECONDS);
+                locking.get(10, TimeUnit.SECONDS);
+            } finally {
+                executor.shutdown();
+            }
+            isolated.close();
         }
 
         @Test
