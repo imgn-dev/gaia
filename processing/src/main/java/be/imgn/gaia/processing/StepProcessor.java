@@ -45,7 +45,7 @@ import org.jspecify.annotations.Nullable;
  * resolves it. So is an element a step gives back, which must be one the step gets: an element a step would not get
  * again is reported as an error instead. An element still held back after the last round is reported as an error, with
  * the type that blocked it, unless only its being a root element held it back: javac reports its unresolved type
- * itself. Then each step {@linkplain Step#processingOver() finishes}, and the processor writes the service files its
+ * itself. None is reported once the compilation has errors, which end the rounds early. Then each step {@linkplain Step#processingOver() finishes}, and the processor writes the service files its
  * steps registered with {@link ProcessingContext#services()}, whatever errors were reported.
  *
  * <p>A {@link ProcessingException} that escapes a step is reported as an error, at the place it names, and the
@@ -183,7 +183,9 @@ public abstract class StepProcessor extends AbstractProcessor {
             log.roundStarted(current.diagnostics().errorCount());
         }
         if (roundEnv.processingOver()) {
-            int stillDeferred = reportDeferred(current);
+            // After an error, javac skips the rounds left: an element still waiting for another processor's code is
+            // no error of its own, and reporting it would hide the error that stopped the rounds.
+            int stillDeferred = roundEnv.errorRaised() ? 0 : reportDeferred(current);
             for (int index = 0; index < steps.size(); index++) {
                 finishStep(current, index);
             }

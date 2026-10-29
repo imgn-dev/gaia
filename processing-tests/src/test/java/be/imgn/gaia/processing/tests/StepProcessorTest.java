@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
@@ -195,6 +196,39 @@ class StepProcessorTest {
         assertThat(compilation)
                 .failed()
                 .hadErrorContaining("Could not process example.Marked: it was still deferred after the last round");
+    }
+
+    @Test
+    void reportsNoDeferredElementOnTopOfAnError() {
+        Recorder recorder = new Recorder(elements -> elements);
+        AbstractProcessor failing = new AbstractProcessor() {
+            @Override
+            public Set<String> getSupportedAnnotationTypes() {
+                return Set.of("*");
+            }
+
+            @Override
+            public SourceVersion getSupportedSourceVersion() {
+                return SourceVersion.latestSupported();
+            }
+
+            @Override
+            public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
+                if (!round.processingOver()) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "the real error");
+                }
+                return false;
+            }
+        };
+        Compilation compilation = javac().withProcessors(new TestProcessor(recorder), failing)
+                .compile(ANNOTATIONS, source("example.Marked", """
+                        package example;
+
+                        @Mark
+                        class Marked {}
+                        """));
+
+        assertThat(compilation).failed().hadErrorCount(1).hadErrorContaining("the real error");
     }
 
     @Test
