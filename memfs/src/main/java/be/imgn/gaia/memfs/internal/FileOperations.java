@@ -128,6 +128,11 @@ final class FileOperations {
     private RegularFile openFile(
             @Nullable Directory base, MemoryPath path, Options.Open open, List<FileAttribute<?>> attributes)
             throws IOException {
+        boolean createsNew = open.has(StandardOpenOption.WRITE) && open.has(StandardOpenOption.CREATE_NEW);
+        // As with O_EXCL, a link in the place of the new file is never followed.
+        if (createsNew && open.followLinks() && tree.lookup(base, path, false).node() != null) {
+            throw new FileAlreadyExistsException(path.toString());
+        }
         FileTree.Lookup lookup = tree.lookup(base, path, open.followLinks());
         Node node = lookup.node();
         if (node == null) {
@@ -138,7 +143,7 @@ final class FileOperations {
             create(lookup, path, file, attributes);
             return file;
         }
-        if (open.has(StandardOpenOption.WRITE) && open.has(StandardOpenOption.CREATE_NEW)) {
+        if (createsNew) {
             throw new FileAlreadyExistsException(path.toString());
         }
         RegularFile file = regularFile(node, path);
@@ -169,6 +174,11 @@ final class FileOperations {
     private void create(FileTree.Lookup lookup, MemoryPath path, Node node, List<FileAttribute<?>> attributes)
             throws IOException {
         Directory parent = lookup.parent();
+        if (parent.links() == 0 && !parent.isRoot()) {
+            // A deleted directory, which a working directory or a directory stream can still reach: as on Linux,
+            // nothing can be created in it.
+            throw new NoSuchFileException(path.toString());
+        }
         fileSystem.access().check(parent, path, AccessMode.WRITE, AccessMode.EXECUTE);
         checkName(lookup.name(), path);
         fileSystem.attributes().initialize(node, attributes);

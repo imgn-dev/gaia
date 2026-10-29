@@ -179,6 +179,18 @@ class DirectoryStreamTest {
         }
 
         @Test
+        void createsNothingInItsDirectoryOnceDeleted() throws IOException {
+            try (SecureDirectoryStream<Path> stream = secure(path("dir/sub"))) {
+                Files.delete(path("dir/sub"));
+
+                assertThatExceptionOfType(NoSuchFileException.class)
+                        .isThrownBy(() -> stream.newByteChannel(
+                                        path("x"), Set.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE))
+                                .close());
+            }
+        }
+
+        @Test
         void worksRelativeToItsDirectoryWhereverItMoves() throws IOException {
             try (SecureDirectoryStream<Path> stream = secure(path("dir"))) {
                 Files.move(path("dir"), path("/elsewhere"));

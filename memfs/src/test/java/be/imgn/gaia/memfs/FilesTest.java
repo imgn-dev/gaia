@@ -608,6 +608,17 @@ class FilesTest {
         }
 
         @Test
+        void refusesToCreateANewFileThroughALink() throws IOException {
+            Files.createSymbolicLink(path("dangling"), path("missing"));
+
+            assertThatExceptionOfType(FileAlreadyExistsException.class)
+                    .isThrownBy(() -> Files.newByteChannel(
+                                    path("dangling"), StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
+                            .close());
+            assertThat(Files.exists(path("missing"), LinkOption.NOFOLLOW_LINKS)).isFalse();
+        }
+
+        @Test
         void refusesWhatIsNotALink() throws IOException {
             Files.createFile(path("file"));
             Files.createSymbolicLink(path("link"), path("file"));
