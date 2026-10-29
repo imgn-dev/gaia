@@ -1,5 +1,6 @@
 package be.imgn.gaia.core.collect;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
@@ -54,13 +55,19 @@ public final class Multisets {
      * @param <E> the element type
      * @param elements the elements to copy
      * @return a multiset containing {@code elements}
-     * @throws IllegalArgumentException if an element occurs more than {@link Integer#MAX_VALUE} times
+     * @throws IllegalArgumentException if an element occurs more than {@link Integer#MAX_VALUE} times, or if
+     *     {@code elements} is a multiset that reports a count that is not positive
      */
     public static <E> Multiset<E> multisetCopy(Collection<? extends E> elements) {
         requireNonNull(elements, "elements");
         var builder = new ImmutableOrderedMultiset.Builder<E>();
         if (elements instanceof Multiset<? extends E> multiset) {
-            multiset.forEachEntry(builder::add);
+            // Another implementation could break the Multiset contract: the copy must not inherit its flaws.
+            multiset.forEachEntry((element, count) -> {
+                requireNonNull(element, "elements contains null");
+                checkArgument(count > 0, "elements has a count that is not positive: %s=%s", element, count);
+                builder.add(element, count);
+            });
         } else {
             for (E element : elements) {
                 builder.add(requireNonNull(element, "elements contains null"), 1);

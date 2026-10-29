@@ -2,6 +2,7 @@ package be.imgn.gaia.core.collect;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import java.io.ByteArrayInputStream;
@@ -9,10 +10,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.AbstractCollection;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -166,5 +173,80 @@ class MultisetsTest {
         assertThat(copy.spliterator().getExactSizeIfKnown()).isEqualTo(Integer.MAX_VALUE + 5L);
         assertThat(copy.stream().count()).isEqualTo(Integer.MAX_VALUE + 5L);
         assertThat(copy).hasToString("[bar × 5, foo × 2147483647]");
+    }
+
+    @Test
+    void rejectsAMultisetThatReportsANullElement() {
+        var broken = new FixedEntries(Arrays.asList(null, "foo"), 1);
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> Multisets.multisetCopy(broken))
+                .withMessage("elements contains null");
+    }
+
+    @Test
+    void rejectsAMultisetThatReportsACountThatIsNotPositive() {
+        var broken = new FixedEntries(List.of("foo"), 0);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Multisets.multisetCopy(broken))
+                .withMessage("elements has a count that is not positive: foo=0");
+    }
+
+    /** A broken multiset, whose entries are the given elements, each with the given count. */
+    private static final class FixedEntries extends AbstractCollection<String> implements Multiset<String> {
+
+        private final List<String> elements;
+        private final int count;
+
+        FixedEntries(List<String> elements, int count) {
+            this.elements = elements;
+            this.count = count;
+        }
+
+        @Override
+        public void forEachEntry(ObjIntConsumer<? super String> action) {
+            elements.forEach(element -> action.accept(element, count));
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int size() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int count(@Nullable Object element) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int add(String element, int occurrences) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int remove(@Nullable Object element, int occurrences) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int setCount(String element, int count) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Set<String> elementSet() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Set<Entry<String>> entrySet() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
