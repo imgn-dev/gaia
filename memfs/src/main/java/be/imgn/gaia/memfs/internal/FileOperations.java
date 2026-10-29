@@ -32,6 +32,8 @@ import org.jspecify.annotations.Nullable;
  */
 final class FileOperations {
 
+    private static final int COPY_CHUNK = 64 * 1024;
+
     private static final Pattern RESERVED =
             Pattern.compile("(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\\..*)?", Pattern.CASE_INSENSITIVE);
 
@@ -305,10 +307,8 @@ final class FileOperations {
         return switch (node) {
             case RegularFile file -> {
                 fileSystem.access().check(file, source, AccessMode.READ);
-                ByteBuffer content = ByteBuffer.allocate(Math.toIntExact(file.size()));
-                file.read(0, content);
                 file.accessed(fileSystem.now());
-                yield new Snapshot(node, content.array(), null);
+                yield new Snapshot(node, file, null);
             }
             case SymbolicLink link -> new Snapshot(node, null, link.target().toString());
             case Directory directory -> new Snapshot(node, null, null);
@@ -336,11 +336,19 @@ final class FileOperations {
     }
 
     private Node copyOf(Snapshot snapshot, MemoryPath target) throws IOException {
-        byte[] content = snapshot.content();
+        RegularFile content = snapshot.content();
         String linkTarget = snapshot.linkTarget();
         if (content != null) {
             RegularFile file = new RegularFile(fileSystem.nextId(), fileSystem.now(), fileSystem.disk());
-            file.write(0, ByteBuffer.wrap(content), false, target.toString());
+            // A chunk at a time: a file can be larger than an array, and needs no copy of it on the heap.
+            ByteBuffer chunk = ByteBuffer.allocate(COPY_CHUNK);
+            long position = 0;
+            int read;
+            while ((read = content.read(position, chunk)) > 0) {
+                file.write(position, chunk.flip(), false, target.toString());
+                chunk.clear();
+                position += read;
+            }
             return file;
         }
         if (linkTarget != null) {
@@ -354,8 +362,13 @@ final class FileOperations {
         if (!replace) {
             throw new FileAlreadyExistsException(target.toString());
         }
-        if (existing instanceof Directory directory && !directory.isEmpty()) {
-            throw new DirectoryNotEmptyException(target.toString());
+        if (existing instanceof Directory directory) {
+            if (directory.isRoot()) {
+                throw new FileSystemException(target.toString(), null, "Cannot replace a root directory");
+            }
+            if (!directory.isEmpty()) {
+                throw new DirectoryNotEmptyException(target.toString());
+            }
         }
         fileSystem.access().check(lookup.parent(), target, AccessMode.WRITE, AccessMode.EXECUTE);
         unlink(lookup.parent(), lookup.name());
@@ -500,14 +513,14 @@ final class FileOperations {
         T call() throws IOException;
     }
 
-    /** What a copy takes from its source: the content of a regular file, or the target of a symbolic link. */
+    /** What a copy takes from its source: a regular file to read the content of, or the target of a symbolic link. */
     private static final class Snapshot {
 
         private final Node node;
-        private final byte @Nullable [] content;
+        private final @Nullable RegularFile content;
         private final @Nullable String linkTarget;
 
-        Snapshot(Node node, byte @Nullable [] content, @Nullable String linkTarget) {
+        Snapshot(Node node, @Nullable RegularFile content, @Nullable String linkTarget) {
             this.node = node;
             this.content = content;
             this.linkTarget = linkTarget;
@@ -517,7 +530,8 @@ final class FileOperations {
             return node;
         }
 
-        byte @Nullable [] content() {
+        @Nullable
+        RegularFile content() {
             return content;
         }
 

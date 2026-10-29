@@ -507,6 +507,26 @@ class FilesTest {
         }
 
         @Test
+        void refusesToReplaceARoot() throws IOException {
+            try (FileSystem windows = MemoryFileSystems.newFileSystem(
+                    Configuration.windows().toBuilder().roots("C:\\", "D:\\").build())) {
+                Path file = windows.getPath("file.txt");
+                Files.writeString(file, "x");
+                Path root = windows.getPath("D:\\");
+
+                assertThatExceptionOfType(FileSystemException.class)
+                        .isThrownBy(() -> Files.copy(file, root, StandardCopyOption.REPLACE_EXISTING))
+                        .withMessageContaining("Cannot replace a root directory");
+                assertThatExceptionOfType(FileSystemException.class)
+                        .isThrownBy(() -> Files.move(file, root, StandardCopyOption.REPLACE_EXISTING))
+                        .withMessageContaining("Cannot replace a root directory");
+                try (var entries = Files.list(root)) {
+                    assertThat(entries).isEmpty();
+                }
+            }
+        }
+
+        @Test
         void renamesWithinTheSameEntryOnCaseInsensitiveFileSystems() throws IOException {
             try (FileSystem windows = MemoryFileSystems.newFileSystem(Configuration.windows())) {
                 Files.writeString(windows.getPath("readme.txt"), "x");
