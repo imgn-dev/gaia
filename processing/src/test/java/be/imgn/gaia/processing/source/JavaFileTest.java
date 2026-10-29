@@ -293,6 +293,23 @@ class JavaFileTest {
         }
 
         @Test
+        void keepsTheEndOfACommentInJavadocTextFromEndingIt() {
+            Type type = Type.newClassBuilder("Top")
+                    .addJavadoc(CodeBlock.of("Matches $S.\n", "*/"))
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    /**
+                     * Matches "*&#47;".
+                     */
+                    class Top {
+                    }
+                    """);
+        }
+
+        @Test
         void writesGenericTypesFoundByReflection() throws NoSuchMethodException {
             Type type = Type.newClassBuilder("Names")
                     .addTypeVariable(TypeVariableName.of("E"))

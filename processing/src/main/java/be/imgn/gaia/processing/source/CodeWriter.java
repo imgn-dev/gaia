@@ -38,6 +38,8 @@ final class CodeWriter {
             Set.of("clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait");
 
     private final StringBuilder out = new StringBuilder();
+    private boolean inJavadoc;
+    private char previous;
     private final LineWrapper wrapper = new LineWrapper(out, COLUMN_LIMIT);
     private final String indentUnit;
     private final Map<String, ClassName> visible;
@@ -734,8 +736,10 @@ final class CodeWriter {
         if (!javadoc.isEmpty()) {
             emit("/**\n");
             linePrefix = " * ";
+            inJavadoc = true;
             emitCode(javadoc);
             endLine();
+            inJavadoc = false;
             linePrefix = "";
             emit(" */\n");
         }
@@ -1001,8 +1005,14 @@ final class CodeWriter {
                     line.append(indentUnit.repeat(indentLevel + continuation())).append(linePrefix);
                     lineStart = false;
                 }
-                line.append(c);
+                // "*/" in the text of a Javadoc comment would end it: its slash is written as an HTML entity.
+                if (inJavadoc && c == '/' && previous == '*') {
+                    line.append("&#47;");
+                } else {
+                    line.append(c);
+                }
             }
+            previous = c;
         }
         wrapper.append(line);
     }
