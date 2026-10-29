@@ -15,11 +15,12 @@
 # Nothing becomes public until you press Publish in the Central portal:
 # autoPublish is false in be.imgn.parent:parent.
 #
-# Credentials are prompted for and never written to disk. They live only in the
-# environment of the Maven process; scripts/release-settings.xml reads the
-# Central token from it, and maven-gpg-plugin reads MAVEN_GPG_PASSPHRASE. Set
-# CENTRAL_TOKEN_USERNAME, CENTRAL_TOKEN_PASSWORD and MAVEN_GPG_PASSPHRASE
-# beforehand to skip the prompts.
+# Credentials are prompted for and never written to disk. They are passed only
+# to the Maven process that deploys, never to the build and tests before it;
+# scripts/release-settings.xml reads the Central token from its environment, and
+# maven-gpg-plugin reads MAVEN_GPG_PASSPHRASE. Set CENTRAL_TOKEN_USERNAME,
+# CENTRAL_TOKEN_PASSWORD and MAVEN_GPG_PASSPHRASE beforehand to skip the
+# prompts.
 #
 # Usage:  scripts/release.sh [--dry-run] <releaseVersion> <nextVersion>
 #         scripts/release.sh --dry-run 0.1.0 0.2.0
@@ -117,6 +118,8 @@ credentials() {
     prompt_secret() {
         local name=$1 prompt=$2 value
         if [[ -n ${!name:-} ]]; then
+            # Kept, but no longer exported: only the deployment gets it.
+            export -n "$name"
             ok "$name taken from the environment"
             return
         fi
@@ -124,7 +127,7 @@ credentials() {
         read -r -s -p "  $prompt: " value
         printf '\n'
         [[ -n $value ]] || die "$name cannot be empty."
-        export "$name=$value"
+        printf -v "$name" '%s' "$value"
         ok "$name set for this run"
     }
 
@@ -225,7 +228,7 @@ dry_run_deploy() {
     info 'Deploying as a release does, up to the upload'
     local log status=0 bundle
     log=$(mktemp)
-    CENTRAL_TOKEN_USERNAME=dry-run CENTRAL_TOKEN_PASSWORD=dry-run \
+    CENTRAL_TOKEN_USERNAME=dry-run CENTRAL_TOKEN_PASSWORD=dry-run MAVEN_GPG_PASSPHRASE="$MAVEN_GPG_PASSPHRASE" \
         "${MVN[@]}" -s "$ROOT/scripts/release-settings.xml" -Prelease -DskipTests \
         -Dgpg.keyname="$KEY_ID" -DcentralBaseUrl=http://127.0.0.1:9 deploy 2>&1 \
         | tee "$log" || status=$?
@@ -265,7 +268,9 @@ build() {
     fi
 
     info 'Deploying to the Central portal'
-    "${MVN[@]}" -s "$ROOT/scripts/release-settings.xml" -Prelease -DskipTests \
+    CENTRAL_TOKEN_USERNAME="$CENTRAL_TOKEN_USERNAME" CENTRAL_TOKEN_PASSWORD="$CENTRAL_TOKEN_PASSWORD" \
+        MAVEN_GPG_PASSPHRASE="$MAVEN_GPG_PASSPHRASE" \
+        "${MVN[@]}" -s "$ROOT/scripts/release-settings.xml" -Prelease -DskipTests \
         -Dgpg.keyname="$KEY_ID" deploy
     trap - ERR
     ok 'uploaded; waiting in the portal'
