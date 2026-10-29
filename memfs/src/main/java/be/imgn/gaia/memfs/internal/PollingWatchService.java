@@ -36,6 +36,8 @@ import org.jspecify.annotations.Nullable;
 final class PollingWatchService implements WatchService {
 
     private static final Set<WatchEvent.Kind<?>> KINDS = Set.of(ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
+    // As the JDK: past that many events, a key drops them for one OVERFLOW event.
+    private static final int MAX_EVENTS = 512;
 
     private final MemoryFileSystem fileSystem;
     private final BlockingQueue<Key> signalled = new LinkedBlockingQueue<>();
@@ -180,7 +182,9 @@ final class PollingWatchService implements WatchService {
 
         private final MemoryPath path;
         private final Directory directory;
-        private final List<WatchEvent<?>> events = new ArrayList<>();
+        private final List<Event<?>> events = new ArrayList<>();
+        // The last event of each entry, when it is a modification: later ones only count there.
+        private final Map<Path, Event<?>> lastModifications = new HashMap<>();
         private Set<WatchEvent.Kind<?>> kinds = Set.of();
         private Map<String, Entry> entries = Map.of();
         private boolean valid = true;
@@ -214,11 +218,44 @@ final class PollingWatchService implements WatchService {
             entries = snapshot;
         }
 
+        // Adds an event, as the JDK does: a repeat of the last event, or of the last modification of an entry, is
+        // counted there; past the maximum, the events give way to an OVERFLOW event that counts the next ones.
         private void event(WatchEvent.Kind<Path> kind, String name) {
             if (!kinds.contains(kind)) {
                 return;
             }
-            events.add(new Event(kind, new MemoryPath(fileSystem, null, List.of(name))));
+            Path context = new MemoryPath(fileSystem, null, List.of(name));
+            Event<?> repeated = repeated(kind, context);
+            if (repeated != null) {
+                repeated.increment();
+            } else if (events.size() >= MAX_EVENTS) {
+                events.clear();
+                lastModifications.clear();
+                add(new Event<>(OVERFLOW, null));
+            } else {
+                Event<Path> event = new Event<>(kind, context);
+                if (kind.equals(ENTRY_MODIFY)) {
+                    lastModifications.put(context, event);
+                }
+                add(event);
+            }
+        }
+
+        private @Nullable Event<?> repeated(WatchEvent.Kind<Path> kind, Path context) {
+            Event<?> last = events.isEmpty() ? null : events.getLast();
+            if (last != null
+                    && (last.kind().equals(OVERFLOW) || (last.kind().equals(kind) && context.equals(last.context())))) {
+                return last;
+            }
+            if (!kind.equals(ENTRY_MODIFY)) {
+                // The last event of the entry is no longer a modification.
+                lastModifications.remove(context);
+            }
+            return kind.equals(ENTRY_MODIFY) ? lastModifications.get(context) : null;
+        }
+
+        private void add(Event<?> event) {
+            events.add(event);
             if (ready) {
                 ready = false;
                 signalled.add(this);
@@ -236,6 +273,7 @@ final class PollingWatchService implements WatchService {
         public synchronized List<WatchEvent<?>> pollEvents() {
             List<WatchEvent<?>> polled = List.copyOf(events);
             events.clear();
+            lastModifications.clear();
             return polled;
         }
 
@@ -279,12 +317,38 @@ final class PollingWatchService implements WatchService {
         }
     }
 
-    /** An event: its kind, and the name of the entry it is about. */
-    private record Event(WatchEvent.Kind<Path> kind, Path context) implements WatchEvent<Path> {
+    /**
+     * An event: its kind, the name of the entry it is about, if any, and how many times it happened. Its key counts its
+     * repeats until it is polled, under the monitor of the key.
+     */
+    private static final class Event<T> implements WatchEvent<T> {
+
+        private final WatchEvent.Kind<T> kind;
+        private final @Nullable T context;
+        private int count = 1;
+
+        Event(WatchEvent.Kind<T> kind, @Nullable T context) {
+            this.kind = kind;
+            this.context = context;
+        }
+
+        void increment() {
+            count++;
+        }
+
+        @Override
+        public WatchEvent.Kind<T> kind() {
+            return kind;
+        }
 
         @Override
         public int count() {
-            return 1;
+            return count;
+        }
+
+        @Override
+        public @Nullable T context() {
+            return context;
         }
     }
 }

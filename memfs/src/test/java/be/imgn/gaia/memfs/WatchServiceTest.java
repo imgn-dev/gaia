@@ -93,6 +93,39 @@ class WatchServiceTest {
     }
 
     @Test
+    void countsRepeatedEvents() throws Exception {
+        Files.createDirectory(directory);
+        Path file = Files.createFile(directory.resolve("file"));
+        try (WatchService watcher = fileSystem.newWatchService()) {
+            directory.register(watcher, ENTRY_MODIFY);
+
+            for (int i = 0; i < 3; i++) {
+                Files.writeString(file, "change " + i, StandardOpenOption.APPEND);
+                Thread.sleep(50);
+            }
+            WatchKey key = watcher.poll(5, TimeUnit.SECONDS);
+
+            assertThat(events(key)).containsExactly("ENTRY_MODIFY file x3");
+        }
+    }
+
+    @Test
+    void overflowsPastAMaximumOfEvents() throws Exception {
+        Files.createDirectory(directory);
+        try (WatchService watcher = fileSystem.newWatchService()) {
+            directory.register(watcher, ENTRY_CREATE);
+
+            for (int i = 0; i < 600; i++) {
+                Files.createFile(directory.resolve("file" + i));
+            }
+            WatchKey key = watcher.poll(5, TimeUnit.SECONDS);
+            Thread.sleep(50);
+
+            assertThat(events(key)).containsExactly("OVERFLOW null x88");
+        }
+    }
+
+    @Test
     void signalsAgainAfterAResetWithPendingEvents() throws Exception {
         Files.createDirectory(directory);
         try (WatchService watcher = fileSystem.newWatchService()) {
