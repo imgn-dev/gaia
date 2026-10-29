@@ -125,6 +125,34 @@ class SiteGeneratorTest {
     }
 
     @Test
+    void reportsRawHtml() throws IOException {
+        page("index.md", """
+                # Gaia
+
+                <div class="note">
+                Raw.
+                </div>
+
+                Some <b>bold</b> text.
+
+                ```html
+                <div>In a code block.</div>
+                ```
+
+                In code: `<b>`.
+                """);
+        pages("index.md");
+
+        assertThatIllegalStateException()
+                .isThrownBy(() -> SiteGenerator.generate(markdown, theme, output))
+                .withMessage("""
+                        The guide has problems:
+                          index.md: HTML is not supported: <div class="note">
+                          index.md: HTML is not supported: <b>
+                          index.md: HTML is not supported: </b>""");
+    }
+
+    @Test
     void requiresAHomePage() throws IOException {
         page("core.md", "# Core");
         pages("core.md");
