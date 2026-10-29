@@ -44,11 +44,6 @@ on:
 # Nothing by default: each job asks for what it needs.
 permissions: {}
 
-# Two runs must never push to gh-pages at the same time.
-concurrency:
-  group: docs
-  cancel-in-progress: false
-
 env:
   VERSION: ${{ inputs.version }}
   # A call from the release workflow always publishes, and never replaces.
@@ -150,6 +145,13 @@ jobs:
     needs: build
     if: needs.build.outputs.skip != 'true'
     runs-on: ubuntu-latest
+    # A pending snapshot gives way to a newer one, as GitHub keeps one pending
+    # run per group. Any other run, a release's among them, has a group of its
+    # own so that it is never cancelled; the push below rebases on a run that
+    # pushed meanwhile.
+    concurrency:
+      group: ${{ github.event_name == 'push' && 'docs-snapshot' || format('docs-{0}', github.run_id) }}
+      cancel-in-progress: false
     permissions:
       contents: write
     env:
@@ -216,4 +218,12 @@ jobs:
           snapshot) git commit -m "docs: publish the API of $SNAPSHOT_VERSION ($SNAPSHOT_COMMIT)" ;;
           remove)  git commit -m "docs: remove the API of $VERSION" ;;
           esac
+          # Another run may have pushed meanwhile: runs mostly publish different
+          # directories, so its commit is rebased on; a conflict fails the step.
+          for attempt in 1 2 3; do
+            if git push origin gh-pages; then
+              exit 0
+            fi
+            git pull --rebase origin gh-pages
+          done
           git push origin gh-pages
