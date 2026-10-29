@@ -226,8 +226,8 @@ public final class TestCompiler {
      *     its message
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
-     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted; a failure to
-     *     delete them while another exception is thrown is added to that exception as a suppressed one
+     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted; a failure to delete
+     *     them while another exception is thrown is added to that exception as a suppressed one
      */
     public Compilation compile(JavaFileObject... sources) {
         requireNonNull(sources, "sources");
@@ -252,8 +252,8 @@ public final class TestCompiler {
      *     its message
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
-     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted; a failure to
-     *     delete them while another exception is thrown is added to that exception as a suppressed one
+     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted; a failure to delete
+     *     them while another exception is thrown is added to that exception as a suppressed one
      */
     public Compilation compile(List<? extends JavaFileObject> sources) {
         List<JavaFileObject> units = Checks.copyOfNonNull(sources, "sources");

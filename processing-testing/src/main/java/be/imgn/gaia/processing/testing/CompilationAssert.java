@@ -129,19 +129,31 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
     }
 
     /**
-     * Verifies that javac reported no warning, mandatory or not.
+     * Verifies that javac reported no warning, mandatory or not. That includes the notes javac reports instead of the
+     * deprecation, removal and unchecked warnings it is not asked for, such as "Foo.java uses or overrides a deprecated
+     * API".
      *
      * @return these assertions
      */
     public CompilationAssert hadNoWarnings() {
         isNotNull();
         if (!actual.diagnostics(Diagnostic.Kind.WARNING).isEmpty()
-                || !actual.diagnostics(Diagnostic.Kind.MANDATORY_WARNING).isEmpty()) {
+                || !actual.diagnostics(Diagnostic.Kind.MANDATORY_WARNING).isEmpty()
+                || actual.diagnostics(Diagnostic.Kind.NOTE).stream().anyMatch(CompilationAssert::standsForWarnings)) {
             failWithMessage(
                     "Expected no warning, but the diagnostics were:%n%s",
                     DiagnosticAssert.describe(actual.diagnostics()));
         }
         return this;
+    }
+
+    // The notes that sum up the deprecation, removal and unchecked warnings javac was not asked to report one by one.
+    private static boolean standsForWarnings(Diagnostic<?> note) {
+        String code = note.getCode();
+        return code != null
+                && (code.startsWith("compiler.note.deprecated.")
+                        || code.startsWith("compiler.note.removal.")
+                        || code.startsWith("compiler.note.unchecked."));
     }
 
     /**

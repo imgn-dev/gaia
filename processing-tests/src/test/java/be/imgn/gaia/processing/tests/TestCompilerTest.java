@@ -115,6 +115,31 @@ class TestCompilerTest {
     }
 
     @Test
+    void countsTheNotesThatStandForWarningsAsWarnings() {
+        Compilation compilation = javac().compile(source("example.Old", """
+                        package example;
+
+                        public class Old {
+                            @Deprecated
+                            public static void run() {}
+                        }
+                        """), source("example.Caller", """
+                        package example;
+
+                        class Caller {
+                            void call() {
+                                Old.run();
+                            }
+                        }
+                        """));
+
+        assertThat(compilation).succeeded();
+        assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat(compilation).hadNoWarnings())
+                .withMessageContaining("deprecated API");
+    }
+
+    @Test
     void listsTheDiagnosticsWhenAnAssertionFails() {
         Compilation compilation = javac().compile(BROKEN);
 
