@@ -32,6 +32,8 @@ final class CodeWriter {
     private static final Set<Modifier> INTERFACE_METHOD = EnumSet.of(Modifier.PUBLIC, Modifier.ABSTRACT);
     private static final Set<Modifier> INTERFACE_FIELD = EnumSet.of(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
     private static final Set<Modifier> BODY_MODIFIERS = EnumSet.of(Modifier.DEFAULT, Modifier.STATIC, Modifier.PRIVATE);
+    private static final Method PUBLIC_CONSTRUCTOR =
+            Method.newConstructorBuilder().addModifiers(Modifier.PUBLIC).build();
 
     private final StringBuilder out = new StringBuilder();
     private final LineWrapper wrapper = new LineWrapper(out, COLUMN_LIMIT);
@@ -668,7 +670,12 @@ final class CodeWriter {
         emitSupertypes(type);
         scopes.pop();
         emit(" {\n");
-        emitMembers(type, className);
+        // javac's missing-explicit-ctor lint, part of -Xlint:all, warns about a public class of an exported package
+        // that relies on the default constructor.
+        boolean explicitConstructor = type.kind() == Type.Kind.CLASS
+                && (type.modifiers().contains(Modifier.PUBLIC) || implicit.contains(Modifier.PUBLIC))
+                && type.methods().stream().noneMatch(Method::isConstructor);
+        emitMembers(type, className, explicitConstructor);
         emit("}\n");
     }
 
@@ -707,18 +714,18 @@ final class CodeWriter {
         statementDepth = 0;
         statementLine = -1;
         extraIndent = 0;
-        emitMembers(type, null);
+        emitMembers(type, null, false);
         emit("}");
         statementDepth = depth;
         statementLine = line;
         extraIndent = extra;
     }
 
-    private void emitMembers(Type type, @Nullable ClassName className) {
+    private void emitMembers(Type type, @Nullable ClassName className, boolean explicitConstructor) {
         scopes.push(new Scope(className, memberTypeNames(type), hiddenNames(type)));
         indentLevel++;
         Member previous = null;
-        for (Member member : members(type, className)) {
+        for (Member member : members(type, className, explicitConstructor)) {
             if (previous != null && !(previous.isField() && member.isField())) {
                 emit("\n");
             }
@@ -729,7 +736,7 @@ final class CodeWriter {
         scopes.pop();
     }
 
-    private List<Member> members(Type type, @Nullable ClassName className) {
+    private List<Member> members(Type type, @Nullable ClassName className, boolean explicitConstructor) {
         Type.Kind kind = type.kind();
         List<Member> members = new ArrayList<>();
         if (kind == Type.Kind.ENUM && (!type.enumConstants().isEmpty() || hasMembers(type))) {
@@ -747,6 +754,9 @@ final class CodeWriter {
         type.methods().stream()
                 .filter(Method::isConstructor)
                 .forEach(method -> members.add(new Member(false, () -> emitMethod(method, name, kind))));
+        if (explicitConstructor) {
+            members.add(new Member(false, () -> emitMethod(PUBLIC_CONSTRUCTOR, name, kind)));
+        }
         type.methods().stream()
                 .filter(method -> !method.isConstructor())
                 .forEach(method -> members.add(new Member(false, () -> emitMethod(method, name, kind))));
@@ -782,7 +792,7 @@ final class CodeWriter {
         }
         if (hasMembers(body)) {
             emit(" {\n");
-            emitMembers(body, null);
+            emitMembers(body, null, false);
             emit("}");
         }
     }

@@ -675,4 +675,25 @@ class GeneratedCodeTest {
         assertThat(loaded.getMethod("count").invoke(record)).isEqualTo(2);
         assertThat(loaded.getMethod("values").invoke(record)).isEqualTo(new String[] {"a", "b"});
     }
+
+    @Test
+    void writesAConstructorThatJavacAsksForInAnExportedPackage() {
+        Type plain = Type.newClassBuilder("Plain")
+                .addModifiers(Modifier.PUBLIC)
+                .addType(Type.newClassBuilder("Nested")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .build())
+                .build();
+
+        Compilation compilation = javac().withOptions("-Xlint:all", "-Werror")
+                .compile(
+                        source("module-info", """
+                                module example {
+                                    exports example;
+                                }
+                                """),
+                        JavaFile.newBuilder("example", plain).build().toJavaFileObject());
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+    }
 }

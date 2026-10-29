@@ -46,6 +46,10 @@ import org.jspecify.annotations.Nullable;
  * {@link TypeName}, use {@link Builder#avoidClashesWithNestedClasses(TypeElement)} or
  * {@link Builder#alwaysQualify(String...)}.
  *
+ * <p>A public class without a constructor is written with an empty public constructor, which the type itself does not
+ * list: javac's {@code missing-explicit-ctor} lint warns about a public class of an exported package that has only the
+ * default constructor.
+ *
  * <p>Types are values: two types written the same, which qualify the same names, are equal.
  */
 public final class Type {

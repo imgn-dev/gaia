@@ -675,6 +675,8 @@ class JavaFileTest {
                         }
 
                         class Inner {
+                            public Inner() {
+                            }
                         }
                     }
                     """);
@@ -880,7 +882,162 @@ class JavaFileTest {
                     package com.example;
 
                     public abstract sealed class Vehicle permits Vehicle.Car {
+                        public Vehicle() {
+                        }
+
                         public static non-sealed class Car extends Vehicle {
+                            public Car() {
+                            }
+                        }
+                    }
+                    """);
+        }
+    }
+
+    @Nested
+    class ExplicitConstructors {
+
+        @Test
+        void writesOneForAPublicClassWithoutConstructorWhereConstructorsGo() {
+            Type type = Type.newClassBuilder("Widget")
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addField(PrimitiveTypeName.INT, "size")
+                    .addMethod(Method.newBuilder("run").build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    public final class Widget {
+                        int size;
+
+                        public Widget() {
+                        }
+
+                        void run() {
+                        }
+                    }
+                    """);
+            assertThat(type.methods()).hasSize(1);
+        }
+
+        @Test
+        void writesOneForAPublicNestedClass() {
+            Type type = Type.newClassBuilder("Outer")
+                    .addType(Type.newClassBuilder("Inner")
+                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                            .build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    class Outer {
+                        public static class Inner {
+                            public Inner() {
+                            }
+                        }
+                    }
+                    """);
+        }
+
+        @Test
+        void writesOneForAClassNestedInAnInterface() {
+            Type type = Type.newInterfaceBuilder("Api")
+                    .addType(Type.newClassBuilder("Impl").build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    interface Api {
+                        class Impl {
+                            public Impl() {
+                            }
+                        }
+                    }
+                    """);
+        }
+
+        @Test
+        void keepsTheConstructorsOfAPublicClass() {
+            Type type = Type.newClassBuilder("Widget")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addMethod(Method.newConstructorBuilder()
+                            .addModifiers(Modifier.PRIVATE)
+                            .build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    public class Widget {
+                        private Widget() {
+                        }
+                    }
+                    """);
+        }
+
+        @Test
+        void writesNoneForAClassThatIsNotPublic() {
+            Type type = Type.newClassBuilder("Outer")
+                    .addType(Type.newClassBuilder("Inner")
+                            .addModifiers(Modifier.PROTECTED, Modifier.STATIC)
+                            .build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    class Outer {
+                        protected static class Inner {
+                        }
+                    }
+                    """);
+        }
+
+        @Test
+        void writesNoneForOtherKindsOfTypes() {
+            Type anonymous = Type.newAnonymousClassBuilder("")
+                    .addSuperinterface(Runnable.class)
+                    .addMethod(Method.newBuilder("run")
+                            .addModifiers(Modifier.PUBLIC)
+                            .build())
+                    .build();
+            Type type = Type.newInterfaceBuilder("Api")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addField(Field.newBuilder(Runnable.class, "TASK")
+                            .initializer("$L", anonymous)
+                            .build())
+                    .addType(Type.newRecordBuilder("Value")
+                            .addModifiers(Modifier.PUBLIC)
+                            .build())
+                    .addType(Type.newEnumBuilder("Mode")
+                            .addModifiers(Modifier.PUBLIC)
+                            .addEnumConstant("ON")
+                            .build())
+                    .addType(Type.newAnnotationBuilder("Mark")
+                            .addModifiers(Modifier.PUBLIC)
+                            .build())
+                    .build();
+
+            assertThat(write(type)).isEqualTo("""
+                    package com.example;
+
+                    public interface Api {
+                        Runnable TASK = new Runnable() {
+                            public void run() {
+                            }
+                        };
+
+                        record Value() {
+                        }
+
+                        enum Mode {
+                            ON
+                        }
+
+                        @interface Mark {
                         }
                     }
                     """);

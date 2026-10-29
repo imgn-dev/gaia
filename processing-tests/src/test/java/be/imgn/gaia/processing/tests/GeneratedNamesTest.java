@@ -124,6 +124,9 @@ class GeneratedNamesTest {
 
                 @Generated("%s")
                 public final class $Outer$Inner$Deep$Deeper$$Described implements Described {
+                    public $Outer$Inner$Deep$Deeper$$Described() {
+                    }
+
                     @Override
                     public String describe() {
                         return "example.Outer.Inner.Deep.Deeper";

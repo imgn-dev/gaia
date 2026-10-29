@@ -92,6 +92,9 @@ class SubscribeProcessorTest {
 
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
                 public final class $Listener$$Subscribers implements SubscriberIndex {
+                    public $Listener$$Subscribers() {
+                    }
+
                     @Override
                     public Class<?> listenerType() {
                         return Listener.class;
@@ -418,6 +421,9 @@ class SubscribeProcessorTest {
 
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
                 public final class $Listener$$Subscribers implements SubscriberIndex {
+                    public $Listener$$Subscribers() {
+                    }
+
                     @Override
                     public Class<?> listenerType() {
                         return Listener.class;
