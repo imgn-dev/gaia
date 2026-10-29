@@ -243,7 +243,8 @@ exception cannot be serialized either.</div>
 <dd><code>message</code> - the message of the error</dd>
 <dd><code>element</code> - the element the error is about</dd>
 <dd><code>annotation</code> - the annotation the error is about, as found on the element: one of its annotations, or one
-    nested in the value of an attribute of those, as a repeatable annotation is in its container</dd>
+    nested in the value of an attribute of those, as a repeatable annotation is in its container, or one a class
+    inherits from a superclass, which is reported on the class</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the annotation is not on the element</dd>
 </dl>
@@ -284,7 +285,8 @@ not write the attribute, leaving it to its default, the error is reported on the
 <dd><code>message</code> - the message of the error</dd>
 <dd><code>element</code> - the element the error is about</dd>
 <dd><code>annotation</code> - the annotation, as found on the element: one of its annotations, or one nested in the value of
-    an attribute of those, as a repeatable annotation is in its container</dd>
+    an attribute of those, as a repeatable annotation is in its container, or one a class inherits from a
+    superclass, which is reported on the class</dd>
 <dd><code>attribute</code> - the name of the attribute the error is about</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the annotation is not on the element, or has no such attribute</dd>

@@ -146,9 +146,9 @@ resumes counting from there. A stopwatch is mutable and not thread-safe.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the elapsed time in the largest unit in which it is at least 1, with four significant digits, as
-<code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's abbreviation: <code>ns</code>,
-<code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>.</div>
+<div class="block">Returns the elapsed time in the largest unit in which it is at least 1 once rounded to four significant digits,
+with those four digits, as <code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's
+abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#unstarted()" class="member-name-link">unstarted</a>()</code></div>
@@ -307,10 +307,11 @@ resumes counting from there. A stopwatch is mutable and not thread-safe.</div>
 <h3>toString</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span>()</div>
-<div class="block">Returns the elapsed time in the largest unit in which it is at least 1, with four significant digits, as
-<code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's abbreviation: <code>ns</code>,
-<code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>. For example <code>"1.234 s"</code> or
-<code>"38.35 ms"</code>.</div>
+<div class="block">Returns the elapsed time in the largest unit in which it is at least 1 once rounded to four significant digits,
+with those four digits, as <code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's
+abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>. For example
+<code>"1.234 s"</code> or <code>"38.35 ms"</code>; 999,960 ns is <code>"1.000 ms"</code>. From 10,000 days, the days are written
+without an exponent, such as <code>"12350 d"</code>.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>

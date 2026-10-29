@@ -177,10 +177,11 @@ are written qualified. The file is written in ASCII only, with Unicode escapes.<
 <dd><code>originatingElements</code> - the elements the file is generated from, so that incremental builds regenerate or
     delete it when they change; the first one also decides whether <code>@Generated</code> is visible</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if the file was written, <code>false</code> if it had already been created, by this processor or
-    another one</dd>
+<dd><code>true</code> if the file was written, <code>false</code> if it had already been created during this
+    compilation, by this processor or another one</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the file cannot be written</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the file cannot be written, such as when a type of the sources being compiled has
+    that name</dd>
 </dl>
 </div>
 </section>
@@ -201,12 +202,13 @@ are written qualified. The file is written in ASCII only, with Unicode escapes.<
 <dd><code>originatingElements</code> - the elements the file is generated from, so that incremental builds regenerate or
     delete it when they change; the first one also decides whether <code>@Generated</code> is visible</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if the file was written, <code>false</code> if it had already been created, by this processor or
-    another one</dd>
+<dd><code>true</code> if the file was written, <code>false</code> if it had already been created during this
+    compilation, by this processor or another one</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>qualifiedName</code> is not a qualified name: Java identifiers, none of them
     a keyword, separated by dots</dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the file cannot be written</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the file cannot be written, such as when a type of the sources being compiled has
+    that name</dd>
 </dl>
 </div>
 </section>
@@ -224,7 +226,7 @@ this object write a file for it, in this round or an earlier one.
 type. A processor that names the types it generates by a convention checks the name first, to report the clash on
 the element it generates for, or to leave alone a type the user wrote by hand:
 
-<pre><code>ClassName name = ClassName.of(type).generatedNameWithSuffix("Mapper");
+<pre><code>ClassName name = ClassName.of(type).generatedName("Mapper");
 if (!context.sources().isAvailable(name)) {
     context.diagnostics().on(type).error("Cannot generate " + name + ": a type with that name already exists");
     return;
@@ -236,7 +238,7 @@ context.sources().write(JavaFile.newBuilder(name.packageName(), mapper(name)).bu
 <code>false</code>. Checking a name does not reserve it.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>name</code> - the name of the type, such as one <a href="source/ClassName.html#generatedNameWithSuffix(java.lang.String)"><code>ClassName.generatedNameWithSuffix(String)</code></a> gives</dd>
+<dd><code>name</code> - the name of the type, such as one <a href="source/ClassName.html#generatedName(java.lang.String)"><code>ClassName.generatedName(String)</code></a> gives</dd>
 <dt>Returns:</dt>
 <dd><code>true</code> if no type has that name and this object wrote no file for it</dd>
 </dl>

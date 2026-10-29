@@ -132,6 +132,10 @@ the simple names of their member types along, so that such types are written qua
 <a href="TypeName.html" title="interface in be.imgn.gaia.processing.source"><code>TypeName</code></a>, use <a href="Type.Builder.html#avoidClashesWithNestedClasses(javax.lang.model.element.TypeElement)"><code>Type.Builder.avoidClashesWithNestedClasses(TypeElement)</code></a> or
 <a href="Type.Builder.html#alwaysQualify(java.lang.String...)"><code>Type.Builder.alwaysQualify(String...)</code></a>.
 
+<p>A public class without a constructor is written with an empty public constructor, which the type itself does not
+list: javac's <code>missing-explicit-ctor</code> lint warns about a public class of an exported package that has only the
+default constructor.
+
 <p>Types are values: two types written the same, which qualify the same names, are equal.</div>
 </div>
 </section>

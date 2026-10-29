@@ -117,7 +117,8 @@ Its keys must have consistent <code>equals</code> and <code>hashCode</code> meth
   <li>Its views are live, and its iterators support <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html#remove()" title="class or interface in java.util" class="external-link"><code>Iterator.remove()</code></a>. The collections of
       <a href="Multimap.html#asMap()"><code>Multimap.asMap()</code></a> do not support adding values: add them through <a href="Multimap.html#get(K)"><code>Multimap.get(Object)</code></a> or <a href="Multimap.html#put(K,V)"><code>Multimap.put(K, V)</code></a>.
   <li>Its iterators fail fast, on a best-effort basis, when it changes while they iterate, outside of their own
-      <code>remove()</code>.
+      <code>remove()</code>. The iterators of the list <a href="Multimap.html#get(K)"><code>Multimap.get(Object)</code></a> returns fail fast on the changes made through
+      that list only: a value put in the multimap meanwhile may be skipped without an exception.
   <li>It is serializable if all its keys and values are.
   <li>It is not thread-safe.
 </ul></div>

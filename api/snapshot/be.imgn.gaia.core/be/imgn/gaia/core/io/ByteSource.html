@@ -290,7 +290,11 @@ charset</a>.</div>
 <h3>of</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/URL.html" title="class or interface in java.net" class="external-link">URL</a>&nbsp;url)</span></div>
-<div class="block">Returns a source that reads what a URL points to, such as a resource from <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html#getResource(java.lang.String)" title="class or interface in java.lang" class="external-link"><code>Class.getResource(String)</code></a>.</div>
+<div class="block">Returns a source that reads what a URL points to, such as a resource from <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html#getResource(java.lang.String)" title="class or interface in java.lang" class="external-link"><code>Class.getResource(String)</code></a>.
+
+<p>It is meant for local resources, such as those of the class path or files. It opens the URL with no timeout,
+so a remote server that stops responding blocks a read forever: for one, open a connection with timeouts in a
+source of your own.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>url</code> - the URL to read</dd>
@@ -305,7 +309,8 @@ charset</a>.</div>
 <h3>of</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/URI.html" title="class or interface in java.net" class="external-link">URI</a>&nbsp;uri)</span></div>
-<div class="block">Returns a source that reads what a URI points to, through the URL it converts to.</div>
+<div class="block">Returns a source that reads what a URI points to, through the URL it converts to. Like <a href="#of(java.net.URL)"><code>of(URL)</code></a>, it is
+meant for local resources: it opens the URL with no timeout.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>uri</code> - the URI to read</dd>

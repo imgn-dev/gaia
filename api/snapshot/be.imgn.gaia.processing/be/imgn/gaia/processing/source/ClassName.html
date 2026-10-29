@@ -80,8 +80,10 @@ loadScripts(document, 'script');</script>
 <li><a href="#enclosing()" tabindex="0">enclosing()</a></li>
 <li><a href="#nested(java.lang.String)" tabindex="0">nested(String)</a></li>
 <li><a href="#peer(java.lang.String)" tabindex="0">peer(String)</a></li>
-<li><a href="#generatedNameWithSuffix(java.lang.String)" tabindex="0">generatedNameWithSuffix(String)</a></li>
-<li><a href="#generatedNameWithPrefix(java.lang.String)" tabindex="0">generatedNameWithPrefix(String)</a></li>
+<li><a href="#generatedName(java.lang.String)" tabindex="0">generatedName(String)</a></li>
+<li><a href="#generatedName(java.lang.String,java.lang.String)" tabindex="0">generatedName(String, String)</a></li>
+<li><a href="#generatedName(javax.lang.model.element.ExecutableElement,java.lang.String)" tabindex="0">generatedName(ExecutableElement, String)</a></li>
+<li><a href="#generatedNameIn(java.lang.String,java.lang.String)" tabindex="0">generatedNameIn(String, String)</a></li>
 <li><a href="#parameterized(be.imgn.gaia.processing.source.TypeName...)" tabindex="0">parameterized(TypeName...)</a></li>
 <li><a href="#annotated(be.imgn.gaia.processing.source.Annotation...)" tabindex="0">annotated(Annotation...)</a></li>
 <li><a href="#annotated(java.util.List)" tabindex="0">annotated(List)</a></li>
@@ -216,17 +218,35 @@ starts with an upper-case letter, as conventional names do.</div>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generatedNameWithPrefix(java.lang.String)" class="member-name-link">generatedNameWithPrefix</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;prefix)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generatedName(java.lang.String)" class="member-name-link">generatedName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the name of a top-level type generated for this one, with a prefix: in the same package, named after a
-prefix, then the simple names from the top-level type to this one, all joined by underscores.</div>
+<div class="block">Returns the name of a top-level type generated for this one: in the same package, <code>$</code>, the simple names
+from the top-level type to this one joined by <code>$</code>, then <code>$$</code> and the kind of the generated type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#generatedName(java.lang.String,java.lang.String)" class="member-name-link">generatedName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;packageName,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the name of a type generated for a whole package: in that package, <code>$$</code> and the kind of the
+generated type, such as <code>com.example.$$Mappers</code> for the package <code>com.example</code> and the kind
+<code>Mappers</code>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#generatedName(javax.lang.model.element.ExecutableElement,java.lang.String)" class="member-name-link">generatedName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;method,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the name of a top-level type generated for a method: in the package of its type, <code>$</code>, the simple
+names from the top-level type to the method's joined by <code>$</code>, then <code>$$</code>, the name of the method,
+<code>$$</code> and the kind of the generated type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generatedNameWithSuffix(java.lang.String)" class="member-name-link">generatedNameWithSuffix</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;suffix)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generatedNameIn(java.lang.String,java.lang.String)" class="member-name-link">generatedNameIn</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;packageName,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the name of a top-level type generated for this one, as processors name the code they generate for a
-type: in the same package, named after the simple names from the top-level type to this one, then a suffix, all
-joined by underscores.</div>
+<div class="block">Returns the name of a type generated for this one in another package, such as an implementation of an annotation
+type that belongs with the code using it: in that package, <code>$$</code>, the names of this type's package joined by
+<code>$</code>, <code>$$</code>, the simple names from the top-level type to this one joined by <code>$</code>, then <code>$$</code>
+and the kind of the generated type.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
@@ -540,66 +560,127 @@ enclosing type, as in <code>@A Outer.Inner</code>, give the inner class an <a hr
 </section>
 </li>
 <li>
-<section class="detail" id="generatedNameWithSuffix(java.lang.String)">
-<h3>generatedNameWithSuffix</h3>
+<section class="detail" id="generatedName(java.lang.String)">
+<h3>generatedName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></span>&nbsp;<span class="element-name">generatedNameWithSuffix</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;suffix)</span></div>
-<div class="block">Returns the name of a top-level type generated for this one, as processors name the code they generate for a
-type: in the same package, named after the simple names from the top-level type to this one, then a suffix, all
-joined by underscores. For <code>com.example.Outer.Inner</code> and the suffix <code>Mapper</code>, it is
-<code>com.example.Outer_Inner_Mapper</code>; for the top-level <code>com.example.Outer</code>, it is
-<code>com.example.Outer_Mapper</code>. <a href="#generatedNameWithPrefix(java.lang.String)"><code>generatedNameWithPrefix(String)</code></a> puts the name of what the type is for
-first instead.
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></span>&nbsp;<span class="element-name">generatedName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</span></div>
+<div class="block">Returns the name of a top-level type generated for this one: in the same package, <code>$</code>, the simple names
+from the top-level type to this one joined by <code>$</code>, then <code>$$</code> and the kind of the generated type. For
+<code>com.example.Outer.Inner</code> and the kind <code>Mapper</code>, it is <code>com.example.$Outer$Inner$$Mapper</code>; for
+the top-level <code>com.example.Outer</code>, it is <code>com.example.$Outer$$Mapper</code>.
 
-<p>Each type and suffix gets its own name. An underscore within a simple name or the suffix is written
-<code>_0</code>: an underscore followed by <code>0</code> is one of the type's, any other one joins two names, as no name
-starts with a digit. <code>A_B.C</code> gives <code>A_0B_C_Mapper</code> where <code>A.B_C</code> gives <code>A_B_0C_Mapper</code>,
-and <code>A</code> with the suffix <code>B_Mapper</code> gives <code>A_B_0Mapper</code>. Other characters, such as a dollar
-sign, are kept as they are. A type that is not generated can still have the name: whether a type has it already
-is for <a href="../GeneratedSources.html#isAvailable(be.imgn.gaia.processing.source.ClassName)"><code>GeneratedSources.isAvailable(ClassName)</code></a> to tell.</div>
+<p>All the generated names of <code>ClassName</code>, this one, <a href="#generatedName(java.lang.String,java.lang.String)"><code>generatedName(String, String)</code></a>,
+<a href="#generatedName(javax.lang.model.element.ExecutableElement,java.lang.String)"><code>generatedName(ExecutableElement, String)</code></a> and <a href="#generatedNameIn(java.lang.String,java.lang.String)"><code>generatedNameIn(String, String)</code></a>, follow one
+scheme, in which each type, package, method and kind gets its own name. <code>$$</code> ends the names of types,
+packages and methods, and the kind, which has no dollar sign, comes last. A dollar sign within a name is written
+<code>$0</code>: <code>$0</code> is one of the name's, <code>$</code> followed by another digit numbers an overloaded method,
+and any other one joins two names, as no name starts with a digit. <code>A$B.C</code> gives <code>$A$0B$C$$Mapper</code>
+where the nested <code>A.B.C</code> gives <code>$A$B$C$$Mapper</code>. A type that is not generated can still have the
+name: whether a type has it already is for
+<a href="../GeneratedSources.html#isAvailable(be.imgn.gaia.processing.source.ClassName)"><code>GeneratedSources.isAvailable(ClassName)</code></a> to tell.
+
+<p>Two limits come from the file systems the generated files go to, not from the scheme. Names that differ only
+in case, as those of methods <code>create</code> and <code>Create</code>, are distinct names but one file on a file system
+that ignores case, as macOS and Windows have by default; javac then reports the second file as one it already
+wrote. And a name is a file name: one past the 255 bytes most file systems allow, as deep packages can make with
+<a href="#generatedNameIn(java.lang.String,java.lang.String)"><code>generatedNameIn(String, String)</code></a>, cannot be written.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>suffix</code> - what the generated type is for this one, such as <code>Mapper</code>: a Java identifier, which may be a
-    keyword</dd>
+<dd><code>kind</code> - what the generated type is for this one, such as <code>Mapper</code>: a Java identifier without a dollar
+    sign, which may be a keyword</dd>
 <dt>Returns:</dt>
 <dd>the name of the generated type, without annotations</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the suffix is not an identifier: if it is empty, starts with a digit, or has
-    a character that cannot be in an identifier, such as a dot or a space</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the kind is not an identifier without a dollar sign: if it is empty, starts
+    with a digit, or has a dollar sign or a character that cannot be in an identifier, such as a dot or a space</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
 </dl>
 </div>
 </section>
 </li>
 <li>
-<section class="detail" id="generatedNameWithPrefix(java.lang.String)">
-<h3>generatedNameWithPrefix</h3>
+<section class="detail" id="generatedName(java.lang.String,java.lang.String)">
+<h3>generatedName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></span>&nbsp;<span class="element-name">generatedNameWithPrefix</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;prefix)</span></div>
-<div class="block">Returns the name of a top-level type generated for this one, with a prefix: in the same package, named after a
-prefix, then the simple names from the top-level type to this one, all joined by underscores. For
-<code>com.example.Outer.Inner</code> and the prefix <code>Generated</code>, it is
-<code>com.example.Generated_Outer_Inner</code>; for the top-level <code>com.example.Outer</code>, it is
-<code>com.example.Generated_Outer</code>.
-
-<p>Underscores are written as <a href="#generatedNameWithSuffix(java.lang.String)"><code>generatedNameWithSuffix(String)</code></a> writes them, so that each type and prefix
-gets its own name: <code>A_B.C</code> with the prefix <code>P</code> gives <code>P_A_0B_C</code> where <code>A.B_C</code> gives
-<code>P_A_B_0C</code>, and <code>A</code> with the prefix <code>P_B</code> gives <code>P_0B_A</code>.
-
-<p>Both methods join the same way, so a name with a prefix is also the name of another type with a suffix when
-the prefix followed by the simple names of this type are the simple names of the other type followed by the
-suffix, and only then: <code>Outer.Inner</code> with the prefix <code>Generated</code> and <code>Generated.Outer</code> with the
-suffix <code>Inner</code> both give <code>Generated_Outer_Inner</code>, and so do <code>Inner</code> with the prefix
-<code>Outer</code> and <code>Outer</code> with the suffix <code>Inner</code>. Such a clash needs the prefix to be the simple
-name of a top-level type of the package, and the suffix that of a type of the package.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></span>&nbsp;<span class="element-name">generatedName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;packageName,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</span></div>
+<div class="block">Returns the name of a type generated for a whole package: in that package, <code>$$</code> and the kind of the
+generated type, such as <code>com.example.$$Mappers</code> for the package <code>com.example</code> and the kind
+<code>Mappers</code>. It follows the scheme of <a href="#generatedName(java.lang.String)"><code>generatedName(String)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>prefix</code> - what the generated type is for this one, such as <code>Generated</code> or <code>AutoValue</code>: a Java
-    identifier, which may be a keyword</dd>
+<dd><code>packageName</code> - the package, empty for the unnamed package</dd>
+<dd><code>kind</code> - what the generated type is for the package, such as <code>Mappers</code>: a Java identifier without a
+    dollar sign, which may be a keyword</dd>
 <dt>Returns:</dt>
-<dd>the name of the generated type, without annotations</dd>
+<dd>the name of the generated type</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the prefix is not an identifier: if it is empty, starts with a digit, or has
-    a character that cannot be in an identifier, such as a dot or a space</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the package name is not valid, or the kind is not an identifier without a
+    dollar sign</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="generatedName(javax.lang.model.element.ExecutableElement,java.lang.String)">
+<h3>generatedName</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></span>&nbsp;<span class="element-name">generatedName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;method,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</span></div>
+<div class="block">Returns the name of a top-level type generated for a method: in the package of its type, <code>$</code>, the simple
+names from the top-level type to the method's joined by <code>$</code>, then <code>$$</code>, the name of the method,
+<code>$$</code> and the kind of the generated type. For the method <code>create</code> of <code>com.example.Outer.Inner</code>
+and the kind <code>Factory</code>, it is <code>com.example.$Outer$Inner$$create$$Factory</code>. It follows the scheme of
+<a href="#generatedName(java.lang.String)"><code>generatedName(String)</code></a>.
+
+<p>An overloaded method, one whose type declares other methods with its name, has its number after its name: its
+position among them in the order they are declared, from 1, such as <code>$Outer$$create$2$$Factory</code> for the
+second <code>create</code> method. Declaring an overload changes the name of a method that had none. The methods the
+compiler declares count too, such as the <code>valueOf(String)</code> of an enum or the accessors of a record, in the
+order the type lists them.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>method</code> - the method</dd>
+<dd><code>kind</code> - what the generated type is for the method, such as <code>Factory</code>: a Java identifier without a
+    dollar sign, which may be a keyword</dd>
+<dt>Returns:</dt>
+<dd>the name of the generated type</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the element is not a method, such as a constructor, its type is local or
+    anonymous, or the kind is not an identifier without a dollar sign</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="generatedNameIn(java.lang.String,java.lang.String)">
+<h3>generatedNameIn</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></span>&nbsp;<span class="element-name">generatedNameIn</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;packageName,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;kind)</span></div>
+<div class="block">Returns the name of a type generated for this one in another package, such as an implementation of an annotation
+type that belongs with the code using it: in that package, <code>$$</code>, the names of this type's package joined by
+<code>$</code>, <code>$$</code>, the simple names from the top-level type to this one joined by <code>$</code>, then <code>$$</code>
+and the kind of the generated type. For <code>com.example.Outer.Named</code>, the package <code>org.app</code> and the kind
+<code>Impl</code>, it is <code>org.app.$$com$example$$Outer$Named$$Impl</code>. It follows the scheme of
+<a href="#generatedName(java.lang.String)"><code>generatedName(String)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>packageName</code> - the package of the generated type, empty for the unnamed package</dd>
+<dd><code>kind</code> - what the generated type is for this one, such as <code>Impl</code>: a Java identifier without a dollar
+    sign, which may be a keyword</dd>
+<dt>Returns:</dt>
+<dd>the name of the generated type</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the package name is not valid, or the kind is not an identifier without a
+    dollar sign</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
 </dl>
 </div>
 </section>

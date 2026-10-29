@@ -86,14 +86,18 @@ and so does the next run of a program after a crash.
 the file in one atomic step. If anything fails, the file is left as it was and the temporary file is deleted.
 
 <ul>
-  <li>A file that exists keeps its POSIX permissions; a new one gets the default permissions, as with
+  <li>A file that exists keeps its POSIX permissions, which the temporary file has from its creation, along with
+      reading by its owner before anything is written to it; a new one gets the default permissions, as with
       <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html#write(java.nio.file.Path,byte%5B%5D,java.nio.file.OpenOption...)" title="class or interface in java.nio.file" class="external-link"><code>Files.write(Path, byte[], java.nio.file.OpenOption...)</code></a>. Other attributes, such as the owner, ACLs or
       extended attributes, are not kept.
-  <li>A symbolic link to a file that exists is followed: the file it points to is replaced, and the link stays.
+  <li>A symbolic link to a file that exists is followed: the file it points to is replaced, and the link stays. A
+      symbolic link to a file that does not exist is not followed: it is replaced with the new file.
   <li>On Windows, the file cannot be replaced while another program has it open: the write then fails with an
       <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/AccessDeniedException.html" title="class or interface in java.nio.file" class="external-link"><code>AccessDeniedException</code></a>.
   <li>A file system that cannot move a file atomically within a directory makes every write fail with an
       <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/AtomicMoveNotSupportedException.html" title="class or interface in java.nio.file" class="external-link"><code>AtomicMoveNotSupportedException</code></a>, rather than replace the file in a way that is not atomic.
+  <li>In a directory that other users can write to and that has no sticky bit, they can rename the temporary file and
+      put another one in its place before it is moved. Write only to directories other users cannot change.
 </ul>
 
 <pre><code>AtomicFiles.writeString(settingsFile, toml);

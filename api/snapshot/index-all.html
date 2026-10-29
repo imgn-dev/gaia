@@ -850,7 +850,8 @@ some other way.</div>
 <dl class="index">
 <dt><a href="be.imgn.gaia.core/module-summary.html">be.imgn.gaia.core</a> - module be.imgn.gaia.core</dt>
 <dd>
-<div class="block">Extensions to the JDK.</div>
+<div class="block">Extensions to the JDK, and an event bus whose <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> methods are
+wired, without reflection, by code that <code>gaia-processor</code> generates.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a> - package be.imgn.gaia.core.base</dt>
 <dd>
@@ -859,6 +860,16 @@ some other way.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/package-summary.html">be.imgn.gaia.core.collect</a> - package be.imgn.gaia.core.collect</dt>
 <dd>
 <div class="block">Collections and collection utilities the JDK does not provide.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a> - package be.imgn.gaia.core.event</dt>
+<dd>
+<div class="block">An event bus: <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event"><code>EventBus</code></a>, the <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscription.html" title="class in be.imgn.gaia.core.event"><code>Subscription</code></a>s it hands
+out, and <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> for the methods of listeners, as are the annotations
+that <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.core.event"><code>@SubscribingAnnotation</code></a> marks.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/package-summary.html">be.imgn.gaia.core.event.spi</a> - package be.imgn.gaia.core.event.spi</dt>
+<dd>
+<div class="block">The interface between <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event"><code>EventBus</code></a> and the code <code>gaia-processor</code> generates.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a> - package be.imgn.gaia.core.io</dt>
 <dd>
@@ -888,27 +899,6 @@ a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/package-summary.html">be.imgn.gaia.core.time</a> - package be.imgn.gaia.core.time</dt>
 <dd>
 <div class="block">Measuring time.</div>
-</dd>
-<dt><a href="be.imgn.gaia.events/module-summary.html">be.imgn.gaia.events</a> - module be.imgn.gaia.events</dt>
-<dd>
-<div class="block">An event bus that delivers events to <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link"><code>Consumer</code></a>s, and to the
-<a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> methods of listeners through code that
-<code>gaia-events-processor</code> generates, without reflection.</div>
-</dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a> - package be.imgn.gaia.events</dt>
-<dd>
-<div class="block">An event bus: <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events"><code>EventBus</code></a>, the <a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscription.html" title="class in be.imgn.gaia.events"><code>Subscription</code></a>s it hands out, and
-<a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> for the methods of listeners, as are the annotations that
-<a href="be.imgn.gaia.events/be/imgn/gaia/events/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events"><code>@SubscribingAnnotation</code></a> marks.</div>
-</dd>
-<dt><a href="be.imgn.gaia.events.processor/module-summary.html">be.imgn.gaia.events.processor</a> - module be.imgn.gaia.events.processor</dt>
-<dd>
-<div class="block">The annotation processor of <code>gaia-events</code>, which generates the code that subscribes the
-<code>@Subscribe</code> methods of each class.</div>
-</dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/package-summary.html">be.imgn.gaia.events.spi</a> - package be.imgn.gaia.events.spi</dt>
-<dd>
-<div class="block">The interface between <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events"><code>EventBus</code></a> and the code <code>gaia-events-processor</code> generates.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/module-summary.html">be.imgn.gaia.memfs</a> - module be.imgn.gaia.memfs</dt>
 <dd>
@@ -941,6 +931,11 @@ JUnit extension that gives tests the <a href="https://docs.oracle.com/en/java/ja
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/package-summary.html">be.imgn.gaia.processing.testing</a> - package be.imgn.gaia.processing.testing</dt>
 <dd>
 <div class="block">Compile sources through an annotation processor and inspect the result.</div>
+</dd>
+<dt><a href="be.imgn.gaia.processor/module-summary.html">be.imgn.gaia.processor</a> - module be.imgn.gaia.processor</dt>
+<dd>
+<div class="block">The annotation processor of <code>gaia-core</code>, which generates the code that subscribes the
+<code>@Subscribe</code> methods of each class.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationExtension.html#beforeAll(org.junit.jupiter.api.extension.ExtensionContext)" class="member-name-link">beforeAll(ExtensionContext)</a> - Method in class be.imgn.gaia.processing.testing.<a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationExtension.html" title="class in be.imgn.gaia.processing.testing">CompilationExtension</a></dt>
 <dd>
@@ -992,6 +987,10 @@ any other type unchanged.</div>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html#param-build"><code>build</code></a> record component.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html" title="class in be.imgn.gaia.core.event">EventBus.Builder</a></dt>
+<dd>
+<div class="block">Builds the bus.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Builds the directories, creating them if this builder was told to.</div>
@@ -1003,10 +1002,6 @@ any other type unchanged.</div>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.Builder.html" title="class in be.imgn.gaia.core.testing">PlatformPreset.Builder</a></dt>
 <dd>
 <div class="block">Builds the system properties and environment variables.</div>
-</dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></dt>
-<dd>
-<div class="block">Builds the bus.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html#build()" class="member-name-link">build()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html" title="class in be.imgn.gaia.memfs">Configuration.Builder</a></dt>
 <dd>
@@ -1164,7 +1159,7 @@ of its vendor, or of its vendor's qualifier.</div>
 <dd>
 <div class="block">Sets the clock that dates the creation, modification and access of files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscription.html#close()" class="member-name-link">close()</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscription.html" title="class in be.imgn.gaia.events">Subscription</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscription.html#close()" class="member-name-link">close()</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscription.html" title="class in be.imgn.gaia.core.event">Subscription</a></dt>
 <dd>
 <div class="block">Unsubscribes what this subscription subscribed, so that it receives no event published from then on.</div>
 </dd>
@@ -1389,7 +1384,7 @@ not known to this one.</div>
 <dd>
 <div class="block">Returns a new, empty multiset sorted by the natural ordering of its elements.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#create()" class="member-name-link">create()</a> - Static method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events">EventBus</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#create()" class="member-name-link">create()</a> - Static method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></dt>
 <dd>
 <div class="block">Returns a bus that delivers events on the thread that publishes them, and logs the exceptions of subscribers.</div>
 </dd>
@@ -1844,13 +1839,13 @@ annotations, or one attribute of that annotation.</div>
 <dd>
 <div class="block">Returns the errors.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" class="type-name-link" title="class in be.imgn.gaia.events">EventBus</a> - Class in <a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" class="type-name-link" title="class in be.imgn.gaia.core.event">EventBus</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a></dt>
 <dd>
 <div class="block">Delivers each event it is given to the subscribers of the event's class and of all its supertypes.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html" class="type-name-link" title="class in be.imgn.gaia.events">EventBus.Builder</a> - Class in <a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html" class="type-name-link" title="class in be.imgn.gaia.core.event">EventBus.Builder</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a></dt>
 <dd>
-<div class="block">Builds an <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events"><code>EventBus</code></a>.</div>
+<div class="block">Builds an <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event"><code>EventBus</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html#everyNth(int)" class="member-name-link">everyNth(int)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.html" title="class in be.imgn.gaia.core.collect">MoreGatherers</a></dt>
 <dd>
@@ -1861,7 +1856,7 @@ annotations, or one attribute of that annotation.</div>
 <dd>
 <div class="block">Names match only when they have the same characters, as on Linux.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html#exceptionHandler(java.util.function.BiConsumer)" class="member-name-link">exceptionHandler(BiConsumer)</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html#exceptionHandler(java.util.function.BiConsumer)" class="member-name-link">exceptionHandler(BiConsumer)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html" title="class in be.imgn.gaia.core.event">EventBus.Builder</a></dt>
 <dd>
 <div class="block">Sets what handles an exception thrown by a subscriber, instead of logging it.</div>
 </dd>
@@ -1869,21 +1864,22 @@ annotations, or one attribute of that annotation.</div>
 <dd>
 <div class="block">Returns the exceptions in the <code>throws</code> clause.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/VirtualThreadExecutor.html#execute(java.lang.Runnable)" class="member-name-link">execute(Runnable)</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/VirtualThreadExecutor.html" title="class in be.imgn.gaia.events">VirtualThreadExecutor</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html#execute(java.lang.Runnable)" class="member-name-link">execute(Runnable)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" title="class in be.imgn.gaia.core.event">VirtualThreadExecutor</a></dt>
 <dd>
 <div class="block">Starts a virtual thread that runs a task.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/SubscribingAnnotation.html#executor()" class="member-name-link">executor()</a> - Element in annotation interface be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">SubscribingAnnotation</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html#executor()" class="member-name-link">executor()</a> - Element in annotation interface be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.core.event">SubscribingAnnotation</a></dt>
 <dd>
-<div class="block">Returns the class of the executor that delivers the events, with an accessible constructor without parameters.</div>
+<div class="block">Returns the class of the executor that delivers the events, with an accessible constructor without parameters
+that declares no checked exceptions.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html#executor(java.lang.Class,java.util.concurrent.Executor)" class="member-name-link">executor(Class, Executor)</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html#executor(java.lang.Class,java.util.concurrent.Executor)" class="member-name-link">executor(Class, Executor)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html" title="class in be.imgn.gaia.core.event">EventBus.Builder</a></dt>
 <dd>
-<div class="block">Makes the bus deliver the events of the methods with a <a href="be.imgn.gaia.events/be/imgn/gaia/events/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing
+<div class="block">Makes the bus deliver the events of the methods with a <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.core.event">subscribing
 annotation</a> through an executor, rather than through the one the annotation names, which the bus then never
 creates: to deliver them right away in tests, for instance.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html#executor(java.util.concurrent.Executor)" class="member-name-link">executor(Executor)</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.Builder.html" title="class in be.imgn.gaia.events">EventBus.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html#executor(java.util.concurrent.Executor)" class="member-name-link">executor(Executor)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html" title="class in be.imgn.gaia.core.event">EventBus.Builder</a></dt>
 <dd>
 <div class="block">Makes the bus deliver each event in a task of an executor, rather than on the thread that publishes it.</div>
 </dd>
@@ -2051,16 +2047,29 @@ item.</div>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/Compilation.html#param-generatedFiles"><code>generatedFiles</code></a> record component.</div>
 </dd>
-<dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#generatedNameWithPrefix(java.lang.String)" class="member-name-link">generatedNameWithPrefix(String)</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
+<dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#generatedName(java.lang.String)" class="member-name-link">generatedName(String)</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
 <dd>
-<div class="block">Returns the name of a top-level type generated for this one, with a prefix: in the same package, named after a
-prefix, then the simple names from the top-level type to this one, all joined by underscores.</div>
+<div class="block">Returns the name of a top-level type generated for this one: in the same package, <code>$</code>, the simple names
+from the top-level type to this one joined by <code>$</code>, then <code>$$</code> and the kind of the generated type.</div>
 </dd>
-<dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#generatedNameWithSuffix(java.lang.String)" class="member-name-link">generatedNameWithSuffix(String)</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
+<dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#generatedName(java.lang.String,java.lang.String)" class="member-name-link">generatedName(String, String)</a> - Static method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
 <dd>
-<div class="block">Returns the name of a top-level type generated for this one, as processors name the code they generate for a
-type: in the same package, named after the simple names from the top-level type to this one, then a suffix, all
-joined by underscores.</div>
+<div class="block">Returns the name of a type generated for a whole package: in that package, <code>$$</code> and the kind of the
+generated type, such as <code>com.example.$$Mappers</code> for the package <code>com.example</code> and the kind
+<code>Mappers</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#generatedName(javax.lang.model.element.ExecutableElement,java.lang.String)" class="member-name-link">generatedName(ExecutableElement, String)</a> - Static method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
+<dd>
+<div class="block">Returns the name of a top-level type generated for a method: in the package of its type, <code>$</code>, the simple
+names from the top-level type to the method's joined by <code>$</code>, then <code>$$</code>, the name of the method,
+<code>$$</code> and the kind of the generated type.</div>
+</dd>
+<dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#generatedNameIn(java.lang.String,java.lang.String)" class="member-name-link">generatedNameIn(String, String)</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
+<dd>
+<div class="block">Returns the name of a type generated for this one in another package, such as an implementation of an annotation
+type that belongs with the code using it: in that package, <code>$$</code>, the names of this type's package joined by
+<code>$</code>, <code>$$</code>, the simple names from the top-level type to this one joined by <code>$</code>, then <code>$$</code>
+and the kind of the generated type.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationAssert.html#generatedNoSourceFiles()" class="member-name-link">generatedNoSourceFiles()</a> - Method in class be.imgn.gaia.processing.testing.<a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationAssert.html" title="class in be.imgn.gaia.processing.testing">CompilationAssert</a></dt>
 <dd>
@@ -2824,7 +2833,7 @@ separators included.</div>
 <dd>
 <div class="block">Linux.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.html#listenerType()" class="member-name-link">listenerType()</a> - Method in interface be.imgn.gaia.events.spi.<a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.html" title="interface in be.imgn.gaia.events.spi">SubscriberIndex</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.html#listenerType()" class="member-name-link">listenerType()</a> - Method in interface be.imgn.gaia.core.event.spi.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.html" title="interface in be.imgn.gaia.core.event.spi">SubscriberIndex</a></dt>
 <dd>
 <div class="block">Returns the class whose methods this index subscribes.</div>
 </dd>
@@ -3204,15 +3213,15 @@ or <code>Outer&lt;String&gt;.Inner&lt;Integer&gt;</code>.</div>
 <dd>
 <div class="block">Returns a builder of anonymous classes, written with <code>$L</code> in code, as in <code>new Runnable() { ... }</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#newBuilder()" class="member-name-link">newBuilder()</a> - Static method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></dt>
+<dd>
+<div class="block">Returns a builder of a bus, which delivers events on the thread that publishes them, and logs the exceptions of
+subscribers, unless told otherwise.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#newBuilder()" class="member-name-link">newBuilder()</a> - Static method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns a builder that detects a platform from the given sources, or from the running JVM's for any source not
 given.</div>
-</dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#newBuilder()" class="member-name-link">newBuilder()</a> - Static method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events">EventBus</a></dt>
-<dd>
-<div class="block">Returns a builder of a bus, which delivers events on the thread that publishes them, and logs the exceptions of
-subscribers, unless told otherwise.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.html#newBuilder()" class="member-name-link">newBuilder()</a> - Static method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.html" title="class in be.imgn.gaia.processing.source">CodeBlock</a></dt>
 <dd>
@@ -3589,10 +3598,10 @@ defaults of the others, in the order the annotation type declares its members.</
 <dd>
 <div class="block">Returns a splitter on the matches of a regular expression, given as a string.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/OnVirtualThread.html" class="type-name-link" title="annotation interface in be.imgn.gaia.events">OnVirtualThread</a> - Annotation Interface in <a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/OnVirtualThread.html" class="type-name-link" title="annotation interface in be.imgn.gaia.core.event">OnVirtualThread</a> - Annotation Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a></dt>
 <dd>
-<div class="block">Subscribes a method as <a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> does, but has each of its events delivered on a new virtual
-thread, with <a href="be.imgn.gaia.events/be/imgn/gaia/events/VirtualThreadExecutor.html" title="class in be.imgn.gaia.events"><code>VirtualThreadExecutor</code></a>.</div>
+<div class="block">Subscribes a method as <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> does, but has each of its events delivered on a new virtual
+thread, with <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" title="class in be.imgn.gaia.core.event"><code>VirtualThreadExecutor</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html#open(C,C)" class="member-name-link">open(C, C)</a> - Static method in record class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect">Range</a></dt>
 <dd>
@@ -3675,7 +3684,8 @@ three are <code>false</code>.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html#overriding(javax.lang.model.element.ExecutableElement)" class="member-name-link">overriding(ExecutableElement)</a> - Static method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html" title="class in be.imgn.gaia.processing.source">Method</a></dt>
 <dd>
 <div class="block">Returns a builder of a method that overrides another one: the same name, type variables, return type, parameters
-and exceptions, annotated with <code>@Override</code>, and without <code>abstract</code> or <code>default</code>.</div>
+and exceptions, annotated with <code>@Override</code>, and without <code>abstract</code>, <code>default</code>, <code>native</code>,
+<code>synchronized</code> or <code>strictfp</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html#overriding(javax.lang.model.element.ExecutableElement,javax.lang.model.type.DeclaredType,javax.lang.model.util.Types)" class="member-name-link">overriding(ExecutableElement, DeclaredType, Types)</a> - Static method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html" title="class in be.imgn.gaia.processing.source">Method</a></dt>
 <dd>
@@ -3878,7 +3888,7 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Accessible wherever the element's module lets it be.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#publish(java.lang.Object)" class="member-name-link">publish(Object)</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events">EventBus</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#publish(java.lang.Object)" class="member-name-link">publish(Object)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></dt>
 <dd>
 <div class="block">Delivers an event to the subscribers of its class and of its supertypes.</div>
 </dd>
@@ -3990,10 +4000,10 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Returns the binary name of this type, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html#forName(java.lang.String)" title="class or interface in java.lang" class="external-link"><code>Class.forName(String)</code></a> expects it.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#register(java.lang.Object)" class="member-name-link">register(Object)</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events">EventBus</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#register(java.lang.Object)" class="member-name-link">register(Object)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></dt>
 <dd>
-<div class="block">Subscribes the <a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> methods of a listener, those of its class and of the classes it
-extends, through the code <code>gaia-events-processor</code> generated for each of these classes.</div>
+<div class="block">Subscribes the <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> methods of a listener, those of its class and of the classes it
+extends, through the code <code>gaia-processor</code> generated for each of these classes.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html#remove(java.lang.Object)" class="member-name-link">remove(Object)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a></dt>
 <dd>&nbsp;</dd>
@@ -4291,6 +4301,10 @@ connected.</div>
 <dd>
 <div class="block">Splits <code>text</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html#spliterator()" class="member-name-link">spliterator()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#spliterator()" class="member-name-link">spliterator()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" class="type-name-link" title="class in be.imgn.gaia.core.text">Splitter</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/package-summary.html">be.imgn.gaia.core.text</a></dt>
 <dd>
 <div class="block">Splits text into parts around a separator: a character, a literal string or a regular expression.</div>
@@ -4387,47 +4401,47 @@ annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/S
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#subMultiset(E,boolean,E,boolean)" class="member-name-link">subMultiset(E, boolean, E, boolean)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.Registrar.html#subscribe(java.lang.Class,java.lang.Class,java.util.function.Supplier,java.util.function.Consumer)" class="member-name-link">subscribe(Class, Class, Supplier, Consumer)</a> - Method in interface be.imgn.gaia.events.spi.<a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.Registrar.html" title="interface in be.imgn.gaia.events.spi">SubscriberIndex.Registrar</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.Registrar.html#subscribe(java.lang.Class,java.lang.Class,java.util.function.Supplier,java.util.function.Consumer)" class="member-name-link">subscribe(Class, Class, Supplier, Consumer)</a> - Method in interface be.imgn.gaia.core.event.spi.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.Registrar.html" title="interface in be.imgn.gaia.core.event.spi">SubscriberIndex.Registrar</a></dt>
 <dd>
-<div class="block">Subscribes a method with a <a href="be.imgn.gaia.events/be/imgn/gaia/events/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a> to
-the events of a type and of its subtypes, delivered through the executor of the annotation.</div>
+<div class="block">Subscribes a method with a <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.core.event">subscribing annotation</a>
+to the events of a type and of its subtypes, delivered through the executor of the annotation.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)" class="member-name-link">subscribe(Class, Consumer)</a> - Method in class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html" title="class in be.imgn.gaia.events">EventBus</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)" class="member-name-link">subscribe(Class, Consumer)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></dt>
 <dd>
 <div class="block">Subscribes to the events of a type and of its subtypes.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.Registrar.html#subscribe(java.lang.Class,java.util.function.Consumer)" class="member-name-link">subscribe(Class, Consumer)</a> - Method in interface be.imgn.gaia.events.spi.<a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.Registrar.html" title="interface in be.imgn.gaia.events.spi">SubscriberIndex.Registrar</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.Registrar.html#subscribe(java.lang.Class,java.util.function.Consumer)" class="member-name-link">subscribe(Class, Consumer)</a> - Method in interface be.imgn.gaia.core.event.spi.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.Registrar.html" title="interface in be.imgn.gaia.core.event.spi">SubscriberIndex.Registrar</a></dt>
 <dd>
 <div class="block">Subscribes a method to the events of a type and of its subtypes.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.html#subscribe(java.lang.Object,be.imgn.gaia.events.spi.SubscriberIndex.Registrar)" class="member-name-link">subscribe(Object, SubscriberIndex.Registrar)</a> - Method in interface be.imgn.gaia.events.spi.<a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.html" title="interface in be.imgn.gaia.events.spi">SubscriberIndex</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.html#subscribe(java.lang.Object,be.imgn.gaia.core.event.spi.SubscriberIndex.Registrar)" class="member-name-link">subscribe(Object, SubscriberIndex.Registrar)</a> - Method in interface be.imgn.gaia.core.event.spi.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.html" title="interface in be.imgn.gaia.core.event.spi">SubscriberIndex</a></dt>
 <dd>
 <div class="block">Subscribes the methods of a listener.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" class="type-name-link" title="annotation interface in be.imgn.gaia.events">Subscribe</a> - Annotation Interface in <a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" class="type-name-link" title="annotation interface in be.imgn.gaia.core.event">Subscribe</a> - Annotation Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a></dt>
 <dd>
-<div class="block">Marks a method that receives events once its listener is <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#register(java.lang.Object)">registered</a>: the
+<div class="block">Marks a method that receives events once its listener is <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#register(java.lang.Object)">registered</a>: the
 events of the type of its parameter, and of the subtypes of that type.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.html" class="type-name-link" title="interface in be.imgn.gaia.events.spi">SubscriberIndex</a> - Interface in <a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/package-summary.html">be.imgn.gaia.events.spi</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.html" class="type-name-link" title="interface in be.imgn.gaia.core.event.spi">SubscriberIndex</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/package-summary.html">be.imgn.gaia.core.event.spi</a></dt>
 <dd>
-<div class="block">Subscribes the <a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> methods a class declares, and those with a
-<a href="be.imgn.gaia.events/be/imgn/gaia/events/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.events">subscribing annotation</a>: implemented by the code
-<code>gaia-events-processor</code> generates for that class, and found by
-<a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a>.</div>
+<div class="block">Subscribes the <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> methods a class declares, and those with a
+<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html" title="annotation interface in be.imgn.gaia.core.event">subscribing annotation</a>: implemented by the code
+<code>gaia-processor</code> generates for that class, and found by
+<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> with <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/SubscriberIndex.Registrar.html" class="type-name-link" title="interface in be.imgn.gaia.events.spi">SubscriberIndex.Registrar</a> - Interface in <a href="be.imgn.gaia.events/be/imgn/gaia/events/spi/package-summary.html">be.imgn.gaia.events.spi</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/SubscriberIndex.Registrar.html" class="type-name-link" title="interface in be.imgn.gaia.core.event.spi">SubscriberIndex.Registrar</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/spi/package-summary.html">be.imgn.gaia.core.event.spi</a></dt>
 <dd>
 <div class="block">Subscribes the methods of a listener, on behalf of the event bus.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/SubscribingAnnotation.html" class="type-name-link" title="annotation interface in be.imgn.gaia.events">SubscribingAnnotation</a> - Annotation Interface in <a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html" class="type-name-link" title="annotation interface in be.imgn.gaia.core.event">SubscribingAnnotation</a> - Annotation Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a></dt>
 <dd>
-<div class="block">Marks an annotation that subscribes the methods it annotates as <a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscribe.html" title="annotation interface in be.imgn.gaia.events"><code>@Subscribe</code></a> does, and has the bus
+<div class="block">Marks an annotation that subscribes the methods it annotates as <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> does, and has the bus
 deliver their events through an executor, such as on a given thread.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/Subscription.html" class="type-name-link" title="class in be.imgn.gaia.events">Subscription</a> - Class in <a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscription.html" class="type-name-link" title="class in be.imgn.gaia.core.event">Subscription</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a></dt>
 <dd>
-<div class="block">What <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)"><code>EventBus.subscribe(Class, java.util.function.Consumer)</code></a> or <a href="be.imgn.gaia.events/be/imgn/gaia/events/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> subscribed,
+<div class="block">What <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)"><code>EventBus.subscribe(Class, java.util.function.Consumer)</code></a> or <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> subscribed,
 until it is closed.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html#subtypeOf(be.imgn.gaia.processing.source.TypeName)" class="member-name-link">subtypeOf(TypeName)</a> - Static method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html" title="class in be.imgn.gaia.processing.source">WildcardTypeName</a></dt>
@@ -4667,6 +4681,16 @@ order they are first encountered, and over the values of a key in the order they
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a></dt>
+<dd>
+<div class="block">Returns each element once, followed by <code>×</code> and its count if it occurs more than once, as in <code>[foo ×
+3, bar]</code>: the occurrences may be too many to write one by one.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
+<dd>
+<div class="block">Returns each element once, followed by <code>×</code> and its count if it occurs more than once, as in <code>[foo ×
+3, bar]</code>: the occurrences may be too many to write one by one.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Closed.html#toString()" class="member-name-link">toString()</a> - Method in record class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Closed.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Closed</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
@@ -4685,9 +4709,9 @@ order they are first encountered, and over the values of a key in the order they
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
 <dd>
-<div class="block">Returns the elapsed time in the largest unit in which it is at least 1, with four significant digits, as
-<code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's abbreviation: <code>ns</code>,
-<code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>.</div>
+<div class="block">Returns the elapsed time in the largest unit in which it is at least 1 once rounded to four significant digits,
+with those four digits, as <code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's
+abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>&nbsp;</dd>
@@ -5055,11 +5079,11 @@ then optional build metadata identifiers after <code>+</code>.</div>
 <dd>
 <div class="block">Creates a version.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/VirtualThreadExecutor.html" class="type-name-link" title="class in be.imgn.gaia.events">VirtualThreadExecutor</a> - Class in <a href="be.imgn.gaia.events/be/imgn/gaia/events/package-summary.html">be.imgn.gaia.events</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" class="type-name-link" title="class in be.imgn.gaia.core.event">VirtualThreadExecutor</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/package-summary.html">be.imgn.gaia.core.event</a></dt>
 <dd>
-<div class="block">Runs each task on a new virtual thread: the executor of <a href="be.imgn.gaia.events/be/imgn/gaia/events/OnVirtualThread.html" title="annotation interface in be.imgn.gaia.events"><code>@OnVirtualThread</code></a>.</div>
+<div class="block">Runs each task on a new virtual thread: the executor of <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/OnVirtualThread.html" title="annotation interface in be.imgn.gaia.core.event"><code>@OnVirtualThread</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.events/be/imgn/gaia/events/VirtualThreadExecutor.html#%3Cinit%3E()" class="member-name-link">VirtualThreadExecutor()</a> - Constructor for class be.imgn.gaia.events.<a href="be.imgn.gaia.events/be/imgn/gaia/events/VirtualThreadExecutor.html" title="class in be.imgn.gaia.events">VirtualThreadExecutor</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html#%3Cinit%3E()" class="member-name-link">VirtualThreadExecutor()</a> - Constructor for class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" title="class in be.imgn.gaia.core.event">VirtualThreadExecutor</a></dt>
 <dd>
 <div class="block">Creates the executor, as the code that subscribes <code>@OnVirtualThread</code> methods does.</div>
 </dd>

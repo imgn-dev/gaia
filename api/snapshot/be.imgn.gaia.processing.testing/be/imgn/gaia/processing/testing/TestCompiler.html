@@ -346,7 +346,8 @@ sources must not have a <code>module-info</code>: javac would then look for them
     its message</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></code> - if an annotation processor, or a file given to javac, throws an exception, which is the
     cause of the one thrown</dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the temporary directories cannot be written, read or deleted</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the temporary directories cannot be written, read or deleted; a failure to delete
+    them while another exception is thrown is added to that exception as a suppressed one</dd>
 </dl>
 </div>
 </section>
@@ -376,7 +377,8 @@ sources must not have a <code>module-info</code>: javac would then look for them
     its message</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></code> - if an annotation processor, or a file given to javac, throws an exception, which is the
     cause of the one thrown</dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the temporary directories cannot be written, read or deleted</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the temporary directories cannot be written, read or deleted; a failure to delete
+    them while another exception is thrown is added to that exception as a suppressed one</dd>
 </dl>
 </div>
 </section>

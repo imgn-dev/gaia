@@ -179,8 +179,9 @@ annotation gives.
     message as a Unicode escape, as <code>&#92;u0009</code> for a tab</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the name is blank, <code>.</code> or <code>..</code>, starts or ends with whitespace,
-    or contains a control character or any of <code>/ \ : &lt; &gt; " | ? *</code>, which some platform forbids in a file
-    name</dd>
+    contains a control character or any of <code>/ \ : &lt; &gt; " | ? *</code>, which some platform forbids in a file name,
+    ends with a dot, or is the name of a Windows device, such as <code>CON</code>, <code>NUL</code>, <code>COM1</code> or
+    <code>LPT9</code>, with or without an extension</dd>
 </dl>
 </div>
 </section>

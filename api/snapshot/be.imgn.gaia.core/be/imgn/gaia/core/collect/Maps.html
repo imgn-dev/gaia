@@ -94,9 +94,11 @@ loadScripts(document, 'script');</script>
 <p>The <code>map</code> methods behave exactly like their <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html#of()" title="class or interface in java.util" class="external-link"><code>Map.of</code></a> counterparts,
 <a href="#mapOfEntries(java.util.Map.Entry...)"><code>mapOfEntries(Map.Entry...)</code></a> like <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html#ofEntries(java.util.Map.Entry...)" title="class or interface in java.util" class="external-link"><code>Map.ofEntries</code></a>, <a href="#mapCopy(java.util.Map)"><code>mapCopy(Map)</code></a>
 like <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html#copyOf(java.util.Map)" title="class or interface in java.util" class="external-link"><code>Map.copyOf</code></a>, and the <code>toMap</code> collectors like
-<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html#toUnmodifiableMap(java.util.function.Function,java.util.function.Function)" title="class or interface in java.util.stream" class="external-link"><code>Collectors.toUnmodifiableMap</code></a>, except for iteration order.
-<code>Map.of</code> and <code>Map.copyOf</code> leave the order unspecified, and it changes from one run to the next. These
-maps iterate over their keys, values and entries in the order the keys were given. Otherwise they are the same:
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html#toUnmodifiableMap(java.util.function.Function,java.util.function.Function)" title="class or interface in java.util.stream" class="external-link"><code>Collectors.toUnmodifiableMap</code></a>, except for iteration order and
+one query. <code>Map.of</code> and <code>Map.copyOf</code> leave the order unspecified, and it changes from one run to the
+next. These maps iterate over their keys, values and entries in the order the keys were given. And
+<code>entrySet().contains(null)</code> throws <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link"><code>NullPointerException</code></a>, like every other query with <code>null</code>,
+where a <code>Map.of</code> map returns <code>false</code>. Otherwise they are the same:
 
 <ul>
   <li>They are unmodifiable: every mutator method throws <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link"><code>UnsupportedOperationException</code></a>, even when the call

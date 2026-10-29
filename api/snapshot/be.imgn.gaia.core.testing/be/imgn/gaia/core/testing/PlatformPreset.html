@@ -105,7 +105,8 @@ properties are:
   <tr><td><code>user.name</code></td><td colspan="4"><code>test</code></td></tr>
   <tr><td><code>user.home</code>, <code>user.dir</code></td><td><code>/home/test</code></td><td><code>/home/test</code></td>
       <td><code>/Users/test</code></td><td><code>C:\Users\test</code></td></tr>
-  <tr><td><code>java.io.tmpdir</code></td><td><code>/tmp</code></td><td><code>/tmp</code></td><td><code>/tmp</code></td>
+  <tr><td><code>java.io.tmpdir</code></td><td><code>/tmp</code></td><td><code>/tmp</code></td>
+      <td><code>/var/folders/zz/zyxvpxvq6csfxvn_n0000000000000/T/</code>, as <code>TMPDIR</code></td>
       <td><code>C:\Users\test\AppData\Local\Temp\</code></td></tr>
   <tr><td><code>file.separator</code></td><td><code>/</code></td><td><code>/</code></td><td><code>/</code></td><td><code>\</code></td></tr>
   <tr><td><code>path.separator</code></td><td><code>:</code></td><td><code>:</code></td><td><code>:</code></td><td><code>;</code></td></tr>
@@ -116,8 +117,9 @@ properties are:
 <p>The environment variables are:
 
 <ul>
-  <li>Linux, other Unix, macOS: <code>HOME</code> (the home directory) and <code>USER</code> (the user name). No XDG variable
-      is set, so the specification's defaults apply, unless <a href="PlatformPreset.Builder.html#xdgVariables(boolean)"><code>PlatformPreset.Builder.xdgVariables(boolean)</code></a> sets them.
+  <li>Linux, other Unix, macOS: <code>HOME</code> (the home directory) and <code>USER</code> (the user name), and on macOS
+      <code>TMPDIR</code> too. No XDG variable is set, so the specification's defaults apply, unless
+      <a href="PlatformPreset.Builder.html#xdgVariables(boolean)"><code>PlatformPreset.Builder.xdgVariables(boolean)</code></a> sets them.
   <li>Windows: <code>USERNAME</code>, <code>USERPROFILE</code> (the home directory), <code>APPDATA</code>
       (<code>C:\Users\test\AppData\Roaming</code>), <code>LOCALAPPDATA</code> (<code>C:\Users\test\AppData\Local</code>),
       <code>TEMP</code> and <code>TMP</code> (<code>C:\Users\test\AppData\Local\Temp</code>), <code>ProgramData</code>

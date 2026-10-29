@@ -86,7 +86,8 @@ name the types it refers to.
 
 <p><code>name(...)</code> returns the name to write in the source, and records the import it needs. Types in
 <code>java.lang</code> and in the generated file's own package need none. A type whose simple name is already taken, by
-another import or by the generated type itself, is written fully qualified instead.</div>
+another import or by the generated type itself, is written fully qualified instead; so is a type of <code>java.lang</code>
+that a type of the package hides, such as <code>Character</code> next to a <code>com.example.Character</code>.</div>
 </div>
 </section>
 <section class="summary">
