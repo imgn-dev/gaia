@@ -22,7 +22,9 @@ import org.jspecify.annotations.Nullable;
  * its nearest enclosing type or package, and the path from there to the element.
  *
  * <p>A method is identified by its name and the simple names of its parameter types, which stay the same when an
- * unresolved type becomes resolved.
+ * unresolved type becomes resolved: an unresolved type has no package yet. Two overloads whose parameter types differ
+ * only by their packages, as {@code m(java.util.Date)} and {@code m(java.sql.Date)}, therefore share a key, which finds
+ * the first of them.
  *
  * @param root the qualified name of the nearest enclosing type or package
  * @param inPackage whether the root is a package rather than a type
