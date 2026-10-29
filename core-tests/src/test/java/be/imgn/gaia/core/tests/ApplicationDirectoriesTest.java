@@ -194,6 +194,39 @@ class ApplicationDirectoriesTest {
         }
     }
 
+    // Windows opens a device for the first two, and strips the trailing dot of the last one.
+    @ParameterizedTest
+    @ValueSource(strings = {"CON", "nul.txt", "Quuz."})
+    void rejectsWhatWindowsMishandlesOnEveryPlatform(String name) {
+        for (OperatingSystem operatingSystem : OperatingSystem.values()) {
+            Platform platform = FakePlatform.newBuilder(operatingSystem, root).build();
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> platform.applicationDirectories(name))
+                    .withMessageContaining("application");
+        }
+    }
+
+    @Test
+    void rejectsTheNamesOfWindowsDevicesNamingItsRole() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("Com1.log", "vendor"))
+                .withMessage("The vendor must not be the name of a Windows device: \"Com1.log\"");
+    }
+
+    @Test
+    void rejectsATrailingDotNamingItsRole() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> ApplicationDirectories.checkName("Quuz.", "application"))
+                .withMessage("The application must not end with a dot: \"Quuz.\"");
+    }
+
+    @Test
+    void acceptsANameThatOnlyStartsWithTheNameOfAWindowsDevice() {
+        assertThatNoException().isThrownBy(() -> ApplicationDirectories.checkName("Console", "application"));
+        assertThatNoException().isThrownBy(() -> ApplicationDirectories.checkName("COM10", "application"));
+    }
+
     @Test
     void acceptsANameEveryPlatformAllows() {
         assertThatNoException().isThrownBy(() -> ApplicationDirectories.checkName("Quuz 2", "application"));

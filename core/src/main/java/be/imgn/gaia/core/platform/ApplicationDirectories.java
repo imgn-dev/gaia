@@ -6,6 +6,7 @@ import static java.util.Objects.requireNonNull;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,6 +24,9 @@ import org.jspecify.annotations.Nullable;
 public final class ApplicationDirectories {
 
     private static final String FORBIDDEN_CHARACTERS = "/\\:<>\"|?*";
+    // Windows opens the device rather than a file for these names, whatever their case, and even with an extension.
+    private static final Pattern WINDOWS_DEVICE =
+            Pattern.compile("(?:CON|PRN|AUX|NUL|COM[0-9¹²³]|LPT[0-9¹²³]) *(?:\\..*)?", Pattern.CASE_INSENSITIVE);
 
     private final Path config;
     private final Path data;
@@ -73,8 +77,9 @@ public final class ApplicationDirectories {
      *     vendor must not start or end with whitespace: " bar"}; a control character of the name is written in the
      *     message as a Unicode escape, as <code>&#92;u0009</code> for a tab
      * @throws IllegalArgumentException if the name is blank, {@code .} or {@code ..}, starts or ends with whitespace,
-     *     or contains a control character or any of {@code / \ : < > " | ? *}, which some platform forbids in a file
-     *     name
+     *     contains a control character or any of {@code / \ : < > " | ? *}, which some platform forbids in a file name,
+     *     ends with a dot, or is the name of a Windows device, such as {@code CON}, {@code NUL}, {@code COM1} or
+     *     {@code LPT9}, with or without an extension
      */
     public static void checkName(String name, String role) {
         requireNonNull(role, "role");
@@ -93,6 +98,13 @@ public final class ApplicationDirectories {
                 "The %s must not contain a control character or any of %s: %s",
                 role,
                 FORBIDDEN_CHARACTERS,
+                quoted(name));
+        // Windows strips a trailing dot, so that "Quuz." and "Quuz" are the same directory.
+        checkArgument(!name.endsWith("."), "The %s must not end with a dot: %s", role, quoted(name));
+        checkArgument(
+                !WINDOWS_DEVICE.matcher(name).matches(),
+                "The %s must not be the name of a Windows device: %s",
+                role,
                 quoted(name));
     }
 

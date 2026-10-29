@@ -191,7 +191,8 @@ Two overloads name the application more fully, for the operating systems that us
   the directories after: `~/Library/Application Support/foo.bar.Quuz`.
 
 Each name must be valid on every operating system, whichever the JVM runs on: not blank, `.` or `..`, without leading
-or trailing whitespace, control characters or any of `/ \ : < > " | ? *`. To check a name before it reaches the
+or trailing whitespace, control characters or any of `/ \ : < > " | ? *`, not ending with a dot, and not the name of a
+Windows device such as `CON`, `NUL`, `COM1` or `LPT9`, with or without an extension. To check a name before it reaches the
 platform, such as one an annotation gives to an annotation processor, call
 [`ApplicationDirectories.checkName`](api:be.imgn.gaia.core.platform.ApplicationDirectories), which throws the same
 `IllegalArgumentException`.
