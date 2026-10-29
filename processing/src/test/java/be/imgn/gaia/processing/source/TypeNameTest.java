@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TypeNameTest {
 
@@ -124,6 +125,14 @@ class TypeNameTest {
                     .isEqualTo(ClassName.of(Map.Entry.class));
             assertThat(ClassName.of(Map.Entry.class).annotated(NULLABLE).topLevel())
                     .isEqualTo(ClassName.of(Map.class));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"record", "var", "yield", "sealed", "permits"})
+        void rejectsTheIdentifiersThatCannotNameAType(String name) {
+            assertThatIllegalArgumentException().isThrownBy(() -> ClassName.of("com.example", name));
+            assertThatIllegalArgumentException().isThrownBy(() -> Type.newClassBuilder(name));
+            assertThatIllegalArgumentException().isThrownBy(() -> TypeVariableName.of(name));
         }
 
         @Test

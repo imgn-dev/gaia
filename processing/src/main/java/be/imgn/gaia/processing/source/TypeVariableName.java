@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeKind;
@@ -35,7 +34,7 @@ public record TypeVariableName(String name, List<TypeName> bounds, List<Annotati
         requireNonNull(name, "name");
         bounds = Checks.elements(bounds, "bounds");
         annotations = Checks.elements(annotations, "annotations");
-        if (!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) {
+        if (!Checks.isTypeName(name)) {
             throw new IllegalArgumentException("Not a type variable name: " + name);
         }
         for (TypeName bound : bounds) {

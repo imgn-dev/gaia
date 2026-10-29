@@ -244,7 +244,7 @@ public final class Type {
     }
 
     private static String checkName(String name) {
-        if (!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) {
+        if (!Checks.isTypeName(name)) {
             throw new IllegalArgumentException("Not a type name: " + name);
         }
         return name;

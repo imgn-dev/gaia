@@ -53,7 +53,7 @@ public record ClassName(String packageName, List<String> simpleNames, List<Annot
             throw new IllegalArgumentException("Not a package name: " + packageName);
         }
         for (String simpleName : simpleNames) {
-            if (!SourceVersion.isIdentifier(simpleName) || SourceVersion.isKeyword(simpleName)) {
+            if (!Checks.isTypeName(simpleName)) {
                 throw new IllegalArgumentException("Not a simple name: " + simpleName);
             }
         }
