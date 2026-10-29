@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  *
  * <p>Applications do not implement it. For a class {@code com.example.Outer.Listener}, the processor generates
  * {@code com.example.$Outer$Listener$$Subscribers}, named as gaia-processing names a type generated for another, and
- * registers it as a provider of this service. The event bus finds it by that name.
+ * registers it as a provider of this service. The event bus finds it by its {@link #listenerType()}.
  *
  * @since 0.1.2
  */

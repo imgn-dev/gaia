@@ -322,30 +322,15 @@ public final class EventBus {
                 || type.isArray()) {
             return Optional.empty();
         }
-        var name = indexName(type);
         var module = type.getModule();
         var layer = module.getLayer();
         var loader = module.isNamed() && layer != null
                 ? ServiceLoader.load(layer, SubscriberIndex.class)
                 : ServiceLoader.load(SubscriberIndex.class, type.getClassLoader());
         return loader.stream()
-                .filter(provider -> provider.type().getName().equals(name))
-                .findFirst()
-                .map(ServiceLoader.Provider::get);
-    }
-
-    /**
-     * Returns the binary name of the index generated for a class, as gaia-processing names a type generated for
-     * another: in its package, {@code $}, the simple names from the top-level class to this one joined by {@code $},
-     * each dollar sign within them written {@code $0}, then {@code $$Subscribers}.
-     */
-    private static String indexName(Class<?> type) {
-        var names = new StringBuilder();
-        for (Class<?> current = type; current != null; current = current.getEnclosingClass()) {
-            names.insert(0, "$" + current.getSimpleName().replace("$", "$0"));
-        }
-        var packageName = type.getPackageName();
-        return (packageName.isEmpty() ? "" : packageName + ".") + names + "$$Subscribers";
+                .map(ServiceLoader.Provider::get)
+                .filter(index -> index.listenerType() == type)
+                .findFirst();
     }
 
     /** Builds an {@link EventBus}. */
