@@ -47,10 +47,11 @@ import java.util.concurrent.Executor;
  * with more than one subscribing annotation, {@code @Subscribe} included. The generated code refers to the annotation,
  * and creates the executor: it reports an error for an annotation or an executor that it cannot access from the package
  * of the listener, and for an executor that is abstract, an inner class, or without an accessible constructor without
- * parameters. On the declaration of the annotation, it reports the same problems for any package the annotation can be
- * used from: a public annotation needs a public executor, with a public constructor without parameters. It reports a
- * retention of {@code SOURCE} too: the processor needs to see the annotation on the methods of classes compiled before,
- * to report the methods that override them.
+ * parameters, or whose constructor without parameters declares checked exceptions. On the declaration of the
+ * annotation, it reports the same problems for any package the annotation can be used from: a public annotation needs a
+ * public executor, with a public constructor without parameters. It reports a retention of {@code SOURCE} too: the
+ * processor needs to see the annotation on the methods of classes compiled before, to report the methods that override
+ * them.
  *
  * <p>The processor only finds the methods annotated with an annotation that has this meta-annotation itself, not
  * through other annotations.
@@ -63,7 +64,8 @@ import java.util.concurrent.Executor;
 public @interface SubscribingAnnotation {
 
     /**
-     * Returns the class of the executor that delivers the events, with an accessible constructor without parameters.
+     * Returns the class of the executor that delivers the events, with an accessible constructor without parameters
+     * that declares no checked exceptions.
      *
      * @return the class of the executor
      */

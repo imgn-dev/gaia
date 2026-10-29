@@ -692,6 +692,49 @@ class SubscribeProcessorTest {
     }
 
     @Test
+    void reportsAnExecutorWhoseConstructorDeclaresACheckedException() {
+        var compilation = compile(TestCompiler.source("example.Listener", """
+                package example;
+
+                import be.imgn.gaia.core.event.SubscribingAnnotation;
+                import java.io.IOException;
+                import java.util.concurrent.Executor;
+
+                class Listener {
+                    @OnChecked
+                    void onChecked(String text) {}
+
+                    @OnUnchecked
+                    void onUnchecked(String text) {}
+
+                    @SubscribingAnnotation(executor = Checked.class)
+                    @interface OnChecked {}
+
+                    @SubscribingAnnotation(executor = Unchecked.class)
+                    @interface OnUnchecked {}
+
+                    static class Checked implements Executor {
+                        Checked() throws IOException {}
+
+                        public void execute(Runnable task) {}
+                    }
+
+                    static class Unchecked implements Executor {
+                        Unchecked() throws IllegalStateException {}
+
+                        public void execute(Runnable task) {}
+                    }
+                }
+                """));
+
+        assertThat(compilation).failed().hadErrorCount(2).generatedNoSourceFiles();
+        var problem = "must not declare checked exceptions in its constructor without parameters: java.io.IOException";
+        // On the declaration of the annotation, and on the method.
+        assertExecutorError(compilation, "Listener", 14, "OnChecked", "example.Listener.Checked", problem);
+        assertExecutorError(compilation, "Listener", 9, "OnChecked", "example.Listener.Checked", problem);
+    }
+
+    @Test
     void reportsAnExecutorThatTheModuleOfTheListenerCannotAccess(@TempDir Path modules) throws IOException {
         // Without -Werror: javac's lint warns that the exported annotation names an executor that is not exported.
         var queue = TestCompiler.javac()

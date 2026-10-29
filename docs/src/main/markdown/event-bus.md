@@ -147,7 +147,8 @@ exception thrown by the method, or by the executor when it is handed the task, g
 The processor checks these methods as it checks `@Subscribe` ones, and reports a method with more than one subscribing
 annotation, `@Subscribe` included. It also reports what keeps the generated code from referring to the annotation and
 creating the executor: the executor must be a class, neither abstract nor an inner class, with a constructor without
-parameters, all accessible from the package of the listener, and exported to its module. On the declaration of the
+parameters that declares no checked exceptions, all accessible from the package of the listener, and exported to its
+module. On the declaration of the
 annotation, it checks the executor from wherever the annotation can be used, and reports a retention of `SOURCE`: the
 annotation must be kept in class files, so that the processor sees it on the methods of classes compiled before.
 

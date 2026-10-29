@@ -202,7 +202,7 @@ final class SubscribeStep implements Step {
             report.error(name + " methods must return void");
         }
         for (var thrown : method.getThrownTypes()) {
-            if (!context.isSubtype(thrown, RuntimeException.class) && !context.isSubtype(thrown, Error.class)) {
+            if (isChecked(thrown)) {
                 report.error(name + " methods must not declare checked exceptions: " + thrown);
             }
         }
@@ -289,11 +289,36 @@ final class SubscribeStep implements Step {
         }
         if (!accessible.test(executor)) {
             report.error(prefix + " must be " + where);
-        } else if (ElementFilter.constructorsIn(executor.getEnclosedElements()).stream()
-                .noneMatch(constructor -> constructor.getParameters().isEmpty() && accessible.test(constructor))) {
-            report.error(prefix + " must have a constructor without parameters that is " + where);
+        } else {
+            checkConstructor(report, executor, prefix, accessible, where);
         }
         return found;
+    }
+
+    private void checkConstructor(
+            Diagnostics.Report report,
+            TypeElement executor,
+            String prefix,
+            Predicate<Element> accessible,
+            String where) {
+        var constructor = ElementFilter.constructorsIn(executor.getEnclosedElements()).stream()
+                .filter(candidate -> candidate.getParameters().isEmpty())
+                .findFirst();
+        if (constructor.isEmpty() || !accessible.test(constructor.get())) {
+            report.error(prefix + " must have a constructor without parameters that is " + where);
+            return;
+        }
+        // The generated reference to the constructor is an Executor supplier, which cannot throw them.
+        for (var thrown : constructor.get().getThrownTypes()) {
+            if (isChecked(thrown)) {
+                report.error(prefix + " must not declare checked exceptions in its constructor without parameters: "
+                        + thrown);
+            }
+        }
+    }
+
+    private boolean isChecked(TypeMirror thrown) {
+        return !context.isSubtype(thrown, RuntimeException.class) && !context.isSubtype(thrown, Error.class);
     }
 
     private static String executorOf(TypeElement annotation, TypeElement executor) {
