@@ -13,8 +13,8 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
+# Nothing by default: each job asks for what it needs.
+permissions: {}
 
 # Two releases must never interleave their version commits and tags.
 concurrency:
@@ -24,6 +24,9 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      # To push the release commit and tag, and to create the GitHub release.
+      contents: write
     steps:
       # First, before anything is checked out or published.
       - name: Check version format
@@ -58,20 +61,17 @@ jobs:
         with:
           # A full history, so the tag this workflow pushes has ancestry.
           fetch-depth: 0
+          # The build must not find a token it could push with: the push step
+          # below passes it to that one command.
+          persist-credentials: false
 
-      - name: Set up JDK and publishing credentials
+      # No Maven cache: a release builds from a clean repository, so nothing a
+      # build on another branch left in the cache can reach the signed artifacts.
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '25'
-          cache: maven
-          # Writes ~/.m2/settings.xml with a <server> whose id matches
-          # <publishingServerId>central</publishingServerId> in the parent POM.
-          server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Configure git identity
         run: |
@@ -86,6 +86,21 @@ jobs:
       # Every module, the *-tests modules included, on the release version.
       - name: Verify
         run: ./mvnw -B --no-transfer-progress clean verify
+
+      # Only now, after the build and its tests have run, so that none of them
+      # had the signing key within reach.
+      - name: Set up publishing credentials
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          # Writes ~/.m2/settings.xml with a <server> whose id matches
+          # <publishingServerId>central</publishingServerId> in the parent POM.
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Publish to Maven Central
         env:
@@ -115,11 +130,18 @@ jobs:
           git tag -a 'v${{ inputs.releaseVersion }}' -m 'Release ${{ inputs.releaseVersion }}'
 
       - name: Start the next development version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           next='${{ inputs.nextVersion }}-SNAPSHOT'
           sed -i -E "s/-Drevision=[^[:space:]]+/-Drevision=$next/" .mvn/maven.config
           git commit -am "Start $next"
-          git push origin HEAD --follow-tags
+          # The token goes to this command only, as the header actions/checkout
+          # would have stored in .git/config.
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$auth"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
+            push origin HEAD --follow-tags
 
       - name: Create the GitHub release
         env:
@@ -133,6 +155,9 @@ jobs:
   # API docs workflow.
   docs:
     needs: release
+    permissions:
+      # The publish job of the API docs workflow pushes to gh-pages.
+      contents: write
     uses: ./.github/workflows/docs.yml
     with:
       version: ${{ inputs.releaseVersion }}
