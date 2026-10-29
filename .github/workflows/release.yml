@@ -154,9 +154,10 @@ jobs:
         # never deployed. autoPublish is false, so the deployment waits in the
         # Central portal for a human to release it.
         #
-        # skipTests: the Verify step above already ran every test. This step
-        # publishes; it does not test.
-        run: ./mvnw -B --no-transfer-progress -Prelease -DskipTests deploy
+        # skipTests and invoker.skip: the Verify step above already ran every test
+        # and integration test. This step publishes; it does not test, and runs
+        # no Maven build of the integration tests with the credentials around.
+        run: ./mvnw -B --no-transfer-progress -Prelease -DskipTests -Dinvoker.skip deploy
 
       - name: Tag the release
         # The POM may already sit at the version being released, in which case
