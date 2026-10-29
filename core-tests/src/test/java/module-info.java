@@ -1,4 +1,5 @@
 import be.imgn.gaia.core.event.spi.SubscriberIndex;
+import be.imgn.gaia.core.tests.event.$Listeners$AbstractListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.$Listeners$BaseListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.$Listeners$ExtendingListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.$Listeners$FailingQueuedListener$$Subscribers;
@@ -8,6 +9,7 @@ import be.imgn.gaia.core.tests.event.$Listeners$OrderListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.$Listeners$OtherQueuedListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.$Listeners$Outer$Inner$$Subscribers;
 import be.imgn.gaia.core.tests.event.$Listeners$QueuedListener$$Subscribers;
+import be.imgn.gaia.core.tests.event.$Listeners$RecordListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.$Listeners$VirtualThreadListener$$Subscribers;
 import be.imgn.gaia.core.tests.event.RecordingLoggerFinder;
 import javax.annotation.processing.Processor;
@@ -36,6 +38,7 @@ open module be.imgn.gaia.core.tests {
     uses Processor;
 
     provides SubscriberIndex with
+            $Listeners$AbstractListener$$Subscribers,
             $Listeners$BaseListener$$Subscribers,
             $Listeners$ExtendingListener$$Subscribers,
             $Listeners$FailingQueuedListener$$Subscribers,
@@ -45,6 +48,7 @@ open module be.imgn.gaia.core.tests {
             $Listeners$OtherQueuedListener$$Subscribers,
             $Listeners$Outer$Inner$$Subscribers,
             $Listeners$QueuedListener$$Subscribers,
+            $Listeners$RecordListener$$Subscribers,
             $Listeners$VirtualThreadListener$$Subscribers;
     provides System.LoggerFinder with
             RecordingLoggerFinder;

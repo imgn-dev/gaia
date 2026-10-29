@@ -233,6 +233,46 @@ class SubscribeProcessorTest {
     }
 
     @Test
+    void generatesAnIndexForRecordEnumAndAbstractListeners() {
+        var compilation = compile(TestCompiler.source("example.Listeners", """
+                package example;
+
+                import be.imgn.gaia.core.event.Subscribe;
+
+                class Listeners {
+                    record Record(String name) {
+                        @Subscribe
+                        void onText(String text) {}
+                    }
+
+                    enum Enum {
+                        PLAIN,
+                        SPECIAL {
+                            @Override
+                            void onText(String text) {}
+                        };
+
+                        @Subscribe
+                        void onText(String text) {}
+                    }
+
+                    abstract static class Abstract {
+                        @Subscribe
+                        abstract void onText(String text);
+                    }
+                }
+                """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        for (var name : new String[] {"Record", "Enum", "Abstract"}) {
+            assertThat(compilation)
+                    .generatedSourceFile("example.$Listeners$" + name + "$$Subscribers")
+                    .contains("var l = (Listeners." + name + ") listener;")
+                    .contains("registrar.subscribe(String.class, l::onText);");
+        }
+    }
+
+    @Test
     void reportsTheMethodsTheGeneratedCodeCannotCall() {
         var compilation = compile(TestCompiler.source("example.Listener", """
                 package example;

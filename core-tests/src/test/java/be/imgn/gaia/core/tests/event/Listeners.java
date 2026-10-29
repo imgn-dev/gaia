@@ -66,6 +66,26 @@ final class Listeners {
         }
     }
 
+    /** Subscribes a method that its subclasses implement. */
+    abstract static class AbstractListener extends Recording {
+        @Subscribe
+        abstract void onPlaced(OrderPlaced event);
+    }
+
+    static class ImplementingListener extends AbstractListener {
+        @Override
+        void onPlaced(OrderPlaced event) {
+            record("implementing " + event.id());
+        }
+    }
+
+    record RecordListener(List<String> received) {
+        @Subscribe
+        void onPlaced(OrderPlaced event) {
+            received.add("record " + event.id());
+        }
+    }
+
     static class GenericListener<T> extends Recording {
         @Subscribe
         void onPlaced(OrderPlaced event) {

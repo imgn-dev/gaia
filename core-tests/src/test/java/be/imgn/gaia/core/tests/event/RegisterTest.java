@@ -7,10 +7,13 @@ import be.imgn.gaia.core.event.EventBus;
 import be.imgn.gaia.core.tests.event.Listeners.BaseListener;
 import be.imgn.gaia.core.tests.event.Listeners.ExtendingListener;
 import be.imgn.gaia.core.tests.event.Listeners.GenericListener;
+import be.imgn.gaia.core.tests.event.Listeners.ImplementingListener;
 import be.imgn.gaia.core.tests.event.Listeners.OrderListener;
 import be.imgn.gaia.core.tests.event.Listeners.Outer;
 import be.imgn.gaia.core.tests.event.Listeners.OverridingListener;
 import be.imgn.gaia.core.tests.event.Listeners.QuietListener;
+import be.imgn.gaia.core.tests.event.Listeners.RecordListener;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -74,6 +77,19 @@ class RegisterTest {
 
         assertThat(generic.received()).containsExactly("generic 1");
         assertThat(outer.received()).containsExactly("inner 1");
+    }
+
+    @Test
+    void subscribesTheMethodsOfRecordsAndAbstractMethods() {
+        var record = new RecordListener(new ArrayList<>());
+        var implementing = new ImplementingListener();
+
+        bus.register(record);
+        bus.register(implementing);
+        bus.publish(new OrderPlaced(1));
+
+        assertThat(record.received()).containsExactly("record 1");
+        assertThat(implementing.received()).containsExactly("implementing 1");
     }
 
     @Test
