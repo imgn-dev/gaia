@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,12 +19,14 @@ import java.nio.channels.NonReadableChannelException;
 import java.nio.channels.NonWritableChannelException;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -202,6 +205,38 @@ class ChannelTest {
 
             assertThat(lock.isValid()).isFalse();
             assertThatExceptionOfType(ClosedChannelException.class).isThrownBy(lock::release);
+        }
+
+        @Test
+        void transfersWhatATargetWithNoMoreRoomTakes() throws IOException {
+            Files.writeString(file, "transferred content");
+            var taken = new StringBuilder();
+            WritableByteChannel full = new WritableByteChannel() {
+                @Override
+                public int write(ByteBuffer src) {
+                    if (taken.length() >= 3) {
+                        return 0;
+                    }
+                    taken.append((char) src.get());
+                    return 1;
+                }
+
+                @Override
+                public boolean isOpen() {
+                    return true;
+                }
+
+                @Override
+                public void close() {}
+            };
+
+            try (FileChannel channel = FileChannel.open(file, StandardOpenOption.READ)) {
+                long transferred =
+                        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> channel.transferTo(0, 100, full));
+
+                assertThat(transferred).isEqualTo(3);
+                assertThat(taken).hasToString("tra");
+            }
         }
 
         @Test

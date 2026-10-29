@@ -206,6 +206,7 @@ final class MemoryFileChannel extends FileChannel {
         checkReadable();
         ByteBuffer buffer = ByteBuffer.allocate(TRANSFER_BUFFER);
         long transferred = 0;
+        transfer:
         while (transferred < count) {
             buffer.clear().limit((int) Math.min(TRANSFER_BUFFER, count - transferred));
             int read = file.read(position + transferred, buffer);
@@ -214,7 +215,12 @@ final class MemoryFileChannel extends FileChannel {
             }
             buffer.flip();
             while (buffer.hasRemaining()) {
-                transferred += target.write(buffer);
+                int written = target.write(buffer);
+                if (written == 0) {
+                    // A non-blocking target with no room: return what it took, rather than wait for room.
+                    break transfer;
+                }
+                transferred += written;
             }
         }
         file.accessed(fileSystem.now());
