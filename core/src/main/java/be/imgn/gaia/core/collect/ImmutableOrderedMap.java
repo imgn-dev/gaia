@@ -329,14 +329,16 @@ final class ImmutableOrderedMap<K, V> extends AbstractMap<K, V> implements Seria
             if (size < 0) {
                 throw new InvalidObjectException("negative size: " + size);
             }
-            Object[] readKeys = new Object[size];
-            Object[] readValues = new Object[size];
+            // Growing with what the stream actually holds, rather than allocating the size it claims, keeps a tampered
+            // size from exhausting the heap: the stream runs out of entries first.
+            var readKeys = new ArrayList<Object>();
+            var readValues = new ArrayList<Object>();
             for (int i = 0; i < size; i++) {
-                readKeys[i] = in.readObject();
-                readValues[i] = in.readObject();
+                readKeys.add(in.readObject());
+                readValues.add(in.readObject());
             }
-            keys = readKeys;
-            values = readValues;
+            keys = readKeys.toArray();
+            values = readValues.toArray();
         }
 
         @Serial

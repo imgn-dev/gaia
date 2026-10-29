@@ -2,6 +2,7 @@ package be.imgn.gaia.core.collect;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -152,6 +153,14 @@ class MapsTest {
 
         assertThat(copy).isInstanceOf(Map.class).isEqualTo(map);
         assertThat(List.copyOf(((Map<?, ?>) copy).keySet())).isEqualTo(order);
+    }
+
+    @Test
+    void rejectsATamperedSizeWithoutAllocatingIt() throws IOException {
+        byte[] tampered =
+                TamperedStreams.replacingFirstInt(serialize(Maps.map(3, "3", 1, "1", 2, "2")), 3, 0x7fff_fff0);
+
+        assertThatIOException().isThrownBy(() -> deserialize(tampered));
     }
 
     private static byte[] serialize(Object object) throws IOException {

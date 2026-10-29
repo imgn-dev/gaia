@@ -1,7 +1,10 @@
 package be.imgn.gaia.core.collect;
 
+import static be.imgn.gaia.core.collect.HashListMultimapTest.deserialize;
+import static be.imgn.gaia.core.collect.HashListMultimapTest.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
@@ -96,6 +99,13 @@ class HashMultisetTest {
 
         assertThat(read).isInstanceOf(HashMultiset.class).isEqualTo(multiset);
         assertThat(((HashMultiset<?>) read).size()).isEqualTo(5);
+    }
+
+    @Test
+    void rejectsATamperedLengthWithoutAllocatingIt() throws IOException {
+        byte[] tampered = TamperedStreams.replacingFirstInt(serialize(multiset), 3, 0x7fff_fff0);
+
+        assertThatIOException().isThrownBy(() -> deserialize(tampered));
     }
 
     @Nested

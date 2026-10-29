@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -200,11 +201,13 @@ final class ImmutableOrderedSet<E> extends AbstractSet<E> implements Serializabl
             if (length < 0) {
                 throw new InvalidObjectException("negative length: " + length);
             }
-            Object[] read = new Object[length];
+            // Growing with what the stream actually holds, rather than allocating the length it claims, keeps a
+            // tampered length from exhausting the heap: the stream runs out of elements first.
+            var read = new ArrayList<Object>();
             for (int i = 0; i < length; i++) {
-                read[i] = in.readObject();
+                read.add(in.readObject());
             }
-            elements = read;
+            elements = read.toArray();
         }
 
         @Serial

@@ -2,6 +2,7 @@ package be.imgn.gaia.core.collect;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -83,6 +84,13 @@ class SetsTest {
 
         assertThat(copy).isInstanceOf(Set.class).isEqualTo(set);
         assertThat(List.copyOf((Set<?>) copy)).isEqualTo(order);
+    }
+
+    @Test
+    void rejectsATamperedLengthWithoutAllocatingIt() throws IOException {
+        byte[] tampered = TamperedStreams.replacingFirstInt(serialize(Sets.set(3, 1, 2)), 3, 0x7fff_fff0);
+
+        assertThatIOException().isThrownBy(() -> deserialize(tampered));
     }
 
     private static byte[] serialize(Object object) throws IOException {

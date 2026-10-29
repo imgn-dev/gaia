@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -66,8 +67,10 @@ abstract class SerializedMultimap implements Serializable {
         if (length < 0) {
             throw new InvalidObjectException("negative length: " + length);
         }
-        Object[] readKeys = new Object[length];
-        Object[][] readValues = new Object[length][];
+        // Growing with what the stream actually holds, rather than allocating the lengths it claims, keeps a tampered
+        // length from exhausting the heap: the stream runs out of keys or values first.
+        var readKeys = new ArrayList<Object>();
+        var readValues = new ArrayList<Object[]>();
         for (var i = 0; i < length; i++) {
             Object key = in.readObject();
             if (key == null) {
@@ -77,18 +80,18 @@ abstract class SerializedMultimap implements Serializable {
             if (count <= 0) {
                 throw new InvalidObjectException("number of values of " + key + " is not positive: " + count);
             }
-            Object[] keyValues = new Object[count];
+            var keyValues = new ArrayList<Object>();
             for (var j = 0; j < count; j++) {
                 Object value = in.readObject();
                 if (value == null) {
                     throw new InvalidObjectException("null value of " + key);
                 }
-                keyValues[j] = value;
+                keyValues.add(value);
             }
-            readKeys[i] = key;
-            readValues[i] = keyValues;
+            readKeys.add(key);
+            readValues.add(keyValues.toArray());
         }
-        keys = readKeys;
-        values = readValues;
+        keys = readKeys.toArray();
+        values = readValues.toArray(Object[][]::new);
     }
 }

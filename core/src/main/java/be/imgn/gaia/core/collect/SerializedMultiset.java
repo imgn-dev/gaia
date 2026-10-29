@@ -6,7 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.function.ObjIntConsumer;
+import java.util.stream.IntStream;
 
 /**
  * The serialized form of the multisets of this package: each distinct element with its count. Deserializing adds them
@@ -69,8 +71,10 @@ abstract class SerializedMultiset implements Serializable {
         if (length < 0) {
             throw new InvalidObjectException("negative length: " + length);
         }
-        Object[] readElements = new Object[length];
-        int[] readCounts = new int[length];
+        // Growing with what the stream actually holds, rather than allocating the length it claims, keeps a tampered
+        // length from exhausting the heap: the stream runs out of elements first.
+        var readElements = new ArrayList<Object>();
+        var readCounts = IntStream.builder();
         for (var i = 0; i < length; i++) {
             Object element = in.readObject();
             if (element == null) {
@@ -80,10 +84,10 @@ abstract class SerializedMultiset implements Serializable {
             if (count <= 0) {
                 throw new InvalidObjectException("count of " + element + " is not positive: " + count);
             }
-            readElements[i] = element;
-            readCounts[i] = count;
+            readElements.add(element);
+            readCounts.add(count);
         }
-        elements = readElements;
-        counts = readCounts;
+        elements = readElements.toArray();
+        counts = readCounts.build().toArray();
     }
 }

@@ -3,6 +3,7 @@ package be.imgn.gaia.core.collect;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import java.io.ByteArrayInputStream;
@@ -189,6 +190,26 @@ class HashListMultimapTest {
 
         assertThat(copy).isInstanceOf(HashListMultimap.class).isEqualTo(multimap);
         assertConsistent((Multimap<?, ?>) copy);
+    }
+
+    @Test
+    void rejectsATamperedNumberOfKeysWithoutAllocatingIt() throws IOException {
+        multimap.putAll("a", List.of(1, 2, 1));
+        multimap.put("b", 3);
+
+        byte[] tampered = TamperedStreams.replacingFirstInt(serialize(multimap), 2, 0x7fff_fff0);
+
+        assertThatIOException().isThrownBy(() -> deserialize(tampered));
+    }
+
+    @Test
+    void rejectsATamperedNumberOfValuesWithoutAllocatingIt() throws IOException {
+        multimap.putAll("a", List.of(1, 2, 1));
+        multimap.put("b", 3);
+
+        byte[] tampered = TamperedStreams.replacingFirstInt(serialize(multimap), 3, 0x7fff_fff0);
+
+        assertThatIOException().isThrownBy(() -> deserialize(tampered));
     }
 
     static byte[] serialize(Object object) throws IOException {
