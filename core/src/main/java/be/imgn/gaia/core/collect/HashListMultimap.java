@@ -21,7 +21,8 @@ import java.util.Map;
  *   <li>Its views are live, and its iterators support {@link java.util.Iterator#remove()}. The collections of
  *       {@link #asMap()} do not support adding values: add them through {@link #get(Object)} or {@link #put}.
  *   <li>Its iterators fail fast, on a best-effort basis, when it changes while they iterate, outside of their own
- *       {@code remove()}.
+ *       {@code remove()}. The iterators of the list {@link #get(Object)} returns fail fast on the changes made through
+ *       that list only: a value put in the multimap meanwhile may be skipped without an exception.
  *   <li>It is serializable if all its keys and values are.
  *   <li>It is not thread-safe.
  * </ul>
