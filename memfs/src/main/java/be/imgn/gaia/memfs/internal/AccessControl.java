@@ -51,7 +51,17 @@ final class AccessControl {
         }
     }
 
-    // Changing the owner, group, permissions or access control list of a file is for its owner.
+    // Changing the DOS flags or the user-defined attributes of a file takes the right to write it, whatever its
+    // read-only flag: clearing that flag is one of these changes.
+    void checkAttributesWritable(Node node, MemoryPath path) throws AccessDeniedException {
+        if (user != null
+                && !user.equals(ROOT)
+                && !(posixAllows(node, AccessMode.WRITE) && aclAllows(node, AccessMode.WRITE))) {
+            throw new AccessDeniedException(path.toString());
+        }
+    }
+
+    // Changing the owner, group, permissions, access control list or times of a file is for its owner.
     void checkOwner(Node node, MemoryPath path) throws AccessDeniedException {
         if (user != null
                 && !user.equals(ROOT)

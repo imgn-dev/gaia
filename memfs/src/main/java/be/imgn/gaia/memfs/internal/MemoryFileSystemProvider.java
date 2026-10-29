@@ -48,7 +48,9 @@ public final class MemoryFileSystemProvider extends FileSystemProvider {
 
     private static final Pattern NAME = Pattern.compile("[A-Za-z0-9._~-]+");
     // The attributes only the owner of a file changes.
-    private static final Pattern OWNED = Pattern.compile("(owner|posix|unix|acl):");
+    // The views whose attributes only the owner sets: the times of every view among them, as with utimes.
+    private static final Pattern OWNED = Pattern.compile("(owner|posix|unix|acl|basic):");
+    private static final Pattern WRITABLE = Pattern.compile("(dos|user):");
     private static final MemoryFileSystemProvider FALLBACK = new MemoryFileSystemProvider();
 
     private final Map<String, MemoryFileSystem> fileSystems = new ConcurrentHashMap<>();
@@ -327,8 +329,10 @@ public final class MemoryFileSystemProvider extends FileSystemProvider {
                     .tree()
                     .lookup(null, checked, Options.followLinks(options))
                     .existing(checked);
-            if (OWNED.matcher(attribute).lookingAt()) {
+            if (OWNED.matcher(attribute).lookingAt() || !attribute.contains(":")) {
                 fileSystem.access().checkOwner(node, checked);
+            } else if (WRITABLE.matcher(attribute).lookingAt()) {
+                fileSystem.access().checkAttributesWritable(node, checked);
             }
             fileSystem.attributes().set(node, attribute, value, false);
             return node;

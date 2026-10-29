@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.AccessMode;
 import java.nio.file.FileSystem;
@@ -13,6 +14,8 @@ import java.nio.file.attribute.AclEntry;
 import java.nio.file.attribute.AclEntryPermission;
 import java.nio.file.attribute.AclEntryType;
 import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.DosFileAttributeView;
+import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
@@ -147,6 +150,17 @@ class AccessControlTest {
         }
 
         @Test
+        void letsOnlyTheOwnerSetTimes() throws IOException {
+            Path file = Files.createFile(path("file"));
+            owner(file, "bob");
+
+            assertThatExceptionOfType(AccessDeniedException.class)
+                    .isThrownBy(() -> Files.setLastModifiedTime(file, FileTime.fromMillis(0)));
+            assertThatExceptionOfType(AccessDeniedException.class)
+                    .isThrownBy(() -> Files.setAttribute(file, "lastAccessTime", FileTime.fromMillis(0)));
+        }
+
+        @Test
         void neverDeniesRoot() throws IOException {
             try (FileSystem root = MemoryFileSystems.newFileSystem(
                     Configuration.unix().toBuilder().currentUser("root").build())) {
@@ -194,6 +208,22 @@ class AccessControlTest {
             assertThat(Files.readString(file)).isEqualTo("content");
             Files.setAttribute(file, "dos:readonly", false);
             Files.delete(file);
+        }
+
+        @Test
+        void needsTheRightToWriteToChangeFlagsAndUserAttributes() throws IOException {
+            Path file = Files.writeString(fileSystem.getPath("file"), "content");
+            var everyone = fileSystem.getUserPrincipalLookupService().lookupPrincipalByName("EVERYONE@");
+            Files.getFileAttributeView(file, AclFileAttributeView.class)
+                    .setAcl(List.of(entry(AclEntryType.ALLOW, everyone, AclEntryPermission.READ_DATA)));
+
+            assertThatExceptionOfType(AccessDeniedException.class)
+                    .isThrownBy(() -> Files.setAttribute(file, "dos:hidden", true));
+            assertThatExceptionOfType(AccessDeniedException.class)
+                    .isThrownBy(() -> Files.getFileAttributeView(file, DosFileAttributeView.class)
+                            .setReadOnly(true));
+            assertThatExceptionOfType(AccessDeniedException.class)
+                    .isThrownBy(() -> Files.setAttribute(file, "user:tag", ByteBuffer.wrap(new byte[] {1})));
         }
 
         @Test

@@ -125,8 +125,14 @@ final class AttributeViews {
         public void setTimes(
                 @Nullable FileTime lastModifiedTime, @Nullable FileTime lastAccessTime, @Nullable FileTime createTime)
                 throws IOException {
-            write((node, path) -> node.setTimes(
-                    lastModifiedTime, lastAccessTime, createTime, fileSystem().now()));
+            write((node, path) -> {
+                fileSystem().access().checkOwner(node, path);
+                node.setTimes(
+                        lastModifiedTime,
+                        lastAccessTime,
+                        createTime,
+                        fileSystem().now());
+            });
         }
     }
 
@@ -229,7 +235,10 @@ final class AttributeViews {
         }
 
         private void flag(String name, boolean value) throws IOException {
-            write((node, path) -> fileSystem().attributes().set(node, "dos:" + name, value, false));
+            write((node, path) -> {
+                fileSystem().access().checkAttributesWritable(node, path);
+                fileSystem().attributes().set(node, "dos:" + name, value, false);
+            });
         }
     }
 
@@ -306,14 +315,20 @@ final class AttributeViews {
         public int write(String name, ByteBuffer src) throws IOException {
             requireNonNull(name, "name");
             int length = requireNonNull(src, "src").remaining();
-            write((node, path) -> fileSystem().attributes().set(node, "user:" + name, src, false));
+            write((node, path) -> {
+                fileSystem().access().checkAttributesWritable(node, path);
+                fileSystem().attributes().set(node, "user:" + name, src, false);
+            });
             return length;
         }
 
         @Override
         public void delete(String name) throws IOException {
             requireNonNull(name, "name");
-            write((node, path) -> node.removeAttribute("user:" + name));
+            write((node, path) -> {
+                fileSystem().access().checkAttributesWritable(node, path);
+                node.removeAttribute("user:" + name);
+            });
         }
 
         private byte[] value(String name) throws IOException {
