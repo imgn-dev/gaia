@@ -294,7 +294,11 @@ public final class Configuration {
         return "Configuration[" + style + ", roots=" + roots + ", workingDirectory=" + workingDirectory + "]";
     }
 
-    /** A builder of {@link Configuration}s. */
+    /**
+     * A builder of {@link Configuration}s.
+     *
+     * @since 0.1.1
+     */
     public static final class Builder {
 
         private final PathStyle style;
