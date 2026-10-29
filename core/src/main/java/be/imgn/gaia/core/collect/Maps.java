@@ -18,9 +18,11 @@ import java.util.stream.Collectors;
  * <p>The {@code map} methods behave exactly like their {@link Map#of() Map.of} counterparts,
  * {@link #mapOfEntries(Map.Entry...)} like {@link Map#ofEntries(Map.Entry...) Map.ofEntries}, {@link #mapCopy(Map)}
  * like {@link Map#copyOf(Map) Map.copyOf}, and the {@code toMap} collectors like
- * {@link Collectors#toUnmodifiableMap(Function, Function) Collectors.toUnmodifiableMap}, except for iteration order.
- * {@code Map.of} and {@code Map.copyOf} leave the order unspecified, and it changes from one run to the next. These
- * maps iterate over their keys, values and entries in the order the keys were given. Otherwise they are the same:
+ * {@link Collectors#toUnmodifiableMap(Function, Function) Collectors.toUnmodifiableMap}, except for iteration order
+ * and one query. {@code Map.of} and {@code Map.copyOf} leave the order unspecified, and it changes from one run to the
+ * next. These maps iterate over their keys, values and entries in the order the keys were given. And
+ * {@code entrySet().contains(null)} throws {@link NullPointerException}, like every other query with {@code null},
+ * where a {@code Map.of} map returns {@code false}. Otherwise they are the same:
  *
  * <ul>
  *   <li>They are unmodifiable: every mutator method throws {@link UnsupportedOperationException}, even when the call
