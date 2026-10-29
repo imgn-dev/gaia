@@ -211,8 +211,13 @@ final class ImmutableOrderedSet<E> extends AbstractSet<E> implements Serializabl
         }
 
         @Serial
-        private Object readResolve() {
-            return of(elements);
+        private Object readResolve() throws InvalidObjectException {
+            try {
+                return of(elements);
+            } catch (NullPointerException | IllegalArgumentException e) {
+                // A tampered stream, reported as deserialization reports the others.
+                throw new InvalidObjectException(e.getMessage(), e);
+            }
         }
     }
 }

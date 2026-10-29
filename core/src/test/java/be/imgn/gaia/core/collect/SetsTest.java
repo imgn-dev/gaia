@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -91,6 +92,13 @@ class SetsTest {
         byte[] tampered = TamperedStreams.replacingFirstInt(serialize(Sets.set(3, 1, 2)), 3, 0x7fff_fff0);
 
         assertThatIOException().isThrownBy(() -> deserialize(tampered));
+    }
+
+    @Test
+    void rejectsATamperedDuplicateAsAnInvalidStream() throws IOException {
+        byte[] tampered = TamperedStreams.replacingFirstString(serialize(Sets.set("x", "y")), "y", "x");
+
+        assertThatExceptionOfType(InvalidObjectException.class).isThrownBy(() -> deserialize(tampered));
     }
 
     private static byte[] serialize(Object object) throws IOException {

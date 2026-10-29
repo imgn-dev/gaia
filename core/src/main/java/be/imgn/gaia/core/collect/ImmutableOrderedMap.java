@@ -342,8 +342,13 @@ final class ImmutableOrderedMap<K, V> extends AbstractMap<K, V> implements Seria
         }
 
         @Serial
-        private Object readResolve() {
-            return of(Arrays.asList(keys), Arrays.asList(values));
+        private Object readResolve() throws InvalidObjectException {
+            try {
+                return of(Arrays.asList(keys), Arrays.asList(values));
+            } catch (NullPointerException | IllegalArgumentException e) {
+                // A tampered stream, reported as deserialization reports the others.
+                throw new InvalidObjectException(e.getMessage(), e);
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.AbstractMap.SimpleEntry;
@@ -161,6 +162,13 @@ class MapsTest {
                 TamperedStreams.replacingFirstInt(serialize(Maps.map(3, "3", 1, "1", 2, "2")), 3, 0x7fff_fff0);
 
         assertThatIOException().isThrownBy(() -> deserialize(tampered));
+    }
+
+    @Test
+    void rejectsATamperedDuplicateKeyAsAnInvalidStream() throws IOException {
+        byte[] tampered = TamperedStreams.replacingFirstString(serialize(Maps.map("x", "1", "y", "2")), "y", "x");
+
+        assertThatExceptionOfType(InvalidObjectException.class).isThrownBy(() -> deserialize(tampered));
     }
 
     private static byte[] serialize(Object object) throws IOException {
