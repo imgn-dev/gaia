@@ -15,10 +15,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystemException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -174,6 +178,51 @@ class AtomicFilesTest {
         AtomicFiles.writeString(file, "new");
 
         assertThat(Files.getPosixFilePermissions(file)).isEqualTo(PosixFilePermissions.fromString("rw-r-----"));
+    }
+
+    @Test
+    void keepsThePermissionsTheUmaskRemoves() throws IOException {
+        assumePosix();
+        Path file = Files.writeString(directory.resolve("settings.toml"), "previous");
+        Files.setPosixFilePermissions(file, PosixFilePermissions.fromString("rw-rw-rw-"));
+
+        AtomicFiles.writeString(file, "new");
+
+        assertThat(Files.getPosixFilePermissions(file)).isEqualTo(PosixFilePermissions.fromString("rw-rw-rw-"));
+    }
+
+    @Test
+    void neverGivesTheTemporaryFileMorePermissionsThanTheFile() throws IOException {
+        assumePosix();
+        Path file = Files.writeString(directory.resolve("secret"), "previous");
+        Files.setPosixFilePermissions(file, PosixFilePermissions.fromString("rw-------"));
+        var temporaryPermissions = new ArrayList<Set<PosixFilePermission>>();
+
+        AtomicFiles.write(file, out -> {
+            for (Path entry : entries()) {
+                if (!entry.equals(file)) {
+                    temporaryPermissions.add(Files.getPosixFilePermissions(entry, LinkOption.NOFOLLOW_LINKS));
+                }
+            }
+            out.write(new byte[] {1, 2, 3});
+        });
+
+        assertThat(temporaryPermissions)
+                .singleElement()
+                .satisfies(permissions ->
+                        assertThat(permissions).isSubsetOf(PosixFilePermissions.fromString("rw-------")));
+    }
+
+    @Test
+    void replacesAReadOnlyFile() throws IOException {
+        assumePosix();
+        Path file = Files.writeString(directory.resolve("settings.toml"), "previous");
+        Files.setPosixFilePermissions(file, PosixFilePermissions.fromString("r--------"));
+
+        AtomicFiles.writeString(file, "new");
+
+        assertThat(file).hasContent("new");
+        assertThat(Files.getPosixFilePermissions(file)).isEqualTo(PosixFilePermissions.fromString("r--------"));
     }
 
     @Test

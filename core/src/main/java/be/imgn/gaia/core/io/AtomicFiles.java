@@ -17,11 +17,17 @@ import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Writes files atomically: a reader sees either the previous content of a file or its new content, never a part of it,
@@ -31,9 +37,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * the file in one atomic step. If anything fails, the file is left as it was and the temporary file is deleted.
  *
  * <ul>
- *   <li>A file that exists keeps its POSIX permissions; a new one gets the default permissions, as with
- *       {@link Files#write(Path, byte[], java.nio.file.OpenOption...)}. Other attributes, such as the owner, ACLs or
- *       extended attributes, are not kept.
+ *   <li>A file that exists keeps its POSIX permissions, which the temporary file has from its creation; a new one gets
+ *       the default permissions, as with {@link Files#write(Path, byte[], java.nio.file.OpenOption...)}. Other
+ *       attributes, such as the owner, ACLs or extended attributes, are not kept.
  *   <li>A symbolic link to a file that exists is followed: the file it points to is replaced, and the link stays.
  *   <li>On Windows, the file cannot be replaced while another program has it open: the write then fails with an
  *       {@link java.nio.file.AccessDeniedException}.
@@ -84,16 +90,19 @@ public final class AtomicFiles {
         if (directory == null || Files.isDirectory(target)) {
             throw new FileSystemException(target.toString(), null, "Is a directory");
         }
-        Path temporary = createTemporary(directory, target);
+        Set<PosixFilePermission> permissions = permissionsToKeep(target);
+        Temporary temporary = createTemporary(directory, target, permissions);
         var moved = false;
         try {
-            copyPermissions(target, temporary);
-            writeDurably(temporary, output);
-            Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            try (FileChannel channel = temporary.channel()) {
+                restorePermissions(temporary.path(), permissions);
+                writeDurably(channel, output);
+            }
+            Files.move(temporary.path(), target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
             moved = true;
         } finally {
             if (!moved) {
-                deleteQuietly(temporary);
+                deleteQuietly(temporary.path());
             }
         }
         forceDirectory(directory);
@@ -135,32 +144,56 @@ public final class AtomicFiles {
         write(file, out -> out.write(bytes.array(), bytes.arrayOffset() + bytes.position(), bytes.remaining()));
     }
 
-    // Created rather than taken from Files.createTempFile, whose files only their owner can read.
-    private static Path createTemporary(Path directory, Path target) throws IOException {
+    // Null when there are none to keep: the file is new, or its file system has no POSIX permissions.
+    private static @Nullable Set<PosixFilePermission> permissionsToKeep(Path target) throws IOException {
+        if (Files.exists(target) && Files.getFileAttributeView(target, PosixFileAttributeView.class) != null) {
+            return Files.getPosixFilePermissions(target);
+        }
+        return null;
+    }
+
+    // Created rather than taken from Files.createTempFile, whose files only their owner can read. Created with the
+    // permissions of the file it replaces, since a stream opened on it would keep reading after they are narrowed; a
+    // new file gets the default permissions, which it keeps once moved. It is written only through the channel it is
+    // created with, so that a link put in its place is never followed.
+    private static Temporary createTemporary(
+            Path directory, Path target, @Nullable Set<PosixFilePermission> permissions) throws IOException {
+        FileAttribute<?>[] attributes = permissions == null
+                ? new FileAttribute<?>[0]
+                : new FileAttribute<?>[] {PosixFilePermissions.asFileAttribute(permissions)};
         while (true) {
             String suffix = Long.toUnsignedString(ThreadLocalRandom.current().nextLong(), RADIX);
             Path temporary = directory.resolve("." + target.getFileName() + "." + suffix + ".tmp");
             try {
-                return Files.createFile(temporary);
+                return new Temporary(
+                        temporary,
+                        FileChannel.open(
+                                temporary,
+                                Set.of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE),
+                                attributes));
             } catch (FileAlreadyExistsException e) {
                 // Another write took that name: draw another.
             }
         }
     }
 
-    private static void copyPermissions(Path target, Path temporary) throws IOException {
-        if (Files.exists(target) && Files.getFileAttributeView(temporary, PosixFileAttributeView.class) != null) {
-            Files.setPosixFilePermissions(temporary, Files.getPosixFilePermissions(target));
+    // The umask can only have removed permissions at creation: give them back, without following a link. Only when
+    // needed: setting them without following a link opens the file, only for reading on some JDKs, which fails on a
+    // file its owner cannot read.
+    private static void restorePermissions(Path temporary, @Nullable Set<PosixFilePermission> permissions)
+            throws IOException {
+        if (permissions != null
+                && !Files.getPosixFilePermissions(temporary, LinkOption.NOFOLLOW_LINKS)
+                        .equals(permissions)) {
+            Files.setAttribute(temporary, "posix:permissions", permissions, LinkOption.NOFOLLOW_LINKS);
         }
     }
 
-    private static void writeDurably(Path temporary, Output output) throws IOException {
-        try (FileChannel channel = FileChannel.open(temporary, StandardOpenOption.WRITE)) {
-            OutputStream out = new UncloseableOutputStream(new BufferedOutputStream(Channels.newOutputStream(channel)));
-            output.writeTo(out);
-            out.flush();
-            channel.force(true);
-        }
+    private static void writeDurably(FileChannel channel, Output output) throws IOException {
+        OutputStream out = new UncloseableOutputStream(new BufferedOutputStream(Channels.newOutputStream(channel)));
+        output.writeTo(out);
+        out.flush();
+        channel.force(true);
     }
 
     // Makes the new directory entry durable too. Not every system can open a directory, Windows among them: there, the
@@ -198,6 +231,8 @@ public final class AtomicFiles {
          */
         void writeTo(OutputStream out) throws IOException;
     }
+
+    private record Temporary(Path path, FileChannel channel) {}
 
     // Lets an Output close its stream, as many writers do, without closing the channel before it is forced.
     private static final class UncloseableOutputStream extends FilterOutputStream {
