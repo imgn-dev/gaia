@@ -152,7 +152,8 @@ public final class EventBus {
      * <p>The methods with a {@linkplain SubscribingAnnotation subscribing annotation} are subscribed too. The first
      * time the bus registers such a method, it creates the executor the annotation names, unless it was
      * {@linkplain Builder#executor(Class, Executor) built with one} for the annotation; an exception thrown meanwhile
-     * propagates, and subscribes nothing.
+     * propagates, and subscribes nothing. The bus never shuts the executors it creates down, as
+     * {@link SubscribingAnnotation} tells.
      *
      * <p>The methods of a superclass are subscribed before those of its subclasses, and those of one class in the order
      * they are declared. A method that overrides a {@code @Subscribe} method, or one with a subscribing annotation,
@@ -200,6 +201,9 @@ public final class EventBus {
      * Delivers an event to the subscribers of its class and of its supertypes.
      *
      * @param event the event
+     * @throws java.util.concurrent.RejectedExecutionException if the {@linkplain Builder#executor(Executor) executor}
+     *     of the bus rejects the task of the event, such as one that was shut down: the event then reaches no
+     *     subscriber
      */
     public void publish(Object event) {
         requireNonNull(event, "event");
@@ -387,7 +391,8 @@ public final class EventBus {
          * EventBus bus = EventBus.newBuilder().executor(Executors.newVirtualThreadPerTaskExecutor()).build();
          * }</pre>
          *
-         * @param executor the executor, which runs one task per event
+         * @param executor the executor, which runs one task per event; a task it rejects makes
+         *     {@link EventBus#publish(Object)} throw, and the bus never shuts it down
          * @return this builder
          */
         public Builder executor(Executor executor) {

@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import be.imgn.gaia.core.event.EventBus;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
@@ -154,6 +155,21 @@ class EventBusTest {
         tasks.get(1).run();
         tasks.get(0).run();
         assertThat(received).containsExactly("first 2", "second 2", "first 1", "second 1");
+    }
+
+    @Test
+    void letsARejectionByTheExecutorPropagate() {
+        var bus = EventBus.newBuilder()
+                .executor(task -> {
+                    throw new RejectedExecutionException("Shut down");
+                })
+                .build();
+        bus.subscribe(OrderPlaced.class, event -> received.add("placed " + event.id()));
+
+        assertThatExceptionOfType(RejectedExecutionException.class)
+                .isThrownBy(() -> bus.publish(new OrderPlaced(1)))
+                .withMessage("Shut down");
+        assertThat(received).isEmpty();
     }
 
     // Passing null is the point.

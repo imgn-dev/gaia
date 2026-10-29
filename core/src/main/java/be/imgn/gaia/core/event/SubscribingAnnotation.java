@@ -38,6 +38,11 @@ import java.util.concurrent.Executor;
  * executor} for the annotation. During the delivery of an event, the bus hands such a method a task that calls it, and
  * goes on to the other subscribers without waiting for it.
  *
+ * <p>The bus never shuts the executor down: a bus has no end of its own, and keeps its executors as long as it is
+ * reachable. Each bus creates its own executor, so an executor that owns threads, which keep it and its class loader
+ * reachable, is meant for a bus that lives as long as its application, or for an executor that ends its threads once
+ * idle. To shut an executor down, build the bus with it and shut it down once the bus is no longer used.
+ *
  * <p>{@code gaia-processor} checks such methods as it checks {@code @Subscribe} ones, and reports an error for a method
  * with more than one subscribing annotation, {@code @Subscribe} included. The generated code refers to the annotation,
  * and creates the executor: it reports an error for an annotation or an executor that it cannot access from the package
