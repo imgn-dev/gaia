@@ -3,13 +3,16 @@ package be.imgn.gaia.core.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import be.imgn.gaia.core.collect.MoreGatherers;
 import java.nio.CharBuffer;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
@@ -233,6 +236,20 @@ class MoreGatherersTest {
                         .gather(MoreGatherers.min(2, byLength))
                         .toList())
                 .containsExactly("a", "e");
+    }
+
+    @Test
+    void keepsManyElementsOfAnAscendingStreamInLinearithmicTime() {
+        var size = 1_000_000;
+
+        var greatest = assertTimeoutPreemptively(
+                Duration.ofSeconds(10),
+                () -> IntStream.range(0, size)
+                        .boxed()
+                        .gather(MoreGatherers.max(size, Comparator.naturalOrder()))
+                        .toList());
+
+        assertThat(greatest).hasSize(size).startsWith(size - 1).endsWith(0);
     }
 
     @Test

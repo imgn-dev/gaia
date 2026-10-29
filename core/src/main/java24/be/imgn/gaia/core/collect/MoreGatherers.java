@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -317,8 +318,9 @@ public final class MoreGatherers {
      * Stream.of(3, 1, 4, 1, 5, 9, 2).gather(MoreGatherers.max(3, Comparator.naturalOrder()))  // 9, 5, 4
      * }</pre>
      *
-     * <p>An element that is not greater than the least of {@code n} kept ones costs one comparison. With {@code n} of
-     * 0, it stops pulling elements at once, so it ends an infinite stream.
+     * <p>An element that is not greater than the least of {@code n} kept ones costs one comparison, and one that is
+     * kept a number of comparisons logarithmic in {@code n}. With {@code n} of 0, it stops pulling elements at once, so
+     * it ends an infinite stream.
      *
      * @param <T> the type of the elements
      * @param n the number of elements to keep
@@ -352,8 +354,9 @@ public final class MoreGatherers {
      * Stream.of(3, 1, 4, 1, 5, 9, 2).gather(MoreGatherers.min(3, Comparator.naturalOrder()))  // 1, 1, 2
      * }</pre>
      *
-     * <p>An element that is not less than the greatest of {@code n} kept ones costs one comparison. With {@code n} of
-     * 0, it stops pulling elements at once, so it ends an infinite stream.
+     * <p>An element that is not less than the greatest of {@code n} kept ones costs one comparison, and one that is
+     * kept a number of comparisons logarithmic in {@code n}. With {@code n} of 0, it stops pulling elements at once, so
+     * it ends an infinite stream.
      *
      * @param <T> the type of the elements
      * @param n the number of elements to keep
@@ -497,48 +500,55 @@ public final class MoreGatherers {
 
         private final int capacity;
         private final Comparator<? super T> comparator;
-        private final List<T> elements = new ArrayList<>();
+        // The least kept element at the head, so that a new element is compared with it alone, and replaces it in
+        // logarithmic time.
+        private final PriorityQueue<Ranked<T>> elements;
+        private long offered;
 
         Greatest(int capacity, Comparator<? super T> comparator) {
             this.capacity = capacity;
             this.comparator = comparator;
+            this.elements = new PriorityQueue<>(this::compare);
         }
 
         void offer(T element) {
-            var size = elements.size();
-            if (size == capacity && comparator.compare(elements.get(size - 1), element) >= 0) {
-                return;
+            offer(new Ranked<>(element, offered++));
+        }
+
+        private void offer(Ranked<T> ranked) {
+            if (elements.size() < capacity) {
+                elements.add(ranked);
+            } else if (compare(elements.element(), ranked) < 0) {
+                elements.remove();
+                elements.add(ranked);
             }
-            // After the elements at least as great, so that equal elements keep their encounter order.
-            var low = 0;
-            var high = size;
-            while (low < high) {
-                var middle = (low + high) >>> 1;
-                if (comparator.compare(elements.get(middle), element) >= 0) {
-                    low = middle + 1;
-                } else {
-                    high = middle;
-                }
-            }
-            elements.add(low, element);
-            if (size == capacity) {
-                elements.removeLast();
-            }
+        }
+
+        /** Orders the least element first and, among equal ones, the latest in the stream first. */
+        private int compare(Ranked<T> a, Ranked<T> b) {
+            var comparison = comparator.compare(a.element(), b.element());
+            return comparison != 0 ? comparison : Long.compare(b.index(), a.index());
         }
 
         /** Combines these elements, of a partition of the stream, with those of the partition that follows it. */
         Greatest<T> followedBy(Greatest<T> next) {
-            // Offered after these, the next partition's elements come after the equal ones among these.
-            for (var element : next.elements) {
-                offer(element);
+            // The next partition's elements come after all of these in the stream.
+            for (var ranked : next.elements) {
+                offer(new Ranked<>(ranked.element(), offered + ranked.index()));
             }
+            offered += next.offered;
             return this;
         }
 
         void pushAll(Gatherer.Downstream<? super T> downstream) {
-            for (var i = 0; i < elements.size() && !downstream.isRejecting(); i++) {
-                downstream.push(elements.get(i));
+            var sorted = new ArrayList<>(elements);
+            sorted.sort((a, b) -> compare(b, a));
+            for (var i = 0; i < sorted.size() && !downstream.isRejecting(); i++) {
+                downstream.push(sorted.get(i).element());
             }
         }
     }
+
+    /** An element and its index in the stream. */
+    private record Ranked<T extends @Nullable Object>(T element, long index) {}
 }
