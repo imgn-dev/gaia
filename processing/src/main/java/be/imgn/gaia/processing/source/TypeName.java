@@ -73,7 +73,12 @@ public sealed interface TypeName
                 PrimitiveTypeName.of(type.getKind().name().toLowerCase(Locale.ROOT));
             case ARRAY -> ArrayTypeName.of(of(((ArrayType) type).getComponentType()));
             case DECLARED -> declared((DeclaredType) type);
-            case ERROR -> ClassName.bestGuess(type.toString().replaceFirst("<.*", ""));
+            // The name of the element, as written, rather than the type's text, which starts with its type
+            // annotations.
+            case ERROR ->
+                ClassName.bestGuess(((TypeElement) ((DeclaredType) type).asElement())
+                        .getQualifiedName()
+                        .toString());
             case TYPEVAR ->
                 TypeVariableName.of(
                         ((TypeVariable) type).asElement().getSimpleName().toString());

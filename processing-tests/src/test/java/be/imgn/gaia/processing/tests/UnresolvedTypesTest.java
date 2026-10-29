@@ -6,11 +6,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import be.imgn.gaia.processing.MoreElements;
 import be.imgn.gaia.processing.ProcessingContext;
+import be.imgn.gaia.processing.source.ClassName;
+import be.imgn.gaia.processing.source.TypeName;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
@@ -101,6 +106,19 @@ class UnresolvedTypesTest {
                 .filter(method -> method.getSimpleName().contentEquals(name))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    @Test
+    void namesAnUnresolvedTypeWithTypeAnnotations() {
+        check(context -> {
+            VariableElement field = ElementFilter.fieldsIn(
+                            type(context, "Field").getEnclosedElements())
+                    .getFirst();
+            TypeMirror missing =
+                    ((DeclaredType) field.asType()).getTypeArguments().getFirst();
+
+            assertThat(TypeName.of(missing).withoutAnnotations()).isEqualTo(ClassName.of("", "Missing"));
+        });
     }
 
     @Test
