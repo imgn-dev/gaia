@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
 
 /**
  * A file system in memory. Its files live as long as it is open; closing it closes its channels, streams and watch
@@ -164,10 +165,18 @@ public final class MemoryFileSystem extends FileSystem {
 
     @Override
     public void close() throws IOException {
-        if (!open) {
-            return;
+        // Under the lock of the tree: a channel, stream or watch service opened under it is tracked before, or not
+        // opened at all.
+        Lock lock = tree.lock().writeLock();
+        lock.lock();
+        try {
+            if (!open) {
+                return;
+            }
+            open = false;
+        } finally {
+            lock.unlock();
         }
-        open = false;
         provider.closed(this);
         IOException failure = null;
         for (Closeable resource : new ArrayList<>(resources)) {
@@ -252,11 +261,12 @@ public final class MemoryFileSystem extends FileSystem {
     }
 
     @Override
-    public WatchService newWatchService() {
-        checkOpen();
-        PollingWatchService service = new PollingWatchService(this);
-        track(service);
-        return service;
+    public WatchService newWatchService() throws IOException {
+        return operations.reading(() -> {
+            PollingWatchService service = new PollingWatchService(this);
+            track(service);
+            return service;
+        });
     }
 
     @Override

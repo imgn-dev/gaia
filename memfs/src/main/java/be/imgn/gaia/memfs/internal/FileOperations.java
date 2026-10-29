@@ -69,9 +69,10 @@ final class FileOperations {
     }
 
     private <T> T locked(Lock lock, Call<T> call) throws IOException {
-        fileSystem.checkOpen();
         lock.lock();
         try {
+            // Under the lock, which closing the file system takes too.
+            fileSystem.checkOpen();
             return call.call();
         } finally {
             lock.unlock();
@@ -108,17 +109,18 @@ final class FileOperations {
             FileAttribute<?>... attributes)
             throws IOException {
         Options.Open open = Options.Open.of(options);
-        RegularFile file = writing(() -> openFile(base, path, open, List.of(attributes)));
         @Nullable
         Runnable onClose = open.has(StandardOpenOption.DELETE_ON_CLOSE) ? () -> deleteQuietly(base, path) : null;
-        return new MemoryFileChannel(
+        // The channel counts as open before the lock is released: a deletion or the closing of the file system that
+        // comes next sees it.
+        return writing(() -> new MemoryFileChannel(
                 fileSystem,
-                file,
+                openFile(base, path, open, List.of(attributes)),
                 path,
                 open.has(StandardOpenOption.READ),
                 open.has(StandardOpenOption.WRITE),
                 open.has(StandardOpenOption.APPEND),
-                onClose);
+                onClose));
     }
 
     private RegularFile openFile(
@@ -464,18 +466,17 @@ final class FileOperations {
     DirectoryStream<Path> newDirectoryStream(
             @Nullable Directory base, MemoryPath path, DirectoryStream.Filter<? super Path> filter, boolean followLinks)
             throws IOException {
-        Directory directory = reading(() -> {
+        return reading(() -> {
             Node node = tree.lookup(base, path, followLinks).existing(path);
-            if (!(node instanceof Directory found)) {
+            if (!(node instanceof Directory directory)) {
                 throw new NotDirectoryException(path.toString());
             }
-            fileSystem.access().check(found, path, AccessMode.READ);
-            found.accessed(fileSystem.now());
-            return found;
+            fileSystem.access().check(directory, path, AccessMode.READ);
+            directory.accessed(fileSystem.now());
+            return fileSystem.configuration().features().contains(Feature.SECURE_DIRECTORY_STREAM)
+                    ? new MemorySecureDirectoryStream(fileSystem, directory, path, filter)
+                    : new MemoryDirectoryStream(fileSystem, directory, path, filter);
         });
-        return fileSystem.configuration().features().contains(Feature.SECURE_DIRECTORY_STREAM)
-                ? new MemorySecureDirectoryStream(fileSystem, directory, path, filter)
-                : new MemoryDirectoryStream(fileSystem, directory, path, filter);
     }
 
     void checkFeature(Feature feature, String what) {
