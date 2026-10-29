@@ -217,6 +217,33 @@ class GeneratedSourcesTest {
     }
 
     @Test
+    void returnsFalseForAFileAnotherProcessorCreated() {
+        Compilation compilation = FirstRound.run(List.of(GEN, SEED), List.of(), context -> {
+            try {
+                context.filer().createSourceFile("example.Out").openWriter().close();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            assertThat(context.sources().write("example.Out", scope -> "final class Out {}\n"))
+                    .isFalse();
+        });
+
+        assertThat(compilation).succeeded();
+    }
+
+    @Test
+    void reportsAFileTheFilerRefusesForATypeOfTheSources() {
+        Compilation compilation = FirstRound.run(List.of(GEN, SEED), List.of(), context -> {
+            assertThatExceptionOfType(UncheckedIOException.class)
+                    .isThrownBy(() -> context.sources().write("example.Seed", scope -> "final class Seed {}\n"))
+                    .withMessage("Cannot write the source file of example.Seed")
+                    .withCauseInstanceOf(FilerException.class);
+        });
+
+        assertThat(compilation).succeeded();
+    }
+
+    @Test
     void writesAFileAgainAfterItsBodyFailed() {
         IllegalStateException failure = new IllegalStateException("no body");
 

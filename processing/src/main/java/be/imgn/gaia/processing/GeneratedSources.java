@@ -25,6 +25,7 @@ import javax.lang.model.element.ModuleElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.StandardLocation;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -87,9 +88,10 @@ public final class GeneratedSources {
      * @param file the file
      * @param originatingElements the elements the file is generated from, so that incremental builds regenerate or
      *     delete it when they change; the first one also decides whether {@code @Generated} is visible
-     * @return {@code true} if the file was written, {@code false} if it had already been created, by this processor or
-     *     another one
-     * @throws UncheckedIOException if the file cannot be written
+     * @return {@code true} if the file was written, {@code false} if it had already been created during this
+     *     compilation, by this processor or another one
+     * @throws UncheckedIOException if the file cannot be written, such as when a type of the sources being compiled has
+     *     that name
      */
     public boolean write(JavaFile file, Element... originatingElements) {
         requireNonNull(file, "file");
@@ -120,11 +122,12 @@ public final class GeneratedSources {
      * @param body writes the source after the imports, naming types through the given scope
      * @param originatingElements the elements the file is generated from, so that incremental builds regenerate or
      *     delete it when they change; the first one also decides whether {@code @Generated} is visible
-     * @return {@code true} if the file was written, {@code false} if it had already been created, by this processor or
-     *     another one
+     * @return {@code true} if the file was written, {@code false} if it had already been created during this
+     *     compilation, by this processor or another one
      * @throws IllegalArgumentException if {@code qualifiedName} is not a qualified name: Java identifiers, none of them
      *     a keyword, separated by dots
-     * @throws UncheckedIOException if the file cannot be written
+     * @throws UncheckedIOException if the file cannot be written, such as when a type of the sources being compiled has
+     *     that name
      */
     public boolean write(String qualifiedName, Function<SourceScope, String> body, Element... originatingElements) {
         requireNonNull(qualifiedName, "qualifiedName");
@@ -208,9 +211,28 @@ public final class GeneratedSources {
             writer.write(text);
             return true;
         } catch (FilerException e) {
-            return false;
+            if (createdBefore(qualifiedName)) {
+                return false;
+            }
+            throw new UncheckedIOException("Cannot write the source file of " + qualifiedName, e);
         } catch (IOException e) {
             throw new UncheckedIOException("Cannot write the source file of " + qualifiedName, e);
+        }
+    }
+
+    // The filer refuses to create a file for a name it saw before, which includes the types of the sources being
+    // compiled. It refuses to read a file only once it was created during this compilation.
+    private boolean createdBefore(String qualifiedName) {
+        int dot = qualifiedName.lastIndexOf('.');
+        String packageName = dot < 0 ? "" : qualifiedName.substring(0, dot);
+        String fileName = qualifiedName.substring(dot + 1) + ".java";
+        try {
+            filer.getResource(StandardLocation.SOURCE_OUTPUT, packageName, fileName);
+            return false;
+        } catch (FilerException e) {
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 
