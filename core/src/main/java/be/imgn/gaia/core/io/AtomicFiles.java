@@ -25,6 +25,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import org.jspecify.annotations.Nullable;
@@ -37,9 +38,10 @@ import org.jspecify.annotations.Nullable;
  * the file in one atomic step. If anything fails, the file is left as it was and the temporary file is deleted.
  *
  * <ul>
- *   <li>A file that exists keeps its POSIX permissions, which the temporary file has from its creation; a new one gets
- *       the default permissions, as with {@link Files#write(Path, byte[], java.nio.file.OpenOption...)}. Other
- *       attributes, such as the owner, ACLs or extended attributes, are not kept.
+ *   <li>A file that exists keeps its POSIX permissions, which the temporary file has from its creation, along with
+ *       reading by its owner before anything is written to it; a new one gets the default permissions, as with
+ *       {@link Files#write(Path, byte[], java.nio.file.OpenOption...)}. Other attributes, such as the owner, ACLs or
+ *       extended attributes, are not kept.
  *   <li>A symbolic link to a file that exists is followed: the file it points to is replaced, and the link stays.
  *   <li>On Windows, the file cannot be replaced while another program has it open: the write then fails with an
  *       {@link java.nio.file.AccessDeniedException}.
@@ -154,13 +156,19 @@ public final class AtomicFiles {
 
     // Created rather than taken from Files.createTempFile, whose files only their owner can read. Created with the
     // permissions of the file it replaces, since a stream opened on it would keep reading after they are narrowed; a
-    // new file gets the default permissions, which it keeps once moved. It is written only through the channel it is
-    // created with, so that a link put in its place is never followed.
+    // new file gets the default permissions, which it keeps once moved. Its owner can also read it until its
+    // permissions are restored, which some JDKs do through a stream opened for reading. It is written only through the
+    // channel it is created with, so that a link put in its place is never followed.
     private static Temporary createTemporary(
             Path directory, Path target, @Nullable Set<PosixFilePermission> permissions) throws IOException {
-        FileAttribute<?>[] attributes = permissions == null
-                ? new FileAttribute<?>[0]
-                : new FileAttribute<?>[] {PosixFilePermissions.asFileAttribute(permissions)};
+        FileAttribute<?>[] attributes;
+        if (permissions == null) {
+            attributes = new FileAttribute<?>[0];
+        } else {
+            var readable = EnumSet.of(PosixFilePermission.OWNER_READ);
+            readable.addAll(permissions);
+            attributes = new FileAttribute<?>[] {PosixFilePermissions.asFileAttribute(readable)};
+        }
         while (true) {
             String suffix = Long.toUnsignedString(ThreadLocalRandom.current().nextLong(), RADIX);
             Path temporary = directory.resolve("." + target.getFileName() + "." + suffix + ".tmp");
@@ -177,9 +185,8 @@ public final class AtomicFiles {
         }
     }
 
-    // The umask can only have removed permissions at creation: give them back, without following a link. Only when
-    // needed: setting them without following a link opens the file, only for reading on some JDKs, which fails on a
-    // file its owner cannot read.
+    // Gives back the permissions the umask removed at creation, and removes the reading added then, without following
+    // a link.
     private static void restorePermissions(Path temporary, @Nullable Set<PosixFilePermission> permissions)
             throws IOException {
         if (permissions != null

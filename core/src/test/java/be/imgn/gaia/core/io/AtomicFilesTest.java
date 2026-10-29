@@ -226,6 +226,19 @@ class AtomicFilesTest {
     }
 
     @Test
+    void replacesAWriteOnlyFileWhosePermissionsTheUmaskRemoves() throws IOException {
+        assumePosix();
+        Path file = Files.writeString(directory.resolve("log"), "previous");
+        Files.setPosixFilePermissions(file, PosixFilePermissions.fromString("-w--w--w-"));
+
+        AtomicFiles.writeString(file, "new");
+
+        assertThat(Files.getPosixFilePermissions(file)).isEqualTo(PosixFilePermissions.fromString("-w--w--w-"));
+        Files.setPosixFilePermissions(file, PosixFilePermissions.fromString("rw-------"));
+        assertThat(file).hasContent("new");
+    }
+
+    @Test
     void givesANewFileTheDefaultPermissions() throws IOException {
         assumePosix();
         Path file = directory.resolve("settings.toml");
