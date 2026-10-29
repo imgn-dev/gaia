@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -117,11 +118,13 @@ public interface CharSink {
     default void writeLines(Iterable<? extends CharSequence> lines, String separator) throws IOException {
         requireNonNull(lines, "lines");
         requireNonNull(separator, "separator");
-        // Checked before the sink is opened, which would already replace the content of a file.
+        // Checked before the sink is opened, which would already replace the content of a file, and copied since an
+        // iterable may not be iterated twice.
+        var copy = new ArrayList<CharSequence>();
         for (CharSequence line : lines) {
-            requireNonNull(line, "lines contains null");
+            copy.add(requireNonNull(line, "lines contains null"));
         }
-        writeLines(lines.iterator(), separator);
+        writeLines(copy.iterator(), separator);
     }
 
     /**

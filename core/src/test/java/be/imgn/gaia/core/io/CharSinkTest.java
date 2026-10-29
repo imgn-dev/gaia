@@ -60,6 +60,17 @@ class CharSinkTest {
     }
 
     @Test
+    void writesTheLinesOfAnIterableThatCanBeIteratedOnlyOnce() throws IOException {
+        var sink = new TrackedSink();
+        var iterator = List.of("a", "b").iterator();
+        Iterable<String> lines = () -> iterator;
+
+        sink.writeLines(lines, "\n");
+
+        assertThat(sink.out).hasToString("a\nb\n");
+    }
+
+    @Test
     void writesTheLinesOfAStream() throws IOException {
         var sink = new TrackedSink();
 
