@@ -217,6 +217,34 @@ class GeneratedSourcesTest {
     }
 
     @Test
+    void qualifiesJavaLangTypesThatATypeOfThePackageHides() {
+        JavaFileObject character = source("example.Character", """
+                package example;
+
+                class Character {}
+                """);
+
+        Compilation compilation = FirstRound.run(
+                List.of(GEN, SEED, character),
+                List.of(),
+                context -> context.sources().write("example.Out", scope -> """
+                        final class Out {
+                            %s hidden;
+                            %s own;
+                            %s visible;
+                        }
+                        """.formatted(
+                        scope.name(Character.class), scope.name("example.Character"), scope.name(String.class))));
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation)
+                .generatedSourceFile("example.Out")
+                .contains("java.lang.Character hidden;")
+                .contains("    Character own;")
+                .contains("    String visible;");
+    }
+
+    @Test
     void returnsFalseForAFileAnotherProcessorCreated() {
         Compilation compilation = FirstRound.run(List.of(GEN, SEED), List.of(), context -> {
             try {

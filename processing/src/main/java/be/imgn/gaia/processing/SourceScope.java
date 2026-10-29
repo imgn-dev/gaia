@@ -28,7 +28,8 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>{@code name(...)} returns the name to write in the source, and records the import it needs. Types in
  * {@code java.lang} and in the generated file's own package need none. A type whose simple name is already taken, by
- * another import or by the generated type itself, is written fully qualified instead.
+ * another import or by the generated type itself, is written fully qualified instead; so is a type of {@code java.lang}
+ * that a type of the package hides, such as {@code Character} next to a {@code com.example.Character}.
  */
 public final class SourceScope {
 
@@ -190,6 +191,9 @@ public final class SourceScope {
     // Names the top-level type topPackage.topName, then its nested path, importing the top-level type if possible.
     private String reference(String topPackage, String topName, String nested) {
         String qualified = topPackage.isEmpty() ? topName : topPackage + "." + topName;
+        if (topPackage.equals(JAVA_LANG) && !packageName.equals(JAVA_LANG) && declaredInPackage(topName)) {
+            return qualified + nested;
+        }
         String visible = visibleNames.putIfAbsent(topName, qualified);
         if (visible != null && !visible.equals(qualified)) {
             return qualified + nested;
@@ -198,6 +202,11 @@ public final class SourceScope {
             imports.add(qualified);
         }
         return topName + nested;
+    }
+
+    // The types of the package hide those of java.lang, which are imported on demand.
+    private boolean declaredInPackage(String topName) {
+        return elements.getTypeElement(packageName.isEmpty() ? topName : packageName + "." + topName) != null;
     }
 
     String assemble(String body) {
