@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,31 @@ class HashMultisetTest {
 
         assertThat(read).isInstanceOf(HashMultiset.class).isEqualTo(multiset);
         assertThat(((HashMultiset<?>) read).size()).isEqualTo(5);
+    }
+
+    @Test
+    void iteratesOverTheCountAsItIsWhenTheElementIsReached() {
+        HashMultiset<String> occurrences = HashMultiset.create();
+        occurrences.add("e", 3);
+        Iterator<String> iterator = occurrences.iterator();
+
+        assertThat(iterator.next()).isEqualTo("e");
+        occurrences.setCount("e", 1);
+
+        assertThat(iterator.hasNext()).isFalse();
+    }
+
+    @Test
+    void iteratesOverOccurrencesAddedWhileTheElementIsIterated() {
+        HashMultiset<String> occurrences = HashMultiset.create();
+        occurrences.add("e", 2);
+        Iterator<String> iterator = occurrences.iterator();
+        iterator.next();
+        iterator.remove();
+
+        occurrences.add("e", 2);
+
+        assertThat(iterator).toIterable().containsExactly("e", "e", "e");
     }
 
     @Test

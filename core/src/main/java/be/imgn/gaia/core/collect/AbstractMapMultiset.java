@@ -300,26 +300,29 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
         private final Iterator<Map.Entry<E, Count>> entries =
                 counts().entrySet().iterator();
         private Map.@Nullable Entry<E, Count> current;
-        private int remaining;
+        // Counted against the live count rather than a copy of it, so that a change of the count while the element
+        // is iterated is seen.
+        private int returned;
         private boolean removable;
 
         @Override
         public boolean hasNext() {
-            return remaining > 0 || entries.hasNext();
+            var entry = current;
+            return (entry != null && returned < entry.getValue().get()) || entries.hasNext();
         }
 
         @Override
         public E next() {
             var entry = current;
-            if (remaining == 0 || entry == null) {
+            if (entry == null || returned >= entry.getValue().get()) {
                 if (!entries.hasNext()) {
                     throw new NoSuchElementException();
                 }
                 entry = entries.next();
                 current = entry;
-                remaining = entry.getValue().get();
+                returned = 0;
             }
-            remaining--;
+            returned++;
             removable = true;
             return entry.getKey();
         }
@@ -335,8 +338,10 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
             var count = entry.getValue();
             if (count.get() == 1) {
                 entries.remove();
+                current = null;
             } else {
                 count.set(count.get() - 1);
+                returned--;
             }
             addToTotal(-1);
         }
