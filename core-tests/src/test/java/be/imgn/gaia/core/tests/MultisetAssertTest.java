@@ -7,7 +7,9 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import be.imgn.gaia.core.collect.Multiset;
 import be.imgn.gaia.core.collect.Multisets;
+import be.imgn.gaia.core.collect.TreeMultiset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +36,16 @@ class MultisetAssertTest {
                 .filteredOn(word -> word.startsWith("f"))
                 .hasCount("foo", 2)
                 .hasSize(2);
+    }
+
+    @Test
+    void keepsTheOrderOfTheElementsItFilters() {
+        var sorted = TreeMultiset.<String>create();
+        sorted.addAll(List.of("delta", "alpha", "charlie", "bravo", "alpha"));
+
+        assertThat(sorted)
+                .filteredOn(word -> !word.equals("charlie"))
+                .containsExactly("alpha", "alpha", "bravo", "delta");
     }
 
     @Test

@@ -3,8 +3,9 @@ package be.imgn.gaia.core.testing;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.collect.HashMultiset;
 import be.imgn.gaia.core.collect.Multiset;
+import be.imgn.gaia.core.collect.Multisets;
+import java.util.ArrayList;
 import java.util.Map;
 import org.assertj.core.api.AbstractCollectionAssert;
 import org.assertj.core.api.ObjectAssert;
@@ -105,9 +106,10 @@ public final class MultisetAssert<E>
     }
 
     @Override
+    // AssertJ filters through it: the filtered multiset keeps the order of the elements, as containsExactly needs.
     protected MultisetAssert<E> newAbstractIterableAssert(Iterable<? extends E> iterable) {
-        var multiset = HashMultiset.<E>create();
-        iterable.forEach(multiset::add);
-        return new MultisetAssert<>(multiset);
+        var elements = new ArrayList<E>();
+        iterable.forEach(elements::add);
+        return new MultisetAssert<>(Multisets.multisetCopy(elements));
     }
 }
