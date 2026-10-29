@@ -42,7 +42,8 @@ import org.jspecify.annotations.Nullable;
  *   <tr><td>{@code user.name}</td><td colspan="4">{@code test}</td></tr>
  *   <tr><td>{@code user.home}, {@code user.dir}</td><td>{@code /home/test}</td><td>{@code /home/test}</td>
  *       <td>{@code /Users/test}</td><td>{@code C:\Users\test}</td></tr>
- *   <tr><td>{@code java.io.tmpdir}</td><td>{@code /tmp}</td><td>{@code /tmp}</td><td>{@code /tmp}</td>
+ *   <tr><td>{@code java.io.tmpdir}</td><td>{@code /tmp}</td><td>{@code /tmp}</td>
+ *       <td>{@code /var/folders/zz/zyxvpxvq6csfxvn_n0000000000000/T/}, as {@code TMPDIR}</td>
  *       <td>{@code C:\Users\test\AppData\Local\Temp\}</td></tr>
  *   <tr><td>{@code file.separator}</td><td>{@code /}</td><td>{@code /}</td><td>{@code /}</td><td>{@code \}</td></tr>
  *   <tr><td>{@code path.separator}</td><td>{@code :}</td><td>{@code :}</td><td>{@code :}</td><td>{@code ;}</td></tr>
@@ -53,8 +54,9 @@ import org.jspecify.annotations.Nullable;
  * <p>The environment variables are:
  *
  * <ul>
- *   <li>Linux, other Unix, macOS: {@code HOME} (the home directory) and {@code USER} (the user name). No XDG variable
- *       is set, so the specification's defaults apply, unless {@link Builder#xdgVariables(boolean)} sets them.
+ *   <li>Linux, other Unix, macOS: {@code HOME} (the home directory) and {@code USER} (the user name), and on macOS
+ *       {@code TMPDIR} too. No XDG variable is set, so the specification's defaults apply, unless
+ *       {@link Builder#xdgVariables(boolean)} sets them.
  *   <li>Windows: {@code USERNAME}, {@code USERPROFILE} (the home directory), {@code APPDATA}
  *       ({@code C:\Users\test\AppData\Roaming}), {@code LOCALAPPDATA} ({@code C:\Users\test\AppData\Local}),
  *       {@code TEMP} and {@code TMP} ({@code C:\Users\test\AppData\Local\Temp}), {@code ProgramData}
@@ -76,6 +78,7 @@ public final class PlatformPreset {
 
     private static final String DEFAULT_USER_NAME = "test";
     private static final String UNIX_TEMPORARY_DIRECTORY = "/tmp";
+    private static final String MAC_OS_TEMPORARY_DIRECTORY = "/var/folders/zz/zyxvpxvq6csfxvn_n0000000000000/T/";
     private static final String HOME = "HOME";
     private static final String USER = "USER";
 
@@ -241,6 +244,11 @@ public final class PlatformPreset {
                 windows(properties, environment, userHome);
             } else {
                 unix(properties, environment, userHome);
+                if (operatingSystem == OperatingSystem.MAC_OS) {
+                    // Each user has a temporary directory of their own, which the JVM takes from TMPDIR.
+                    properties.put("java.io.tmpdir", MAC_OS_TEMPORARY_DIRECTORY);
+                    environment.put("TMPDIR", MAC_OS_TEMPORARY_DIRECTORY);
+                }
             }
             if (xdgVariables) {
                 environment.put("XDG_DATA_HOME", "/xdg/data-home");

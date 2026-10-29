@@ -244,7 +244,7 @@ class PlatformPresetTest {
     @CsvSource({
         "LINUX,      Linux,      /,  :, /tmp",
         "OTHER_UNIX, FreeBSD,    /,  :, /tmp",
-        "MAC_OS,     Mac OS X,   /,  :, /tmp",
+        "MAC_OS,     Mac OS X,   /,  :, /var/folders/zz/zyxvpxvq6csfxvn_n0000000000000/T/",
         "WINDOWS,    Windows 11, \\, ;, C:\\Users\\test\\AppData\\Local\\Temp\\",
     })
     void setsTheTypicalSystemProperties(
