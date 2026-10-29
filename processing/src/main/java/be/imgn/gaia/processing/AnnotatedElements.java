@@ -76,6 +76,7 @@ public final class AnnotatedElements {
      * {@code module-info} files declare.
      *
      * @return the root elements, in the order javac gives them; empty if the step does not process them
+     * @since 0.1.2
      */
     public Set<Element> rootElements() {
         return rootElements;

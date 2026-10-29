@@ -133,6 +133,7 @@ public interface Step {
      * takes part in every round. It still claims none, so that other processors see them.
      *
      * @return {@code true} to get the root elements; {@code false} by default
+     * @since 0.1.2
      */
     default boolean processesRootElements() {
         return false;
