@@ -2,6 +2,7 @@ package be.imgn.gaia.core.tests;
 
 import static be.imgn.gaia.core.testing.MultimapAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import be.imgn.gaia.core.collect.HashSetMultimap;
@@ -44,6 +45,16 @@ class MultimapAssertTest {
         assertThat(multimap).hasValues("alice", 5, 3);
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat(scores()).hasValues("alice", 5, 3));
+        assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat(multimap).hasValues("alice", 5, 3, 3));
+    }
+
+    @Test
+    void refusesToLookForNoKey() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(scores()).containsKeys());
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(scores()).doesNotContainKeys());
     }
 
     @Test

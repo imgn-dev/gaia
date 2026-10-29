@@ -2,6 +2,7 @@ package be.imgn.gaia.core.tests;
 
 import static be.imgn.gaia.core.testing.RangeAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import be.imgn.gaia.core.collect.Range;
@@ -23,6 +24,12 @@ class RangeAssertTest {
                 .isNotConnectedTo(Range.greaterThan(10))
                 .isEqualTo(Range.closedOpen(0, 10));
         assertThat(Range.closedOpen(3, 3)).isEmpty();
+    }
+
+    @Test
+    void refusesToLookForNoValue() {
+        assertThatIllegalArgumentException().isThrownBy(() -> assertThat(DIGITS).contains());
+        assertThatIllegalArgumentException().isThrownBy(() -> assertThat(DIGITS).doesNotContain());
     }
 
     @Test

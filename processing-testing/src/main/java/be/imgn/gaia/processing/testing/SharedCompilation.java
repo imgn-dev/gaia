@@ -19,9 +19,9 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * <p>Sharing saves a javac start per test. Since the tests then see the same {@code Elements} and {@code Types}, they
- * must not depend on each other's use of them. Nor may they run at the same time, which JUnit's parallel execution
- * does if enabled: javac's model is not thread-safe, and a test class that shares its compilation must then be
- * annotated {@code @Execution(ExecutionMode.SAME_THREAD)}.
+ * must not depend on each other's use of them. Nor may they run at the same time, which JUnit's parallel execution does
+ * if enabled: javac's model is not thread-safe, and a test class that shares its compilation must then be annotated
+ * {@code @Execution(ExecutionMode.SAME_THREAD)}.
  */
 @Documented
 @Inherited

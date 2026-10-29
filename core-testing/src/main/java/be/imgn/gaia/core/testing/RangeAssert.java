@@ -1,5 +1,6 @@
 package be.imgn.gaia.core.testing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.collect.Range;
@@ -40,11 +41,13 @@ public final class RangeAssert<C extends Comparable<? super C>> extends Abstract
      * Verifies that the range contains all the given values.
      *
      * @param values the values
+     * @throws IllegalArgumentException if no value is given, which would check nothing
      * @return these assertions
      */
     @SafeVarargs
     public final RangeAssert<C> contains(C... values) {
         requireNonNull(values, "values");
+        checkArgument(values.length > 0, "Give at least one value to look for");
         isNotNull();
         var missing = new ArrayList<C>();
         for (var i = 0; i < values.length; i++) {
@@ -62,11 +65,13 @@ public final class RangeAssert<C extends Comparable<? super C>> extends Abstract
      * Verifies that the range contains none of the given values.
      *
      * @param values the values
+     * @throws IllegalArgumentException if no value is given, which would check nothing
      * @return these assertions
      */
     @SafeVarargs
     public final RangeAssert<C> doesNotContain(C... values) {
         requireNonNull(values, "values");
+        checkArgument(values.length > 0, "Give at least one value to look for");
         isNotNull();
         var present = new ArrayList<C>();
         for (var i = 0; i < values.length; i++) {

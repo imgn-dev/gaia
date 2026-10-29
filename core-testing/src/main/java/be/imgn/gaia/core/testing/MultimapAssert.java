@@ -1,5 +1,6 @@
 package be.imgn.gaia.core.testing;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.collect.Multimap;
@@ -84,11 +85,13 @@ public final class MultimapAssert<K, V> extends AbstractAssert<MultimapAssert<K,
      * Verifies that the multimap contains all the given keys.
      *
      * @param keys the keys
+     * @throws IllegalArgumentException if no key is given, which would check nothing
      * @return these assertions
      */
     @SafeVarargs
     public final MultimapAssert<K, V> containsKeys(K... keys) {
         requireNonNull(keys, "keys");
+        checkArgument(keys.length > 0, "Give at least one key to look for");
         isNotNull();
         var missing = new ArrayList<K>();
         for (var i = 0; i < keys.length; i++) {
@@ -106,11 +109,13 @@ public final class MultimapAssert<K, V> extends AbstractAssert<MultimapAssert<K,
      * Verifies that the multimap contains none of the given keys.
      *
      * @param keys the keys
+     * @throws IllegalArgumentException if no key is given, which would check nothing
      * @return these assertions
      */
     @SafeVarargs
     public final MultimapAssert<K, V> doesNotContainKeys(K... keys) {
         requireNonNull(keys, "keys");
+        checkArgument(keys.length > 0, "Give at least one key to look for");
         isNotNull();
         var present = new ArrayList<K>();
         for (var i = 0; i < keys.length; i++) {
@@ -178,7 +183,8 @@ public final class MultimapAssert<K, V> extends AbstractAssert<MultimapAssert<K,
         isNotNull();
         var actualValues = actual.get(key);
         var matches = actualValues instanceof Set<?> set
-                ? set.equals(new HashSet<>(expected))
+                // A set holds each value once: a value expected twice is not there twice.
+                ? set.size() == expected.size() && set.equals(new HashSet<>(expected))
                 : List.copyOf(actualValues).equals(expected);
         if (!matches) {
             failWithMessage(
