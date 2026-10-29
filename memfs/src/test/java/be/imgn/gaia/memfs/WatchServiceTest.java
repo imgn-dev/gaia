@@ -23,6 +23,11 @@ import java.nio.file.WatchService;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -176,6 +181,35 @@ class WatchServiceTest {
 
         assertThatExceptionOfType(ClosedWatchServiceException.class).isThrownBy(watcher::take);
         closer.join();
+    }
+
+    @Test
+    void wakesUpEveryTakeWhenClosed() throws Exception {
+        WatchService watcher = fileSystem.newWatchService();
+        ExecutorService executor =
+                Executors.newFixedThreadPool(3, Thread.ofPlatform().daemon().factory());
+        try {
+            CountDownLatch taking = new CountDownLatch(3);
+            List<Future<?>> takes = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                takes.add(executor.submit(() -> {
+                    taking.countDown();
+                    return watcher.take();
+                }));
+            }
+            taking.await();
+            Thread.sleep(50);
+
+            watcher.close();
+
+            for (Future<?> take : takes) {
+                assertThatExceptionOfType(ExecutionException.class)
+                        .isThrownBy(() -> take.get(5, TimeUnit.SECONDS))
+                        .withCauseInstanceOf(ClosedWatchServiceException.class);
+            }
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Test

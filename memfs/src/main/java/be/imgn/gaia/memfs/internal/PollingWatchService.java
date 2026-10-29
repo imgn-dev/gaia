@@ -129,6 +129,10 @@ final class PollingWatchService implements WatchService {
 
     private @Nullable Key check(@Nullable Key key) {
         if (!open) {
+            if (key != null) {
+                // Passes the wake-up on to the next thread waiting in take().
+                signalled.add(key);
+            }
             throw new ClosedWatchServiceException();
         }
         return key;
@@ -153,7 +157,7 @@ final class PollingWatchService implements WatchService {
             keys.clear();
         }
         fileSystem.untrack(this);
-        // Wakes up the threads waiting in take(), which then find the service closed.
+        // Wakes up the threads waiting in take(), which then find the service closed, one after the other.
         signalled.add(new Key(fileSystem.workingDirectory(), fileSystem.workingDirectoryNode()));
     }
 
