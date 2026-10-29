@@ -176,6 +176,35 @@ class ChannelTest {
         }
 
         @Test
+        void writesNothingForAnEmptyBufferPastTheEnd() throws IOException {
+            try (FileChannel channel = FileChannel.open(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+                assertThat(channel.write(ByteBuffer.allocate(0), 1000)).isZero();
+
+                assertThat(channel.size()).isZero();
+            }
+        }
+
+        @Test
+        void refusesToWritePastTheLargestSize() throws IOException {
+            try (FileChannel channel = FileChannel.open(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+                assertThatExceptionOfType(FileSystemException.class)
+                        .isThrownBy(() -> channel.write(ByteBuffer.allocate(10), Long.MAX_VALUE - 5));
+                assertThat(channel.size()).isZero();
+            }
+        }
+
+        @Test
+        void refusesToReleaseALockOfAClosedChannel() throws IOException {
+            FileLock lock;
+            try (FileChannel channel = FileChannel.open(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+                lock = channel.lock();
+            }
+
+            assertThat(lock.isValid()).isFalse();
+            assertThatExceptionOfType(ClosedChannelException.class).isThrownBy(lock::release);
+        }
+
+        @Test
         void scattersAndGathers() throws IOException {
             try (FileChannel channel = FileChannel.open(
                     file, StandardOpenOption.CREATE, StandardOpenOption.READ, StandardOpenOption.WRITE)) {

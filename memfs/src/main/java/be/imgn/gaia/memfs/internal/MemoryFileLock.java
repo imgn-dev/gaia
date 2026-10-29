@@ -1,6 +1,8 @@
 package be.imgn.gaia.memfs.internal;
 
+import java.io.IOException;
 import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,7 +30,15 @@ final class MemoryFileLock extends FileLock {
     }
 
     @Override
-    public void release() {
+    public void release() throws IOException {
+        if (!acquiredBy().isOpen()) {
+            throw new ClosedChannelException();
+        }
+        invalidate();
+    }
+
+    // Releases the lock as its channel closes, which release() refuses once the channel is closed.
+    void invalidate() {
         if (valid.compareAndSet(true, false)) {
             file.release(this);
         }

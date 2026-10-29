@@ -74,6 +74,13 @@ final class RegularFile extends Node {
         try {
             long start = append ? size : position;
             int length = src.remaining();
+            if (length == 0) {
+                // As on a disk: writing nothing does not grow the file, wherever it writes.
+                return 0;
+            }
+            if (start > Long.MAX_VALUE - length) {
+                throw new FileSystemException(path, null, "File too large");
+            }
             grow(start + length, path);
             int blockSize = disk.blockSize();
             long offset = start;
@@ -172,6 +179,6 @@ final class RegularFile extends Node {
                     .filter(lock -> channel.equals(lock.acquiredBy()))
                     .toList();
         }
-        held.forEach(MemoryFileLock::release);
+        held.forEach(MemoryFileLock::invalidate);
     }
 }
