@@ -149,10 +149,14 @@ final class SubscribeStep implements Step {
             }
         }
         var index = Type.newClassBuilder(name)
-                // Public for ServiceLoader alone: in an exported package, javac would otherwise warn that its supertype
-                // comes from a module the listener's module does not require transitively.
+                // Using deprecated listeners, methods, event types or executors is the listener's choice: the generated
+                // code must not warn of it, which would fail builds with -Werror. Public for ServiceLoader alone: in an
+                // exported package, javac would otherwise warn that its supertype comes from a module the listener's
+                // module does not require transitively.
                 .addAnnotation(Annotation.newBuilder(SuppressWarnings.class)
+                        .addMember("value", "$S", "deprecation")
                         .addMember("value", "$S", "exports")
+                        .addMember("value", "$S", "removal")
                         .build())
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addSuperinterface(SUBSCRIBER_INDEX)

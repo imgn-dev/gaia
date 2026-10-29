@@ -90,7 +90,7 @@ class SubscribeProcessorTest {
                 import be.imgn.gaia.core.event.spi.SubscriberIndex;
                 import javax.annotation.processing.Generated;
 
-                @SuppressWarnings("exports")
+                @SuppressWarnings({"deprecation", "exports", "removal"})
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
                 public final class $Listener$$Subscribers implements SubscriberIndex {
                     public $Listener$$Subscribers() {
@@ -169,6 +169,67 @@ class SubscribeProcessorTest {
                         """));
 
         assertThat(compilation).succeeded().hadNoWarnings();
+    }
+
+    @Test
+    void generatesAnIndexThatCompilesCleanlyWithDeprecatedMembers() {
+        // In the sources, javac warns of none of them: each is used in its own class only.
+        var compilation =
+                compile(TestCompiler.source("example.Listener", """
+                package example;
+
+                import be.imgn.gaia.core.event.Subscribe;
+                import be.imgn.gaia.core.event.SubscribingAnnotation;
+                import java.lang.annotation.ElementType;
+                import java.lang.annotation.Target;
+                import java.util.concurrent.Executor;
+
+                class Listener {
+                    @Deprecated
+                    @Subscribe
+                    void onText(String text) {}
+
+                    @Subscribe
+                    void onRemoved(Removed removed) {}
+
+                    @OnRemoved
+                    void onNumber(Number number) {}
+
+                    @Deprecated(forRemoval = true)
+                    static final class Removed {}
+
+                    @SubscribingAnnotation(executor = RemovedExecutor.class)
+                    @Target(ElementType.METHOD)
+                    @interface OnRemoved {}
+
+                    @Deprecated(forRemoval = true)
+                    static final class RemovedExecutor implements Executor {
+                        @Override
+                        public void execute(Runnable task) {}
+                    }
+                }
+                """), TestCompiler.source("example.Old", """
+                package example;
+
+                import be.imgn.gaia.core.event.Subscribe;
+
+                @Deprecated(forRemoval = true)
+                class Old {
+                    @Subscribe
+                    void onText(String text) {}
+                }
+                """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        assertThat(compilation)
+                .generatedSourceFile("example.$Listener$$Subscribers")
+                .contains("""
+                        @SuppressWarnings({"deprecation", "exports", "removal"})
+                        """)
+                .contains("registrar.subscribe(Listener.Removed.class, l::onRemoved);")
+                .contains("registrar.subscribe(Number.class, Listener.OnRemoved.class, Listener.RemovedExecutor::new,"
+                        + " l::onNumber);");
+        assertThat(compilation).generatedSourceFile("example.$Old$$Subscribers").contains("var l = (Old) listener;");
     }
 
     @Test
@@ -443,7 +504,7 @@ class SubscribeProcessorTest {
                 import example.queue.QueueExecutor;
                 import javax.annotation.processing.Generated;
 
-                @SuppressWarnings("exports")
+                @SuppressWarnings({"deprecation", "exports", "removal"})
                 @Generated("be.imgn.gaia.processor.SubscribeProcessor")
                 public final class $Listener$$Subscribers implements SubscriberIndex {
                     public $Listener$$Subscribers() {
