@@ -8,10 +8,16 @@ import be.imgn.gaia.processing.testing.TestCompiler;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ServiceLoader;
+import java.util.Set;
+import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.Test;
@@ -308,6 +314,78 @@ class SubscribeProcessorTest {
                 """));
 
         assertThat(compilation).succeeded().hadNoWarnings().generatedNoSourceFiles();
+    }
+
+    @Test
+    void waitsForTheTypesAnotherProcessorGenerates() {
+        var compilation = TestCompiler.javac()
+                .withProcessors(new Generating(), processor())
+                .withOptions("-Xlint:all,-processing", "-Werror")
+                .compile(ON_QUEUE, QUEUE_EXECUTOR, TestCompiler.source("example.Listener", """
+                        package example;
+
+                        import be.imgn.gaia.core.event.Subscribe;
+                        import example.queue.OnQueue;
+
+                        class Listener {
+                            @Subscribe
+                            void onText(String text) {}
+
+                            @Subscribe
+                            void onGen(Gen gen) {}
+
+                            static class Queued {
+                                @Subscribe
+                                void onText(String text) {}
+
+                                @OnQueue
+                                void onGen(Gen gen) {}
+                            }
+
+                            static class Throwing {
+                                @Subscribe
+                                void onText(String text) {}
+
+                                @Subscribe
+                                void onNumber(Number number) throws GenException {}
+                            }
+
+                            static class Annotated {
+                                @Subscribe
+                                void onText(String text) {}
+
+                                @Subscribe
+                                @GenMarker
+                                void onNumber(Number number) {}
+                            }
+                        }
+                        """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        assertThat(compilation)
+                .generatedSourceFile("example.$Listener$$Subscribers")
+                .contains("""
+                                registrar.subscribe(String.class, l::onText);
+                                registrar.subscribe(Gen.class, l::onGen);
+                        """);
+        assertThat(compilation)
+                .generatedSourceFile("example.$Listener$Queued$$Subscribers")
+                .contains("""
+                                registrar.subscribe(String.class, l::onText);
+                                registrar.subscribe(Gen.class, OnQueue.class, QueueExecutor::new, l::onGen);
+                        """);
+        assertThat(compilation)
+                .generatedSourceFile("example.$Listener$Throwing$$Subscribers")
+                .contains("""
+                                registrar.subscribe(String.class, l::onText);
+                                registrar.subscribe(Number.class, l::onNumber);
+                        """);
+        assertThat(compilation)
+                .generatedSourceFile("example.$Listener$Annotated$$Subscribers")
+                .contains("""
+                                registrar.subscribe(String.class, l::onText);
+                                registrar.subscribe(Number.class, l::onNumber);
+                        """);
     }
 
     @Test
@@ -713,5 +791,46 @@ class SubscribeProcessorTest {
                 .findFirst()
                 .orElseThrow()
                 .get();
+    }
+
+    /** Generates, in the first round, types that listeners refer to, as another processor would. */
+    private static final class Generating extends AbstractProcessor {
+
+        private boolean generated;
+
+        @Override
+        public Set<String> getSupportedAnnotationTypes() {
+            return Set.of("*");
+        }
+
+        @Override
+        public SourceVersion getSupportedSourceVersion() {
+            return SourceVersion.latestSupported();
+        }
+
+        @Override
+        public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+            if (!generated) {
+                generated = true;
+                write("example.Gen", "package example; public final class Gen {}");
+                write("example.GenException", """
+                        package example;
+
+                        public final class GenException extends RuntimeException {
+                            private static final long serialVersionUID = 1L;
+                        }
+                        """);
+                write("example.GenMarker", "package example; public @interface GenMarker {}");
+            }
+            return false;
+        }
+
+        private void write(String name, String source) {
+            try (var writer = processingEnv.getFiler().createSourceFile(name).openWriter()) {
+                writer.write(source);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
     }
 }

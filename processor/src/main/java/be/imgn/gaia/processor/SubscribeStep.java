@@ -82,7 +82,17 @@ final class SubscribeStep implements Step {
             classes.add(MoreElements.enclosingType(method).orElseThrow());
         }
         Map<TypeElement, List<ExecutableElement>> methods = new LinkedHashMap<>();
+        var later = new LinkedHashSet<Element>();
         for (var type : classes) {
+            var subscribers = ElementFilter.methodsIn(type.getEnclosedElements()).stream()
+                    .filter(method -> !subscribingAnnotations(method).isEmpty())
+                    .toList();
+            if (!annotated.containsAll(subscribers)) {
+                // The processor holds back a method until the types of its signature are generated. The class has one
+                // index only, so it waits for all its methods.
+                subscribers.stream().filter(annotated::contains).forEach(later::add);
+                continue;
+            }
             // In the order they are declared, which is the order they are subscribed in.
             methods.put(
                     type,
@@ -92,7 +102,7 @@ final class SubscribeStep implements Step {
                             .toList());
         }
         context.forEach(methods.entrySet(), entry -> generate(entry.getKey(), entry.getValue()));
-        return Set.of();
+        return later;
     }
 
     private void generate(TypeElement type, List<ExecutableElement> methods) {
@@ -105,7 +115,7 @@ final class SubscribeStep implements Step {
         if (context.diagnostics().errorCount() > errors) {
             return;
         }
-        // The event bus finds the index by this name.
+        // Any name unique to the class would do: the event bus matches an index to its class by listenerType().
         var name = ClassName.of(type).generatedName("Subscribers");
         if (!context.sources().isAvailable(name)) {
             context.diagnostics().on(type).error("Cannot generate " + name + ": a type has that name already");
