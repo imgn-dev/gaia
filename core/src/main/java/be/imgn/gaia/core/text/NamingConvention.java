@@ -54,6 +54,10 @@ import java.util.function.IntUnaryOperator;
  *   <li>{@link #UPPER_UNDERSCORE} text must not contain any lowercase letter.
  * </ul>
  *
+ * <p>A letter of the wrong case is accepted where the conversion to the convention would leave it unchanged, so that a
+ * convention accepts every text converted to it: {@code ß}, which {@link Character#toUpperCase(int)} keeps, may appear
+ * in {@link #UPPER_UNDERSCORE} text, and {@code 名}, which has no case, may start {@link #UPPER_CAMEL} text.
+ *
  * @since 0.1.2
  */
 public enum NamingConvention {
@@ -198,7 +202,7 @@ public enum NamingConvention {
     private boolean isWrittenIn(String text) {
         return !text.isEmpty()
                 && Character.isLetter(text.codePointAt(0))
-                && (camel ? isUpper(text.codePointAt(0)) == upper : hasNoEmptyWord(text))
+                && (camel ? fitsFirstOfCamel(text.codePointAt(0)) : hasNoEmptyWord(text))
                 && text.codePoints().allMatch(this::isAllowed);
     }
 
@@ -207,9 +211,19 @@ public enum NamingConvention {
                 && !text.contains(String.valueOf(new char[] {delimiter, delimiter}));
     }
 
+    // A letter of the wrong case fits when the conversion leaves it unchanged, since the conversion produces it.
+    private boolean fitsFirstOfCamel(int codePoint) {
+        return upper
+                ? isUpper(codePoint) || Character.toTitleCase(codePoint) == codePoint
+                : !isUpper(codePoint) || Character.toLowerCase(codePoint) == codePoint;
+    }
+
     private boolean isAllowed(int codePoint) {
         if (Character.isLetter(codePoint)) {
-            return camel || (upper ? !Character.isLowerCase(codePoint) : !isUpper(codePoint));
+            return camel
+                    || (upper
+                            ? !Character.isLowerCase(codePoint) || Character.toUpperCase(codePoint) == codePoint
+                            : !isUpper(codePoint) || Character.toLowerCase(codePoint) == codePoint);
         }
         return Character.isDigit(codePoint) || (!camel && codePoint == delimiter);
     }

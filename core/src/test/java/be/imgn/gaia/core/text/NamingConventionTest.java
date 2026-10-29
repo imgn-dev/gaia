@@ -1,6 +1,7 @@
 package be.imgn.gaia.core.text;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -126,6 +127,31 @@ class NamingConventionTest {
                 .isEqualTo("a𝒷");
     }
 
+    @Test
+    void acceptsTheLettersThatHaveNoCaseToConvertTo() {
+        assertThat(NamingConvention.LOWER_UNDERSCORE.toUpperUnderscore("straße"))
+                .isEqualTo("STRAßE");
+        assertThat(NamingConvention.UPPER_UNDERSCORE.toLowerUnderscore("STRAßE"))
+                .isEqualTo("straße");
+        assertThat(NamingConvention.UPPER_CAMEL.toLowerHyphen("名前Value")).isEqualTo("名前-value");
+        assertThat(NamingConvention.LOWER_HYPHEN.toLowerCamel("aϒ")).isEqualTo("aϒ");
+    }
+
+    @ParameterizedTest
+    @EnumSource(NamingConvention.class)
+    void producesTextThatFollowsTheTargetConvention(NamingConvention target) {
+        for (var codePoint = 0; codePoint <= Character.MAX_CODE_POINT; codePoint++) {
+            if (Character.isLetter(codePoint)) {
+                var letter = Character.toString(codePoint);
+                for (var text : new String[] {letter, "a" + letter}) {
+                    var converted = target.from(text);
+
+                    assertThatCode(() -> target.to(target, converted)).as(text).doesNotThrowAnyException();
+                }
+            }
+        }
+    }
+
     @ParameterizedTest
     @EnumSource(NamingConvention.class)
     void convertsToEachConventionDirectly(NamingConvention source) {
@@ -208,7 +234,6 @@ class NamingConventionTest {
         "LOWER_CAMEL, a$",
         "UPPER_CAMEL, port",
         "UPPER_CAMEL, Max_Size",
-        "UPPER_CAMEL, 名前",
         "LOWER_HYPHEN, Port",
         "LOWER_HYPHEN, max-Size",
         "LOWER_HYPHEN, a--b",
