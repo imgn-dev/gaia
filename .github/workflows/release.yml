@@ -157,7 +157,11 @@ jobs:
         # skipTests and invoker.skip: the Verify step above already ran every test
         # and integration test. This step publishes; it does not test, and runs
         # no Maven build of the integration tests with the credentials around.
-        run: ./mvnw -B --no-transfer-progress -Prelease -DskipTests -Dinvoker.skip deploy
+        # The entries of the jars are dated as the released commit, so that the
+        # artifacts can be rebuilt byte for byte.
+        run: >-
+          ./mvnw -B --no-transfer-progress -Prelease -DskipTests -Dinvoker.skip
+          -Dproject.build.outputTimestamp="$(git log -1 --format=%cI)" deploy
 
       - name: Tag the release
         # The POM may already sit at the version being released, in which case

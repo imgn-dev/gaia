@@ -230,6 +230,7 @@ dry_run_deploy() {
     log=$(mktemp)
     CENTRAL_TOKEN_USERNAME=dry-run CENTRAL_TOKEN_PASSWORD=dry-run MAVEN_GPG_PASSPHRASE="$MAVEN_GPG_PASSPHRASE" \
         "${MVN[@]}" -s "$ROOT/scripts/release-settings.xml" -Prelease -DskipTests -Dinvoker.skip \
+        -Dproject.build.outputTimestamp="$(git log -1 --format=%cI)" \
         -Dgpg.keyname="$KEY_ID" -DcentralBaseUrl=http://127.0.0.1:9 deploy 2>&1 \
         | tee "$log" || status=$?
     bundle=$(find "$ROOT" -path '*/target/central-publishing/central-bundle.zip' -print -quit)
@@ -271,6 +272,7 @@ build() {
     CENTRAL_TOKEN_USERNAME="$CENTRAL_TOKEN_USERNAME" CENTRAL_TOKEN_PASSWORD="$CENTRAL_TOKEN_PASSWORD" \
         MAVEN_GPG_PASSPHRASE="$MAVEN_GPG_PASSPHRASE" \
         "${MVN[@]}" -s "$ROOT/scripts/release-settings.xml" -Prelease -DskipTests -Dinvoker.skip \
+        -Dproject.build.outputTimestamp="$(git log -1 --format=%cI)" \
         -Dgpg.keyname="$KEY_ID" deploy
     trap - ERR
     ok 'uploaded; waiting in the portal'

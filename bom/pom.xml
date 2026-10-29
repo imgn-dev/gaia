@@ -55,6 +55,7 @@
   <properties>
     <!-- ${revision} comes from ../.mvn/maven.config, shared with gaia-parent. -->
 
+    <!-- As in the parent: a release overrides it. -->
     <project.build.outputTimestamp>2026-10-17T19:51:24Z</project.build.outputTimestamp>
     <!-- Same as gaia-parent: bom-parent does not manage flatten. -->
     <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>

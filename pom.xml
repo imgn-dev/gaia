@@ -63,7 +63,9 @@
          compiler's and javadoc's release and into requireJavaVersion. -->
     <java.release>21</java.release>
 
-    <!-- Reproducible builds: bump on each release. -->
+    <!-- Reproducible builds. A release sets it to the time of the commit it
+         releases (-Dproject.build.outputTimestamp, in release.yml and
+         scripts/release.sh); this value only serves other builds. -->
     <project.build.outputTimestamp>2026-10-17T19:51:24Z</project.build.outputTimestamp>
 
     <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
