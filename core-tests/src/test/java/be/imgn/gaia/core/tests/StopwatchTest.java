@@ -83,6 +83,10 @@ class StopwatchTest {
             123456789012     | 2.058 min
             7200000000000    | 2.000 h
             259200000000000  | 3.000 d
+            999960           | 1.000 ms
+            59999000000      | 1.000 min
+            864000000000000000  | 10000 d
+            1066665600000000000 | 12350 d
             """)
     void printsFourSignificantDigitsInTheLargestUnit(long nanos, String expected) {
         Stopwatch stopwatch = Stopwatch.started(ticker);

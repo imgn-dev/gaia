@@ -2,6 +2,9 @@ package be.imgn.gaia.core.time;
 
 import static java.util.Objects.requireNonNull;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +24,8 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Stopwatch {
 
+    private static final MathContext FOUR_DIGITS = new MathContext(4, RoundingMode.HALF_UP);
+    private static final BigDecimal TEN_THOUSAND = BigDecimal.valueOf(10_000);
     private static final List<TimeUnit> UNITS = List.of(
             TimeUnit.DAYS,
             TimeUnit.HOURS,
@@ -157,10 +162,11 @@ public final class Stopwatch {
     }
 
     /**
-     * Returns the elapsed time in the largest unit in which it is at least 1, with four significant digits, as
-     * {@code String.format(Locale.ROOT, "%.4g", value)} prints them, followed by the unit's abbreviation: {@code ns},
-     * {@code μs}, {@code ms}, {@code s}, {@code min}, {@code h} or {@code d}. For example {@code "1.234 s"} or
-     * {@code "38.35 ms"}.
+     * Returns the elapsed time in the largest unit in which it is at least 1 once rounded to four significant digits,
+     * with those four digits, as {@code String.format(Locale.ROOT, "%.4g", value)} prints them, followed by the unit's
+     * abbreviation: {@code ns}, {@code μs}, {@code ms}, {@code s}, {@code min}, {@code h} or {@code d}. For example
+     * {@code "1.234 s"} or {@code "38.35 ms"}; 999,960 ns is {@code "1.000 ms"}. From 10,000 days, the days are written
+     * without an exponent, such as {@code "12350 d"}.
      *
      * @return the elapsed time, for people to read
      */
@@ -168,8 +174,24 @@ public final class Stopwatch {
     public String toString() {
         long nanos = elapsedNanos();
         TimeUnit unit = unitOf(nanos);
-        double value = (double) nanos / TimeUnit.NANOSECONDS.convert(1, unit);
-        return String.format(Locale.ROOT, "%.4g %s", value, abbreviate(unit));
+        BigDecimal value = rounded(nanos, unit);
+        int index = UNITS.indexOf(unit);
+        // Rounding can reach the next unit: 999,960 ns is 1.000 ms, not 1000 μs.
+        if (index > 0) {
+            TimeUnit larger = UNITS.get(index - 1);
+            if (value.compareTo(BigDecimal.valueOf(unit.convert(1, larger))) >= 0) {
+                unit = larger;
+                value = rounded(nanos, unit);
+            }
+        }
+        // %g switches to an exponent from 10,000.
+        String digits =
+                value.compareTo(TEN_THOUSAND) < 0 ? String.format(Locale.ROOT, "%.4g", value) : value.toPlainString();
+        return digits + " " + abbreviate(unit);
+    }
+
+    private static BigDecimal rounded(long nanos, TimeUnit unit) {
+        return BigDecimal.valueOf(nanos).divide(BigDecimal.valueOf(TimeUnit.NANOSECONDS.convert(1, unit)), FOUR_DIGITS);
     }
 
     private long elapsedNanos() {
