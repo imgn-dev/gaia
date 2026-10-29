@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 import be.imgn.gaia.processing.testing.Compilation;
 import be.imgn.gaia.processing.testing.TestCompiler;
@@ -19,12 +20,17 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -275,6 +281,23 @@ class TestCompilerTest {
                 .cause()
                 .isExactlyInstanceOf(IllegalStateException.class)
                 .hasMessage("Failing on purpose");
+    }
+
+    @Test
+    void keepsWhatAProcessorThrowsWhenATemporaryDirectoryCannotBeDeleted() throws IOException {
+        assumeThat(FileSystems.getDefault().supportedFileAttributeViews()).contains("posix");
+        LockingProcessor processor = new LockingProcessor();
+        try {
+            assertThatThrownBy(() -> javac().withProcessors(processor).compile(FOO))
+                    .isExactlyInstanceOf(RuntimeException.class)
+                    .satisfies(thrown ->
+                            assertThat(thrown.getSuppressed()).singleElement().isInstanceOf(UncheckedIOException.class))
+                    .cause()
+                    .isExactlyInstanceOf(IllegalStateException.class)
+                    .hasMessage("Failing on purpose");
+        } finally {
+            processor.unlock();
+        }
     }
 
     @Test
@@ -593,6 +616,50 @@ class TestCompilerTest {
                 }
             }
             return false;
+        }
+    }
+
+    /**
+     * Writes {@code example/Foo.toml} to the class output, makes its directory read-only so that the file cannot be
+     * deleted, and throws.
+     */
+    @SupportedAnnotationTypes("*")
+    private static final class LockingProcessor extends AbstractProcessor {
+
+        private final List<Path> locked = new ArrayList<>();
+
+        @Override
+        public SourceVersion getSupportedSourceVersion() {
+            return SourceVersion.latestSupported();
+        }
+
+        @Override
+        public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+            try {
+                FileObject resource =
+                        processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "example", "Foo.toml");
+                try (Writer writer = resource.openWriter()) {
+                    writer.write("title = \"Foo\"\n");
+                }
+                Path directory = Path.of(resource.toUri()).getParent();
+                Files.setPosixFilePermissions(directory, PosixFilePermissions.fromString("r-xr-xr-x"));
+                locked.add(directory);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            throw new IllegalStateException("Failing on purpose");
+        }
+
+        /** Makes the directory writable again, and deletes the class output it is in. */
+        void unlock() throws IOException {
+            for (Path directory : locked) {
+                Files.setPosixFilePermissions(directory, PosixFilePermissions.fromString("rwx------"));
+                try (Stream<Path> paths = Files.walk(directory.getParent())) {
+                    for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+                        Files.delete(path);
+                    }
+                }
+            }
         }
     }
 

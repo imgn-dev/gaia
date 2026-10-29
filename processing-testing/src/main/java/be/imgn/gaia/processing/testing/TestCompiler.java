@@ -226,7 +226,8 @@ public final class TestCompiler {
      *     its message
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
-     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted
+     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted; a failure to
+     *     delete them while another exception is thrown is added to that exception as a suppressed one
      */
     public Compilation compile(JavaFileObject... sources) {
         requireNonNull(sources, "sources");
@@ -251,7 +252,8 @@ public final class TestCompiler {
      *     its message
      * @throws RuntimeException if an annotation processor, or a file given to javac, throws an exception, which is the
      *     cause of the one thrown
-     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted
+     * @throws UncheckedIOException if the temporary directories cannot be written, read or deleted; a failure to
+     *     delete them while another exception is thrown is added to that exception as a suppressed one
      */
     public Compilation compile(List<? extends JavaFileObject> sources) {
         List<JavaFileObject> units = Checks.copyOfNonNull(sources, "sources");
@@ -273,11 +275,15 @@ public final class TestCompiler {
             throw new IllegalStateException("No system Java compiler: run the tests on a JDK, not a JRE");
         }
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-        Path classOutput = createTempDirectory("class-output");
-        Path sourceOutput = createTempDirectory("source-output");
-        Path sourcePath = createTempDirectory("source-path");
-        try (StandardJavaFileManager fileManager =
-                compiler.getStandardFileManager(diagnostics, Locale.ROOT, StandardCharsets.UTF_8)) {
+        // Closed last, so that a failure to delete a directory is suppressed by the exception that ends the
+        // compilation,
+        // if any.
+        try (TemporaryDirectories directories = new TemporaryDirectories();
+                StandardJavaFileManager fileManager =
+                        compiler.getStandardFileManager(diagnostics, Locale.ROOT, StandardCharsets.UTF_8)) {
+            Path classOutput = directories.create("class-output");
+            Path sourceOutput = directories.create("source-output");
+            Path sourcePath = directories.create("source-path");
             write(classOutput, classOutputResources);
             write(sourcePath, sourcePathResources);
             fileManager.setLocationFromPaths(StandardLocation.CLASS_OUTPUT, List.of(classOutput));
@@ -296,10 +302,6 @@ public final class TestCompiler {
             return new Compilation(success, diagnostics.getDiagnostics(), generated);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
-        } finally {
-            deleteRecursively(classOutput);
-            deleteRecursively(sourceOutput);
-            deleteRecursively(sourcePath);
         }
     }
 
@@ -395,21 +397,48 @@ public final class TestCompiler {
         return files;
     }
 
-    private static Path createTempDirectory(String prefix) {
-        try {
-            return Files.createTempDirectory("gaia-processing-testing-" + prefix);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
+    /** The temporary directories of a compilation, which are deleted when closed. */
+    private static final class TemporaryDirectories implements AutoCloseable {
 
-    private static void deleteRecursively(Path root) {
-        try (Stream<Path> paths = Files.walk(root)) {
-            for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
-                Files.delete(path);
+        private final List<Path> directories = new ArrayList<>();
+
+        Path create(String prefix) throws IOException {
+            Path directory = Files.createTempDirectory("gaia-processing-testing-" + prefix);
+            directories.add(directory);
+            return directory;
+        }
+
+        /**
+         * Deletes each directory, even when another cannot be deleted.
+         *
+         * @throws UncheckedIOException if a directory cannot be deleted, with the failures to delete the others as
+         *     suppressed exceptions
+         */
+        @Override
+        public void close() {
+            UncheckedIOException failure = null;
+            for (Path directory : directories) {
+                try {
+                    deleteRecursively(directory);
+                } catch (IOException e) {
+                    if (failure == null) {
+                        failure = new UncheckedIOException(e);
+                    } else {
+                        failure.addSuppressed(e);
+                    }
+                }
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            if (failure != null) {
+                throw failure;
+            }
+        }
+
+        private static void deleteRecursively(Path root) throws IOException {
+            try (Stream<Path> paths = Files.walk(root)) {
+                for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+                    Files.delete(path);
+                }
+            }
         }
     }
 
