@@ -78,6 +78,10 @@ public interface ByteSource {
     /**
      * Returns a source that reads what a URL points to, such as a resource from {@link Class#getResource(String)}.
      *
+     * <p>It is meant for local resources, such as those of the class path or files. It opens the URL with no timeout,
+     * so a remote server that stops responding blocks a read forever: for one, open a connection with timeouts in a
+     * source of your own.
+     *
      * @param url the URL to read
      * @return a source of the content at {@code url}
      */
@@ -87,7 +91,8 @@ public interface ByteSource {
     }
 
     /**
-     * Returns a source that reads what a URI points to, through the URL it converts to.
+     * Returns a source that reads what a URI points to, through the URL it converts to. Like {@link #of(URL)}, it is
+     * meant for local resources: it opens the URL with no timeout.
      *
      * @param uri the URI to read
      * @return a source of the content at {@code uri}

@@ -113,6 +113,7 @@ public interface CharSource {
 
     /**
      * Returns a source that reads the text a URL points to, such as a resource from {@link Class#getResource(String)}.
+     * Like {@link ByteSource#of(URL)}, it is meant for local resources: it opens the URL with no timeout.
      *
      * @param url the URL to read
      * @param charset the charset the text is encoded in
