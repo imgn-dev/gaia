@@ -13,6 +13,9 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 import org.jspecify.annotations.Nullable;
@@ -135,14 +138,35 @@ public final class Diagnostics {
     }
 
     // Checks that an annotation is on an element, as Report.annotation(AnnotationMirror) does: one of its annotations,
-    // or nested in the value of one, as a repeatable annotation is in its container, defaults included.
+    // or nested in the value of one, as a repeatable annotation is in its container, defaults included, or one that a
+    // class inherits from a superclass.
     static AnnotationMirror requireAnnotationOf(Element element, AnnotationMirror annotation) {
         checkArgument(
-                contains(element.getAnnotationMirrors(), annotation),
+                isWritten(element, annotation) || isInherited(element, annotation),
                 "%s is not an annotation of %s",
                 annotation,
                 element);
         return annotation;
+    }
+
+    // Whether the source of the element has the annotation, which a report can then point at.
+    private static boolean isWritten(Element element, AnnotationMirror annotation) {
+        return contains(element.getAnnotationMirrors(), annotation);
+    }
+
+    private static boolean isInherited(Element element, AnnotationMirror annotation) {
+        if (!(element instanceof TypeElement type)) {
+            return false;
+        }
+        TypeMirror superclass = type.getSuperclass();
+        while (superclass.getKind() == TypeKind.DECLARED) {
+            TypeElement declaring = (TypeElement) ((DeclaredType) superclass).asElement();
+            if (isWritten(declaring, annotation)) {
+                return true;
+            }
+            superclass = declaring.getSuperclass();
+        }
+        return false;
     }
 
     private static boolean contains(List<? extends AnnotationMirror> mirrors, AnnotationMirror annotation) {
@@ -209,7 +233,8 @@ public final class Diagnostics {
          * Narrows this report to an annotation of the element.
          *
          * @param annotation the annotation, as found on the element: one of its annotations, or one nested in the value
-         *     of an attribute of those, as a repeatable annotation is in its container
+         *     of an attribute of those, as a repeatable annotation is in its container, or one a class inherits from a
+         *     superclass, which is reported on the class, its source not having it
          * @return the narrowed report
          * @throws IllegalArgumentException if the annotation is not on the element
          */
@@ -285,7 +310,13 @@ public final class Diagnostics {
 
         private void print(Diagnostic.Kind kind, String message) {
             requireNonNull(message, "message");
-            messager.printMessage(kind, message, element, annotation, value);
+            AnnotationMirror mirror = annotation;
+            if (mirror == null || isWritten(element, mirror)) {
+                messager.printMessage(kind, message, element, mirror, value);
+            } else {
+                // Inherited: the annotation is in the source of a superclass, not in that of the element.
+                messager.printMessage(kind, message, element);
+            }
         }
     }
 }

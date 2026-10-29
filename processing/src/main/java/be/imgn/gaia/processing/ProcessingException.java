@@ -56,7 +56,8 @@ public final class ProcessingException extends RuntimeException {
      * @param message the message of the error
      * @param element the element the error is about
      * @param annotation the annotation the error is about, as found on the element: one of its annotations, or one
-     *     nested in the value of an attribute of those, as a repeatable annotation is in its container
+     *     nested in the value of an attribute of those, as a repeatable annotation is in its container, or one a class
+     *     inherits from a superclass, which is reported on the class
      * @throws IllegalArgumentException if the annotation is not on the element
      */
     public ProcessingException(String message, Element element, AnnotationMirror annotation) {
@@ -82,7 +83,8 @@ public final class ProcessingException extends RuntimeException {
      * @param message the message of the error
      * @param element the element the error is about
      * @param annotation the annotation, as found on the element: one of its annotations, or one nested in the value of
-     *     an attribute of those, as a repeatable annotation is in its container
+     *     an attribute of those, as a repeatable annotation is in its container, or one a class inherits from a
+     *     superclass, which is reported on the class
      * @param attribute the name of the attribute the error is about
      * @throws IllegalArgumentException if the annotation is not on the element, or has no such attribute
      */

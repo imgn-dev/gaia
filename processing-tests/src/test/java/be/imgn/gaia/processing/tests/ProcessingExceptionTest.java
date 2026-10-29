@@ -500,6 +500,55 @@ class ProcessingExceptionTest {
     }
 
     @Test
+    void reportsAnInheritedAnnotationOnTheElement() {
+        List<AnnotationMirror> inherited = new ArrayList<>();
+        Compilation compilation = compile(context -> List.of(markStep(elements -> {
+                    TypeElement derived = context.elements().getTypeElement("example.Derived");
+                    AnnotationMirror kind = context.inheritedAnnotation(derived, "example.Kind")
+                            .orElseThrow()
+                            .mirror();
+                    inherited.add(kind);
+                    context.diagnostics()
+                            .on(derived)
+                            .annotation(kind)
+                            .attribute("value")
+                            .warning("inherited");
+                    throw new ProcessingException("inherited kind", derived, kind, "value");
+                })))
+                .compile(
+                        ANNOTATIONS,
+                        source("example.Kind", """
+                        package example;
+
+                        import java.lang.annotation.Inherited;
+
+                        @Inherited
+                        @interface Kind {
+                            String value();
+                        }
+                        """),
+                        source("example.Base", """
+                        package example;
+
+                        @Kind("base")
+                        class Base {}
+                        """),
+                        source("example.Derived", """
+                        package example;
+
+                        @Mark
+                        class Derived extends Base {}
+                        """));
+
+        assertThat(inherited).singleElement().asString().isEqualTo("@example.Kind(\"base\")");
+        assertThat(compilation)
+                .hadErrorContaining("inherited kind")
+                .inFile("example/Derived.java")
+                .onLine(4);
+        assertThat(compilation).hadWarningContaining("inherited").inFile("example/Derived.java");
+    }
+
+    @Test
     void cannotBeSerialized() {
         List<ProcessingException> exceptions = new ArrayList<>();
         compile(context -> List.of(markStep(elements -> {
