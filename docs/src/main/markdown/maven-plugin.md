@@ -28,7 +28,8 @@ It runs in the `process-classes` phase:
 
 - It reads every file in `META-INF/services` of the compiled classes, in the format of `ServiceLoader`: one provider
   per line, with `#` comments and blank lines ignored.
-- For each service, the providers in its file replace those that `module-info.java` declares, if any. The `provides`
+- For each service, the providers in its file replace those that `module-info.java` declares, if any. A file that
+  lists no provider removes the service's `provides` directive, even one added by an earlier build. The `provides`
   directives of other services stay as they are.
 - Running it again changes nothing, and it never writes to the sources.
 - Each provider must be a class of the module, or the build fails: the JVM would refuse to start a module that

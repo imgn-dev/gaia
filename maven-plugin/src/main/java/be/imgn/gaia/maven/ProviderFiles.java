@@ -23,8 +23,8 @@ final class ProviderFiles {
     private ProviderFiles() {}
 
     /**
-     * Returns the providers of services, by service name. A service with no file, or a file that lists no provider, is
-     * left out.
+     * Returns the providers of services, by service name. A service with no file is left out; a file that lists no
+     * provider gives an empty list, so that a directive written from an earlier version of the file can be removed.
      *
      * @param classes the directory of compiled classes
      * @param services the names of the services to read, or an empty list to read every file in the directory
@@ -40,10 +40,7 @@ final class ProviderFiles {
             checkName(service, "Not a service name: " + service);
             var file = directory.resolve(service);
             if (Files.isRegularFile(file)) {
-                var listed = providers(classes, file);
-                if (!listed.isEmpty()) {
-                    providers.put(service, listed);
-                }
+                providers.put(service, providers(classes, file));
             }
         }
         return providers;

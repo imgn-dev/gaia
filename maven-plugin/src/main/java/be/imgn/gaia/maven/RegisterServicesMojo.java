@@ -21,7 +21,8 @@ import org.jspecify.annotations.Nullable;
  *
  * <ul>
  *   <li>The providers listed in the file of a service replace the {@code provides} directive of that service, if
- *       {@code module-info.java} declares one. Directives for other services are kept.
+ *       {@code module-info.java} declares one. A file that lists no provider removes the directive, even one added by
+ *       an earlier build. Directives for other services are kept.
  *   <li>Running the goal again changes nothing, and sources are never written.
  *   <li>Each provider must be a class in {@link #classesDirectory}, or the build fails: the JVM would refuse to start a
  *       module that provides a class it does not contain.

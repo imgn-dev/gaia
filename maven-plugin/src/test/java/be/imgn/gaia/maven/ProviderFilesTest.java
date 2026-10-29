@@ -60,12 +60,21 @@ class ProviderFilesTest {
     }
 
     @Test
-    void leavesOutServicesWithoutProviders() throws Exception {
+    void readsServicesWithoutProviders() throws Exception {
         classes("p/A");
         service("p.Service", "p.A");
         service("p.Empty", "# nothing yet", "");
 
-        assertThat(ProviderFiles.read(classes, List.of("p.Service", "p.Empty", "p.Missing")))
+        assertThat(ProviderFiles.read(classes, List.of()))
+                .containsExactly(entry("p.Empty", List.of()), entry("p.Service", List.of("p.A")));
+    }
+
+    @Test
+    void leavesOutServicesWithoutAFile() throws Exception {
+        classes("p/A");
+        service("p.Service", "p.A");
+
+        assertThat(ProviderFiles.read(classes, List.of("p.Service", "p.Missing")))
                 .containsExactly(entry("p.Service", List.of("p.A")));
     }
 

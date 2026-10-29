@@ -54,6 +54,25 @@ class ModuleInfoTest {
     }
 
     @Test
+    void removesTheDirectiveOfAServiceWithoutProviders() throws Exception {
+        var moduleInfo = compile("module m { provides p.Service with p.A; provides p.Other with p.C; }");
+
+        assertThat(ModuleInfo.provide(moduleInfo, Map.of("p.Service", List.of())))
+                .isTrue();
+
+        assertThat(provides(moduleInfo)).containsOnly(Map.entry("p.Other", List.of("p.C")));
+    }
+
+    @Test
+    void addsNoDirectiveForANewServiceWithoutProviders() throws Exception {
+        var moduleInfo = compile("module m { provides p.Other with p.C; }");
+
+        ModuleInfo.provide(moduleInfo, Map.of("p.Service", List.of()));
+
+        assertThat(provides(moduleInfo)).containsOnly(Map.entry("p.Other", List.of("p.C")));
+    }
+
+    @Test
     void keepsTheRestOfTheDescriptor() throws Exception {
         var moduleInfo =
                 compile("open module m { requires java.logging; exports p; uses p.Other; provides p.Other with p.C; }");

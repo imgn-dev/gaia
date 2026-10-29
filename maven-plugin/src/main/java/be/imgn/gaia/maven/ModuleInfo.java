@@ -25,11 +25,12 @@ final class ModuleInfo {
 
     /**
      * Makes a module descriptor provide services with the given providers. The directive of each service, if any, is
-     * replaced where it stands; the directives of other services are kept, and those of services not provided yet are
-     * added at the end. Providing the same services again leaves the file unchanged.
+     * replaced where it stands, or removed if the service has no provider; the directives of other services are kept,
+     * and those of services not provided yet are added at the end. Providing the same services again leaves the file
+     * unchanged.
      *
      * @param file the {@code module-info.class} file
-     * @param providers the providers of each service, by binary name
+     * @param providers the providers of each service, by binary name, possibly none
      * @return whether the file changed
      */
     static boolean provide(Path file, Map<String, List<String>> providers) throws IOException {
@@ -90,6 +91,10 @@ final class ModuleInfo {
         }
 
         private void provide(String service, List<String> providers) {
+            // A class file cannot hold a directive without providers.
+            if (providers.isEmpty()) {
+                return;
+            }
             super.visitProvide(
                     service, providers.stream().map(ModuleInfo::internalName).toArray(String[]::new));
         }
