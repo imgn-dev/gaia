@@ -25,6 +25,7 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.Set;
@@ -237,6 +238,19 @@ class ChannelTest {
                 assertThat(transferred).isEqualTo(3);
                 assertThat(taken).hasToString("tra");
             }
+        }
+
+        @Test
+        void deletesOnCloseOnlyTheFileItOpened() throws IOException {
+            Path other = fileSystem.getPath("other");
+            Files.writeString(other, "replacement");
+            try (FileChannel channel = FileChannel.open(
+                    file, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.DELETE_ON_CLOSE)) {
+                channel.write(ByteBuffer.wrap("opened".getBytes(UTF_8)));
+                Files.move(other, file, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            assertThat(Files.readString(file)).isEqualTo("replacement");
         }
 
         @Test

@@ -39,6 +39,24 @@ final class FileTree {
         roots.put(fileSystem.syntax().rootKey(root), directory);
     }
 
+    // Unlinks every file, so that the content of each one goes back to the disk: a path of a closed file system, which
+    // can outlive it, must not keep the files in memory.
+    void release() {
+        for (Directory root : roots.values()) {
+            release(root);
+        }
+    }
+
+    private void release(Directory directory) {
+        for (Directory.Entry entry : directory.entries()) {
+            if (entry.node() instanceof Directory child) {
+                release(child);
+            }
+            directory.remove(fileSystem.names().key(entry.name()));
+            entry.node().unlink();
+        }
+    }
+
     @Nullable
     Directory root(String root) {
         return roots.get(fileSystem.syntax().rootKey(root));

@@ -111,18 +111,22 @@ final class FileOperations {
             FileAttribute<?>... attributes)
             throws IOException {
         Options.Open open = Options.Open.of(options);
-        @Nullable
-        Runnable onClose = open.has(StandardOpenOption.DELETE_ON_CLOSE) ? () -> deleteQuietly(base, path) : null;
         // The channel counts as open before the lock is released: a deletion or the closing of the file system that
         // comes next sees it.
-        return writing(() -> new MemoryFileChannel(
-                fileSystem,
-                openFile(base, path, open, List.of(attributes)),
-                path,
-                open.has(StandardOpenOption.READ),
-                open.has(StandardOpenOption.WRITE),
-                open.has(StandardOpenOption.APPEND),
-                onClose));
+        return writing(() -> {
+            RegularFile file = openFile(base, path, open, List.of(attributes));
+            @Nullable
+            Runnable onClose =
+                    open.has(StandardOpenOption.DELETE_ON_CLOSE) ? () -> deleteQuietly(base, path, file) : null;
+            return new MemoryFileChannel(
+                    fileSystem,
+                    file,
+                    path,
+                    open.has(StandardOpenOption.READ),
+                    open.has(StandardOpenOption.WRITE),
+                    open.has(StandardOpenOption.APPEND),
+                    onClose);
+        });
     }
 
     private RegularFile openFile(
@@ -294,13 +298,15 @@ final class FileOperations {
         }
     }
 
-    private void deleteQuietly(@Nullable Directory base, MemoryPath path) {
+    // Deletes the file a channel opened, unless the path names another file by now: one that replaced it.
+    private void deleteQuietly(@Nullable Directory base, MemoryPath path, RegularFile file) {
         try {
-            if (fileSystem.isOpen()) {
+            if (fileSystem.isOpen()
+                    && reading(() -> tree.lookup(base, path, false).node() == file)) {
                 delete(base, path, Deletion.FILE);
             }
         } catch (IOException e) {
-            // The file was deleted or replaced since it was opened: there is nothing left to delete.
+            // The file was deleted since it was opened: there is nothing left to delete.
         }
     }
 

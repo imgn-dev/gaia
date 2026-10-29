@@ -191,6 +191,12 @@ public final class MemoryFileSystem extends FileSystem {
             }
         }
         resources.clear();
+        lock.lock();
+        try {
+            tree.release();
+        } finally {
+            lock.unlock();
+        }
         if (failure != null) {
             throw failure;
         }
