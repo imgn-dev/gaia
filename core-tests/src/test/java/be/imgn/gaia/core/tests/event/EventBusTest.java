@@ -185,6 +185,13 @@ class EventBusTest {
                 .withMessage("eventType must not be primitive: int");
     }
 
+    @Test
+    void rejectsArrayEventTypes() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> bus.subscribe(Object[].class, event -> {}))
+                .withMessage("eventType must not be an array: class [Ljava.lang.Object;");
+    }
+
     interface J {}
 
     interface I extends J {}

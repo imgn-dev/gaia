@@ -131,7 +131,8 @@ public final class EventBus {
      * @param subscriber what receives them
      * @param <E> the type of the events
      * @return the subscription, which unsubscribes when closed
-     * @throws IllegalArgumentException if {@code eventType} is primitive: no event is
+     * @throws IllegalArgumentException if {@code eventType} is primitive: no event is; or if it is an array type, as
+     *     for a {@link Subscribe @Subscribe} method
      */
     public <E> Subscription subscribe(Class<E> eventType, Consumer<? super E> subscriber) {
         var registration = registration(eventType, subscriber, null);
@@ -279,6 +280,8 @@ public final class EventBus {
         requireNonNull(eventType, "eventType");
         requireNonNull(subscriber, "subscriber");
         checkArgument(!eventType.isPrimitive(), "eventType must not be primitive: %s", eventType);
+        // An array does not have its array supertypes, such as Object[] for a String[], among its supertypes.
+        checkArgument(!eventType.isArray(), "eventType must not be an array: %s", eventType);
         return new Registration<>(eventType, subscriber, executor);
     }
 
