@@ -74,7 +74,7 @@ class RangeTest {
                 .withMessage("invalid range [5, 2]: the lower bound is above the upper bound");
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Range.open(3, 3))
-                .withMessage("invalid range (3, 3): the lower bound is above the upper bound");
+                .withMessage("invalid range (3, 3): an open range needs distinct endpoints");
         assertThatIllegalArgumentException().isThrownBy(() -> Range.closedOpen(5, 2));
     }
 

@@ -1,6 +1,5 @@
 package be.imgn.gaia.core.collect;
 
-import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
@@ -45,10 +44,15 @@ public record Range<C extends Comparable<? super C>>(Bound<C> lower, Bound<C> up
     public Range {
         requireNonNull(lower, "lower");
         requireNonNull(upper, "upper");
-        checkArgument(
-                compare(lower, true, upper, false) <= 0,
-                "invalid range %s: the lower bound is above the upper bound",
-                format(lower, upper));
+        if (compare(lower, true, upper, false) > 0) {
+            // Only (a, a) gets here with equal endpoints: [a, a), (a, a] and [a, a] are valid.
+            String reason = lower instanceof Bound.Open<?>
+                            && upper instanceof Bound.Open<?>
+                            && endpoint(lower).compareTo(endpoint(upper)) == 0
+                    ? "an open range needs distinct endpoints"
+                    : "the lower bound is above the upper bound";
+            throw new IllegalArgumentException("invalid range " + format(lower, upper) + ": " + reason);
+        }
     }
 
     /**
