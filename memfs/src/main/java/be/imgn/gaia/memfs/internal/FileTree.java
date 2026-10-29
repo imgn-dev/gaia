@@ -59,7 +59,7 @@ final class FileTree {
             Directory start = base == null ? fileSystem.workingDirectoryNode() : base;
             return walk(start, names(path), path, followLinks, new int[1]);
         }
-        MemoryPath absolute = absolute(path);
+        MemoryPath absolute = path.absolute();
         return walk(rootDirectory(absolute, path), names(absolute), path, followLinks, new int[1]);
     }
 
@@ -69,17 +69,6 @@ final class FileTree {
             throw new NoSuchFileException(path.toString());
         }
         return directory;
-    }
-
-    // A Windows path such as "\dir" or "C:dir" is on a drive of the working directory, or at the root of its drive.
-    private MemoryPath absolute(MemoryPath path) {
-        if (path.isAbsolute()) {
-            return path;
-        }
-        MemoryPath resolved = fileSystem.workingDirectory().resolve(path);
-        return resolved.isAbsolute()
-                ? resolved
-                : new MemoryPath(fileSystem, requireNonNull(resolved.root()) + "\\", resolved.names());
     }
 
     private static List<String> names(MemoryPath path) {
@@ -149,7 +138,7 @@ final class FileTree {
         if (target.root() == null) {
             return walk(directory, names(target), path, true, hops);
         }
-        MemoryPath absolute = absolute(target);
+        MemoryPath absolute = target.absolute();
         return walk(rootDirectory(absolute, path), names(absolute), path, true, hops);
     }
 

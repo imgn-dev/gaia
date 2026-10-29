@@ -158,13 +158,15 @@ public final class MemoryPath implements Path {
         return new MemoryPath(fileSystem, root, joined);
     }
 
-    // A Windows path with a root that is not absolute: "\dir" on the drive of this path, "C:dir" from this path if it
-    // is on the same drive.
+    // A Windows path with a root that is not absolute: "\dir" at the root of the drive or share of this path, "C:dir"
+    // from this path if it is on the same drive.
     private MemoryPath resolveRooted(MemoryPath path) {
         String otherRoot = requireNonNull(path.root);
         if ("\\".equals(otherRoot)) {
-            String drive = root == null ? null : driveOf(root);
-            return drive == null ? path : new MemoryPath(fileSystem, drive + "\\", path.names);
+            if (root == null) {
+                return path;
+            }
+            return new MemoryPath(fileSystem, root.endsWith("\\") ? root : root + "\\", path.names);
         }
         if (root != null && otherRoot.equalsIgnoreCase(driveOf(root))) {
             List<String> joined = new ArrayList<>(names);
@@ -209,7 +211,18 @@ public final class MemoryPath implements Path {
     @Override
     public MemoryPath toAbsolutePath() {
         fileSystem.checkOpen();
-        return isAbsolute() ? this : fileSystem.workingDirectory().resolve(this);
+        return absolute();
+    }
+
+    // A Windows path such as "\dir" or "C:dir" is on the drive of the working directory, or at the root of its drive.
+    MemoryPath absolute() {
+        if (isAbsolute()) {
+            return this;
+        }
+        MemoryPath resolved = fileSystem.workingDirectory().resolve(this);
+        return resolved.isAbsolute()
+                ? resolved
+                : new MemoryPath(fileSystem, requireNonNull(resolved.root()) + "\\", resolved.names());
     }
 
     @Override

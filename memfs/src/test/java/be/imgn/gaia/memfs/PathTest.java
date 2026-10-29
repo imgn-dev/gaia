@@ -266,6 +266,32 @@ class PathTest {
         }
 
         @Test
+        void makesDriveRelativePathsAbsolute() throws IOException {
+            Path absolute = path("D:dir").toAbsolutePath();
+
+            assertThat(absolute).hasToString("D:\\dir");
+            assertThat(absolute.isAbsolute()).isTrue();
+            Files.createDirectory(absolute);
+            assertThat(Path.of(path("D:dir").toUri())).isEqualTo(absolute);
+        }
+
+        @Test
+        void resolvesRootRelativePathsOnTheShareOfTheWorkingDirectory() throws IOException {
+            try (FileSystem share = MemoryFileSystems.newFileSystem(Configuration.windows().toBuilder()
+                    .roots("C:\\", "\\\\server\\share\\")
+                    .workingDirectory("\\\\server\\share\\work")
+                    .build())) {
+                Path path = share.getPath("\\dir");
+
+                assertThat(share.getPath("\\\\server\\share\\x").resolve(path)).hasToString("\\\\server\\share\\dir");
+                assertThat(path.toAbsolutePath()).hasToString("\\\\server\\share\\dir");
+                Files.createDirectory(path);
+                assertThat(Files.isDirectory(share.getPath("\\\\server\\share\\dir")))
+                        .isTrue();
+            }
+        }
+
+        @Test
         void findsFilesThroughRootedRelativePaths() throws IOException {
             Files.createDirectories(path("D:\\data"));
             Files.writeString(path("D:\\data\\file.txt"), "text");
