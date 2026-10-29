@@ -153,6 +153,18 @@ class SiteGeneratorTest {
     }
 
     @Test
+    void copiesTheThemeWithItsDirectories() throws IOException {
+        write(Files.createDirectories(theme.resolve("fonts/latin")).resolve("text.woff2"), "font");
+        page("index.md", "# Gaia");
+        pages("index.md");
+
+        SiteGenerator.generate(markdown, theme, output);
+
+        assertThat(output.resolve("fonts/latin/text.woff2")).hasContent("font");
+        assertThat(output.resolve("style.css")).hasContent("body {}");
+    }
+
+    @Test
     void requiresAHomePage() throws IOException {
         page("core.md", "# Core");
         pages("core.md");

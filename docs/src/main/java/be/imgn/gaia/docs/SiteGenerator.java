@@ -33,7 +33,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
  * or to a web page ({@code https://...}). Every other link is an error, and so are images and HTML outside code.
  *
  * <p>The theme directory holds {@code template.html}, where {@code {{title}}}, {@code {{navigation}}} and
- * {@code {{content}}} are replaced by those of each page, and the files to copy beside the pages, such as style sheets.
+ * {@code {{content}}} are replaced by those of each page, and the files to copy beside the pages, such as style sheets,
+ * with their directories.
  *
  * <p>Every problem found, such as a broken link, is reported at once, and fails the generation.
  */
@@ -195,10 +196,15 @@ public final class SiteGenerator {
                     .replace("{{content}}", renderer.render(page.document()));
             Files.writeString(output.resolve(page.htmlName()), html, UTF_8);
         }
-        try (var files = Files.list(theme)) {
-            for (var file : files.filter(file -> !file.getFileName().toString().equals(TEMPLATE))
-                    .toList()) {
-                Files.copy(file, output.resolve(file.getFileName().toString()), REPLACE_EXISTING);
+        var templateFile = theme.resolve(TEMPLATE);
+        try (var files = Files.walk(theme)) {
+            for (var file : files.filter(file -> !file.equals(templateFile)).toList()) {
+                var target = output.resolve(theme.relativize(file).toString());
+                if (Files.isDirectory(file)) {
+                    Files.createDirectories(target);
+                } else {
+                    Files.copy(file, target, REPLACE_EXISTING);
+                }
             }
         }
     }
