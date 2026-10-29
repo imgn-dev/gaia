@@ -2,6 +2,10 @@
 
 `gaia-maven-plugin` has one goal, `register-services`, for projects that run on the module path.
 
+It requires Maven 3.10.0 or later, and Java 21 or later: its descriptor declares both, so an older Maven refuses to
+run it. With the [Maven Wrapper](https://maven.apache.org/tools/wrapper/), set `distributionUrl` to Maven 3.10.0 or
+later.
+
 ## Registering service providers
 
 An annotation processor can list the service providers it generates in `META-INF/services`, which `ServiceLoader`
@@ -60,5 +64,3 @@ as a misspelled name would otherwise be ignored:
   </services>
 </configuration>
 ```
-
-The plugin requires Maven 3.10.0 or later, and Java 21 or later.
