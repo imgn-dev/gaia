@@ -81,7 +81,7 @@ class MultisetsTest {
 
         assertThat(multiset).isEqualTo(same).hasSameHashCodeAs(same);
         assertThat(same).isEqualTo(multiset);
-        assertThat(multiset).hasToString(ORDER.toString());
+        assertThat(multiset).hasToString("[foo × 3, quuz, bar × 2]");
     }
 
     @ParameterizedTest
@@ -153,5 +153,18 @@ class MultisetsTest {
 
         assertThat(copy.count("foo")).isEqualTo(Integer.MAX_VALUE);
         assertThat(copy).hasSize(Integer.MAX_VALUE);
+    }
+
+    @Test
+    void streamsAndShowsMoreOccurrencesThanItsSizeCounts() {
+        var source = TreeMultiset.<String>create();
+        source.add("foo", Integer.MAX_VALUE);
+        source.add("bar", 5);
+
+        var copy = Multisets.multisetCopy(source);
+
+        assertThat(copy.spliterator().getExactSizeIfKnown()).isEqualTo(Integer.MAX_VALUE + 5L);
+        assertThat(copy.stream().count()).isEqualTo(Integer.MAX_VALUE + 5L);
+        assertThat(copy).hasToString("[bar × 5, foo × 2147483647]");
     }
 }

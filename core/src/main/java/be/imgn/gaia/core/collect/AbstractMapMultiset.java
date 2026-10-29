@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Predicate;
 import org.jspecify.annotations.Nullable;
@@ -59,6 +62,12 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
     @Override
     public Iterator<E> iterator() {
         return new OccurrenceIterator();
+    }
+
+    // The default spliterator would report size(), capped at Integer.MAX_VALUE, as the exact number of occurrences.
+    @Override
+    public Spliterator<E> spliterator() {
+        return new OccurrenceSpliterator();
     }
 
     @Override
@@ -233,6 +242,26 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
         return hash;
     }
 
+    /**
+     * Returns each element once, followed by {@code ×} and its count if it occurs more than once, as in {@code [foo ×
+     * 3, bar]}: the occurrences may be too many to write one by one.
+     */
+    @Override
+    public String toString() {
+        var string = new StringBuilder("[");
+        for (var entry : counts().entrySet()) {
+            if (string.length() > 1) {
+                string.append(", ");
+            }
+            string.append(entry.getKey());
+            var count = entry.getValue().get();
+            if (count > 1) {
+                string.append(" × ").append(count);
+            }
+        }
+        return string.append(']').toString();
+    }
+
     /** Removes every occurrence of an element, and returns whether there was any. */
     final boolean removeAllOccurrences(@Nullable Object element) {
         checkModifiable();
@@ -304,6 +333,46 @@ abstract class AbstractMapMultiset<E> extends AbstractCollection<E> implements M
                 count.set(count.get() - 1);
             }
             addToTotal(-1);
+        }
+    }
+
+    /** Iterates over the occurrences, and reads their number when it is first used, as the default spliterator does. */
+    private final class OccurrenceSpliterator implements Spliterator<E> {
+
+        private @Nullable Spliterator<E> bound;
+
+        private Spliterator<E> bound() {
+            var spliterator = bound;
+            if (spliterator == null) {
+                spliterator = Spliterators.spliterator(iterator(), total(), 0);
+                bound = spliterator;
+            }
+            return spliterator;
+        }
+
+        @Override
+        public boolean tryAdvance(Consumer<? super E> action) {
+            return bound().tryAdvance(action);
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super E> action) {
+            bound().forEachRemaining(action);
+        }
+
+        @Override
+        public @Nullable Spliterator<E> trySplit() {
+            return bound().trySplit();
+        }
+
+        @Override
+        public long estimateSize() {
+            return bound().estimateSize();
+        }
+
+        @Override
+        public int characteristics() {
+            return Spliterator.SIZED | Spliterator.SUBSIZED;
         }
     }
 

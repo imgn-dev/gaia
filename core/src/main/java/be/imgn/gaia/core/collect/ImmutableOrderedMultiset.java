@@ -65,7 +65,8 @@ final class ImmutableOrderedMultiset<E> extends AbstractMapMultiset<E> implement
 
     @Override
     public Spliterator<E> spliterator() {
-        return Spliterators.spliterator(this, Spliterator.ORDERED | Spliterator.IMMUTABLE);
+        // The total, not size(), which is capped at Integer.MAX_VALUE.
+        return Spliterators.spliterator(iterator(), total, Spliterator.ORDERED | Spliterator.IMMUTABLE);
     }
 
     @Serial

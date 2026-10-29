@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Spliterator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -292,6 +293,15 @@ class HashMultisetTest {
 
             assertThat(iterator.hasNext()).isFalse();
             assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(iterator::next);
+        }
+
+        @Test
+        void sizesTheSpliteratorWhenItIsFirstUsed() {
+            var spliterator = multiset.spliterator();
+            multiset.add("quuz");
+
+            assertThat(spliterator.getExactSizeIfKnown()).isEqualTo(6);
+            assertThat(spliterator.hasCharacteristics(Spliterator.SIZED)).isTrue();
         }
 
         @Test

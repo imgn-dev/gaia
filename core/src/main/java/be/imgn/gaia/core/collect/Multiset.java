@@ -33,6 +33,10 @@ import org.jspecify.annotations.Nullable;
  * <p>A count is at most {@link Integer#MAX_VALUE}; an operation that would go beyond throws
  * {@link IllegalArgumentException}. No multiset of this library contains {@code null}.
  *
+ * <p>The multisets of this library can hold more than {@link Integer#MAX_VALUE} occurrences in all: their spliterators,
+ * and so their streams, report the exact number. Their {@code toString()} writes each element once, followed by
+ * {@code ×} and its count if it occurs more than once, as in {@code [foo × 3, bar]}.
+ *
  * @param <E> the element type
  * @since 0.1.1
  */

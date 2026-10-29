@@ -40,13 +40,13 @@ class MultisetAssertTest {
     void reportsTheCountsThatFail() {
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat(WORDS).hasCount("foo", 3))
-                .withMessage("Expected the count of foo in [foo, foo, bar, baz] to be 3, but it was 2");
+                .withMessage("Expected the count of foo in [foo × 2, bar, baz] to be 3, but it was 2");
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat(WORDS).hasDistinctSize(4))
-                .withMessage("Expected [foo, foo, bar, baz] to have 4 distinct elements, but it has 3");
+                .withMessage("Expected [foo × 2, bar, baz] to have 4 distinct elements, but it has 3");
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat(WORDS).containsExactlyCounts(Map.of("foo", 2, "bar", 1)))
-                .withMessageStartingWith("Expected [foo, foo, bar, baz] to have the counts {")
+                .withMessageStartingWith("Expected [foo × 2, bar, baz] to have the counts {")
                 .withMessageEndingWith("}, but it has [foo=2, bar=1, baz=1]");
         assertThatExceptionOfType(AssertionError.class)
                 .isThrownBy(() -> assertThat(WORDS).containsExactlyCounts(Map.of("foo", 1, "bar", 1, "baz", 1)));

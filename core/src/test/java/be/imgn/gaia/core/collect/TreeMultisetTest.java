@@ -32,6 +32,18 @@ class TreeMultisetTest {
     }
 
     @Test
+    void streamsAndShowsMoreOccurrencesThanItsSizeCounts() {
+        var many = TreeMultiset.<String>create();
+        many.add("foo", Integer.MAX_VALUE);
+        many.add("bar", 5);
+
+        assertThat(many).hasSize(Integer.MAX_VALUE);
+        assertThat(many.spliterator().getExactSizeIfKnown()).isEqualTo(Integer.MAX_VALUE + 5L);
+        assertThat(many.stream().count()).isEqualTo(Integer.MAX_VALUE + 5L);
+        assertThat(many).hasToString("[bar × 5, foo × 2147483647]");
+    }
+
+    @Test
     void sortsByTheNaturalOrdering() {
         assertThat(multiset.comparator()).isNull();
         assertThat(TreeMultiset.<String>create()).isEmpty();
