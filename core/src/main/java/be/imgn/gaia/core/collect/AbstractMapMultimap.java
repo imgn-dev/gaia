@@ -275,11 +275,11 @@ abstract class AbstractMapMultimap<K, V, C extends Collection<V>> implements Mul
     }
 
     /**
-     * Records the removal of a value through an iterator over the values of a key, which are still the values of that
-     * key in the map. Removes the key once it has no values left.
+     * Records the removal of values through a view of the values of a key, which are still the values of that key in
+     * the map. Removes the key once it has no values left.
      */
-    final void removedFrom(Object key, C values) {
-        addToTotal(-1);
+    final void removedFrom(Object key, C values, int removed) {
+        addToTotal(-removed);
         if (values.isEmpty()) {
             detach(key);
         }

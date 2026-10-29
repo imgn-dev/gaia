@@ -5,9 +5,11 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
+import java.util.function.Predicate;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -118,9 +120,51 @@ abstract class AbstractMapListMultimap<K, V> extends AbstractMapMultimap<K, V, L
             checkModifiable();
             var values = valuesAt(index);
             V removed = values.remove(index);
-            removedFrom(key, values);
+            removedFrom(key, values, 1);
             modCount++;
             return removed;
+        }
+
+        // The bulk removals remove from the values in one pass, rather than one value at a time.
+        @Override
+        public boolean removeIf(Predicate<? super V> filter) {
+            checkModifiable();
+            requireNonNull(filter, "filter");
+            var values = values();
+            if (values == null) {
+                return false;
+            }
+            var size = values.size();
+            if (!values.removeIf(filter)) {
+                return false;
+            }
+            removedFrom(key, values, size - values.size());
+            modCount++;
+            return true;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            requireNonNull(c, "c");
+            return removeIf(c::contains);
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            requireNonNull(c, "c");
+            return removeIf(value -> !c.contains(value));
+        }
+
+        @Override
+        protected void removeRange(int fromIndex, int toIndex) {
+            checkModifiable();
+            var values = values();
+            if (values == null || fromIndex == toIndex) {
+                return;
+            }
+            values.subList(fromIndex, toIndex).clear();
+            removedFrom(key, values, toIndex - fromIndex);
+            modCount++;
         }
 
         @Override

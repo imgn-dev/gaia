@@ -84,7 +84,7 @@ abstract class AbstractMapSetMultimap<K, V> extends AbstractMapMultimap<K, V, Se
                         throw new ConcurrentModificationException();
                     }
                     iterator.remove();
-                    removedFrom(key, values);
+                    removedFrom(key, values, 1);
                     detachments = detachments();
                 }
             };

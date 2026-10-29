@@ -5,18 +5,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -311,6 +315,57 @@ class HashListMultimapTest {
             values.removeIf(value -> value == 5);
 
             assertThat(multimap.containsKey("a")).isFalse();
+            assertConsistent(multimap);
+        }
+
+        @Test
+        void removeInBulkInLinearTime() {
+            var size = 1_000_000;
+            multimap.putAll("a", IntStream.range(0, size).boxed().toList());
+            var ones = IntStream.range(0, size).filter(i -> i % 4 == 1).boxed().collect(Collectors.toSet());
+            var threes =
+                    IntStream.range(0, size).filter(i -> i % 4 == 3).boxed().collect(Collectors.toSet());
+            List<Integer> values = multimap.get("a");
+
+            assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+                assertThat(values.removeIf(value -> value % 4 == 0)).isTrue();
+                assertThat(values.removeAll(ones)).isTrue();
+                assertThat(values.retainAll(threes)).isTrue();
+                values.subList(0, values.size() - 1).clear();
+            });
+
+            assertThat(multimap.get("a")).containsExactly(size - 1);
+            assertConsistent(multimap);
+        }
+
+        @Test
+        void removeNothingInBulkWithoutChangingTheMultimap() {
+            multimap.putAll("a", List.of(1, 2));
+            List<Integer> values = multimap.get("a");
+            var iterator = values.iterator();
+
+            assertThat(values.removeIf(value -> value > 2)).isFalse();
+            assertThat(values.removeAll(List.of(3))).isFalse();
+            assertThat(values.retainAll(List.of(1, 2))).isFalse();
+            assertThat(multimap.get("b").removeIf(value -> true)).isFalse();
+            values.subList(1, 1).clear();
+
+            assertThat(iterator.next()).isEqualTo(1);
+            assertThat(multimap.get("a")).containsExactly(1, 2);
+            assertConsistent(multimap);
+        }
+
+        @Test
+        void removeAllTheirValuesInBulkAndThenTheKey() {
+            multimap.putAll("a", List.of(1, 2));
+            multimap.putAll("b", List.of(3, 4));
+            multimap.putAll("c", List.of(5, 6));
+
+            assertThat(multimap.get("a").removeAll(List.of(1, 2))).isTrue();
+            assertThat(multimap.get("b").retainAll(List.of())).isTrue();
+            multimap.get("c").subList(0, 2).clear();
+
+            assertThat(multimap.isEmpty()).isTrue();
             assertConsistent(multimap);
         }
 
