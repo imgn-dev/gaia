@@ -271,6 +271,17 @@ class AtomicFilesTest {
     }
 
     @Test
+    void replacesASymbolicLinkToAFileThatDoesNotExist() throws IOException {
+        Path target = directory.resolve("dotfiles-settings.toml");
+        Path link = Files.createSymbolicLink(directory.resolve("settings.toml"), target.getFileName());
+
+        AtomicFiles.writeString(link, "new");
+
+        assertThat(link).isRegularFile().hasContent("new");
+        assertThat(target).doesNotExist();
+    }
+
+    @Test
     void rejectsACharsetThatCannotEncode() {
         var file = directory.resolve("text");
 

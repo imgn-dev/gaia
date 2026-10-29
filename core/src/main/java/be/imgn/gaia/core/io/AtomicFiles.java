@@ -42,7 +42,8 @@ import org.jspecify.annotations.Nullable;
  *       reading by its owner before anything is written to it; a new one gets the default permissions, as with
  *       {@link Files#write(Path, byte[], java.nio.file.OpenOption...)}. Other attributes, such as the owner, ACLs or
  *       extended attributes, are not kept.
- *   <li>A symbolic link to a file that exists is followed: the file it points to is replaced, and the link stays.
+ *   <li>A symbolic link to a file that exists is followed: the file it points to is replaced, and the link stays. A
+ *       symbolic link to a file that does not exist is not followed: it is replaced with the new file.
  *   <li>On Windows, the file cannot be replaced while another program has it open: the write then fails with an
  *       {@link java.nio.file.AccessDeniedException}.
  *   <li>A file system that cannot move a file atomically within a directory makes every write fail with an
