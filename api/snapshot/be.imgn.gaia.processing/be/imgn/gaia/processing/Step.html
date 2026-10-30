@@ -60,6 +60,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#annotations()" tabindex="0">annotations()</a></li>
 <li><a href="#metaAnnotations()" tabindex="0">metaAnnotations()</a></li>
 <li><a href="#processesRootElements()" tabindex="0">processesRootElements()</a></li>
+<li><a href="#processesUnresolvedRootElements()" tabindex="0">processesUnresolvedRootElements()</a></li>
 <li><a href="#process(be.imgn.gaia.processing.AnnotatedElements)" tabindex="0">process(AnnotatedElements)</a></li>
 <li><a href="#processingOver()" tabindex="0">processingOver()</a></li>
 <li><a href="#name()" tabindex="0">name()</a></li>
@@ -152,9 +153,15 @@ resolved.</div>
 <div class="block">Returns whether this step also gets the root elements of each round, annotated or not, with
 <a href="AnnotatedElements.html#rootElements()"><code>AnnotatedElements.rootElements()</code></a>, such as to process the classes that implement an interface.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#processingOver()" class="member-name-link">processingOver</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#processesUnresolvedRootElements()" class="member-name-link">processesUnresolvedRootElements</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Returns whether this step, if it <a href="#processesRootElements()">processes root elements</a>, also gets those
+whose members have types javac could not resolve yet, such as the types this step generates for them.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#processingOver()" class="member-name-link">processingOver</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Finishes this step once all rounds are done: to check what they produced together, to report a summary, or to
 register or <a href="ServiceFiles.html#discard(be.imgn.gaia.processing.source.ClassName)">discard</a> the
 implementations of a service before its file is written.</div>
@@ -269,14 +276,49 @@ top-level type. The sources a round generates are root elements of the next one,
 generates.
 
 <p>As with <a href="#annotations()"><code>annotations()</code></a>, a root element whose signature, or the signature of one of its members, has a
-type javac could not resolve yet is held back until a later round resolves it. If none does, the processor does
-not report it: javac reports the unresolved type itself.
+type javac could not resolve yet is held back until a later round resolves it, unless this step
+<a href="#processesUnresolvedRootElements()">gets them anyway</a>. If none does, the processor does not report it:
+javac reports the unresolved type itself.
 
 <p>A <a href="StepProcessor.html" title="class in be.imgn.gaia.processing"><code>StepProcessor</code></a> with a step that processes root elements supports all annotations, <code>*</code>, and so
 takes part in every round. It still claims none, so that other processors see them.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd><code>true</code> to get the root elements; <code>false</code> by default</dd>
+<dt>Since:</dt>
+<dd>0.1.2</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="processesUnresolvedRootElements()">
+<h3>processesUnresolvedRootElements</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">processesUnresolvedRootElements</span>()</div>
+<div class="block">Returns whether this step, if it <a href="#processesRootElements()">processes root elements</a>, also gets those
+whose members have types javac could not resolve yet, such as the types this step generates for them. Without it,
+such a root element would wait for those types forever.
+
+<pre><code>// Gets Scene in the first round, to generate SceneCommands.
+final class Scene extends BaseScene {
+    Scene(SceneCommands commands) {
+        super(commands);
+    }
+}
+</code></pre>
+
+<p>Only the root element's own annotations, superclass, interfaces and type parameters must be resolved; a root
+element with an unresolved one is still held back until a later round resolves it. The signatures of its fields,
+constructors, methods and nested types may have unresolved types, which appear as
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeKind.html#ERROR" title="class or interface in javax.lang.model.type" class="external-link">errors</a>: this step must not rely on them. A root element this
+step also gets through its annotations is checked the same way there, so that this step gets it once, in the
+round it first appears, like any resolved element. Other elements with this step's annotations are still held
+back until their whole signature is resolved.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> to get the root elements with unresolved members' types; <code>false</code> by default, and
+    ignored if this step does not process root elements</dd>
 <dt>Since:</dt>
 <dd>0.1.2</dd>
 </dl>
