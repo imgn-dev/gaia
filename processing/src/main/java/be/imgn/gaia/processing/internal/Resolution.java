@@ -46,6 +46,23 @@ public final class Resolution {
         return new Resolution().element(element);
     }
 
+    /**
+     * Returns the first unresolved type in the signature of {@code element}, leaving out the members of a type: only
+     * its annotations, superclass, interfaces and type parameters count.
+     *
+     * @param element the element to check
+     * @return the name of the unresolved type, as {@link #firstUnresolved(Element)} gives it; or empty if every type is
+     *     resolved
+     */
+    public static Optional<String> firstUnresolvedOutsideMembers(Element element) {
+        Resolution resolution = new Resolution();
+        return resolution
+                .annotations(element.getAnnotationMirrors())
+                .or(() -> element.getKind().isDeclaredType()
+                        ? resolution.typeHeader((TypeElement) element)
+                        : resolution.declaration(element));
+    }
+
     private Optional<String> element(Element element) {
         return annotations(element.getAnnotationMirrors()).or(() -> declaration(element));
     }
@@ -63,10 +80,13 @@ public final class Resolution {
     }
 
     private Optional<String> typeDeclaration(TypeElement type) {
+        return typeHeader(type).or(() -> elements(type.getEnclosedElements()));
+    }
+
+    private Optional<String> typeHeader(TypeElement type) {
         return type(type.getSuperclass())
                 .or(() -> types(type.getInterfaces()))
-                .or(() -> elements(type.getTypeParameters()))
-                .or(() -> elements(type.getEnclosedElements()));
+                .or(() -> elements(type.getTypeParameters()));
     }
 
     private Optional<String> executable(ExecutableElement method) {

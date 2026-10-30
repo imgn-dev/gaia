@@ -119,6 +119,114 @@ class RootElementStepTest {
     }
 
     @Test
+    void getsARootElementWithUnresolvedMembersIfItAsks() {
+        Roots roots = new LenientRoots();
+        Compilation compilation = javac().withProcessors(new TestProcessor(roots))
+                .compile(ANNOTATIONS, SEED, source("example.Uses", """
+                        package example;
+
+                        class Uses {
+                            void use(Generated generated) {}
+                        }
+                        """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        assertThat(roots.rounds)
+                .containsExactly(
+                        List.of("example.Mark", "example.Generate", "example.Seed", "example.Uses"),
+                        List.of("example.Generated"));
+    }
+
+    @Test
+    void generatesTheTypeARootElementWithUnresolvedMembersNames() {
+        List<List<String>> rounds = new ArrayList<>();
+        StepProcessor processor = new StepProcessor() {
+            @Override
+            protected List<Step> steps(ProcessingContext context) {
+                return List.of(new LenientRoots() {
+                    @Override
+                    public Set<? extends Element> process(AnnotatedElements elements) {
+                        List<String> names = elements.rootElements().stream()
+                                .map(RootElementStepTest::describe)
+                                .toList();
+                        rounds.add(names);
+                        if (names.contains("example.Uses")) {
+                            try (Writer writer = context.filer()
+                                    .createSourceFile("example.UsesHelper")
+                                    .openWriter()) {
+                                writer.write("package example;\n\nclass UsesHelper {}\n");
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
+                        }
+                        return Set.of();
+                    }
+                });
+            }
+        };
+        Compilation compilation = javac().withProcessors(processor).compile(source("example.Uses", """
+                        package example;
+
+                        class Uses {
+                            Uses(UsesHelper helper) {}
+                        }
+                        """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        assertThat(rounds).containsExactly(List.of("example.Uses"), List.of("example.UsesHelper"));
+    }
+
+    @Test
+    void holdsARootElementWithAnUnresolvedSuperclassBackEvenIfItAsks() {
+        Roots roots = new LenientRoots();
+        Compilation compilation =
+                javac().withProcessors(new TestProcessor(roots)).compile(ANNOTATIONS, SEED, source("example.Sub", """
+                        package example;
+
+                        class Sub extends Generated {}
+                        """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        assertThat(roots.rounds)
+                .containsExactly(
+                        List.of("example.Mark", "example.Generate", "example.Seed"),
+                        List.of("example.Generated", "example.Sub"));
+    }
+
+    @Test
+    void getsAnAnnotatedRootElementWithUnresolvedMembersOnceIfItAsks() {
+        List<String> annotated = new ArrayList<>();
+        Roots roots = new LenientRoots() {
+            @Override
+            public Set<String> annotations() {
+                return Set.of("example.Mark");
+            }
+
+            @Override
+            public Set<? extends Element> process(AnnotatedElements elements) {
+                elements.annotatedWith("example.Mark").forEach(element -> annotated.add(describe(element)));
+                return super.process(elements);
+            }
+        };
+        Compilation compilation = javac().withProcessors(new TestProcessor(roots))
+                .compile(ANNOTATIONS, SEED, source("example.Uses", """
+                        package example;
+
+                        @Mark
+                        class Uses {
+                            void use(Generated generated) {}
+                        }
+                        """));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        assertThat(annotated).containsExactly("example.Uses");
+        assertThat(roots.rounds)
+                .containsExactly(
+                        List.of("example.Mark", "example.Generate", "example.Seed", "example.Uses"),
+                        List.of("example.Generated"));
+    }
+
+    @Test
     void getsARootElementGivenBackInTheNextRound() {
         List<Integer> calls = new ArrayList<>();
         Roots roots = new Roots(elements -> {
@@ -340,6 +448,19 @@ class RootElementStepTest {
                     .map(RootElementStepTest::describe)
                     .toList());
             return deferral.apply(elements.rootElements());
+        }
+    }
+
+    /** A step recording the root elements it gets, including those whose members have unresolved types. */
+    private static class LenientRoots extends Roots {
+
+        LenientRoots() {
+            super(elements -> Set.of());
+        }
+
+        @Override
+        public boolean processesUnresolvedRootElements() {
+            return true;
         }
     }
 

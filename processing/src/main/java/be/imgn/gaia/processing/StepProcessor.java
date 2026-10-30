@@ -42,12 +42,13 @@ import org.jspecify.annotations.Nullable;
  * {@linkplain Step#metaAnnotations() meta-annotations} annotate, grouped by annotation, and the root elements of the
  * round if it {@linkplain Step#processesRootElements() processes them}. An element whose signature still has a type
  * javac could not resolve, typically one another processor has yet to generate, is held back until a later round
- * resolves it. So is an element a step gives back, which must be one the step gets: an element a step would not get
- * again is reported as an error instead. An element still held back after the last round is reported as an error, with
- * the type that blocked it, unless only its being a root element held it back: javac reports its unresolved type
- * itself. None is reported once the compilation has errors, which end the rounds early. Then each step
- * {@linkplain Step#processingOver() finishes}, and the processor writes the service files its steps registered with
- * {@link ProcessingContext#services()}, whatever errors were reported.
+ * resolves it; for a root element, only its members' types are left out if the step
+ * {@linkplain Step#processesUnresolvedRootElements() asks for it}. So is an element a step gives back, which must be
+ * one the step gets: an element a step would not get again is reported as an error instead. An element still held back
+ * after the last round is reported as an error, with the type that blocked it, unless only its being a root element
+ * held it back: javac reports its unresolved type itself. None is reported once the compilation has errors, which end
+ * the rounds early. Then each step {@linkplain Step#processingOver() finishes}, and the processor writes the service
+ * files its steps registered with {@link ProcessingContext#services()}, whatever errors were reported.
  *
  * <p>A {@link ProcessingException} that escapes a step is reported as an error, at the place it names, and the
  * processor goes on with the next step: the elements of that step in that round are done, none is given back to it. To
@@ -364,11 +365,13 @@ public abstract class StepProcessor extends AbstractProcessor {
         private final Map<Element, Boolean> resolved = new HashMap<>();
         private final Step step;
         private final Set<String> metaAnnotations;
+        private final boolean unresolvedRoots;
         private final @Nullable MetaAnnotated metaAnnotated;
 
         Batch(Step step, @Nullable MetaAnnotated metaAnnotated) {
             this.step = step;
             this.metaAnnotations = step.metaAnnotations();
+            this.unresolvedRoots = step.processesRootElements() && step.processesUnresolvedRootElements();
             this.metaAnnotated = metaAnnotated;
         }
 
@@ -447,10 +450,16 @@ public abstract class StepProcessor extends AbstractProcessor {
                     .add(element));
         }
 
-        // Holds an element back if it is not resolved, to report it if it is still held back after the last round.
+        // Holds an element back if it is not resolved, to report it if it is still held back after the last round. A
+        // root element is checked the same way whether it comes as a root or with an annotation, so that a step gets it
+        // once.
         private boolean isResolved(Element element, boolean report) {
             boolean isResolved = resolved.computeIfAbsent(
-                    element, candidate -> Resolution.firstUnresolved(candidate).isEmpty());
+                    element,
+                    candidate -> (unresolvedRoots && isRoot(candidate))
+                            ? Resolution.firstUnresolvedOutsideMembers(candidate)
+                                    .isEmpty()
+                            : Resolution.firstUnresolved(candidate).isEmpty());
             if (!isResolved) {
                 ElementKey.of(element).ifPresent(key -> {
                     heldBack.add(key);

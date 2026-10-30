@@ -126,8 +126,9 @@ public interface Step {
      * generates.
      *
      * <p>As with {@link #annotations()}, a root element whose signature, or the signature of one of its members, has a
-     * type javac could not resolve yet is held back until a later round resolves it. If none does, the processor does
-     * not report it: javac reports the unresolved type itself.
+     * type javac could not resolve yet is held back until a later round resolves it, unless this step
+     * {@linkplain #processesUnresolvedRootElements() gets them anyway}. If none does, the processor does not report it:
+     * javac reports the unresolved type itself.
      *
      * <p>A {@link StepProcessor} with a step that processes root elements supports all annotations, {@code *}, and so
      * takes part in every round. It still claims none, so that other processors see them.
@@ -136,6 +137,36 @@ public interface Step {
      * @since 0.1.2
      */
     default boolean processesRootElements() {
+        return false;
+    }
+
+    /**
+     * Returns whether this step, if it {@linkplain #processesRootElements() processes root elements}, also gets those
+     * whose members have types javac could not resolve yet, such as the types this step generates for them. Without it,
+     * such a root element would wait for those types forever.
+     *
+     * <pre>{@code
+     * // Gets Scene in the first round, to generate SceneCommands.
+     * final class Scene extends BaseScene {
+     *     Scene(SceneCommands commands) {
+     *         super(commands);
+     *     }
+     * }
+     * }</pre>
+     *
+     * <p>Only the root element's own annotations, superclass, interfaces and type parameters must be resolved; a root
+     * element with an unresolved one is still held back until a later round resolves it. The signatures of its fields,
+     * constructors, methods and nested types may have unresolved types, which appear as
+     * {@linkplain javax.lang.model.type.TypeKind#ERROR errors}: this step must not rely on them. A root element this
+     * step also gets through its annotations is checked the same way there, so that this step gets it once, in the
+     * round it first appears, like any resolved element. Other elements with this step's annotations are still held
+     * back until their whole signature is resolved.
+     *
+     * @return {@code true} to get the root elements with unresolved members' types; {@code false} by default, and
+     *     ignored if this step does not process root elements
+     * @since 0.1.2
+     */
+    default boolean processesUnresolvedRootElements() {
         return false;
     }
 
