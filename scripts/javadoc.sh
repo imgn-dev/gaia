@@ -60,9 +60,11 @@ done
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 (cd "$checkout" && ./mvnw -B -q --no-transfer-progress -DskipTests compile \
-    dependency:build-classpath -Dmdep.includeScope=compile \
+    dependency:build-classpath -DincludeScope=compile \
     -Dmdep.outputFile="$work/classpath-\${project.artifactId}.txt")
-module_path=$(cat "$work"/classpath-*.txt | tr ':' '\n' \
+# The files end without a newline: awk adds it, so that the last entry of one
+# file and the first of the next stay apart.
+module_path=$(awk 1 "$work"/classpath-*.txt | tr ':' '\n' \
     | grep -v -e '^$' -e '/be/imgn/gaia/' -e '/target/classes' | sort -u | paste -sd: -)
 
 rm -rf "$output"
