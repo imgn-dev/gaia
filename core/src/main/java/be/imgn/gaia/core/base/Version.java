@@ -3,6 +3,7 @@ package be.imgn.gaia.core.base;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.text.Ascii;
 import be.imgn.gaia.core.text.Splitter;
 import java.util.ArrayList;
 import java.util.List;
@@ -218,7 +219,7 @@ public record Version(long major, long minor, long patch, List<String> preReleas
         if (identifier.isEmpty()) {
             return "a " + kind + " identifier is empty";
         }
-        if (!identifier.chars().allMatch(c -> isAsciiDigit(c) || isAsciiLetter(c) || c == '-')) {
+        if (!identifier.chars().allMatch(c -> Ascii.isAlphanumeric(c) || c == '-')) {
             return "the " + kind + " identifier " + quoted(identifier)
                     + " has a character other than an ASCII letter, digit or hyphen";
         }
@@ -248,19 +249,11 @@ public record Version(long major, long minor, long patch, List<String> preReleas
     }
 
     private static boolean isNumeric(String text) {
-        return text.chars().allMatch(Version::isAsciiDigit);
+        return text.chars().allMatch(Ascii::isDigit);
     }
 
     private static boolean hasLeadingZero(String number) {
         return number.length() > 1 && number.charAt(0) == '0';
-    }
-
-    private static boolean isAsciiDigit(int c) {
-        return c >= '0' && c <= '9';
-    }
-
-    private static boolean isAsciiLetter(int c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
     // A control character would end up raw in the message, and in whatever shows it.
