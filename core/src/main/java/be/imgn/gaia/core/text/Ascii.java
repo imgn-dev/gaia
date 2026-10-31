@@ -3,9 +3,8 @@ package be.imgn.gaia.core.text;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Classes, case mapping, comparison and trimming of ASCII characters, as web standards and many protocols and file
- * formats define them, following the <a href="https://infra.spec.whatwg.org/#ascii-code-point">WHATWG Infra
- * Standard</a>.
+ * Classes, case mapping, comparison and trimming of ASCII characters, as many protocols, file formats and identifiers
+ * define them.
  *
  * <pre>{@code
  * Ascii.equalsIgnoreCase("DocType", "DOCTYPE")  // true
@@ -116,7 +115,7 @@ public final class Ascii {
 
     /**
      * Returns whether a code point is ASCII whitespace: tab (U+0009), line feed (U+000A), form feed (U+000C), carriage
-     * return (U+000D) or space (U+0020). Line tabulation (U+000B) is not.
+     * return (U+000D) or space (U+0020). Line tabulation (U+000B, vertical tab) is not.
      *
      * @param c the code point
      * @return whether it is ASCII whitespace

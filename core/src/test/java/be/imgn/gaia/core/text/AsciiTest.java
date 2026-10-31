@@ -147,7 +147,7 @@ class AsciiTest {
 
     @Test
     void keepsOtherWhitespace() {
-        // Line tabulation, no-break space and ideographic space.
+        // Line tabulation (vertical tab), no-break space and ideographic space.
         String text = "\u000Ba 　";
         assertThat(Ascii.strip(text)).isSameAs(text);
         assertThat(Ascii.stripLeading(text)).isSameAs(text);
