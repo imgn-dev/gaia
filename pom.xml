@@ -45,6 +45,8 @@
     <module>processing</module>
     <module>processing-testing</module>
     <module>processor</module>
+    <!-- Not published yet: the API sketch of gaia-plugin. -->
+    <module>plugin</module>
     <!-- Published, but not in the BOM: a build plugin is not a dependency. -->
     <module>maven-plugin</module>
     <!-- Not published: tests that exercise X through X-testing. -->
