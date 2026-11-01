@@ -675,6 +675,11 @@ charset</a>.</div>
 <dd>
 <div class="block">Returns a source of the characters these bytes encode.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" class="type-name-link" title="class in be.imgn.gaia.core.text">Ascii</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/package-summary.html">be.imgn.gaia.core.text</a></dt>
+<dd>
+<div class="block">Classes, case mapping, comparison and trimming of ASCII characters, as many protocols, file formats and identifiers
+define them.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html#asDeclared(javax.lang.model.type.TypeMirror)" class="member-name-link">asDeclared(TypeMirror)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html" title="class in be.imgn.gaia.processing">MoreTypes</a></dt>
 <dd>
 <div class="block">Returns a type as a declared type: a class, interface, enum, record or annotation type, possibly parameterized.</div>
@@ -1818,6 +1823,11 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#equalsIgnoreCase(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">equalsIgnoreCase(CharSequence, CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether two texts are equal when ASCII uppercase letters are taken as lowercase: <code>DocType</code> equals
+<code>DOCTYPE</code>, but <code>PUBLıC</code> does not equal <code>PUBLIC</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Diagnostics.html#error(be.imgn.gaia.processing.ProcessingException)" class="member-name-link">error(ProcessingException)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Diagnostics.html" title="class in be.imgn.gaia.processing">Diagnostics</a></dt>
 <dd>
 <div class="block">Reports the error an exception carries, with its message, at the place it names: its element, one of its
@@ -2408,6 +2418,14 @@ extend the type that declares the element: generated code, unless it is such a s
 <div class="block">Returns whether a class in a package that extends another class can access an element, as JLS 6.6 says: the
 generated subclass of a processor, for instance.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isAlpha(int)" class="member-name-link">isAlpha(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII letter: <code>A</code> to <code>Z</code>, or <code>a</code> to <code>z</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isAlphanumeric(int)" class="member-name-link">isAlphanumeric(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII letter or digit.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeName.html#isAnnotated()" class="member-name-link">isAnnotated()</a> - Method in interface be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeName.html" title="interface in be.imgn.gaia.processing.source">TypeName</a></dt>
 <dd>
 <div class="block">Returns whether this name has type annotations, at the top level.</div>
@@ -2456,6 +2474,10 @@ that javac warns about it.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html#isConstructor()" class="member-name-link">isConstructor()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html" title="class in be.imgn.gaia.processing.source">Method</a></dt>
 <dd>
 <div class="block">Returns whether this is a constructor, compact or not.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isDigit(int)" class="member-name-link">isDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII digit: <code>0</code> to <code>9</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#isEmpty()" class="member-name-link">isEmpty()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
@@ -2515,6 +2537,11 @@ element's module, and the element's module exports the element's package to it.<
 <div class="block">Returns whether an element comes from a source file of this compilation, and so is compiled with the code a
 processor generates, rather than read from a class file compiled before.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isHexDigit(int)" class="member-name-link">isHexDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII hexadecimal digit: <code>0</code> to <code>9</code>, <code>A</code> to <code>F</code>, or
+<code>a</code> to <code>f</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#isInnerClass(javax.lang.model.element.Element)" class="member-name-link">isInnerClass(Element)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html" title="class in be.imgn.gaia.processing">MoreElements</a></dt>
 <dd>
 <div class="block">Returns whether an element is an inner class: a nested class that is neither explicitly nor implicitly static, as
@@ -2526,6 +2553,15 @@ JLS 8.1.3 defines it.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#isLinux()" class="member-name-link">isLinux()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isLowerAlpha(int)" class="member-name-link">isLowerAlpha(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII lowercase letter: <code>a</code> to <code>z</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isLowerHexDigit(int)" class="member-name-link">isLowerHexDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII lowercase hexadecimal digit: <code>0</code> to <code>9</code>, or <code>a</code> to
+<code>f</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isMacOS()" class="member-name-link">isMacOS()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns whether this platform runs macOS.</div>
@@ -2604,6 +2640,15 @@ compilation unit, not in another type or in a block.</div>
 <dd>
 <div class="block">Returns whether a type is the declared type of a name, ignoring type arguments.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isUpperAlpha(int)" class="member-name-link">isUpperAlpha(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII uppercase letter: <code>A</code> to <code>Z</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isUpperHexDigit(int)" class="member-name-link">isUpperHexDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is an ASCII uppercase hexadecimal digit: <code>0</code> to <code>9</code>, or <code>A</code> to
+<code>F</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html#isVarargs()" class="member-name-link">isVarargs()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Method.html" title="class in be.imgn.gaia.processing.source">Method</a></dt>
 <dd>
 <div class="block">Returns whether the last parameter is variable arity, written <code>String... names</code>.</div>
@@ -2611,6 +2656,11 @@ compilation unit, not in another type or in a block.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html#isVarargs()" class="member-name-link">isVarargs()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html" title="class in be.imgn.gaia.processing.source">Type</a></dt>
 <dd>
 <div class="block">Returns whether the last component of a record is variable arity, written <code>String... names</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)" class="member-name-link">isWhitespace(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a code point is ASCII whitespace: tab (U+0009), line feed (U+000A), form feed (U+000C), carriage
+return (U+000D) or space (U+0020).</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#isWindows()" class="member-name-link">isWindows()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
@@ -4005,6 +4055,11 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Returns the binary name of this type, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html#forName(java.lang.String)" title="class or interface in java.lang" class="external-link"><code>Class.forName(String)</code></a> expects it.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#regionMatchesIgnoreCase(java.lang.CharSequence,int,java.lang.CharSequence)" class="member-name-link">regionMatchesIgnoreCase(CharSequence, int, CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a region of a text, starting at an offset and as long as another text, equals that other text,
+ignoring ASCII case.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#register(java.lang.Object)" class="member-name-link">register(Object)</a> - Method in class be.imgn.gaia.core.event.<a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></dt>
 <dd>
 <div class="block">Subscribes the <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> methods of a listener, those of its class and of the classes it
@@ -4330,6 +4385,10 @@ connected.</div>
 <dd>
 <div class="block">Returns a running stopwatch on <code>ticker</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#startsWithIgnoreCase(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">startsWithIgnoreCase(CharSequence, CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns whether a text starts with a prefix, ignoring ASCII case.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#state()" class="member-name-link">state()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a></dt>
 <dd>
 <div class="block">Returns the directory for the application's state: data that should persist between restarts but is not important
@@ -4395,6 +4454,18 @@ annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/S
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html#strings(java.lang.String)" class="member-name-link">strings(String)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html" title="class in be.imgn.gaia.processing">AnnotationReader</a></dt>
 <dd>
 <div class="block">Returns the values of a <code>String[]</code> attribute.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#strip(java.lang.CharSequence)" class="member-name-link">strip(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its start and its end.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#stripLeading(java.lang.CharSequence)" class="member-name-link">stripLeading(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its start.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#stripTrailing(java.lang.CharSequence)" class="member-name-link">stripTrailing(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its end.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#style()" class="member-name-link">style()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
@@ -4629,6 +4700,18 @@ order they are first encountered, and over the values of a key in the order they
 <dd>
 <div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_CAMEL"><code>NamingConvention.LOWER_CAMEL</code></a>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toLowerCase(char)" class="member-name-link">toLowerCase(char)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns the lowercase of a character if it is an ASCII uppercase letter, or the character itself.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toLowerCase(int)" class="member-name-link">toLowerCase(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns the lowercase of a code point if it is an ASCII uppercase letter, or the code point itself.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toLowerCase(java.lang.CharSequence)" class="member-name-link">toLowerCase(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns text with its ASCII uppercase letters in lowercase.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toLowerDot(java.lang.String)" class="member-name-link">toLowerDot(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
 <div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_DOT"><code>NamingConvention.LOWER_DOT</code></a>.</div>
@@ -4775,6 +4858,18 @@ abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toUpperCamel(java.lang.String)" class="member-name-link">toUpperCamel(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
 <div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#UPPER_CAMEL"><code>NamingConvention.UPPER_CAMEL</code></a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toUpperCase(char)" class="member-name-link">toUpperCase(char)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns the uppercase of a character if it is an ASCII lowercase letter, or the character itself.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toUpperCase(int)" class="member-name-link">toUpperCase(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns the uppercase of a code point if it is an ASCII lowercase letter, or the code point itself.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toUpperCase(java.lang.CharSequence)" class="member-name-link">toUpperCase(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dd>
+<div class="block">Returns text with its ASCII lowercase letters in uppercase.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toUpperUnderscore(java.lang.String)" class="member-name-link">toUpperUnderscore(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
