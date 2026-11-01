@@ -14,7 +14,7 @@
   <parent>
     <groupId>be.imgn.parent</groupId>
     <artifactId>bom-parent</artifactId>
-    <version>2026-11-SNAPSHOT</version>
+    <version>2026-11-01</version>
     <relativePath/>
   </parent>
 
