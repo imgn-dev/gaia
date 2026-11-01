@@ -17,6 +17,7 @@
 <ul>
 <li><a href="index.html">Gaia</a></li>
 <li><a href="core.html">Core</a></li>
+<li><a href="event-bus.html">Event bus</a></li>
 <li><a href="memfs.html">Memory file system</a></li>
 <li><a href="processing.html">Annotation processing</a></li>
 <li><a href="testing.html">Testing</a></li>
@@ -26,6 +27,9 @@
 <main>
 <h1 id="maven-plugin">Maven plugin</h1>
 <p><code>gaia-maven-plugin</code> has one goal, <code>register-services</code>, for projects that run on the module path.</p>
+<p>It requires Maven 3.10.0 or later, and Java 21 or later: its descriptor declares both, so an older Maven refuses to
+run it. With the <a href="https://maven.apache.org/tools/wrapper/">Maven Wrapper</a>, set <code>distributionUrl</code> to Maven 3.10.0 or
+later.</p>
 <h2 id="registering-service-providers">Registering service providers</h2>
 <p>An annotation processor can list the service providers it generates in <code>META-INF/services</code>, which <code>ServiceLoader</code>
 reads on the class path. On the module path, <code>ServiceLoader</code> only finds the providers that <code>module-info.java</code> declares
@@ -48,8 +52,10 @@ with <code>provides</code>, which a processor cannot add. The <code>register-ser
 <ul>
 <li>It reads every file in <code>META-INF/services</code> of the compiled classes, in the format of <code>ServiceLoader</code>: one provider
 per line, with <code>#</code> comments and blank lines ignored.</li>
-<li>For each service, the providers in its file replace those that <code>module-info.java</code> declares, if any. The <code>provides</code>
+<li>For each service, the providers in its file replace those that <code>module-info.java</code> declares, if any. A file that
+lists no provider removes the service's <code>provides</code> directive, even one added by an earlier build. The <code>provides</code>
 directives of other services stay as they are.</li>
+<li>In a multi-release output, the <code>module-info.class</code> of each release in <code>META-INF/versions</code> gets the same directives.</li>
 <li>Running it again changes nothing, and it never writes to the sources.</li>
 <li>Each provider must be a class of the module, or the build fails: the JVM would refuse to start a module that
 provides a class it doesn't contain.</li>
@@ -89,14 +95,14 @@ provides a class it doesn't contain.</li>
 </tr>
 </tbody>
 </table>
-<p>To register only some services:</p>
+<p>To register only some services, list them. A listed service without a file in <code>META-INF/services</code> fails the build,
+as a misspelled name would otherwise be ignored:</p>
 <pre><code class="language-xml">&lt;configuration&gt;
   &lt;services&gt;
     &lt;service&gt;com.example.Plugin&lt;/service&gt;
   &lt;/services&gt;
 &lt;/configuration&gt;
 </code></pre>
-<p>The plugin requires Maven 3.9.16 or later, and Java 21 or later.</p>
 
 </main>
 </div>

@@ -17,6 +17,7 @@
 <ul>
 <li><a href="index.html">Gaia</a></li>
 <li><a href="core.html">Core</a></li>
+<li><a href="event-bus.html">Event bus</a></li>
 <li><a href="memfs.html">Memory file system</a></li>
 <li><a href="processing.html" aria-current="page">Annotation processing</a></li>
 <li><a href="testing.html">Testing</a></li>
@@ -72,9 +73,30 @@ final class MapperStep implements Step {
 </code></pre>
 <p>Rounds are handled for you. An element whose types another processor has yet to generate is held back until they
 exist, and reported as an error if they never do. A step can also hand elements back for the next round, by returning
-them, and finish in <code>processingOver()</code> once all rounds are done.</p>
+them, as long as it would get them again: elements with its annotations, or its root elements. It finishes in
+<code>processingOver()</code> once all rounds are done.</p>
+<p>A step that returns <code>true</code> from <code>processesRootElements()</code> also gets every root element of each round, annotated or
+not: the top-level types, and the packages and modules declared in <code>package-info</code> and <code>module-info</code> files. That
+suits the processing of classes found by what they implement or extend rather than by an annotation. A root element
+whose types never exist is not reported by the processor: javac already reports them.</p>
+<pre><code class="language-java">@Override
+public boolean processesRootElements() {
+    return true;
+}
+
+@Override
+public Set&lt;? extends Element&gt; process(AnnotatedElements elements) {
+    TypeMirror view = context.elements().getTypeElement(&quot;com.example.View&quot;).asType();
+    for (TypeElement type : ElementFilter.typesIn(elements.rootElements())) {
+        if (context.types().isAssignable(type.asType(), view)) {
+            // process the view
+        }
+    }
+    return Set.of();
+}
+</code></pre>
 <p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotatedElements.html"><code>AnnotatedElements</code></a> are the elements a step gets in a round, by
-annotation and by meta-annotation. <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html"><code>ProcessingContext</code></a> is everything
+annotation and by meta-annotation, and its root elements. <a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html"><code>ProcessingContext</code></a> is everything
 a step works with: elements, types, the filer, options, and the helpers below.</p>
 <p>With <code>-Agaia.debug</code>, every step processor notes what each step did in each round, and how long it took, naming each
 step by its <code>name()</code>.</p>
@@ -130,9 +152,41 @@ compiles.</li>
 <li>Writing the same file twice returns <code>false</code> instead of failing.</li>
 <li>Files are written in ASCII, other characters as Unicode escapes, so they compile the same under any <code>-encoding</code>.</li>
 </ul>
-<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html"><code>ClassName</code></a><code>.generatedNameWithSuffix(&quot;Mapper&quot;)</code> names a generated
-type after its source type, as <code>Outer_Inner_Mapper</code> (<code>generatedNameWithPrefix(&quot;Generated&quot;)</code> gives
-<code>Generated_Outer_Inner</code>), and <code>isAvailable(name)</code> tells whether a type has that name already.</p>
+<p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html"><code>ClassName</code></a> names generated types after what they are generated
+for, and <code>isAvailable(name)</code> tells whether a type has that name already. Each name ends with <code>$$</code> and the kind of the
+generated type:</p>
+<table>
+<thead>
+<tr>
+<th>For</th>
+<th>Call</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A type</td>
+<td><code>ClassName.of(type).generatedName(&quot;Mapper&quot;)</code></td>
+<td><code>$Outer$Inner$$Mapper</code></td>
+</tr>
+<tr>
+<td>A package</td>
+<td><code>ClassName.generatedName(&quot;com.example&quot;, &quot;Mappers&quot;)</code></td>
+<td><code>com.example.$$Mappers</code></td>
+</tr>
+<tr>
+<td>A method</td>
+<td><code>ClassName.generatedName(method, &quot;Factory&quot;)</code></td>
+<td><code>$Outer$$create$$Factory</code>, <code>$Outer$$create$2$$Factory</code> for the second overload</td>
+</tr>
+<tr>
+<td>A type, in another package</td>
+<td><code>ClassName.of(type).generatedNameIn(&quot;org.app&quot;, &quot;Impl&quot;)</code></td>
+<td><code>org.app.$$com$example$$Named$$Impl</code></td>
+</tr>
+</tbody>
+</table>
+<p>No two types, packages, methods or kinds get the same name: a dollar sign within a name is written <code>$0</code>.</p>
 <h2 id="service-files">Service files</h2>
 <p><a href="api/latest/be.imgn.gaia.processing/be/imgn/gaia/processing/ServiceFiles.html"><code>ServiceFiles</code></a> registers generated service providers:
 <code>context.services().add(service, implementation)</code> collects <code>META-INF/services</code> entries over all rounds. They are

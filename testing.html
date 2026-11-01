@@ -17,6 +17,7 @@
 <ul>
 <li><a href="index.html">Gaia</a></li>
 <li><a href="core.html">Core</a></li>
+<li><a href="event-bus.html">Event bus</a></li>
 <li><a href="memfs.html">Memory file system</a></li>
 <li><a href="processing.html">Annotation processing</a></li>
 <li><a href="testing.html" aria-current="page">Testing</a></li>
@@ -97,6 +98,16 @@ running the given annotation processors, and returns a
                 interface Foo {}
                 &quot;&quot;&quot;));
 </code></pre>
+<p><code>withResource</code> gives the compilation a file a processor reads with <code>Filer.getResource</code>, in the class output, where a
+build tool copies the resources before compiling, or in the source path, which rules out compiling a <code>module-info</code>:</p>
+<pre><code class="language-java">Compilation compilation = TestCompiler.javac()
+        .withProcessors(new ViewProcessor())
+        .withResource(StandardLocation.CLASS_OUTPUT, &quot;example/MainView.toml&quot;, &quot;&quot;&quot;
+                title = &quot;Main&quot;
+                &quot;&quot;&quot;)
+        .compile(TestCompiler.source(&quot;example.MainView&quot;, &quot;...&quot;));
+</code></pre>
+<p>An overload takes the content as bytes, for a binary resource such as an image.</p>
 <p><a href="api/latest/be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationAssert.html"><code>CompilationAssert</code></a> asserts on it:</p>
 <pre><code class="language-java">assertThat(compilation).succeeded().hadNoWarnings();
 assertThat(compilation).hadErrorContaining(&quot;must be a class&quot;).inFile(&quot;example/Foo.java&quot;).onLine(3);

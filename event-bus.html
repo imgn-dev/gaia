@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event bus · Gaia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<a class="brand" href="index.html">Gaia</a>
+<a href="api/latest/">API</a>
+<a href="https://github.com/imgn-dev/gaia">GitHub</a>
+</header>
+<div class="layout">
+<nav aria-label="Guide">
+<ul>
+<li><a href="index.html">Gaia</a></li>
+<li><a href="core.html">Core</a></li>
+<li><a href="event-bus.html" aria-current="page">Event bus</a></li>
+<li><a href="memfs.html">Memory file system</a></li>
+<li><a href="processing.html">Annotation processing</a></li>
+<li><a href="testing.html">Testing</a></li>
+<li><a href="maven-plugin.html">Maven plugin</a></li>
+</ul>
+</nav>
+<main>
+<h1 id="event-bus">Event bus</h1>
+<p><code>gaia-core</code> has an event bus, in <code>be.imgn.gaia.core.event</code>. It delivers events to consumers, and to the <code>@Subscribe</code>
+methods of listeners through code that the <code>gaia-processor</code> annotation processor generates. No reflection is
+involved: the module of a listener opens nothing to the bus.</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
+  &lt;artifactId&gt;gaia-core&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>The processor goes on the annotation processor path, never on the class path:</p>
+<pre><code class="language-xml">&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+  &lt;configuration&gt;
+    &lt;annotationProcessorPaths&gt;
+      &lt;path&gt;
+        &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
+        &lt;artifactId&gt;gaia-processor&lt;/artifactId&gt;
+        &lt;version&gt;${gaia.version}&lt;/version&gt;
+      &lt;/path&gt;
+    &lt;/annotationProcessorPaths&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre>
+<h2 id="subscribing">Subscribing</h2>
+<p>An <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html"><code>EventBus</code></a> delivers each event to the subscribers of the event's class and of
+all its supertypes. Any object is an event: records and sealed hierarchies need nothing special.</p>
+<pre><code class="language-java">EventBus bus = EventBus.create();
+Subscription subscription = bus.subscribe(OrderPlaced.class, order -&gt; ship(order));
+bus.publish(new OrderPlaced(42));
+subscription.close();
+</code></pre>
+<p>Closing the <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/event/Subscription.html"><code>Subscription</code></a> unsubscribes: the bus holds its subscribers
+strongly until then.</p>
+<h2 id="listeners">Listeners</h2>
+<p>The methods of a listener annotated <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html"><code>@Subscribe</code></a> receive the events of the type
+of their parameter:</p>
+<pre><code class="language-java">class OrderListener {
+    @Subscribe
+    void onPlaced(OrderPlaced event) {
+        ...
+    }
+
+    @Subscribe
+    void onAny(OrderEvent event) {
+        ...
+    }
+}
+
+Subscription subscription = bus.register(new OrderListener());
+</code></pre>
+<p>For each class with such methods, the processor generates an index that calls them, named after the class:
+<code>com.example.$OrderListener$$Subscribers</code> for <code>com.example.OrderListener</code>, <code>$Outer$Inner$$Subscribers</code> for a nested
+class. <code>register</code> finds the indexes of the listener's class and of the classes it extends with <code>ServiceLoader</code>, and
+subscribes the methods of a superclass before those of its subclasses, and those of one class in the order they are
+declared. A method that overrides a <code>@Subscribe</code> method receives its events without the annotation, and so does one
+that overrides a method with a <a href="#subscribing-annotations">subscribing annotation</a>.</p>
+<p>The processor reports an error for a method that the generated code cannot call: one that is private, or in a private
+nested class; static; in an interface; without exactly one parameter, or whose parameter is primitive, an array, a
+type variable, a parameterized type or a type the package of the class cannot access; that returns a value; that
+declares checked exceptions; or that overrides a <code>@Subscribe</code> method, or one with a subscribing annotation, which
+would deliver each event twice.</p>
+<p>javac hands annotation processors no method of a local or anonymous class, so the processor cannot see <code>@Subscribe</code>
+there: registering an instance of such a class subscribes the methods of the classes it extends only. A listener
+whose class and superclasses have no index is rejected with an <code>IllegalArgumentException</code>.</p>
+<h2 id="delivery">Delivery</h2>
+<p>An event reaches the subscribers of its class first, then those of its supertypes, a type always before its own
+supertypes and <code>Object</code> last, and the subscribers of one type in the order they subscribed.</p>
+<p>By default, the bus delivers an event on the thread that publishes it, before <code>publish</code> returns. An event that a
+subscriber publishes to the same bus waits until the current one has reached all its subscribers, so that events
+arrive in the order they were published. With an executor, the bus hands it one task per event instead, which
+delivers the event to its subscribers in order, while separate events may be delivered concurrently:</p>
+<pre><code class="language-java">EventBus bus = EventBus.newBuilder().executor(Executors.newVirtualThreadPerTaskExecutor()).build();
+</code></pre>
+<p>An exception thrown by a subscriber goes to the exception handler, and the event goes on to its other subscribers.
+The default handler logs it at <code>ERROR</code> with <code>System.Logger</code>; <code>newBuilder().exceptionHandler((event, exception) -&gt; ...)</code>
+replaces it. An <code>Error</code> propagates.</p>
+<h2 id="subscribing-annotations">Subscribing annotations</h2>
+<p>An annotation marked <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.html"><code>@SubscribingAnnotation</code></a> subscribes the
+methods it annotates, as <code>@Subscribe</code> does, and has their events delivered through the executor it names, such as on
+the event dispatch thread of Swing:</p>
+<pre><code class="language-java">@SubscribingAnnotation(executor = EdtExecutor.class)
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.METHOD)
+public @interface OnEdt {}
+
+public final class EdtExecutor implements Executor {
+    @Override
+    public void execute(Runnable task) {
+        EventQueue.invokeLater(task);
+    }
+}
+</code></pre>
+<p>A listener then needs only the annotation, and the bus nothing more:</p>
+<pre><code class="language-java">class Window {
+    @OnEdt
+    void onPlaced(OrderPlaced event) {
+        ...
+    }
+}
+
+EventBus bus = EventBus.create();
+bus.register(new Window());
+</code></pre>
+<p>The generated index calls <code>registrar.subscribe(OrderPlaced.class, OnEdt.class, EdtExecutor::new, l::onPlaced)</code>. The
+first time a bus registers a method with the annotation, it creates the executor, and shares it among all the
+listeners it registers. <code>newBuilder().executor(OnEdt.class, Runnable::run)</code> gives the bus another executor for the
+annotation instead, such as in tests, and the bus then never creates the one the annotation names.</p>
+<p>During the delivery of an event, the bus hands the executor a task that calls the method, and goes on to the other
+subscribers without waiting for it. The tasks are handed over in the order the events are delivered; whether they run
+in that order depends on the executor. A task does not call the method if its subscription was closed meanwhile. An
+exception thrown by the method, or by the executor when it is handed the task, goes to the exception handler.</p>
+<p>The processor checks these methods as it checks <code>@Subscribe</code> ones, and reports a method with more than one subscribing
+annotation, <code>@Subscribe</code> included. It also reports what keeps the generated code from referring to the annotation and
+creating the executor: the executor must be a class, neither abstract nor an inner class, with a constructor without
+parameters that declares no checked exceptions, all accessible from the package of the listener, and exported to its
+module. On the declaration of the
+annotation, it checks the executor from wherever the annotation can be used, and reports a retention of <code>SOURCE</code>: the
+annotation must be kept in class files, so that the processor sees it on the methods of classes compiled before.</p>
+<p><code>gaia-core</code> has one, <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/event/OnVirtualThread.html"><code>@OnVirtualThread</code></a>, which delivers each event on
+a new virtual thread with <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html"><code>VirtualThreadExecutor</code></a>. The events then
+reach the method in no particular order, and the method can run on several threads at once: the listener must be
+thread-safe.</p>
+<p>A module that declares such an annotation exports the package of the executor, and requires <code>be.imgn.gaia.core</code>
+transitively, as javac's <code>exports</code> lint asks: the annotation of an exported type is part of its API.</p>
+<h2 id="on-the-module-path">On the module path</h2>
+<p>The processor lists the indexes it generates in <code>META-INF/services</code>, which <code>ServiceLoader</code> reads on the class path.
+On the module path, the module of the listeners must declare them with <code>provides</code>, which a processor cannot write:
+the <code>register-services</code> goal of the <a href="maven-plugin.html">Maven plugin</a> adds the directives to <code>module-info.class</code> after
+compilation. The module requires <code>be.imgn.gaia.core</code>, and needs to open or export nothing to it.</p>
+
+</main>
+</div>
+</body>
+</html>

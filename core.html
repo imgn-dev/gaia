@@ -17,6 +17,7 @@
 <ul>
 <li><a href="index.html">Gaia</a></li>
 <li><a href="core.html" aria-current="page">Core</a></li>
+<li><a href="event-bus.html">Event bus</a></li>
 <li><a href="memfs.html">Memory file system</a></li>
 <li><a href="processing.html">Annotation processing</a></li>
 <li><a href="testing.html">Testing</a></li>
@@ -26,7 +27,8 @@
 <main>
 <h1 id="core">Core</h1>
 <p><code>gaia-core</code> extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
-system properties, the <a href="#platform">platform</a> the JVM runs on, text and time.</p>
+system properties, the <a href="#platform">platform</a> the JVM runs on, text, <a href="#versions">versions</a> and time. It also has an
+<a href="event-bus.html">event bus</a>.</p>
 <pre><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;be.imgn.gaia&lt;/groupId&gt;
   &lt;artifactId&gt;gaia-core&lt;/artifactId&gt;
@@ -234,6 +236,12 @@ of the XDG Base Directory Specification, which its environment variables can mov
 <li><code>applicationDirectories(&quot;foo&quot;, &quot;bar&quot;, &quot;Quuz&quot;)</code> adds the vendor's qualifier, its top-level domain, which macOS names
 the directories after: <code>~/Library/Application Support/foo.bar.Quuz</code>.</li>
 </ul>
+<p>Each name must be valid on every operating system, whichever the JVM runs on: not blank, <code>.</code> or <code>..</code>, without leading
+or trailing whitespace, control characters or any of <code>/ \ : &lt; &gt; &quot; | ? *</code>, not ending with a dot, and not the name of a
+Windows device such as <code>CON</code>, <code>NUL</code>, <code>COM1</code> or <code>LPT9</code>, with or without an extension. To check a name before it reaches the
+platform, such as one an annotation gives to an annotation processor, call
+<a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html"><code>ApplicationDirectories.checkName</code></a>, which throws the same
+<code>IllegalArgumentException</code>.</p>
 <h3 id="base-directories">Base directories</h3>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html"><code>Directories</code></a> are the base directories, shared by all applications, as
 defined by the <a href="https://specifications.freedesktop.org/basedir-spec/latest/">XDG Base Directory Specification</a>:</p>
@@ -324,6 +332,20 @@ of a run followed by a lowercase letter: <code>httpURLPath</code> gives <code>ht
 <code>utf8</code> stays one word. Joined in camel case, a word keeps only its first letter in uppercase, so <code>http-url</code> gives
 <code>httpUrl</code>. Text that doesn't follow the convention it is converted from, or no convention at all for <code>from</code>, throws
 <code>IllegalArgumentException</code>.</p>
+<h2 id="versions">Versions</h2>
+<p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html"><code>Version</code></a> is a version number as
+<a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a> defines it: a major, minor and patch version, then
+optional pre-release identifiers and build metadata.</p>
+<pre><code class="language-java">Version version = Version.parse(&quot;1.4.0-rc.1+build.5&quot;);
+version.preRelease();                // [rc, 1]
+Version.tryParse(&quot;v1.4.0&quot;);          // Optional.empty: not a semantic version
+Version.of(1, 4, 0).isPreRelease();  // false
+</code></pre>
+<p><code>parse</code> throws <code>IllegalArgumentException</code> saying what is wrong with the text, and <code>tryParse</code> returns an empty
+<code>Optional</code> instead. Versions are <code>Comparable</code> by precedence, exactly as the specification defines it:
+<code>1.0.0-alpha &lt; 1.0.0-alpha.1 &lt; 1.0.0-beta &lt; 1.0.0-rc.1 &lt; 1.0.0 &lt; 1.0.1</code>. Build metadata doesn't count, so <code>1.0.0+a</code> and
+<code>1.0.0+b</code> compare as equal while not being <code>equals</code>: a sorted set keeps only one of them. The major, minor and patch
+versions are <code>long</code>s, so a larger number is rejected, although the specification sets no limit.</p>
 <h2 id="time">Time</h2>
 <p><a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html"><code>Stopwatch</code></a> measures elapsed time on a monotonic
 <a href="api/latest/be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html"><code>Ticker</code></a>, with <code>start()</code>, <code>stop()</code> and <code>reset()</code>. Its <code>toString()</code> reads like
