@@ -35,18 +35,21 @@ public interface PluginContext {
      * Registers an extension, until the plugin stops or the registration is closed.
      *
      * <p>The host and the other plugins get it through {@link PluginManager#extensions(Class)}, typed by its extension
-     * point, which is an interface the host's API module or a plugin exports.
+     * point, which is an interface the host's API module or a plugin exports. They get a wrapper, which runs each call
+     * with this plugin's class loader as the thread's context class loader.
      *
      * @param point the extension point
      * @param extension the extension
      * @param <T> the type of the extension point
      * @return the registration, which unregisters the extension when it is closed
+     * @throws IllegalArgumentException if the extension point is not an interface
      * @throws IllegalStateException if the plugin has stopped
      */
     <T> Registration register(Class<T> point, T extension);
 
     /**
-     * Returns a service the host offers to its plugins, such as its editor or its settings.
+     * Returns a service the host offers to its plugins, such as its editor or its settings. The plugin gets a wrapper,
+     * which runs each call with the host's context class loader.
      *
      * @param type the type of the service
      * @param <T> the type of the service
@@ -63,8 +66,9 @@ public interface PluginContext {
     Path dataDirectory();
 
     /**
-     * Returns the plugin's executor, for what it runs in the background. It is shut down when the plugin stops: its
-     * threads are interrupted, and the manager waits for them up to its timeout.
+     * Returns the plugin's executor, for what it runs in the background. Its threads have the plugin's class loader as
+     * their context class loader. It is shut down when the plugin stops: its threads are interrupted, and the manager
+     * waits for them up to its timeout.
      *
      * @return the plugin's executor
      */

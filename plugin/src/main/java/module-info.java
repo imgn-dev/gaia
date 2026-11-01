@@ -40,6 +40,10 @@ import be.imgn.gaia.plugin.Plugin;
  * that a parent layer has already, such as the host's API module: the plugin's types and the host's would then be two
  * different classes.
  *
+ * <p>The class loader of a plugin's layer has the {@linkplain ClassLoader#getPlatformClassLoader() platform class
+ * loader} as parent, not the host's: a plugin loads the host's classes only from the modules it reads, and never sees
+ * the host's class path.
+ *
  * <h2>Extensions</h2>
  *
  * <p>An extension point is an interface that the host's API module exports, or that a plugin exports for the plugins
@@ -72,7 +76,35 @@ import be.imgn.gaia.plugin.Plugin;
  * to {@link be.imgn.gaia.plugin.PluginContext#closeOnStop(AutoCloseable)}. The host drops its own references to an
  * extension when it is told that the extension is removed.
  *
- * <p>Plugins are trusted code: they run in the host's process, with all its rights.
+ * <h2>Isolation of the host's services</h2>
+ *
+ * <p>A plugin cannot add providers to the host's own {@link java.util.ServiceLoader} lookups:
+ *
+ * <ul>
+ *   <li>A lookup from the host's layer, {@code ServiceLoader.load(layer, type)}, searches that layer and its
+ *       ancestors, never the plugins' layers below it.
+ *   <li>A lookup from the host's class loader, {@code ServiceLoader.load(type, loader)}, searches that loader, its
+ *       parents and their layers, never the plugins' loaders, which are not among them.
+ *   <li>A lookup from the thread's context class loader, {@code ServiceLoader.load(type)}, which the host's libraries
+ *       also use, such as the XML and scripting factories, finds the providers of whatever loader the thread has. So
+ *       every call between the host and a plugin runs with the callee's context class loader, and restores the
+ *       caller's afterwards, whatever the callee did with it:
+ *       <ul>
+ *         <li>the extensions the host gets are wrappers that run each call with the plugin's class loader;
+ *         <li>the services a plugin gets are wrappers that run each call with the host's;
+ *         <li>{@link be.imgn.gaia.plugin.Plugin#start(be.imgn.gaia.plugin.PluginContext)} and {@link
+ *             be.imgn.gaia.plugin.Plugin#stop()} run with the plugin's;
+ *         <li>the threads of the plugin's {@linkplain be.imgn.gaia.plugin.PluginContext#executor() executor} have the
+ *             plugin's.
+ *       </ul>
+ *       So the host's code never runs with a plugin's class loader as its context class loader, and a plugin's
+ *       libraries find their own providers. Wrapping is why extension points and services must be interfaces.
+ * </ul>
+ *
+ * <p>Plugins are trusted code nonetheless: they run in the host's process, with all its rights. Nothing stops one from
+ * calling an API that changes the whole JVM, such as {@code java.security.Security.insertProviderAt}. Nor from
+ * attaching an agent to the host's JVM from another process, unless the host runs with {@code
+ * -XX:-EnableDynamicAgentLoading}.
  */
 module be.imgn.gaia.plugin {
     requires transitive be.imgn.gaia.core;

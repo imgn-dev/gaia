@@ -10,6 +10,10 @@ import java.util.stream.Stream;
  * <p>Extensions come in the order of their plugins, a plugin after the plugins it requires, then in the order each
  * plugin registered them.
  *
+ * <p>Each extension is a wrapper of the one its plugin registered, which runs each call with that plugin's class loader
+ * as the thread's context class loader, and restores the caller's afterwards: a plugin cannot leave its class loader on
+ * the host's thread, where the host's {@link java.util.ServiceLoader} lookups would find its providers.
+ *
  * <p>Whoever keeps an extension must drop it when it is removed, or its plugin cannot be unloaded:
  * {@link #subscribe(Consumer, Consumer)} tells when.
  *

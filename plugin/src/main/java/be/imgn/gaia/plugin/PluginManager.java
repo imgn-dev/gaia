@@ -125,12 +125,14 @@ public interface PluginManager extends AutoCloseable {
         Builder parent(ModuleLayer layer);
 
         /**
-         * Offers a service to the plugins, which they get through {@link PluginContext#service(Class)}.
+         * Offers a service to the plugins, which they get through {@link PluginContext#service(Class)}. They get a
+         * wrapper, which runs each call with the context class loader of the thread that calls {@link #start()}.
          *
-         * @param type the type of the service, which the host's API module exports
+         * @param type the type of the service, an interface the host's API module exports
          * @param service the service
          * @param <T> the type of the service
          * @return this builder
+         * @throws IllegalArgumentException if the type is not an interface
          */
         <T> Builder service(Class<T> type, T service);
 
