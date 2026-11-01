@@ -4,11 +4,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleDescriptor.Provides;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -171,9 +173,12 @@ class ModuleInfoTest {
         var classes = directory.resolve("classes");
         var arguments = new ArrayList<>(List.of("-d", classes.toString(), "-Xlint:none"));
         arguments.addAll(files);
+        // Some of these modules provide a service of a package they don't export, which javac warns about whatever
+        // -Xlint says: its output goes to the failure message, so that CI doesn't report those warnings.
+        var output = new ByteArrayOutputStream();
         var compiler = ToolProvider.getSystemJavaCompiler();
-        assertThat(compiler.run(null, null, null, arguments.toArray(String[]::new)))
-                .as("javac exit code")
+        assertThat(compiler.run(null, null, output, arguments.toArray(String[]::new)))
+                .as(() -> "javac exit code, with its output:\n" + output.toString(Charset.defaultCharset()))
                 .isZero();
         return classes.resolve(ModuleInfo.FILE_NAME);
     }
