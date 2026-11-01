@@ -18,11 +18,11 @@ import java.util.concurrent.ScheduledExecutorService;
 public interface PluginContext {
 
     /**
-     * Returns the id of the plugin: the name of its module.
+     * Returns the id of the plugin.
      *
      * @return the id of the plugin
      */
-    String id();
+    PluginId id();
 
     /**
      * Returns the version of the plugin: the version of its module.

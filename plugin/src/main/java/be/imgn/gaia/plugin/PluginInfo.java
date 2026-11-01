@@ -8,18 +8,18 @@ import java.nio.file.Path;
 /**
  * A plugin installed in the plugins directory, and its state.
  *
- * @param id the id of the plugin: the name of its module
+ * @param id the id of the plugin
  * @param version the version of the plugin: the version of its module
  * @param directory the plugin's folder in the plugins directory
  * @param state the state of the plugin
  * @since 0.1.3
  */
-public record PluginInfo(String id, Version version, Path directory, PluginState state) {
+public record PluginInfo(PluginId id, Version version, Path directory, PluginState state) {
 
     /**
      * Creates the description of a plugin.
      *
-     * @param id the id of the plugin: the name of its module
+     * @param id the id of the plugin
      * @param version the version of the plugin: the version of its module
      * @param directory the plugin's folder in the plugins directory
      * @param state the state of the plugin

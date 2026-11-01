@@ -17,7 +17,8 @@ public sealed interface PluginState {
 
     /**
      * The plugin is enabled, but cannot be loaded: a module it requires is missing, has too low a version, or is a
-     * plugin that is not started; or its module layer could not be created.
+     * plugin that is not started; another folder of the plugins directory holds the same plugin; or its module layer
+     * could not be created.
      *
      * @param reason why the plugin cannot be loaded, for the user
      */

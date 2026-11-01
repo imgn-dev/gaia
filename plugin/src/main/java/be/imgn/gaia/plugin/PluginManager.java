@@ -3,7 +3,6 @@ package be.imgn.gaia.plugin;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The plugins of a host: finds them in the plugins directory, then loads, starts, stops and reloads them, a plugin
@@ -24,6 +23,10 @@ import java.util.Optional;
  * provide no {@link Plugin}, or more than one, or whose plugin module has no version, or one that is not a semantic
  * version.
  *
+ * <p>Two folders that hold the same plugin, such as an old and a new version side by side, are both
+ * {@linkplain PluginState.Unresolved unresolved}, until one of them is removed: the manager never guesses which one is
+ * meant.
+ *
  * @since 0.1.3
  */
 public interface PluginManager extends AutoCloseable {
@@ -34,14 +37,6 @@ public interface PluginManager extends AutoCloseable {
      * @return every plugin
      */
     List<PluginInfo> plugins();
-
-    /**
-     * Returns a plugin of the plugins directory.
-     *
-     * @param id the id of the plugin: the name of its module
-     * @return the plugin, or an empty optional if the directory has none with that id
-     */
-    Optional<PluginInfo> plugin(String id);
 
     /**
      * Returns the extensions that started plugins register for an extension point.
@@ -58,7 +53,7 @@ public interface PluginManager extends AutoCloseable {
      * @param id the id of the plugin
      * @throws IllegalArgumentException if the plugins directory has no plugin with that id
      */
-    void enable(String id);
+    void enable(PluginId id);
 
     /**
      * Disables a plugin and saves that. Stops and unloads it, after the plugins that require it, which stay enabled but
@@ -67,7 +62,7 @@ public interface PluginManager extends AutoCloseable {
      * @param id the id of the plugin
      * @throws IllegalArgumentException if the plugins directory has no plugin with that id
      */
-    void disable(String id);
+    void disable(PluginId id);
 
     /**
      * Loads a plugin again from its folder, such as after it was updated there. Stops and unloads it and the plugins
@@ -76,7 +71,7 @@ public interface PluginManager extends AutoCloseable {
      * @param id the id of the plugin
      * @throws IllegalArgumentException if the plugins directory has no plugin with that id
      */
-    void reload(String id);
+    void reload(PluginId id);
 
     /**
      * Reads the plugins directory again: loads and starts the plugins added to it since, and stops and unloads those
