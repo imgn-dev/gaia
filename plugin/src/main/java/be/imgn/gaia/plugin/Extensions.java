@@ -46,6 +46,9 @@ public interface Extensions<T> extends Iterable<T> {
      * registered later goes to {@code added}, and each one unregistered to {@code removed}, on the thread that
      * registers or unregisters it. An extension goes to {@code removed} before its plugin stops.
      *
+     * <p>The listeners of an extension point are told one at a time. What a listener throws is logged, and the other
+     * listeners are told all the same.
+     *
      * @param added gets each extension added
      * @param removed gets each extension removed
      * @return the registration, which stops telling when it is closed

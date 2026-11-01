@@ -27,8 +27,9 @@ public interface Plugin {
     void start(PluginContext context) throws Exception;
 
     /**
-     * Stops this plugin, before its context undoes what was done through it. The plugins that require this one are
-     * already stopped.
+     * Stops this plugin. The plugins that require this one are already stopped, and its extensions already removed; its
+     * executor is shut down and its resources closed afterwards. It runs with the plugin's class loader as the thread's
+     * context class loader, and must return within the manager's timeout.
      *
      * <p>Does nothing by default: a plugin that did everything through its context has nothing more to stop.
      *

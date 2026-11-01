@@ -34,11 +34,15 @@ import be.imgn.gaia.plugin.Plugin;
  *
  * <h2>Loading</h2>
  *
- * <p>Each plugin gets its own {@link java.lang.ModuleLayer}, whose parents are the host's layer and the layers of the
- * plugins it requires. So a plugin sees the packages that the host's modules and the plugins it requires export, and
- * nothing else; and two plugins can each use their own version of a library. A plugin folder must not hold a module
- * that a parent layer has already, such as the host's API module: the plugin's types and the host's would then be two
- * different classes.
+ * <p>Each plugin gets its own {@link java.lang.ModuleLayer}, whose parents are the layer of the modules plugins may use,
+ * the boot layer by default, and the layers of the plugins it requires. So a plugin sees the packages that those
+ * modules and the plugins it requires export, and nothing else; and two plugins can each use their own version of a
+ * library. A plugin's folder must not hold a module of that parent layer, such as the host's API module, nor another
+ * plugin's module: the plugin's types and theirs would then be two different classes.
+ *
+ * <p>An application that keeps its own modules out of the boot layer, with {@link be.imgn.gaia.plugin.AppLauncher},
+ * keeps them out of its plugins' reach: the boot layer then holds only what plugins may use, such as the application's
+ * API module, and the application's layer and the plugins' layers are siblings.
  *
  * <p>The class loader of a plugin's layer has the {@linkplain ClassLoader#getPlatformClassLoader() platform class
  * loader} as parent, not the host's: a plugin loads the host's classes only from the modules it reads, and never sees

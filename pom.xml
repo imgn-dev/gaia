@@ -45,13 +45,14 @@
     <module>processing</module>
     <module>processing-testing</module>
     <module>processor</module>
-    <!-- Not published yet: the API sketch of gaia-plugin. -->
+    <!-- Not published yet: gaia-plugin is being designed. -->
     <module>plugin</module>
     <!-- Published, but not in the BOM: a build plugin is not a dependency. -->
     <module>maven-plugin</module>
     <!-- Not published: tests that exercise X through X-testing. -->
     <module>core-tests</module>
     <module>processing-tests</module>
+    <module>plugin-tests</module>
     <!-- Not published: the guide, which goes to GitHub Pages. -->
     <module>docs</module>
   </modules>

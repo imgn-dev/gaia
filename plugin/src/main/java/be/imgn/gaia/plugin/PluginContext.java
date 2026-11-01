@@ -42,7 +42,8 @@ public interface PluginContext {
      * @param extension the extension
      * @param <T> the type of the extension point
      * @return the registration, which unregisters the extension when it is closed
-     * @throws IllegalArgumentException if the extension point is not an interface
+     * @throws IllegalArgumentException if the extension point is not a public interface of a package exported to
+     *     {@code be.imgn.gaia.plugin}, or the extension does not implement it
      * @throws IllegalStateException if the plugin has stopped
      */
     <T> Registration register(Class<T> point, T extension);
@@ -66,11 +67,12 @@ public interface PluginContext {
     Path dataDirectory();
 
     /**
-     * Returns the plugin's executor, for what it runs in the background. Its threads have the plugin's class loader as
-     * their context class loader. It is shut down when the plugin stops: its threads are interrupted, and the manager
-     * waits for them up to its timeout.
+     * Returns the plugin's executor, for what it runs in the background. It runs its tasks on one thread, a daemon
+     * thread, which has the plugin's class loader as its context class loader. It is shut down when the plugin stops:
+     * its thread is interrupted, and the manager waits for it up to its timeout.
      *
      * @return the plugin's executor
+     * @throws IllegalStateException if the plugin has stopped
      */
     ScheduledExecutorService executor();
 
