@@ -4,6 +4,7 @@ be.imgn.gaia.core.collect
 be.imgn.gaia.core.event
 be.imgn.gaia.core.event.spi
 be.imgn.gaia.core.io
+be.imgn.gaia.core.math
 be.imgn.gaia.core.platform
 be.imgn.gaia.core.system
 be.imgn.gaia.core.text
