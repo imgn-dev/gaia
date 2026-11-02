@@ -17,6 +17,7 @@ module be.imgn.gaia.core {
     exports be.imgn.gaia.core.event;
     exports be.imgn.gaia.core.event.spi;
     exports be.imgn.gaia.core.io;
+    exports be.imgn.gaia.core.math;
     exports be.imgn.gaia.core.platform;
     exports be.imgn.gaia.core.system;
     exports be.imgn.gaia.core.text;

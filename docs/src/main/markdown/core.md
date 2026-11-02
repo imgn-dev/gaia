@@ -251,6 +251,24 @@ of a run followed by a lowercase letter: `httpURLPath` gives `http-url-path`, `i
 `httpUrl`. Text that doesn't follow the convention it is converted from, or no convention at all for `from`, throws
 `IllegalArgumentException`.
 
+## Math
+
+[`IntMath`](api:be.imgn.gaia.core.math.IntMath) and [`LongMath`](api:be.imgn.gaia.core.math.LongMath) add the
+integer arithmetic that `Math` lacks: greatest common divisors and least common multiples, powers of two, logarithms,
+square roots and divisions with a `RoundingMode`, powers, modular powers, saturated arithmetic, overflow-free means,
+factorials, binomial coefficients and an exact primality test:
+
+```java
+IntMath.gcd(-12, 18);                           // 6
+IntMath.sqrt(99, RoundingMode.HALF_EVEN);       // 10
+IntMath.divide(7, 2, RoundingMode.HALF_UP);     // 4
+LongMath.saturatedMultiply(Long.MAX_VALUE, 2);  // Long.MAX_VALUE
+LongMath.isPrime(Long.MAX_VALUE - 24);          // true
+```
+
+A result that doesn't fit throws `ArithmeticException`, except from `pow`, which wraps around, and the `saturated`
+methods, which return the closest value that fits.
+
 ## Versions
 
 [`Version`](api:be.imgn.gaia.core.base.Version) is a version number as
