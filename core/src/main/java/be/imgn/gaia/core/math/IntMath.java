@@ -4,6 +4,7 @@ import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.math.RoundingMode;
+import java.util.Arrays;
 
 /**
  * Arithmetic on {@code int} values that {@link Math} doesn't provide: divisors, powers, logarithms, square roots and
@@ -47,6 +48,20 @@ public final class IntMath {
     private static final int[] FACTORIALS = {
         1, 1, 2, 6, 24, 120, 720, 5_040, 40_320, 362_880, 3_628_800, 39_916_800, 479_001_600
     };
+
+    // Odd primes that a value is checked against first, since most composite numbers have one as a factor.
+    private static final int[] SMALL_PRIMES = {3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53};
+
+    // x is a multiple of p if and only if x * p^-1 mod 2^32 is at most (2^32 - 1) / p, unsigned: multiplying by the
+    // inverse undoes the multiplications by p, and sends every other value above them. The low half of the inverse
+    // modulo 2^64 is the inverse modulo 2^32.
+    private static final int[] SMALL_PRIME_INVERSES =
+            Arrays.stream(SMALL_PRIMES).map(p -> (int) Montgomery.inverse(p)).toArray();
+    private static final int[] SMALL_PRIME_QUOTIENTS =
+            Arrays.stream(SMALL_PRIMES).map(p -> Integer.divideUnsigned(-1, p)).toArray();
+
+    // An odd value that no small prime divides is prime if it's less than the square of the largest one.
+    private static final int SMALL_PRIMES_SQUARE = 53 * 53;
 
     // The Miller-Rabin test with these bases is never wrong below 4,759,123,141.
     private static final int[] PRIME_BASES = {2, 7, 61};
@@ -378,17 +393,7 @@ public final class IntMath {
     public static int powMod(int base, int exponent, int modulus) {
         checkNotNegative("exponent", exponent);
         checkPositive("modulus", modulus);
-        // In longs, where the product of two values less than the modulus always fits.
-        long result = 1 % modulus;
-        long square = Math.floorMod(base, modulus);
-        while (exponent != 0) {
-            if ((exponent & 1) != 0) {
-                result = result * square % modulus;
-            }
-            square = square * square % modulus;
-            exponent >>>= 1;
-        }
-        return (int) result;
+        return (int) new Barrett(modulus).pow(Math.floorMod(base, modulus), exponent);
     }
 
     /**
@@ -453,33 +458,47 @@ public final class IntMath {
      * @return whether {@code n} is prime, false for values less than 2
      */
     public static boolean isPrime(int n) {
-        if (n < 2) {
-            return false;
-        }
-        if ((n & 1) == 0) {
+        if (n < 2 || (n & 1) == 0) {
             return n == 2;
         }
+        var factor = smallPrimeFactor(n);
+        if (factor != 0) {
+            return n == factor;
+        }
+        return n < SMALL_PRIMES_SQUARE || passesMillerRabin(n);
+    }
+
+    // Returns the smallest of the small primes that divides an odd n, or 0 if none does.
+    private static int smallPrimeFactor(int n) {
+        for (int i = 0; i < SMALL_PRIMES.length; i++) {
+            if (Integer.compareUnsigned(n * SMALL_PRIME_INVERSES[i], SMALL_PRIME_QUOTIENTS[i]) <= 0) {
+                return SMALL_PRIMES[i];
+            }
+        }
+        return 0;
+    }
+
+    // For an odd n greater than every base.
+    private static boolean passesMillerRabin(int n) {
+        var barrett = new Barrett(n);
         for (var base : PRIME_BASES) {
-            if (!isStrongProbablePrime(n, base)) {
+            if (!isStrongProbablePrime(barrett, n, base)) {
                 return false;
             }
         }
         return true;
     }
 
-    // For an odd n greater than 1.
-    private static boolean isStrongProbablePrime(int n, int base) {
-        if (base % n == 0) {
-            return true;
-        }
+    // For an odd n greater than the base.
+    private static boolean isStrongProbablePrime(Barrett barrett, int n, int base) {
         var d = n - 1;
         var s = Integer.numberOfTrailingZeros(d);
-        long x = powMod(base, d >>> s, n);
+        var x = barrett.pow(base, d >>> s);
         if (x == 1 || x == n - 1) {
             return true;
         }
         for (int i = 1; i < s; i++) {
-            x = x * x % n;
+            x = barrett.multiply(x, x);
             if (x == n - 1) {
                 return true;
             }

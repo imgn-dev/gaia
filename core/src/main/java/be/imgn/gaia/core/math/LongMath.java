@@ -4,6 +4,7 @@ import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.math.RoundingMode;
+import java.util.Arrays;
 
 /**
  * Arithmetic on {@code long} values that {@link Math} doesn't provide: divisors, powers, logarithms, square roots and
@@ -102,6 +103,16 @@ public final class LongMath {
         121_645_100_408_832_000L,
         2_432_902_008_176_640_000L
     };
+
+    // Odd primes that a value is checked against first, since most composite numbers have one as a factor.
+    private static final long[] SMALL_PRIMES = {3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53};
+
+    // x is a multiple of p if and only if x * p^-1 mod 2^64 is at most (2^64 - 1) / p, unsigned: multiplying by the
+    // inverse undoes the multiplications by p, and sends every other value above them.
+    private static final long[] SMALL_PRIME_INVERSES =
+            Arrays.stream(SMALL_PRIMES).map(Montgomery::inverse).toArray();
+    private static final long[] SMALL_PRIME_QUOTIENTS =
+            Arrays.stream(SMALL_PRIMES).map(p -> Long.divideUnsigned(-1L, p)).toArray();
 
     // The Miller-Rabin test with these bases is never wrong below 2^64.
     private static final long[] PRIME_BASES = {2, 325, 9_375, 28_178, 450_775, 9_780_504, 1_795_265_022};
@@ -451,6 +462,10 @@ public final class LongMath {
         checkPositive("modulus", modulus);
         // Montgomery multiplication needs an odd modulus. Modulo the power of two an even modulus has, wrapping
         // arithmetic gives the result, and the Chinese remainder theorem combines both.
+        if (modulus >>> Integer.SIZE == 0) {
+            // Products fit in 64 bits, and Barrett reduction takes less than Montgomery multiplication.
+            return new Barrett(modulus).pow(Math.floorMod(base, modulus), exponent);
+        }
         var twos = Long.numberOfTrailingZeros(modulus);
         var odd = modulus >> twos;
         var oddResult = 0L;
@@ -532,7 +547,7 @@ public final class LongMath {
         if (n <= Integer.MAX_VALUE) {
             return n > 1 && IntMath.isPrime((int) n);
         }
-        if ((n & 1) == 0) {
+        if ((n & 1) == 0 || hasSmallPrimeFactor(n)) {
             return false;
         }
         var montgomery = new Montgomery(n);
@@ -544,6 +559,15 @@ public final class LongMath {
             }
         }
         return true;
+    }
+
+    private static boolean hasSmallPrimeFactor(long n) {
+        for (int i = 0; i < SMALL_PRIMES.length; i++) {
+            if (Long.compareUnsigned(n * SMALL_PRIME_INVERSES[i], SMALL_PRIME_QUOTIENTS[i]) <= 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // For an odd modulus n = d * 2^s + 1, and a base less than n.

@@ -20,11 +20,15 @@ final class Montgomery {
         negatedInverse = -inverse(modulus);
         // 2^64 - modulus is 2^64 mod modulus, plus a multiple of it.
         one = Long.remainderUnsigned(-modulus, modulus);
+        // Doublings make 2^8 in Montgomery form, and squarings 2^16, 2^32, then 2^64 in Montgomery form: 2^128 mod
+        // modulus. A squaring costs more than a doubling, but replaces many.
         var r = one;
-        for (int i = 0; i < Long.SIZE; i++) {
+        for (int i = 0; i < Byte.SIZE; i++) {
             r = add(r, r);
         }
-        rSquared = r;
+        r = multiply(r, r);
+        r = multiply(r, r);
+        rSquared = multiply(r, r);
     }
 
     /** Returns the inverse of an odd value modulo {@code 2^64}. */
