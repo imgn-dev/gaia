@@ -23,3 +23,13 @@ AtomicFiles.write(file, out -> {
     writer.flush();
 });
 ```
+
+## Plugin system
+
+A plugin manager that loads modules from a directory at runtime, each in a `ModuleLayer` of its own, with a
+lifecycle, dependencies between plugins, enable/disable state, hot reload and extension points, plus a launcher
+that runs the application in a layer of its own so plugins cannot reach it.
+
+That is a framework, not a library: it owns how the application starts, which layers and class loaders its code
+runs in, and when plugin code is called. gaia holds libraries that an application calls, so the plugin system
+will be a separate project.
