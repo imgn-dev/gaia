@@ -398,7 +398,7 @@ class AccessibilityTest {
                         "org.jspecify.annotations.Nullable",
                         "be.imgn.gaia.processing.internal",
                         "be.imgn.gaia.processing.internal.Inheritance",
-                        "be.imgn.gaia.core.text.Splitter",
+                        "be.imgn.gaia.core.base.Splitter",
                         "jdk.internal.misc.Unsafe"),
                 source("module-info", """
                         module example {
@@ -427,7 +427,7 @@ class AccessibilityTest {
                         entry("org.jspecify.annotations.Nullable", true),
                         entry("be.imgn.gaia.processing.internal", false),
                         entry("be.imgn.gaia.processing.internal.Inheritance", false),
-                        entry("be.imgn.gaia.core.text.Splitter", false),
+                        entry("be.imgn.gaia.core.base.Splitter", false),
                         entry("jdk.internal.misc.Unsafe", false));
     }
 
@@ -440,7 +440,7 @@ class AccessibilityTest {
                         "java.lang.String",
                         "java.util.logging.Logger",
                         "be.imgn.gaia.processing.MoreElements",
-                        "be.imgn.gaia.core.text.Splitter",
+                        "be.imgn.gaia.core.base.Splitter",
                         "be.imgn.gaia.processing.internal.Inheritance",
                         "jdk.internal.misc.Unsafe"),
                 source("example.Plain", """
@@ -456,7 +456,7 @@ class AccessibilityTest {
                         entry("java.lang.String", true),
                         entry("java.util.logging.Logger", true),
                         entry("be.imgn.gaia.processing.MoreElements", true),
-                        entry("be.imgn.gaia.core.text.Splitter", true),
+                        entry("be.imgn.gaia.core.base.Splitter", true),
                         entry("be.imgn.gaia.processing.internal.Inheritance", false),
                         entry("jdk.internal.misc.Unsafe", false));
     }

@@ -72,7 +72,7 @@ class SiteGeneratorTest {
                 # Gaia
 
                 [Core](core.md), [collections](core.md#collections), [above](#gaia), \
-                [web](https://example.com/a.md), [Splitter](api:be.imgn.gaia.core.text.Splitter), \
+                [web](https://example.com/a.md), [Splitter](api:be.imgn.gaia.core.base.Splitter), \
                 [Entry](api:be.imgn.gaia.core.collect.Multiset.Entry)
                 """);
         page("core.md", "# Core\n\n## Collections\n");
@@ -86,7 +86,7 @@ class SiteGeneratorTest {
                 .contains("<a href=\"core.html#collections\">collections</a>")
                 .contains("<a href=\"#gaia\">above</a>")
                 .contains("<a href=\"https://example.com/a.md\">web</a>")
-                .contains("<a href=\"api/latest/be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html\">Splitter</a>")
+                .contains("<a href=\"api/latest/be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html\">Splitter</a>")
                 .contains("<a href=\"api/latest/be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.Entry.html\">");
     }
 
@@ -96,7 +96,7 @@ class SiteGeneratorTest {
                 # Gaia
 
                 [a](missing.md) [b](core.md#nowhere) [c](#nowhere) [d](other.txt)
-                [e](api:be.imgn.gaia.core.text.Nothing) [f](api:java.lang.String)
+                [e](api:be.imgn.gaia.core.base.Nothing) [f](api:java.lang.String)
                 [g](api:be.imgn.gaia.memfs.internal.MemoryFileSystemProvider)
                 ![h](picture.png)
                 """);
@@ -117,7 +117,7 @@ class SiteGeneratorTest {
                           index.md: no heading nowhere in core.md
                           index.md: no heading nowhere in index.md
                           index.md: broken link to other.txt
-                          index.md: no API documentation for be.imgn.gaia.core.text.Nothing
+                          index.md: no API documentation for be.imgn.gaia.core.base.Nothing
                           index.md: no API documentation for java.lang.String
                           index.md: no API documentation for be.imgn.gaia.memfs.internal.MemoryFileSystemProvider
                           index.md: images are not supported: picture.png""");

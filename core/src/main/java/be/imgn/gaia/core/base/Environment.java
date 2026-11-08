@@ -1,8 +1,7 @@
-package be.imgn.gaia.core.system;
+package be.imgn.gaia.core.base;
 
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.text.Splitter;
 import java.io.File;
 import java.util.List;
 import java.util.Map;

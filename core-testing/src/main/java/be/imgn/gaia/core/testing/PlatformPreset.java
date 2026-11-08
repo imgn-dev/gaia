@@ -4,9 +4,9 @@ import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
+import be.imgn.gaia.core.base.Environment;
+import be.imgn.gaia.core.base.SystemProperties;
 import be.imgn.gaia.core.platform.Platform;
-import be.imgn.gaia.core.system.Environment;
-import be.imgn.gaia.core.system.SystemProperties;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

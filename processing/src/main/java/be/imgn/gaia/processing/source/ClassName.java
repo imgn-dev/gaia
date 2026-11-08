@@ -2,7 +2,7 @@ package be.imgn.gaia.processing.source;
 
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.text.Splitter;
+import be.imgn.gaia.core.base.Splitter;
 import be.imgn.gaia.processing.MoreElements;
 import java.util.ArrayList;
 import java.util.List;

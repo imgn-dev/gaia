@@ -3,8 +3,6 @@ package be.imgn.gaia.core.base;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.text.Ascii;
-import be.imgn.gaia.core.text.Splitter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;

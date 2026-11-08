@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.time;
+package be.imgn.gaia.core.base;
 
 /**
  * A source of nanosecond time, for measuring elapsed time: only the difference between two readings is meaningful.

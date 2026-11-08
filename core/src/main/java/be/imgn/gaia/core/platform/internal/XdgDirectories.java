@@ -1,8 +1,8 @@
 package be.imgn.gaia.core.platform.internal;
 
+import be.imgn.gaia.core.base.Environment;
+import be.imgn.gaia.core.base.Splitter;
 import be.imgn.gaia.core.platform.Directories;
-import be.imgn.gaia.core.system.Environment;
-import be.imgn.gaia.core.text.Splitter;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.List;

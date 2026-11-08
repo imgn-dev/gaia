@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.time;
+package be.imgn.gaia.core.base;
 
 import static java.util.Objects.requireNonNull;
 

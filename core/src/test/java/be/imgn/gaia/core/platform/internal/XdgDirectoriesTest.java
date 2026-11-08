@@ -2,7 +2,7 @@ package be.imgn.gaia.core.platform.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import be.imgn.gaia.core.system.Environment;
+import be.imgn.gaia.core.base.Environment;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Map;

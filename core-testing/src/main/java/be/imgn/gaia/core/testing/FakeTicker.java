@@ -3,7 +3,7 @@ package be.imgn.gaia.core.testing;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.time.Ticker;
+import be.imgn.gaia.core.base.Ticker;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicLong;
 

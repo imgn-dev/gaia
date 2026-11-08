@@ -2,8 +2,8 @@ package be.imgn.gaia.processing.internal;
 
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.time.Stopwatch;
-import be.imgn.gaia.core.time.Ticker;
+import be.imgn.gaia.core.base.Stopwatch;
+import be.imgn.gaia.core.base.Ticker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

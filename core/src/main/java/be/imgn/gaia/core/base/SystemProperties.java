@@ -1,9 +1,8 @@
-package be.imgn.gaia.core.system;
+package be.imgn.gaia.core.base;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.text.Splitter;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.InvalidPathException;

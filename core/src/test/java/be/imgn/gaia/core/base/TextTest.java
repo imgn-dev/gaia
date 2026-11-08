@@ -1,9 +1,9 @@
-package be.imgn.gaia.core.text;
+package be.imgn.gaia.core.base;
 
-import static be.imgn.gaia.core.text.Text.first;
-import static be.imgn.gaia.core.text.Text.last;
-import static be.imgn.gaia.core.text.Text.prefix;
-import static be.imgn.gaia.core.text.Text.suffix;
+import static be.imgn.gaia.core.base.Text.first;
+import static be.imgn.gaia.core.base.Text.last;
+import static be.imgn.gaia.core.base.Text.prefix;
+import static be.imgn.gaia.core.base.Text.suffix;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;

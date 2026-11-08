@@ -2,7 +2,7 @@ package be.imgn.gaia.processing.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import be.imgn.gaia.core.time.Ticker;
+import be.imgn.gaia.core.base.Ticker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

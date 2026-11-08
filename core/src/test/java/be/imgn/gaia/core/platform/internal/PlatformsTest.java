@@ -3,10 +3,10 @@ package be.imgn.gaia.core.platform.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import be.imgn.gaia.core.base.Environment;
+import be.imgn.gaia.core.base.SystemProperties;
 import be.imgn.gaia.core.platform.Directories;
 import be.imgn.gaia.core.platform.Platform;
-import be.imgn.gaia.core.system.Environment;
-import be.imgn.gaia.core.system.SystemProperties;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;

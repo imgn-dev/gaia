@@ -170,8 +170,8 @@ String checksum = Bytes.encode(text).digest("SHA-256").toHex();
 
 ## System properties and environment variables
 
-[`SystemProperties`](api:be.imgn.gaia.core.system.SystemProperties) and
-[`Environment`](api:be.imgn.gaia.core.system.Environment) read system properties and environment variables from the
+[`SystemProperties`](api:be.imgn.gaia.core.base.SystemProperties) and
+[`Environment`](api:be.imgn.gaia.core.base.Environment) read system properties and environment variables from the
 running JVM, or from fixed values in tests. `SystemProperties` has a typed method for each standard Java property,
 such as `userHome()` or `javaVersion()`. Paths come back as `Path`s of the default file system. For the directories
 of an application, or paths in a file system a test provides, the [platform](#platform) is often the better fit.
@@ -251,7 +251,7 @@ subdirectories named after it, or use its [application directories](#application
 
 ## Text
 
-[`Splitter`](api:be.imgn.gaia.core.text.Splitter) splits text on a character, a literal string or a regular
+[`Splitter`](api:be.imgn.gaia.core.base.Splitter) splits text on a character, a literal string or a regular
 expression, with optional trimming, omission of empty parts and a limit:
 
 ```java
@@ -261,7 +261,7 @@ Splitter.on("::").split("a::b");                                           // [a
 
 Unlike `String.split`, a string separator is literal, and nothing is dropped unless asked.
 
-[`Text`](api:be.imgn.gaia.core.text.Text) finds one occurrence in a text, to extract, remove or replace it. A pattern
+[`Text`](api:be.imgn.gaia.core.base.Text) finds one occurrence in a text, to extract, remove or replace it. A pattern
 selects the first or last occurrence of a character, a literal string or a regular expression, or a prefix or suffix,
 and conditions narrow it down to an occurrence that is, or is not, preceded or followed by a literal string:
 
@@ -274,10 +274,10 @@ Text.suffix('/').addToIfAbsent("/api");                            // /api/
 ```
 
 Conditions are checked against the whole text and aren't part of the occurrence. A prefix or suffix is an
-[`Affix`](api:be.imgn.gaia.core.text.Text.Affix): a `CharSequence` of its literal that can also be added to a text that
+[`Affix`](api:be.imgn.gaia.core.base.Text.Affix): a `CharSequence` of its literal that can also be added to a text that
 lacks it.
 
-[`NamingConvention`](api:be.imgn.gaia.core.text.NamingConvention) converts names between naming conventions:
+[`NamingConvention`](api:be.imgn.gaia.core.base.NamingConvention) converts names between naming conventions:
 `LOWER_CAMEL`, `UPPER_CAMEL`, `LOWER_HYPHEN`, `LOWER_UNDERSCORE`, `UPPER_UNDERSCORE` and `LOWER_DOT`:
 
 ```java
@@ -337,8 +337,8 @@ versions are `long`s, so a larger number is rejected, although the specification
 
 ## Time
 
-[`Stopwatch`](api:be.imgn.gaia.core.time.Stopwatch) measures elapsed time on a monotonic
-[`Ticker`](api:be.imgn.gaia.core.time.Ticker), with `start()`, `stop()` and `reset()`. Its `toString()` reads like
+[`Stopwatch`](api:be.imgn.gaia.core.base.Stopwatch) measures elapsed time on a monotonic
+[`Ticker`](api:be.imgn.gaia.core.base.Ticker), with `start()`, `stop()` and `reset()`. Its `toString()` reads like
 `1.234 s`:
 
 ```java

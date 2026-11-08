@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.text;
+package be.imgn.gaia.core.base;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;

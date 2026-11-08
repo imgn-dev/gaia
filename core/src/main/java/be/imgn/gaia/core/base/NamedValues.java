@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.system;
+package be.imgn.gaia.core.base;
 
 import static java.util.Objects.requireNonNull;
 

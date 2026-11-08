@@ -2,9 +2,9 @@ package be.imgn.gaia.core.platform;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Environment;
+import be.imgn.gaia.core.base.SystemProperties;
 import be.imgn.gaia.core.platform.internal.Platforms;
-import be.imgn.gaia.core.system.Environment;
-import be.imgn.gaia.core.system.SystemProperties;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 

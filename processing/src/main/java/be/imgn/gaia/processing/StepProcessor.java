@@ -2,8 +2,8 @@ package be.imgn.gaia.processing;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.base.Ticker;
 import be.imgn.gaia.core.collect.Sets;
-import be.imgn.gaia.core.time.Ticker;
 import be.imgn.gaia.processing.internal.DebugLog;
 import be.imgn.gaia.processing.internal.ElementKey;
 import be.imgn.gaia.processing.internal.MetaAnnotated;
