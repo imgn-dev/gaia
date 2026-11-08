@@ -233,7 +233,7 @@ flushes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/
 <h3>of</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link">Writer</a>&nbsp;out)</span></div>
-<div class="block">Returns a writer that writes to a stream, which it then owns.</div>
+<div class="block">Returns a writer that writes to a stream, which it then owns. If <code>out</code> is the <a href="#asWriter()">stream view</a> of a writer, returns that writer rather than buffering its characters again.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>out</code> - the stream to write to</dd>
@@ -250,7 +250,8 @@ flushes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link">Appendable</a>&nbsp;out)</span></div>
 <div class="block">Returns a writer that writes to an <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link"><code>Appendable</code></a>, such as a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html" title="class or interface in java.lang" class="external-link"><code>StringBuilder</code></a>, which it then owns: it
 flushes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Flushable.html" title="class or interface in java.io" class="external-link"><code>Flushable</code></a>, and closes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Closeable.html" title="class or interface in java.io" class="external-link"><code>Closeable</code></a>. Each write goes to it directly,
-unless it is a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a>.</div>
+unless it is a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a>. If <code>out</code> is the <a href="#asWriter()">stream view</a> of a writer, returns
+that writer.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>out</code> - where to write</dd>

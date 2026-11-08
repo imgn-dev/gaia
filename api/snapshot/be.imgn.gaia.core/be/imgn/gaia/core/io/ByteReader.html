@@ -374,7 +374,7 @@ anything.
 <h3>of</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&nbsp;in)</span></div>
-<div class="block">Returns a reader that reads a stream, which it then owns.</div>
+<div class="block">Returns a reader that reads a stream, which it then owns. If <code>in</code> is the <a href="#asInputStream()">stream view</a> of a reader, returns that reader rather than buffering its bytes again.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>in</code> - the stream to read</dd>
