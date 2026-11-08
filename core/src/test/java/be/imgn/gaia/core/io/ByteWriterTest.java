@@ -14,6 +14,7 @@ import be.imgn.gaia.core.io.TestStreams.FailingOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -211,6 +212,13 @@ class ByteWriterTest {
 
         out.close();
         assertThat(stream.closeCount()).isOne();
+    }
+
+    @Test
+    void unwrapsItsStreamView() {
+        var out = ByteWriter.of(OutputStream.nullOutputStream());
+
+        assertThat(ByteWriter.of(out.asOutputStream())).isSameAs(out);
     }
 
     @Test

@@ -3,7 +3,6 @@ package be.imgn.gaia.core.io;
 import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.base.Charsets;
-import be.imgn.gaia.core.io.internal.ByteArraySource;
 import be.imgn.gaia.core.io.internal.ConcatenatedByteSource;
 import be.imgn.gaia.core.io.internal.PathSource;
 import be.imgn.gaia.core.io.internal.SlicedByteSource;

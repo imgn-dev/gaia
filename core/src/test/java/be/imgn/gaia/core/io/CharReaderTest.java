@@ -235,6 +235,13 @@ class CharReaderTest {
     }
 
     @Test
+    void unwrapsItsStreamView() {
+        var in = CharReader.of("a");
+
+        assertThat(CharReader.of(in.asReader())).isSameAs(in);
+    }
+
+    @Test
     void sharesItsPositionWithItsStreamView() throws IOException {
         var text = randomText(7);
         for (var reader : readers(text)) {

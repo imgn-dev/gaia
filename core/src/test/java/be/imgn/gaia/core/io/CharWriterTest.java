@@ -158,6 +158,14 @@ class CharWriterTest {
     }
 
     @Test
+    void unwrapsItsStreamView() {
+        var out = CharWriter.of(new StringBuilder());
+
+        assertThat(CharWriter.of(out.asWriter())).isSameAs(out);
+        assertThat(CharWriter.of((Appendable) out.asWriter())).isSameAs(out);
+    }
+
+    @Test
     void sharesItsBufferWithItsStreamView() throws IOException {
         for (var target : new Appendable[] {new CountingWriter(), new StringBuilder()}) {
             var out = CharWriter.of(target);

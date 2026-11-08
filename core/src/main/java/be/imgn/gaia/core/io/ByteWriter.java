@@ -63,13 +63,17 @@ public final class ByteWriter implements Closeable, Flushable {
     }
 
     /**
-     * Returns a writer that writes to a stream, which it then owns.
+     * Returns a writer that writes to a stream, which it then owns. If {@code out} is the {@linkplain #asOutputStream()
+     * stream view} of a writer, returns that writer rather than buffering its bytes again.
      *
      * @param out the stream to write to
      * @return a writer that writes to {@code out}
      */
     public static ByteWriter of(OutputStream out) {
         requireNonNull(out, "out");
+        if (out instanceof View view) {
+            return view.owner();
+        }
         return new ByteWriter(out);
     }
 
@@ -388,6 +392,10 @@ public final class ByteWriter implements Closeable, Flushable {
     }
 
     private final class View extends OutputStream {
+
+        ByteWriter owner() {
+            return ByteWriter.this;
+        }
 
         @Override
         public void write(int b) throws IOException {

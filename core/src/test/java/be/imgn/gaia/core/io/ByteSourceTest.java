@@ -363,6 +363,13 @@ class ByteSourceTest {
         }
     }
 
+    @Test
+    void opensAReaderOnASliceOfBytes() throws IOException {
+        try (var in = ByteSource.wrap(Bytes.of(BYTES).slice(1, 4)).openReader()) {
+            assertThat(in.readAll()).isEqualTo(Bytes.of(new byte[] {2, 3, 4}));
+        }
+    }
+
     // Counts the streams it opens and closes.
     private static final class TrackedSource implements ByteSource {
 

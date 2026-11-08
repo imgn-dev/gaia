@@ -82,13 +82,17 @@ public final class ByteReader implements Closeable {
     }
 
     /**
-     * Returns a reader that reads a stream, which it then owns.
+     * Returns a reader that reads a stream, which it then owns. If {@code in} is the {@linkplain #asInputStream()
+     * stream view} of a reader, returns that reader rather than buffering its bytes again.
      *
      * @param in the stream to read
      * @return a reader that reads {@code in}
      */
     public static ByteReader of(InputStream in) {
         requireNonNull(in, "in");
+        if (in instanceof View view) {
+            return view.owner();
+        }
         return new ByteReader(in, new byte[Streams.BUFFER_SIZE], 0, 0);
     }
 
@@ -753,6 +757,10 @@ public final class ByteReader implements Closeable {
     }
 
     private final class View extends InputStream {
+
+        ByteReader owner() {
+            return ByteReader.this;
+        }
 
         @Override
         public int read() throws IOException {

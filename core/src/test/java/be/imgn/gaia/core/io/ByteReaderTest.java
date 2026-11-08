@@ -346,6 +346,13 @@ class ByteReaderTest {
     }
 
     @Test
+    void unwrapsItsStreamView() {
+        var in = ByteReader.of(Bytes.of(new byte[] {1}));
+
+        assertThat(ByteReader.of(in.asInputStream())).isSameAs(in);
+    }
+
+    @Test
     void sharesItsPositionWithItsStreamView() throws IOException {
         var bytes = randomBytes(11, SIZE);
         for (var reader : readers(bytes)) {

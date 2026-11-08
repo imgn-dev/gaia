@@ -54,26 +54,31 @@ public final class CharWriter implements Appendable, Closeable, Flushable {
     }
 
     /**
-     * Returns a writer that writes to a stream, which it then owns.
+     * Returns a writer that writes to a stream, which it then owns. If {@code out} is the {@linkplain #asWriter()
+     * stream view} of a writer, returns that writer rather than buffering its characters again.
      *
      * @param out the stream to write to
      * @return a writer that writes to {@code out}
      */
     public static CharWriter of(Writer out) {
         requireNonNull(out, "out");
-        return new CharWriter(out);
+        return of((Appendable) out);
     }
 
     /**
      * Returns a writer that writes to an {@link Appendable}, such as a {@link StringBuilder}, which it then owns: it
      * flushes it if it is {@link Flushable}, and closes it if it is {@link Closeable}. Each write goes to it directly,
-     * unless it is a {@link Writer}.
+     * unless it is a {@link Writer}. If {@code out} is the {@linkplain #asWriter() stream view} of a writer, returns
+     * that writer.
      *
      * @param out where to write
      * @return a writer that writes to {@code out}
      */
     public static CharWriter of(Appendable out) {
         requireNonNull(out, "out");
+        if (out instanceof View view) {
+            return view.owner();
+        }
         return new CharWriter(out);
     }
 
@@ -345,6 +350,10 @@ public final class CharWriter implements Appendable, Closeable, Flushable {
     }
 
     private final class View extends Writer {
+
+        CharWriter owner() {
+            return CharWriter.this;
+        }
 
         @Override
         public void write(int c) throws IOException {

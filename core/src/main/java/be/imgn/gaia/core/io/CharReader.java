@@ -72,13 +72,17 @@ public final class CharReader implements Closeable {
     }
 
     /**
-     * Returns a reader that reads a stream, which it then owns.
+     * Returns a reader that reads a stream, which it then owns. If {@code in} is the {@linkplain #asReader() stream
+     * view} of a reader, returns that reader rather than buffering its characters again.
      *
      * @param in the stream to read
      * @return a reader that reads {@code in}
      */
     public static CharReader of(Reader in) {
         requireNonNull(in, "in");
+        if (in instanceof View view) {
+            return view.owner();
+        }
         return new CharReader(in);
     }
 
@@ -516,6 +520,10 @@ public final class CharReader implements Closeable {
     }
 
     private final class View extends Reader {
+
+        CharReader owner() {
+            return CharReader.this;
+        }
 
         @Override
         public int read() throws IOException {
