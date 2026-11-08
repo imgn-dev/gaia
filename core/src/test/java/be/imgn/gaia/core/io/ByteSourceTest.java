@@ -44,7 +44,7 @@ class ByteSourceTest {
     void readsAWrappedArray() throws IOException {
         var source = ByteSource.wrap(BYTES);
 
-        assertThat(source.read()).containsExactly(1, 2, 3, 4, 5);
+        assertThat(source.read().toByteArray()).containsExactly(1, 2, 3, 4, 5);
         assertThat(source.sizeIfKnown()).hasValue(5);
         assertThat(source.isEmpty()).isFalse();
     }
@@ -56,14 +56,14 @@ class ByteSourceTest {
 
         bytes[0] = 9;
 
-        assertThat(source.read()).containsExactly(9, 2);
+        assertThat(source.read().toByteArray()).containsExactly(9, 2);
     }
 
     @Test
     void readsNothingFromTheEmptySource() throws IOException {
         var source = ByteSource.empty();
 
-        assertThat(source.read()).isEmpty();
+        assertThat(source.read().isEmpty()).isTrue();
         assertThat(source.size()).isZero();
         assertThat(source.isEmpty()).isTrue();
     }
@@ -72,7 +72,7 @@ class ByteSourceTest {
     void readsALambda() throws IOException {
         ByteSource source = () -> new ByteArrayInputStream(BYTES);
 
-        assertThat(source.read()).containsExactly(1, 2, 3, 4, 5);
+        assertThat(source.read().toByteArray()).containsExactly(1, 2, 3, 4, 5);
         assertThat(source.sizeIfKnown()).isEmpty();
         assertThat(source.size()).isEqualTo(5);
         assertThat(source.isEmpty()).isFalse();
@@ -99,7 +99,7 @@ class ByteSourceTest {
         var file = Files.write(directory.resolve("data"), BYTES);
         var source = ByteSource.of(file);
 
-        assertThat(source.read()).containsExactly(1, 2, 3, 4, 5);
+        assertThat(source.read().toByteArray()).containsExactly(1, 2, 3, 4, 5);
         assertThat(source.sizeIfKnown()).hasValue(5);
     }
 
@@ -120,14 +120,14 @@ class ByteSourceTest {
     void readsAUrl() throws IOException {
         var file = Files.write(directory.resolve("data"), BYTES);
 
-        assertThat(ByteSource.of(file.toUri().toURL()).read()).containsExactly(1, 2, 3, 4, 5);
+        assertThat(ByteSource.of(file.toUri().toURL()).read().toByteArray()).containsExactly(1, 2, 3, 4, 5);
     }
 
     @Test
     void readsAUri() throws IOException {
         var file = Files.write(directory.resolve("data"), BYTES);
 
-        assertThat(ByteSource.of(file.toUri()).read()).containsExactly(1, 2, 3, 4, 5);
+        assertThat(ByteSource.of(file.toUri()).read().toByteArray()).containsExactly(1, 2, 3, 4, 5);
     }
 
     @Test
@@ -198,7 +198,7 @@ class ByteSourceTest {
     void readsASlice() throws IOException {
         var source = ByteSource.wrap(BYTES).slice(1, 3);
 
-        assertThat(source.read()).containsExactly(2, 3, 4);
+        assertThat(source.read().toByteArray()).containsExactly(2, 3, 4);
         assertThat(source.sizeIfKnown()).hasValue(3);
     }
 
@@ -206,7 +206,7 @@ class ByteSourceTest {
     void readsASliceThatGoesPastTheEnd() throws IOException {
         var source = ByteSource.wrap(BYTES).slice(3, 10);
 
-        assertThat(source.read()).containsExactly(4, 5);
+        assertThat(source.read().toByteArray()).containsExactly(4, 5);
         assertThat(source.sizeIfKnown()).hasValue(2);
     }
 
@@ -214,7 +214,7 @@ class ByteSourceTest {
     void readsNothingFromASliceThatStartsPastTheEnd() throws IOException {
         var source = ByteSource.wrap(BYTES).slice(10, 2);
 
-        assertThat(source.read()).isEmpty();
+        assertThat(source.read().isEmpty()).isTrue();
         assertThat(source.sizeIfKnown()).hasValue(0);
         assertThat(source.isEmpty()).isTrue();
     }
@@ -247,7 +247,8 @@ class ByteSourceTest {
 
     @Test
     void readsASliceOfASlice() throws IOException {
-        assertThat(ByteSource.wrap(BYTES).slice(1, 3).slice(1, 5).read()).containsExactly(3, 4);
+        assertThat(ByteSource.wrap(BYTES).slice(1, 3).slice(1, 5).read().toByteArray())
+                .containsExactly(3, 4);
     }
 
     @Test
@@ -262,7 +263,7 @@ class ByteSourceTest {
     void readsConcatenatedSources() throws IOException {
         var source = ByteSource.concat(ByteSource.wrap(new byte[] {1, 2}), ByteSource.empty(), ByteSource.wrap(BYTES));
 
-        assertThat(source.read()).containsExactly(1, 2, 1, 2, 3, 4, 5);
+        assertThat(source.read().toByteArray()).containsExactly(1, 2, 1, 2, 3, 4, 5);
         assertThat(source.sizeIfKnown()).hasValue(7);
         assertThat(source.isEmpty()).isFalse();
     }
@@ -309,7 +310,7 @@ class ByteSourceTest {
     void readsNothingFromNoConcatenatedSources() throws IOException {
         var source = ByteSource.concat();
 
-        assertThat(source.read()).isEmpty();
+        assertThat(source.read().isEmpty()).isTrue();
         assertThat(source.isEmpty()).isTrue();
         assertThat(ByteSource.concat(ByteSource.empty(), ByteSource.empty()).isEmpty())
                 .isTrue();
@@ -322,7 +323,7 @@ class ByteSourceTest {
 
         sources.add(ByteSource.wrap(BYTES));
 
-        assertThat(source.read()).containsExactly(1, 2, 3, 4, 5);
+        assertThat(source.read().toByteArray()).containsExactly(1, 2, 3, 4, 5);
     }
 
     @Test
@@ -344,6 +345,22 @@ class ByteSourceTest {
         var source = ByteSource.wrap(new byte[] {'a', (byte) 0xFF, 'b'}).asCharSource(StandardCharsets.UTF_8);
 
         assertThatExceptionOfType(MalformedInputException.class).isThrownBy(source::read);
+    }
+
+    @Test
+    void readsBytes() throws IOException {
+        var source = ByteSource.wrap(Bytes.of(BYTES).slice(1, 4));
+
+        assertThat(source.read().toByteArray()).containsExactly(2, 3, 4);
+        assertThat(source.sizeIfKnown()).hasValue(3);
+    }
+
+    @Test
+    void opensAReader() throws IOException {
+        try (var in = ByteSource.wrap(BYTES).openReader()) {
+            assertThat(in.readShort()).isEqualTo((short) 0x0102);
+            assertThat(in.readAll()).isEqualTo(Bytes.of(new byte[] {3, 4, 5}));
+        }
     }
 
     // Counts the streams it opens and closes.

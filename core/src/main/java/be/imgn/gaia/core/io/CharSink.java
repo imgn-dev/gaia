@@ -84,6 +84,17 @@ public interface CharSink {
     }
 
     /**
+     * Opens a new writer to write the characters of this sink. The caller must close it.
+     *
+     * @return a new writer
+     * @throws IOException if the stream cannot be opened
+     * @since 0.1.3
+     */
+    default CharWriter openWriter() throws IOException {
+        return CharWriter.of(openStream());
+    }
+
+    /**
      * Writes characters to this sink.
      *
      * @param chars the characters to write

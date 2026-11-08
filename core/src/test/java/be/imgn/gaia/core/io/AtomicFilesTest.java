@@ -52,6 +52,15 @@ class AtomicFilesTest {
     }
 
     @Test
+    void writesASliceOfBytes() throws IOException {
+        Path file = directory.resolve("settings.toml");
+
+        AtomicFiles.write(file, Bytes.of(new byte[] {1, 2, 3, 4}).slice(1, 3));
+
+        assertThat(file).hasBinaryContent(new byte[] {2, 3});
+    }
+
+    @Test
     void replacesTheContentOfAFile() throws IOException {
         Path file = Files.writeString(directory.resolve("settings.toml"), "a much longer previous content");
 

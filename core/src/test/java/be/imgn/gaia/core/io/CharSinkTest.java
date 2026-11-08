@@ -258,6 +258,17 @@ class CharSinkTest {
                 .withMessage("ISO-2022-CN does not support encoding");
     }
 
+    @Test
+    void opensAWriter() throws IOException {
+        var file = directory.resolve("text");
+
+        try (var out = CharSink.of(file, StandardCharsets.UTF_8).openWriter()) {
+            out.write("a").write('b');
+        }
+
+        assertThat(Files.readString(file)).isEqualTo("ab");
+    }
+
     // Keeps what is written to it, and counts the streams it closes.
     private static final class TrackedSink implements CharSink {
 

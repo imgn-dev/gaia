@@ -84,6 +84,20 @@ public final class AtomicFiles {
     }
 
     /**
+     * Writes bytes to a file atomically, creating it or replacing its content.
+     *
+     * @param file the file to write
+     * @param bytes the new content of the file
+     * @throws IOException if the file cannot be written, which leaves it as it was
+     * @since 0.1.3
+     */
+    public static void write(Path file, Bytes bytes) throws IOException {
+        requireNonNull(file, "file");
+        requireNonNull(bytes, "bytes");
+        write(file, bytes::writeTo);
+    }
+
+    /**
      * Writes a file atomically, creating it or replacing its content with what {@code output} writes. The stream given
      * to {@code output} is buffered, and closing it has no effect.
      *

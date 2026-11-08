@@ -36,6 +36,16 @@ class ByteSinkTest {
     }
 
     @Test
+    void writesASliceOfBytes() throws IOException {
+        var sink = new TrackedSink();
+
+        sink.write(Bytes.of(new byte[] {1, 2, 3, 4}).slice(1, 3));
+
+        assertThat(sink.out.toByteArray()).containsExactly(2, 3);
+        assertThat(sink.closed).isEqualTo(1);
+    }
+
+    @Test
     void writesTheBytesOfAStreamAndLeavesItOpen() throws IOException {
         var sink = new TrackedSink();
         var in = new ByteArrayInputStream(new byte[] {1, 2, 3, 4}, 1, 3);
@@ -116,6 +126,17 @@ class ByteSinkTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> new TrackedSink().asCharSink(Charset.forName("ISO-2022-CN")))
                 .withMessage("ISO-2022-CN does not support encoding");
+    }
+
+    @Test
+    void opensAWriter() throws IOException {
+        var file = directory.resolve("data");
+
+        try (var out = ByteSink.of(file).openWriter()) {
+            out.writeShort(0x0102).writeByte(3);
+        }
+
+        assertThat(Files.readAllBytes(file)).containsExactly(1, 2, 3);
     }
 
     // Keeps what is written to it, and counts the streams it closes.

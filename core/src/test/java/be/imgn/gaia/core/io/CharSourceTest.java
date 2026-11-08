@@ -227,14 +227,14 @@ class CharSourceTest {
     void encodesCharacters() throws IOException {
         var source = CharSource.wrap("café ✓ 😀").asByteSource(StandardCharsets.UTF_8);
 
-        assertThat(source.read()).isEqualTo("café ✓ 😀".getBytes(StandardCharsets.UTF_8));
+        assertThat(source.read().toByteArray()).isEqualTo("café ✓ 😀".getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
     void encodesCharactersInTheDefaultCharset() throws IOException {
         var source = CharSource.wrap("café ✓ 😀").asByteSource();
 
-        assertThat(source.read()).isEqualTo("café ✓ 😀".getBytes(Charsets.DEFAULT_CHARSET));
+        assertThat(source.read().toByteArray()).isEqualTo("café ✓ 😀".getBytes(Charsets.DEFAULT_CHARSET));
     }
 
     @Test
@@ -243,7 +243,7 @@ class CharSourceTest {
         var source = CharSource.wrap(text).asByteSource(StandardCharsets.UTF_8);
         var expected = text.getBytes(StandardCharsets.UTF_8);
 
-        assertThat(source.read()).isEqualTo(expected);
+        assertThat(source.read().toByteArray()).isEqualTo(expected);
         var out = new ByteArrayOutputStream();
         try (var in = source.openStream()) {
             for (var b = in.read(); b != -1; b = in.read()) {
@@ -256,7 +256,7 @@ class CharSourceTest {
     @Test
     void encodesNothingForNoCharacters() throws IOException {
         assertThat(CharSource.empty().asByteSource(StandardCharsets.UTF_8).read())
-                .isEmpty();
+                .isEqualTo(Bytes.empty());
     }
 
     @Test
@@ -320,6 +320,14 @@ class CharSourceTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> CharSource.wrap("text").asByteSource(Charset.forName("ISO-2022-CN")))
                 .withMessage("ISO-2022-CN does not support encoding");
+    }
+
+    @Test
+    void opensAReader() throws IOException {
+        try (var in = CharSource.wrap("a\nb").openReader()) {
+            assertThat(in.readLine(10)).hasValue("a");
+            assertThat(in.readAll()).isEqualTo("b");
+        }
     }
 
     // Counts the streams it opens and closes.

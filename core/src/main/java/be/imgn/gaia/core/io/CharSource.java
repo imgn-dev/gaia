@@ -193,6 +193,17 @@ public interface CharSource {
     }
 
     /**
+     * Opens a new reader on the characters of this source. The caller must close it.
+     *
+     * @return a new reader
+     * @throws IOException if the stream cannot be opened
+     * @since 0.1.3
+     */
+    default CharReader openReader() throws IOException {
+        return CharReader.of(openStream());
+    }
+
+    /**
      * Tells whether this source has no characters, reading at most one character to find out.
      *
      * @return whether this source is empty

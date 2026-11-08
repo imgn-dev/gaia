@@ -69,6 +69,17 @@ public interface ByteSink {
     }
 
     /**
+     * Opens a new writer to write the bytes of this sink. The caller must close it.
+     *
+     * @return a new writer
+     * @throws IOException if the stream cannot be opened
+     * @since 0.1.3
+     */
+    default ByteWriter openWriter() throws IOException {
+        return ByteWriter.of(openStream());
+    }
+
+    /**
      * Writes bytes to this sink.
      *
      * @param bytes the bytes to write
@@ -78,6 +89,20 @@ public interface ByteSink {
         requireNonNull(bytes, "bytes");
         try (var out = openStream()) {
             out.write(bytes);
+        }
+    }
+
+    /**
+     * Writes bytes to this sink.
+     *
+     * @param bytes the bytes to write
+     * @throws IOException if this sink cannot be written
+     * @since 0.1.3
+     */
+    default void write(Bytes bytes) throws IOException {
+        requireNonNull(bytes, "bytes");
+        try (var out = openStream()) {
+            bytes.writeTo(out);
         }
     }
 

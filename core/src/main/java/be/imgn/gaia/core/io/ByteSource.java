@@ -33,7 +33,7 @@ import java.util.OptionalLong;
  *
  * <pre>{@code
  * ByteSource source = () -> socket.getInputStream();
- * byte[] bytes = ByteSource.of(file).read();
+ * Bytes bytes = ByteSource.of(file).read();
  * String text = ByteSource.of(uri).asCharSource(StandardCharsets.UTF_8).read();
  * }</pre>
  *
@@ -62,6 +62,18 @@ public interface ByteSource {
      */
     static ByteSource wrap(byte[] bytes) {
         return new ByteArraySource(bytes);
+    }
+
+    /**
+     * Returns a source that reads bytes.
+     *
+     * @param bytes the bytes to read
+     * @return a source that reads {@code bytes}
+     * @since 0.1.3
+     */
+    static ByteSource wrap(Bytes bytes) {
+        requireNonNull(bytes, "bytes");
+        return new ByteArraySource(bytes.array(), bytes.offset(), bytes.size());
     }
 
     /**
@@ -149,6 +161,17 @@ public interface ByteSource {
     }
 
     /**
+     * Opens a new reader on the bytes of this source. The caller must close it.
+     *
+     * @return a new reader
+     * @throws IOException if the stream cannot be opened
+     * @since 0.1.3
+     */
+    default ByteReader openReader() throws IOException {
+        return ByteReader.of(openStream());
+    }
+
+    /**
      * Tells whether this source has no bytes, reading at most one byte to find out.
      *
      * @return whether this source is empty
@@ -193,12 +216,12 @@ public interface ByteSource {
     /**
      * Reads all the bytes of this source.
      *
-     * @return the bytes of this source, in a new array
+     * @return the bytes of this source
      * @throws IOException if this source cannot be read
      */
-    default byte[] read() throws IOException {
+    default Bytes read() throws IOException {
         try (var in = openStream()) {
-            return in.readAllBytes();
+            return Bytes.wrap(in.readAllBytes());
         }
     }
 

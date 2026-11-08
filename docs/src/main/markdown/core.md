@@ -131,11 +131,42 @@ arrays or strings to read or write as a whole, each read or write opening and cl
 
 ```java
 List<String> lines = CharSource.of(file, UTF_8).readLines();
-byte[] magic = ByteSource.of(uri).slice(0, 4).read();
+Bytes magic = ByteSource.of(uri).slice(0, 4).read();
 CharSink.of(file, UTF_8).writeLines(lines);
 ```
 
 Each is a functional interface, so a lambda that opens a stream makes one.
+
+[`ByteReader`](api:be.imgn.gaia.core.io.ByteReader) and [`ByteWriter`](api:be.imgn.gaia.core.io.ByteWriter) read and
+write binary formats on a stream: numbers in big-endian order, as `DataInputStream` does, or in little-endian order
+with the methods that end in `Le`, runs of bytes, text and lines. [`CharReader`](api:be.imgn.gaia.core.io.CharReader)
+and [`CharWriter`](api:be.imgn.gaia.core.io.CharWriter) read and write text, with the lookahead and scanning that
+parsers need. A reader asks its stream only for what a call needs, so it works on sockets and pipes too:
+
+```java
+try (var in = ByteSource.of(classFile).openReader()) {
+    var magic = in.readInt();
+    var minor = in.readUnsignedShort();
+    var major = in.readUnsignedShort();
+}
+try (var out = ByteSink.of(file).openWriter()) {
+    out.writeIntLe(entries.size()).writeString(name);
+}
+```
+
+The methods that read until they find something, such as the end of a line, take a maximum, so that untrusted input
+cannot fill the memory:
+
+```java
+Optional<String> line = in.readLine(8_192);
+```
+
+[`Bytes`](api:be.imgn.gaia.core.io.Bytes) is an immutable sequence of bytes to use as a value, with hex, Base64, text
+and digests:
+
+```java
+String checksum = Bytes.encode(text).digest("SHA-256").toHex();
+```
 
 ## System properties and environment variables
 
