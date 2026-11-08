@@ -65,7 +65,7 @@ loadScripts(document, 'script');</script>
 <div class="package-signature"><span class="annotations">@NullMarked
 </span>package <span class="element-name">be.imgn.gaia.core.io</span></div>
 <section class="package-description" id="package-description">
-<div class="block">Reading and writing files.</div>
+<div class="block">Reading and writing files and streams.</div>
 </section>
 </div>
 <section class="summary">
@@ -86,21 +86,46 @@ and so does the next run of a program after a crash.</div>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">Writes the content of a file to a stream.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Reads a stream of bytes: numbers in either byte order, runs of bytes, text and lines, with lookahead and search.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">An immutable sequence of bytes, usable as a value: two instances with the same bytes are equal, and instances are
+ordered by their bytes.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="Bytes.Content.html" title="interface in be.imgn.gaia.core.io">Bytes.Content</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">Writes bytes to a writer, for <a href="Bytes.html#build(be.imgn.gaia.core.io.Bytes.Content)"><code>Bytes.build(Content)</code></a>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">A writable destination of bytes, such as a file, that opens a new stream each time it is written.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">A readable source of bytes, such as a file or a URL, that opens a new stream each time it is read.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Writes a stream of bytes: numbers in either byte order, runs of bytes and text.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Reads a stream of characters: lines, runs of characters, lookahead and search, for reading text formats.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">A writable destination of characters, such as a text file, that opens a new stream each time it is written.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">A readable source of characters, such as a text file or a string, that opens a new stream each time it is read.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Writes a stream of characters, with calls that chain.</div>
 </div>
 </div>
 </div>

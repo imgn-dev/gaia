@@ -606,6 +606,19 @@ meta-annotated with <code>@Component</code>.</div>
 <dd>
 <div class="block">Returns the arguments an anonymous class passes to its superclass constructor.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#append(char)" class="member-name-link">append(char)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes a <code>char</code>, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html#append(char)" title="class or interface in java.lang" class="external-link"><code>Appendable.append(char)</code></a> specifies.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#append(java.lang.CharSequence)" class="member-name-link">append(CharSequence)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes characters, or <code>"null"</code> for a null sequence, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html#append(java.lang.CharSequence)" title="class or interface in java.lang" class="external-link"><code>Appendable.append(CharSequence)</code></a> specifies.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#append(java.lang.CharSequence,int,int)" class="member-name-link">append(CharSequence, int, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes part of a character sequence, or of <code>"null"</code> for a null sequence, as
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html#append(java.lang.CharSequence,int,int)" title="class or interface in java.lang" class="external-link"><code>Appendable.append(CharSequence, int, int)</code></a> specifies.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#applicationDirectories(java.lang.String)" class="member-name-link">applicationDirectories(String)</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the directories of an application, named by its name alone.</div>
@@ -638,6 +651,10 @@ one for each kind of file, never shared with another kind.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html#asArray(javax.lang.model.type.TypeMirror)" class="member-name-link">asArray(TypeMirror)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html" title="class in be.imgn.gaia.processing">MoreTypes</a></dt>
 <dd>
 <div class="block">Returns a type as an array type.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#asByteBuffer()" class="member-name-link">asByteBuffer()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns a read-only buffer on the bytes, without copying them.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#asByteSink()" class="member-name-link">asByteSink()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
 <dd>
@@ -693,6 +710,10 @@ define them.</div>
 <div class="block">Returns a type as the type of a method, a constructor or an initializer, such as the one <code>Types.asMemberOf</code>
 gives a method.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#asInputStream()" class="member-name-link">asInputStream()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Returns a stream that reads the rest of the bytes through this reader, for APIs that take an <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link"><code>InputStream</code></a>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html#asIntersection(javax.lang.model.type.TypeMirror)" class="member-name-link">asIntersection(TypeMirror)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html" title="class in be.imgn.gaia.processing">MoreTypes</a></dt>
 <dd>
 <div class="block">Returns a type as an intersection type, such as the bound of <code>T extends Number &amp; Comparable&lt;T&gt;</code>.</div>
@@ -722,6 +743,10 @@ gives a method.</div>
 <dd>
 <div class="block">Returns an element as a module, named or unnamed.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#asOutputStream()" class="member-name-link">asOutputStream()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Returns a stream that writes through this writer, for APIs that take an <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/OutputStream.html" title="class or interface in java.io" class="external-link"><code>OutputStream</code></a>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#asPackage(javax.lang.model.element.Element)" class="member-name-link">asPackage(Element)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html" title="class in be.imgn.gaia.processing">MoreElements</a></dt>
 <dd>
 <div class="block">Returns an element as a package.</div>
@@ -729,6 +754,10 @@ gives a method.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html#asPrimitive(javax.lang.model.type.TypeMirror)" class="member-name-link">asPrimitive(TypeMirror)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html" title="class in be.imgn.gaia.processing">MoreTypes</a></dt>
 <dd>
 <div class="block">Returns a type as a primitive type, <code>void</code> excluded.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#asReader()" class="member-name-link">asReader()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Returns a stream that reads the rest of the characters through this reader, for APIs that take a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link"><code>Reader</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#asRecordComponent(javax.lang.model.element.Element)" class="member-name-link">asRecordComponent(Element)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html" title="class in be.imgn.gaia.processing">MoreElements</a></dt>
 <dd>
@@ -800,6 +829,10 @@ parameter, a resource variable or a binding variable.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html#asWildcard(javax.lang.model.type.TypeMirror)" class="member-name-link">asWildcard(TypeMirror)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreTypes.html" title="class in be.imgn.gaia.processing">MoreTypes</a></dt>
 <dd>
 <div class="block">Returns a type as a wildcard type argument.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#asWriter()" class="member-name-link">asWriter()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Returns a stream that writes through this writer, for APIs that take a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/DiagnosticAssert.html#atColumn(long)" class="member-name-link">atColumn(long)</a> - Method in class be.imgn.gaia.processing.testing.<a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/DiagnosticAssert.html" title="class in be.imgn.gaia.processing.testing">DiagnosticAssert</a></dt>
 <dd>
@@ -878,7 +911,7 @@ that <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.ht
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a> - package be.imgn.gaia.core.io</dt>
 <dd>
-<div class="block">Reading and writing files.</div>
+<div class="block">Reading and writing files and streams.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/package-summary.html">be.imgn.gaia.core.math</a> - package be.imgn.gaia.core.math</dt>
 <dd>
@@ -1052,9 +1085,26 @@ any other type unchanged.</div>
 <dd>
 <div class="block">Builds the type.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#build(be.imgn.gaia.core.io.Bytes.Content)" class="member-name-link">build(Bytes.Content)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes that a callback writes to a writer in memory.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/PrimitiveTypeName.html#BYTE" class="member-name-link">BYTE</a> - Static variable in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/PrimitiveTypeName.html" title="class in be.imgn.gaia.processing.source">PrimitiveTypeName</a></dt>
 <dd>
 <div class="block"><code>byte</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" class="type-name-link" title="class in be.imgn.gaia.core.io">ByteReader</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
+<dd>
+<div class="block">Reads a stream of bytes: numbers in either byte order, runs of bytes, text and lines, with lookahead and search.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" class="type-name-link" title="class in be.imgn.gaia.core.io">Bytes</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
+<dd>
+<div class="block">An immutable sequence of bytes, usable as a value: two instances with the same bytes are equal, and instances are
+ordered by their bytes.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.Content.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">Bytes.Content</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
+<dd>
+<div class="block">Writes bytes to a writer, for <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#build(be.imgn.gaia.core.io.Bytes.Content)"><code>Bytes.build(Content)</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">ByteSink</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
@@ -1063,6 +1113,10 @@ any other type unchanged.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">ByteSource</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
 <div class="block">A readable source of bytes, such as a file or a URL, that opens a new stream each time it is read.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" class="type-name-link" title="class in be.imgn.gaia.core.io">ByteWriter</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
+<dd>
+<div class="block">Writes a stream of bytes: numbers in either byte order, runs of bytes and text.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:C">C</h2>
@@ -1103,6 +1157,10 @@ any other type unchanged.</div>
 <dd>
 <div class="block"><code>char</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" class="type-name-link" title="class in be.imgn.gaia.core.io">CharReader</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
+<dd>
+<div class="block">Reads a stream of characters: lines, runs of characters, lookahead and search, for reading text formats.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Charsets</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">Charsets that gaia relies on.</div>
@@ -1114,6 +1172,10 @@ any other type unchanged.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">CharSource</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
 <div class="block">A readable source of characters, such as a text file or a string, that opens a new stream each time it is read.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" class="type-name-link" title="class in be.imgn.gaia.core.io">CharWriter</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
+<dd>
+<div class="block">Writes a stream of characters, with calls that chain.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Preconditions.html#checkArgument(boolean)" class="member-name-link">checkArgument(boolean)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Preconditions.html" title="class in be.imgn.gaia.core.base">Preconditions</a></dt>
 <dd>
@@ -1188,6 +1250,23 @@ of its vendor, or of its vendor's qualifier.</div>
 <dd>
 <div class="block">Unsubscribes what this subscription subscribed, so that it receives no event published from then on.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#close()" class="member-name-link">close()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Closes the stream.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#close()" class="member-name-link">close()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes the buffered bytes to the stream, then closes it, even if writing fails.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#close()" class="member-name-link">close()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Closes the stream.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#close()" class="member-name-link">close()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes the buffered characters to the stream, then closes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Closeable.html" title="class or interface in java.io" class="external-link"><code>Closeable</code></a>, even if writing fails,
+or flushes it if it is only <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Flushable.html" title="class or interface in java.io" class="external-link"><code>Flushable</code></a>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html#closed(C,C)" class="member-name-link">closed(C, C)</a> - Static method in record class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect">Range</a></dt>
 <dd>
 <div class="block">Returns the range of the values between two endpoints, both included: <code>[lower, upper]</code>.</div>
@@ -1223,6 +1302,10 @@ to.</div>
 <dd>
 <div class="block">Compares this version with another by precedence, as Semantic Versioning defines it, ignoring build metadata.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#compareTo(be.imgn.gaia.core.io.Bytes)" class="member-name-link">compareTo(Bytes)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Compares these bytes with others, one by one as unsigned values, then by size.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#compareTo(be.imgn.gaia.processing.source.ClassName)" class="member-name-link">compareTo(ClassName)</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/Compilation.html" class="type-name-link" title="class in be.imgn.gaia.processing.testing">Compilation</a> - Record Class in <a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/package-summary.html">be.imgn.gaia.processing.testing</a></dt>
@@ -1257,6 +1340,10 @@ to.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ArrayTypeName.html#componentType()" class="member-name-link">componentType()</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ArrayTypeName.html" title="class in be.imgn.gaia.processing.source">ArrayTypeName</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.processing/be/imgn/gaia/processing/source/ArrayTypeName.html#param-componentType"><code>componentType</code></a> record component.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#concat(be.imgn.gaia.core.io.Bytes...)" class="member-name-link">concat(Bytes...)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes of instances one after the other.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#concat(be.imgn.gaia.core.io.ByteSource...)" class="member-name-link">concat(ByteSource...)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
@@ -1364,6 +1451,14 @@ default attributes, clock and features.</div>
 <dd>
 <div class="block">Returns an allocator for a nested scope: it knows the names and tags of this one, and the names it hands out are
 not known to this one.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#copyOf(byte%5B%5D,int,int)" class="member-name-link">copyOf(byte[], int, int)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns an instance with a copy of part of an array.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#copyOf(java.nio.ByteBuffer)" class="member-name-link">copyOf(ByteBuffer)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns an instance with a copy of the remaining bytes of a buffer, from its position to its limit.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#copyTo(be.imgn.gaia.core.io.ByteSink)" class="member-name-link">copyTo(ByteSink)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
@@ -1482,6 +1577,15 @@ each as many times as it occurs there.</div>
 <dd>
 <div class="block">Sets the directory for user-specific data files.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#decode()" class="member-name-link">decode()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the characters that the bytes encode in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default
+charset</a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#decode(java.nio.charset.Charset)" class="member-name-link">decode(Charset)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the characters that the bytes encode in a charset.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET" class="member-name-link">DEFAULT_CHARSET</a> - Static variable in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html" title="class in be.imgn.gaia.core.base">Charsets</a></dt>
 <dd>
 <div class="block">The charset that the methods of gaia use when they are not given one, which currently is UTF-8.</div>
@@ -1542,6 +1646,10 @@ attribute of that annotation.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Diagnostics.Report.html" class="type-name-link" title="class in be.imgn.gaia.processing">Diagnostics.Report</a> - Class in <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/package-summary.html">be.imgn.gaia.processing</a></dt>
 <dd>
 <div class="block">A report about an element, possibly narrowed to one of its annotations and one attribute of it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#digest(java.lang.String)" class="member-name-link">digest(String)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the digest of the bytes, such as their SHA-256 hash.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#directories()" class="member-name-link">directories()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
@@ -1644,6 +1752,10 @@ to its package.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#elementSet()" class="member-name-link">elementSet()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#empty()" class="member-name-link">empty()</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the instance with no bytes.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#empty()" class="member-name-link">empty()</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
 <div class="block">Returns a source with no bytes.</div>
@@ -1671,6 +1783,14 @@ to its package.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#enclosingType(javax.lang.model.element.Element)" class="member-name-link">enclosingType(Element)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html" title="class in be.imgn.gaia.processing">MoreElements</a></dt>
 <dd>
 <div class="block">Returns the type an element is declared in.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#encode(java.lang.CharSequence)" class="member-name-link">encode(CharSequence)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes that encode characters in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default charset</a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#encode(java.lang.CharSequence,java.nio.charset.Charset)" class="member-name-link">encode(CharSequence, Charset)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes that encode characters in a charset.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.Builder.html#endControlFlow()" class="member-name-link">endControlFlow()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.Builder.html" title="class in be.imgn.gaia.processing.source">CodeBlock.Builder</a></dt>
 <dd>
@@ -1705,6 +1825,10 @@ to its package.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Open.html#endpoint()" class="member-name-link">endpoint()</a> - Method in record class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Open.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Open</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Open.html#param-endpoint"><code>endpoint</code></a> record component.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#endsWith(be.imgn.gaia.core.io.Bytes)" class="member-name-link">endsWith(Bytes)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Tells whether these bytes end with others.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#entries()" class="member-name-link">entries()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
@@ -1786,6 +1910,10 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html" title="interface in be.imgn.gaia.core.collect">Multiset</a></dt>
 <dd>
 <div class="block">Compares this multiset with an object.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Tells whether an object is an instance with the same bytes.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html" title="class in be.imgn.gaia.processing.source">Annotation</a></dt>
 <dd>&nbsp;</dd>
@@ -1921,6 +2049,14 @@ creates: to deliver them right away in tests, for instance.</div>
 <dd>
 <div class="block">Makes the bus deliver each event in a task of an executor, rather than on the thread that publishes it.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#exhausted()" class="member-name-link">exhausted()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Tells whether the stream has no more bytes, reading one ahead if none is buffered.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#exhausted()" class="member-name-link">exhausted()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Tells whether the stream has no more characters, reading one ahead if none is buffered.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:F">F</h2>
 <dl class="index">
@@ -2047,6 +2183,14 @@ processor has not generated it yet.</div>
 <dd>
 <div class="block">Returns the largest power of two that doesn't exceed a value.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#flush()" class="member-name-link">flush()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes the buffered bytes to the stream, and flushes the stream.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#flush()" class="member-name-link">flush()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes the buffered characters to the stream, and flushes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Flushable.html" title="class or interface in java.io" class="external-link"><code>Flushable</code></a>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#forCurrentPlatform()" class="member-name-link">forCurrentPlatform()</a> - Static method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
 <div class="block">Returns the configuration that looks like the file system of the operating system the JVM runs on:
@@ -2081,6 +2225,18 @@ item.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#from(java.lang.String)" class="member-name-link">from(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
 <div class="block">Converts text that follows any convention to this one.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#fromBase64(java.lang.CharSequence)" class="member-name-link">fromBase64(CharSequence)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes that Base64 text stands for, in the basic alphabet of RFC 4648.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#fromBase64Url(java.lang.CharSequence)" class="member-name-link">fromBase64Url(CharSequence)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes that Base64 text stands for, in the URL and file name safe alphabet of RFC 4648.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#fromHex(java.lang.CharSequence)" class="member-name-link">fromHex(CharSequence)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes that hexadecimal digits stand for, two digits per byte, in upper or lower case.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:G">G</h2>
@@ -2155,6 +2311,10 @@ and the kind of the generated type.</div>
 <dd>
 <div class="block">Writes the Java source files a processor generates, with their package declaration and imports: modelled as a
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html" title="class in be.imgn.gaia.processing.source"><code>JavaFile</code></a>, or written as text.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#get(int)" class="member-name-link">get(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the byte at an index.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/NameAllocator.html#get(java.lang.Object)" class="member-name-link">get(Object)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/NameAllocator.html" title="class in be.imgn.gaia.processing.source">NameAllocator</a></dt>
 <dd>
@@ -2280,6 +2440,10 @@ its entries.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect">Range</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns a hash code of the bytes, the same as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html#hashCode(byte%5B%5D)" title="class or interface in java.util" class="external-link"><code>Arrays.hashCode(byte[])</code></a> on a copy of them.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html" title="class in be.imgn.gaia.processing.source">Annotation</a></dt>
 <dd>&nbsp;</dd>
@@ -2412,6 +2576,30 @@ Windows, are under.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.Builder.html#indent(java.lang.String)" class="member-name-link">indent(String)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.Builder.html" title="class in be.imgn.gaia.processing.source">JavaFile.Builder</a></dt>
 <dd>
 <div class="block">Sets the indentation of one level.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#indexOf(byte)" class="member-name-link">indexOf(byte)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the index of the first occurrence of a byte.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#indexOf(byte,int)" class="member-name-link">indexOf(byte, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Returns the offset of the first occurrence of a byte among the next ones, without consuming them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#indexOf(char,int)" class="member-name-link">indexOf(char, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Returns the offset of the first occurrence of a character among the next ones, without consuming them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#indexOf(be.imgn.gaia.core.io.Bytes)" class="member-name-link">indexOf(Bytes)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the index of the first occurrence of other bytes.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#indexOf(be.imgn.gaia.core.io.Bytes,int)" class="member-name-link">indexOf(Bytes, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Returns the offset of the first occurrence of bytes among the next ones, without consuming them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#indexOf(java.lang.CharSequence,int)" class="member-name-link">indexOf(CharSequence, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Returns the offset of the first occurrence of characters among the next ones, without consuming them.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/DiagnosticAssert.html#inFile(java.lang.String)" class="member-name-link">inFile(String)</a> - Method in class be.imgn.gaia.processing.testing.<a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/DiagnosticAssert.html" title="class in be.imgn.gaia.processing.testing">DiagnosticAssert</a></dt>
 <dd>
@@ -2553,6 +2741,10 @@ that javac warns about it.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html#isEmpty()" class="member-name-link">isEmpty()</a> - Method in record class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect">Range</a></dt>
 <dd>
 <div class="block">Returns whether this range contains no value, as <code>[3, 3)</code> does.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#isEmpty()" class="member-name-link">isEmpty()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Tells whether there are no bytes.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#isEmpty()" class="member-name-link">isEmpty()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
@@ -3484,6 +3676,10 @@ before the components are assigned.</div>
 <dd>
 <div class="block">Returns a builder of interfaces.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#newLine()" class="member-name-link">newLine()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes the line separator of the system.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/NameAllocator.html#newName(java.lang.String)" class="member-name-link">newName(String)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/NameAllocator.html" title="class in be.imgn.gaia.processing.source">NameAllocator</a></dt>
 <dd>
 <div class="block">Returns a new name, not attached to any tag.</div>
@@ -3535,9 +3731,17 @@ before the components are assigned.</div>
 <dd>
 <div class="block"><code>java.lang.Object</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#of(byte...)" class="member-name-link">of(byte...)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns an instance with a copy of bytes.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html#of(long,long,long)" class="member-name-link">of(long, long, long)</a> - Static method in record class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></dt>
 <dd>
 <div class="block">Returns a release version, without pre-release identifiers or build metadata.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#of(be.imgn.gaia.core.io.Bytes)" class="member-name-link">of(Bytes)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Returns a reader that reads bytes, without copying them.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html#of(be.imgn.gaia.processing.source.ClassName)" class="member-name-link">of(ClassName)</a> - Static method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html" title="class in be.imgn.gaia.processing.source">Annotation</a></dt>
 <dd>
@@ -3562,6 +3766,31 @@ before the components are assigned.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Parameter.html#of(be.imgn.gaia.processing.source.TypeName,java.lang.String,javax.lang.model.element.Modifier...)" class="member-name-link">of(TypeName, String, Modifier...)</a> - Static method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Parameter.html" title="class in be.imgn.gaia.processing.source">Parameter</a></dt>
 <dd>
 <div class="block">Returns a parameter.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#of(java.io.InputStream)" class="member-name-link">of(InputStream)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Returns a reader that reads a stream, which it then owns.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#of(java.io.OutputStream)" class="member-name-link">of(OutputStream)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Returns a writer that writes to a stream, which it then owns.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#of(java.io.Reader)" class="member-name-link">of(Reader)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Returns a reader that reads a stream, which it then owns.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#of(java.io.Writer)" class="member-name-link">of(Writer)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Returns a writer that writes to a stream, which it then owns.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#of(java.lang.Appendable)" class="member-name-link">of(Appendable)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Returns a writer that writes to an <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link"><code>Appendable</code></a>, such as a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html" title="class or interface in java.lang" class="external-link"><code>StringBuilder</code></a>, which it then owns: it
+flushes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Flushable.html" title="class or interface in java.io" class="external-link"><code>Flushable</code></a>, and closes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Closeable.html" title="class or interface in java.io" class="external-link"><code>Closeable</code></a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#of(java.lang.CharSequence)" class="member-name-link">of(CharSequence)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Returns a reader that reads characters.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#of(java.lang.Class)" class="member-name-link">of(Class)</a> - Static method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
 <dd>
@@ -3795,6 +4024,14 @@ thread, with <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExe
 <dd>
 <div class="block">Returns the range of the values between two endpoints, the upper one included: <code>(lower, upper]</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#openReader()" class="member-name-link">openReader()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
+<dd>
+<div class="block">Opens a new reader on the bytes of this source.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#openReader()" class="member-name-link">openReader()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
+<dd>
+<div class="block">Opens a new reader on the characters of this source.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#openStream()" class="member-name-link">openStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
 <dd>
 <div class="block">Opens a new stream to write the bytes of this sink.</div>
@@ -3810,6 +4047,14 @@ thread, with <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExe
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#openStream()" class="member-name-link">openStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
 <dd>
 <div class="block">Opens a new stream on the characters of this source.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#openWriter()" class="member-name-link">openWriter()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
+<dd>
+<div class="block">Opens a new writer to write the bytes of this sink.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#openWriter()" class="member-name-link">openWriter()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
+<dd>
+<div class="block">Opens a new writer to write the characters of this sink.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" class="type-name-link" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a> - Enum Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
@@ -3928,6 +4173,14 @@ separator (<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/PathStyle.html" class="type-name-link" title="enum class in be.imgn.gaia.memfs">PathStyle</a> - Enum Class in <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/package-summary.html">be.imgn.gaia.memfs</a></dt>
 <dd>
 <div class="block">How the paths of a file system are written: their separators, roots and the characters their names may have.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#peek()" class="member-name-link">peek()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Returns the next byte, without consuming it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#peek()" class="member-name-link">peek()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Returns the next character, without consuming it.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#peer(java.lang.String)" class="member-name-link">peer(String)</a> - Method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
 <dd>
@@ -4169,6 +4422,42 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Returns the current reading, in nanoseconds since an arbitrary origin.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#read(byte%5B%5D,int,int)" class="member-name-link">read(byte[], int, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads at least one byte into an array, unless the stream has no more, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html#read(byte%5B%5D,int,int)" title="class or interface in java.io" class="external-link"><code>InputStream.read(byte[], int, int)</code></a> does.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readAll()" class="member-name-link">readAll()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads the bytes up to the end of the stream.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#readAll()" class="member-name-link">readAll()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Reads the characters up to the end of the stream.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readByte()" class="member-name-link">readByte()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a byte.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readBytes(int)" class="member-name-link">readBytes(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads bytes.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#readChar()" class="member-name-link">readChar()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Reads a <code>char</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#readCodePoint()" class="member-name-link">readCodePoint()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Reads a code point: two <code>char</code>s if they are a surrogate pair, one otherwise.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readDouble()" class="member-name-link">readDouble()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a big-endian <code>double</code>, from the bits of a big-endian <code>long</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readDoubleLe()" class="member-name-link">readDoubleLe()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a little-endian <code>double</code>, from the bits of a little-endian <code>long</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html#reader(javax.lang.model.element.AnnotationMirror)" class="member-name-link">reader(AnnotationMirror)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html" title="class in be.imgn.gaia.processing">ProcessingContext</a></dt>
 <dd>
 <div class="block">Returns a reader of an annotation.</div>
@@ -4177,9 +4466,93 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Reads the first line of this source.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readFloat()" class="member-name-link">readFloat()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a big-endian <code>float</code>, from the bits of a big-endian <code>int</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readFloatLe()" class="member-name-link">readFloatLe()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a little-endian <code>float</code>, from the bits of a little-endian <code>int</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readFully(byte%5B%5D,int,int)" class="member-name-link">readFully(byte[], int, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads bytes into an array, filling the part of it given.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readInt()" class="member-name-link">readInt()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a big-endian <code>int</code>: four bytes, the most significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readIntLe()" class="member-name-link">readIntLe()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a little-endian <code>int</code>: four bytes, the least significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readLine(int)" class="member-name-link">readLine(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a line of text encoded in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default charset</a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#readLine(int)" class="member-name-link">readLine(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Reads a line.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readLine(int,java.nio.charset.Charset)" class="member-name-link">readLine(int, Charset)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a line of text encoded in a charset.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#readLines()" class="member-name-link">readLines()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
 <dd>
 <div class="block">Reads all the lines of this source.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readLong()" class="member-name-link">readLong()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a big-endian <code>long</code>: eight bytes, the most significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readLongLe()" class="member-name-link">readLongLe()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a little-endian <code>long</code>: eight bytes, the least significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readShort()" class="member-name-link">readShort()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a big-endian <code>short</code>: two bytes, the most significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readShortLe()" class="member-name-link">readShortLe()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a little-endian <code>short</code>: two bytes, the least significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readString(int)" class="member-name-link">readString(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads bytes that encode text in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default charset</a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#readString(int)" class="member-name-link">readString(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Reads characters.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readString(int,java.nio.charset.Charset)" class="member-name-link">readString(int, Charset)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads bytes that encode text in a charset.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readUnsignedByte()" class="member-name-link">readUnsignedByte()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a byte as an unsigned value.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readUnsignedInt()" class="member-name-link">readUnsignedInt()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a big-endian unsigned 32-bit value.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readUnsignedIntLe()" class="member-name-link">readUnsignedIntLe()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a little-endian unsigned 32-bit value.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readUnsignedShort()" class="member-name-link">readUnsignedShort()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a big-endian unsigned 16-bit value.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#readUnsignedShortLe()" class="member-name-link">readUnsignedShortLe()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Reads a little-endian unsigned 16-bit value.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#readWhile(java.util.function.IntPredicate,int)" class="member-name-link">readWhile(IntPredicate, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Reads the code points that pass a test, up to the first that doesn't, a length limit or the end of the stream.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Kind.html#RECORD" class="member-name-link">RECORD</a> - Enum constant in enum class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Kind.html" title="enum class in be.imgn.gaia.processing.source">Type.Kind</a></dt>
 <dd>
@@ -4267,6 +4640,22 @@ set.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SetMultimap.html#replaceValues(K,java.lang.Iterable)" class="member-name-link">replaceValues(K, Iterable)</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SetMultimap.html" title="interface in be.imgn.gaia.core.collect">SetMultimap</a></dt>
 <dd>
 <div class="block">Replaces all the values of a key.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#request(int)" class="member-name-link">request(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Buffers bytes ahead, without consuming them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#request(int)" class="member-name-link">request(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Buffers characters ahead, without consuming them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#require(int)" class="member-name-link">require(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Buffers bytes ahead, without consuming them, or fails if the stream ends first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#require(int)" class="member-name-link">require(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Buffers characters ahead, without consuming them, or fails if the stream ends first.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#reset()" class="member-name-link">reset()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
 <dd>
@@ -4488,6 +4877,10 @@ classes, instead of starting one per test.</div>
 <dd>
 <div class="block">Returns the number of entries: the key-value pairs, not the distinct keys.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#size()" class="member-name-link">size()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the number of bytes.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#size()" class="member-name-link">size()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
 <div class="block">Returns the number of bytes in this source, reading them all if <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#sizeIfKnown()"><code>ByteSource.sizeIfKnown()</code></a> does not know it.</div>
@@ -4496,9 +4889,25 @@ classes, instead of starting one per test.</div>
 <dd>
 <div class="block">Returns the number of bytes in this source if it is known without reading them.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#skip(long)" class="member-name-link">skip(long)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Skips bytes.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#skip(long)" class="member-name-link">skip(long)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Skips characters.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ServiceFiles.html#skipModuleCheck(be.imgn.gaia.processing.source.ClassName)" class="member-name-link">skipModuleCheck(ClassName)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ServiceFiles.html" title="class in be.imgn.gaia.processing">ServiceFiles</a></dt>
 <dd>
 <div class="block">Turns off the check that the module of each implementation of a service declares <code>provides</code> for it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#skipWhile(java.util.function.IntPredicate)" class="member-name-link">skipWhile(IntPredicate)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Skips the code points that pass a test, up to the first that doesn't or the end of the stream.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#slice(int,int)" class="member-name-link">slice(int, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes between two indexes.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#slice(long,long)" class="member-name-link">slice(long, long)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
@@ -4562,6 +4971,18 @@ connected.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#started(be.imgn.gaia.core.time.Ticker)" class="member-name-link">started(Ticker)</a> - Static method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns a running stopwatch on <code>ticker</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#startsWith(be.imgn.gaia.core.io.Bytes)" class="member-name-link">startsWith(Bytes)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Tells whether the next bytes are some others, without consuming them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#startsWith(be.imgn.gaia.core.io.Bytes)" class="member-name-link">startsWith(Bytes)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Tells whether these bytes start with others.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#startsWith(java.lang.CharSequence)" class="member-name-link">startsWith(CharSequence)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Tells whether the next characters are some others, without consuming them.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#startsWithIgnoreCase(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">startsWithIgnoreCase(CharSequence, CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
 <dd>
@@ -4828,6 +5249,14 @@ source, not the defaults.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/MultisetAssert.html#toAssert(E,java.lang.String)" class="member-name-link">toAssert(E, String)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/MultisetAssert.html" title="class in be.imgn.gaia.core.testing">MultisetAssert</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#toBase64()" class="member-name-link">toBase64()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes as Base64 text in the basic alphabet of RFC 4648, with padding.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#toBase64Url()" class="member-name-link">toBase64Url()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes as Base64 text in the URL and file name safe alphabet of RFC 4648, with padding.</div>
+</dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#toBuilder()" class="member-name-link">toBuilder()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
 <div class="block">Returns a builder that starts with this configuration.</div>
@@ -4859,6 +5288,14 @@ source, not the defaults.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html#toBuilder()" class="member-name-link">toBuilder()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html" title="class in be.imgn.gaia.processing.source">Type</a></dt>
 <dd>
 <div class="block">Returns a builder that starts with this type.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#toByteArray()" class="member-name-link">toByteArray()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns a copy of the bytes.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#toHex()" class="member-name-link">toHex()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns the bytes as hexadecimal digits in lower case, two per byte.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html#toJavaFileObject()" class="member-name-link">toJavaFileObject()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html" title="class in be.imgn.gaia.processing.source">JavaFile</a></dt>
 <dd>
@@ -4973,6 +5410,10 @@ order they are first encountered, and over the values of a key in the order they
 <dd>
 <div class="block">Returns this range in interval notation, such as <code>[0, 10)</code> or <code>(-∞, 5]</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Returns a description of the bytes, for debugging, such as <code>Bytes[size=3, hex=cafeba]</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns the elapsed time in the largest unit in which it is at least 1 once rounded to four significant digits,
@@ -5052,6 +5493,23 @@ abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toUpperUnderscore(java.lang.String)" class="member-name-link">toUpperUnderscore(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
 <div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#UPPER_UNDERSCORE"><code>NamingConvention.UPPER_UNDERSCORE</code></a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#transferFrom(java.io.InputStream)" class="member-name-link">transferFrom(InputStream)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes the bytes of a stream up to its end.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#transferFrom(java.io.Reader)" class="member-name-link">transferFrom(Reader)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes the characters of a stream up to its end.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#transferTo(java.io.OutputStream)" class="member-name-link">transferTo(OutputStream)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
+<dd>
+<div class="block">Writes the bytes up to the end of the stream to another stream, which stays open.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#transferTo(java.lang.Appendable)" class="member-name-link">transferTo(Appendable)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
+<dd>
+<div class="block">Writes the characters up to the end of the stream to an <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang" class="external-link"><code>Appendable</code></a>, such as a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a> or a
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html" title="class or interface in java.lang" class="external-link"><code>StringBuilder</code></a>, which stays open.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" class="type-name-link" title="class in be.imgn.gaia.core.collect">TreeMultiset&lt;E&gt;</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/package-summary.html">be.imgn.gaia.core.collect</a></dt>
 <dd>
@@ -5486,6 +5944,10 @@ and Linux without <code>XDG_RUNTIME_DIR</code>.</div>
 <dd>
 <div class="block">Returns a source that reads an array.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#wrap(be.imgn.gaia.core.io.Bytes)" class="member-name-link">wrap(Bytes)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
+<dd>
+<div class="block">Returns a source that reads bytes.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#wrap(java.lang.CharSequence)" class="member-name-link">wrap(CharSequence)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
 <dd>
 <div class="block">Returns a source that reads a character sequence.</div>
@@ -5499,6 +5961,26 @@ they implement.</div>
 <dd>
 <div class="block">Writes bytes to this sink.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#write(byte%5B%5D)" class="member-name-link">write(byte[])</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes the bytes of an array.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#write(byte%5B%5D,int,int)" class="member-name-link">write(byte[], int, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes part of an array.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#write(char)" class="member-name-link">write(char)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes a <code>char</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#write(be.imgn.gaia.core.io.Bytes)" class="member-name-link">write(Bytes)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
+<dd>
+<div class="block">Writes bytes to this sink.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#write(be.imgn.gaia.core.io.Bytes)" class="member-name-link">write(Bytes)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes bytes.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html#write(be.imgn.gaia.processing.source.JavaFile,javax.lang.model.element.Element...)" class="member-name-link">write(JavaFile, Element...)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html" title="class in be.imgn.gaia.processing">GeneratedSources</a></dt>
 <dd>
 <div class="block">Writes a source file, unless it was already created.</div>
@@ -5506,6 +5988,14 @@ they implement.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#write(java.lang.CharSequence)" class="member-name-link">write(CharSequence)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
 <dd>
 <div class="block">Writes characters to this sink.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#write(java.lang.CharSequence)" class="member-name-link">write(CharSequence)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes characters.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#write(java.lang.CharSequence,int,int)" class="member-name-link">write(CharSequence, int, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes part of a character sequence.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html#write(java.lang.String,java.util.function.Function,javax.lang.model.element.Element...)" class="member-name-link">write(String, Function, Element...)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html" title="class in be.imgn.gaia.processing">GeneratedSources</a></dt>
 <dd>
@@ -5519,6 +6009,34 @@ they implement.</div>
 <dd>
 <div class="block">Writes a file atomically, creating it or replacing its content with what <code>output</code> writes.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/AtomicFiles.html#write(java.nio.file.Path,be.imgn.gaia.core.io.Bytes)" class="member-name-link">write(Path, Bytes)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/AtomicFiles.html" title="class in be.imgn.gaia.core.io">AtomicFiles</a></dt>
+<dd>
+<div class="block">Writes bytes to a file atomically, creating it or replacing its content.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeByte(int)" class="member-name-link">writeByte(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a byte.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#writeCodePoint(int)" class="member-name-link">writeCodePoint(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes a code point: two <code>char</code>s if it is a supplementary character, one otherwise.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeDouble(double)" class="member-name-link">writeDouble(double)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a big-endian <code>double</code>, as the bits of a big-endian <code>long</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeDoubleLe(double)" class="member-name-link">writeDoubleLe(double)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a little-endian <code>double</code>, as the bits of a little-endian <code>long</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeFloat(float)" class="member-name-link">writeFloat(float)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a big-endian <code>float</code>, as the bits of a big-endian <code>int</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeFloatLe(float)" class="member-name-link">writeFloatLe(float)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a little-endian <code>float</code>, as the bits of a little-endian <code>int</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#writeFrom(java.io.InputStream)" class="member-name-link">writeFrom(InputStream)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
 <dd>
 <div class="block">Writes the bytes of a stream to this sink, up to its end.</div>
@@ -5526,6 +6044,18 @@ they implement.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#writeFrom(java.lang.Readable)" class="member-name-link">writeFrom(Readable)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
 <dd>
 <div class="block">Writes the characters of a readable to this sink, up to its end.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeInt(int)" class="member-name-link">writeInt(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a big-endian <code>int</code>: four bytes, the most significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeIntLe(int)" class="member-name-link">writeIntLe(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a little-endian <code>int</code>: four bytes, the least significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html#writeLine(java.lang.CharSequence)" class="member-name-link">writeLine(CharSequence)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" title="class in be.imgn.gaia.core.io">CharWriter</a></dt>
+<dd>
+<div class="block">Writes characters followed by the line separator of the system.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#writeLines(java.lang.Iterable)" class="member-name-link">writeLines(Iterable)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
 <dd>
@@ -5543,6 +6073,30 @@ they implement.</div>
 <dd>
 <div class="block">Writes the lines of a stream to this sink, each followed by a separator.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeLong(long)" class="member-name-link">writeLong(long)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a big-endian <code>long</code>: eight bytes, the most significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeLongLe(long)" class="member-name-link">writeLongLe(long)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a little-endian <code>long</code>: eight bytes, the least significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeShort(int)" class="member-name-link">writeShort(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a big-endian <code>short</code>: two bytes, the most significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeShortLe(int)" class="member-name-link">writeShortLe(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes a little-endian <code>short</code>: two bytes, the least significant first.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeString(java.lang.CharSequence)" class="member-name-link">writeString(CharSequence)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes text encoded in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default charset</a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#writeString(java.lang.CharSequence,java.nio.charset.Charset)" class="member-name-link">writeString(CharSequence, Charset)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
+<dd>
+<div class="block">Writes text encoded in a charset.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/AtomicFiles.html#writeString(java.nio.file.Path,java.lang.CharSequence)" class="member-name-link">writeString(Path, CharSequence)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/AtomicFiles.html" title="class in be.imgn.gaia.core.io">AtomicFiles</a></dt>
 <dd>
 <div class="block">Writes text to a file atomically in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default charset</a>, creating
@@ -5552,9 +6106,17 @@ it or replacing its content.</div>
 <dd>
 <div class="block">Writes text to a file atomically in a charset, creating it or replacing its content.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.Content.html#writeTo(be.imgn.gaia.core.io.ByteWriter)" class="member-name-link">writeTo(ByteWriter)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.Content.html" title="interface in be.imgn.gaia.core.io">Bytes.Content</a></dt>
+<dd>
+<div class="block">Writes bytes to <code>out</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/AtomicFiles.Output.html#writeTo(java.io.OutputStream)" class="member-name-link">writeTo(OutputStream)</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/AtomicFiles.Output.html" title="interface in be.imgn.gaia.core.io">AtomicFiles.Output</a></dt>
 <dd>
 <div class="block">Writes the content of a file to <code>out</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#writeTo(java.io.OutputStream)" class="member-name-link">writeTo(OutputStream)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
+<dd>
+<div class="block">Writes the bytes to a stream, which stays open.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html#writeTo(java.lang.Appendable)" class="member-name-link">writeTo(Appendable)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html" title="class in be.imgn.gaia.processing.source">JavaFile</a></dt>
 <dd>

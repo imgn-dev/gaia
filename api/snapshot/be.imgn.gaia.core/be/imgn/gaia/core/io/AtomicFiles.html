@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#write(java.nio.file.Path,byte%5B%5D)" tabindex="0">write(Path, byte[])</a></li>
+<li><a href="#write(java.nio.file.Path,be.imgn.gaia.core.io.Bytes)" tabindex="0">write(Path, Bytes)</a></li>
 <li><a href="#write(java.nio.file.Path,be.imgn.gaia.core.io.AtomicFiles.Output)" tabindex="0">write(Path, AtomicFiles.Output)</a></li>
 <li><a href="#writeString(java.nio.file.Path,java.lang.CharSequence)" tabindex="0">writeString(Path, CharSequence)</a></li>
 <li><a href="#writeString(java.nio.file.Path,java.lang.CharSequence,java.nio.charset.Charset)" tabindex="0">writeString(Path, CharSequence, Charset)</a></li>
@@ -152,17 +153,23 @@ AtomicFiles.write(exportFile, out -&gt; ImageIO.write(image, "png", out));
 <div class="block">Writes a file atomically, creating it or replacing its content with what <code>output</code> writes.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writeString(java.nio.file.Path,java.lang.CharSequence)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
- <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;text)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#write(java.nio.file.Path,be.imgn.gaia.core.io.Bytes)" class="member-name-link">write</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a>&nbsp;bytes)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Writes bytes to a file atomically, creating it or replacing its content.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writeString(java.nio.file.Path,java.lang.CharSequence)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;text)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Writes text to a file atomically in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default charset</a>, creating
 it or replacing its content.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writeString(java.nio.file.Path,java.lang.CharSequence,java.nio.charset.Charset)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writeString(java.nio.file.Path,java.lang.CharSequence,java.nio.charset.Charset)" class="member-name-link">writeString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;text,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Writes text to a file atomically in a charset, creating it or replacing its content.</div>
 </div>
 </div>
@@ -196,6 +203,26 @@ it or replacing its content.</div>
 <dd><code>bytes</code> - the new content of the file</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the file cannot be written, which leaves it as it was</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="write(java.nio.file.Path,be.imgn.gaia.core.io.Bytes)">
+<h3>write</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a>&nbsp;bytes)</span>
+                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Writes bytes to a file atomically, creating it or replacing its content.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>file</code> - the file to write</dd>
+<dd><code>bytes</code> - the new content of the file</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the file cannot be written, which leaves it as it was</dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
 </dl>
 </div>
 </section>

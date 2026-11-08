@@ -60,7 +60,9 @@ loadScripts(document, 'script');</script>
 <li><a href="#of(java.nio.file.Path,java.nio.file.OpenOption...)" tabindex="0">of(Path, OpenOption...)</a></li>
 <li><a href="#openStream()" tabindex="0">openStream()</a></li>
 <li><a href="#openBufferedStream()" tabindex="0">openBufferedStream()</a></li>
+<li><a href="#openWriter()" tabindex="0">openWriter()</a></li>
 <li><a href="#write(byte%5B%5D)" tabindex="0">write(byte[])</a></li>
+<li><a href="#write(be.imgn.gaia.core.io.Bytes)" tabindex="0">write(Bytes)</a></li>
 <li><a href="#writeFrom(java.io.InputStream)" tabindex="0">writeFrom(InputStream)</a></li>
 <li><a href="#asCharSink()" tabindex="0">asCharSink()</a></li>
 <li><a href="#asCharSink(java.nio.charset.Charset)" tabindex="0">asCharSink(Charset)</a></li>
@@ -140,8 +142,18 @@ default charset</a>.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Opens a new stream to write the bytes of this sink.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#openWriter()" class="member-name-link">openWriter</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Opens a new writer to write the bytes of this sink.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#write(byte%5B%5D)" class="member-name-link">write</a><wbr>(byte[]&nbsp;bytes)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Writes bytes to this sink.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#write(byte%5B%5D)" class="member-name-link">write</a><wbr>(byte[]&nbsp;bytes)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#write(be.imgn.gaia.core.io.Bytes)" class="member-name-link">write</a><wbr>(<a href="Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a>&nbsp;bytes)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Writes bytes to this sink.</div>
 </div>
@@ -215,6 +227,24 @@ atomic: see <a href="AtomicFiles.html" title="class in be.imgn.gaia.core.io"><co
 </section>
 </li>
 <li>
+<section class="detail" id="openWriter()">
+<h3>openWriter</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></span>&nbsp;<span class="element-name">openWriter</span>()
+                       throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Opens a new writer to write the bytes of this sink. The caller must close it.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a new writer</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the stream cannot be opened</dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="write(byte[])">
 <h3>write</h3>
 <div class="horizontal-scroll">
@@ -226,6 +256,24 @@ atomic: see <a href="AtomicFiles.html" title="class in be.imgn.gaia.core.io"><co
 <dd><code>bytes</code> - the bytes to write</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if this sink cannot be written</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="write(be.imgn.gaia.core.io.Bytes)">
+<h3>write</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(<a href="Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a>&nbsp;bytes)</span>
+            throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Writes bytes to this sink.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>bytes</code> - the bytes to write</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if this sink cannot be written</dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
 </dl>
 </div>
 </section>
