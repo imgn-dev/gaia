@@ -5,13 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import be.imgn.gaia.core.base.Charsets;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.file.Files;
@@ -53,18 +52,6 @@ class ByteSinkTest {
         assertThat(sink.writeFrom(in)).isEqualTo(3);
         assertThat(sink.out.toByteArray()).containsExactly(2, 3, 4);
         assertThat(sink.closed).isEqualTo(1);
-    }
-
-    @Test
-    void opensABufferedStream() throws IOException {
-        var sink = new TrackedSink();
-
-        try (var out = sink.openBufferedStream()) {
-            assertThat(out).isInstanceOf(BufferedOutputStream.class);
-            out.write(1);
-        }
-
-        assertThat(sink.out.toByteArray()).containsExactly(1);
     }
 
     @Test
@@ -115,6 +102,37 @@ class ByteSinkTest {
     }
 
     @Test
+    void encodesCharactersBeyondABuffer() throws IOException {
+        var sink = new TrackedSink();
+        var text = "aé😀".repeat(10_000);
+
+        sink.asCharSink(StandardCharsets.UTF_8).write(text);
+
+        assertThat(sink.out.toByteArray()).isEqualTo(text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void encodesASurrogatePairSplitAcrossWrites() throws IOException {
+        var out = new ByteArrayOutputStream();
+
+        try (var writer = new EncodingWriter(ByteWriter.of(out), StandardCharsets.UTF_8.newEncoder())) {
+            writer.write("a\uD83D");
+            writer.write("\uDE00b");
+        }
+
+        assertThat(out.toByteArray()).isEqualTo("a😀b".getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void failsOnAHighSurrogateAtTheEnd() {
+        var tracked = new TrackedSink();
+        var sink = tracked.asCharSink(StandardCharsets.UTF_8);
+
+        assertThatExceptionOfType(MalformedInputException.class).isThrownBy(() -> sink.write("a\uD83D"));
+        assertThat(tracked.closed).isEqualTo(1);
+    }
+
+    @Test
     void failsOnACharacterTheCharsetCannotEncode() {
         var sink = new TrackedSink().asCharSink(StandardCharsets.ISO_8859_1);
 
@@ -146,14 +164,14 @@ class ByteSinkTest {
         private int closed;
 
         @Override
-        public OutputStream openStream() {
-            return new FilterOutputStream(out) {
+        public ByteWriter openWriter() {
+            return ByteWriter.of(new FilterOutputStream(out) {
                 @Override
                 public void close() throws IOException {
                     closed++;
                     super.close();
                 }
-            };
+            });
         }
     }
 }

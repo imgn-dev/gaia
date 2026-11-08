@@ -3,6 +3,7 @@ package be.imgn.gaia.core.io.internal;
 import static java.util.Objects.checkFromIndexSize;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.io.ByteReader;
 import be.imgn.gaia.core.io.ByteSource;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -30,8 +31,8 @@ public final class SlicedByteSource implements ByteSource {
     }
 
     @Override
-    public InputStream openStream() throws IOException {
-        var in = source.openStream();
+    public ByteReader openReader() throws IOException {
+        var in = source.openReader().asInputStream();
         var skipped = false;
         try {
             Streams.skipUpTo(in, offset);
@@ -41,7 +42,7 @@ public final class SlicedByteSource implements ByteSource {
                 in.close();
             }
         }
-        return new LimitedInputStream(in, length);
+        return ByteReader.of(new LimitedInputStream(in, length));
     }
 
     @Override

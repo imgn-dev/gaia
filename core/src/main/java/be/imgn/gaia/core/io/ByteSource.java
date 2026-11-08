@@ -7,10 +7,8 @@ import be.imgn.gaia.core.io.internal.ConcatenatedByteSource;
 import be.imgn.gaia.core.io.internal.PathSource;
 import be.imgn.gaia.core.io.internal.SlicedByteSource;
 import be.imgn.gaia.core.io.internal.Streams;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -22,16 +20,16 @@ import java.util.Arrays;
 import java.util.OptionalLong;
 
 /**
- * A readable source of bytes, such as a file or a URL, that opens a new stream each time it is read.
+ * A readable source of bytes, such as a file or a URL, that opens a new reader each time it is read.
  *
  * <p>Unlike an {@link InputStream}, a source is not an open resource: it can be kept, passed around and read any number
- * of times, and each read method opens a stream and closes it before returning. Only {@link #openStream()} and
- * {@link #openBufferedStream()} leave a stream for the caller to close.
+ * of times, and each read method opens a reader and closes it before returning. Only {@link #openReader()} leaves a
+ * reader for the caller to close.
  *
- * <p>The only abstract method is {@link #openStream()}, so a lambda makes a source:
+ * <p>The only abstract method is {@link #openReader()}, so a lambda makes a source:
  *
  * <pre>{@code
- * ByteSource source = () -> socket.getInputStream();
+ * ByteSource source = () -> ByteReader.of(socket.getInputStream());
  * Bytes bytes = ByteSource.of(file).read();
  * String text = ByteSource.of(uri).asCharSource(StandardCharsets.UTF_8).read();
  * }</pre>
@@ -98,7 +96,7 @@ public interface ByteSource {
      */
     static ByteSource of(URL url) {
         requireNonNull(url, "url");
-        return url::openStream;
+        return () -> ByteReader.of(url.openStream());
     }
 
     /**
@@ -141,34 +139,14 @@ public interface ByteSource {
     }
 
     /**
-     * Opens a new stream on the bytes of this source. The caller must close it.
-     *
-     * @return a new stream
-     * @throws IOException if the stream cannot be opened
-     */
-    InputStream openStream() throws IOException;
-
-    /**
-     * Opens a new buffered stream on the bytes of this source. The caller must close it.
-     *
-     * @return a new buffered stream
-     * @throws IOException if the stream cannot be opened
-     */
-    default InputStream openBufferedStream() throws IOException {
-        var in = openStream();
-        return in instanceof BufferedInputStream ? in : new BufferedInputStream(in);
-    }
-
-    /**
-     * Opens a new reader on the bytes of this source. The caller must close it.
+     * Opens a new reader on the bytes of this source. The caller must close it. For APIs that take an
+     * {@link InputStream}, {@link ByteReader#asInputStream()} reads through it.
      *
      * @return a new reader
-     * @throws IOException if the stream cannot be opened
+     * @throws IOException if the reader cannot be opened
      * @since 0.1.3
      */
-    default ByteReader openReader() throws IOException {
-        return ByteReader.of(openStream());
-    }
+    ByteReader openReader() throws IOException;
 
     /**
      * Tells whether this source has no bytes, reading at most one byte to find out.
@@ -181,8 +159,8 @@ public interface ByteSource {
         if (size.isPresent()) {
             return size.getAsLong() == 0;
         }
-        try (var in = openStream()) {
-            return in.read() == -1;
+        try (var in = openReader()) {
+            return in.exhausted();
         }
     }
 
@@ -207,7 +185,7 @@ public interface ByteSource {
         if (size.isPresent()) {
             return size.getAsLong();
         }
-        try (var in = openStream()) {
+        try (var in = openReader()) {
             return in.transferTo(OutputStream.nullOutputStream());
         }
     }
@@ -219,8 +197,8 @@ public interface ByteSource {
      * @throws IOException if this source cannot be read
      */
     default Bytes read() throws IOException {
-        try (var in = openStream()) {
-            return Bytes.wrap(in.readAllBytes());
+        try (var in = openReader()) {
+            return in.readAll();
         }
     }
 
@@ -233,7 +211,7 @@ public interface ByteSource {
      */
     default long copyTo(OutputStream out) throws IOException {
         requireNonNull(out, "out");
-        try (var in = openStream()) {
+        try (var in = openReader()) {
             return in.transferTo(out);
         }
     }
@@ -247,9 +225,9 @@ public interface ByteSource {
      */
     default long copyTo(ByteSink sink) throws IOException {
         requireNonNull(sink, "sink");
-        try (var in = openStream();
-                var out = sink.openStream()) {
-            return in.transferTo(out);
+        try (var in = openReader();
+                var out = sink.openWriter()) {
+            return out.transferFrom(in.asInputStream());
         }
     }
 
@@ -267,9 +245,9 @@ public interface ByteSource {
         if (size.isPresent() && otherSize.isPresent() && size.getAsLong() != otherSize.getAsLong()) {
             return false;
         }
-        try (var in = openStream();
-                var otherIn = other.openStream()) {
-            return Streams.contentEquals(in, otherIn);
+        try (var in = openReader();
+                var otherIn = other.openReader()) {
+            return Streams.contentEquals(in.asInputStream(), otherIn.asInputStream());
         }
     }
 
@@ -313,6 +291,6 @@ public interface ByteSource {
      */
     default CharSource asCharSource(Charset charset) {
         requireNonNull(charset, "charset");
-        return () -> new InputStreamReader(openStream(), charset.newDecoder());
+        return () -> CharReader.of(new DecodingReader(openReader(), charset.newDecoder()));
     }
 }

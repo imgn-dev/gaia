@@ -3,6 +3,7 @@ package be.imgn.gaia.core.io.internal;
 import static java.util.Objects.checkFromIndexSize;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.io.ByteReader;
 import be.imgn.gaia.core.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +32,8 @@ public final class ConcatenatedByteSource implements ByteSource {
     }
 
     @Override
-    public InputStream openStream() {
-        return new ConcatenatedInputStream(sources.iterator());
+    public ByteReader openReader() {
+        return ByteReader.of(new ConcatenatedInputStream(sources.iterator()));
     }
 
     @Override
@@ -117,7 +118,7 @@ public final class ConcatenatedByteSource implements ByteSource {
             }
             var in = current;
             if (in == null && sources.hasNext()) {
-                in = sources.next().openStream();
+                in = sources.next().openReader().asInputStream();
                 current = in;
             }
             return in;

@@ -5,27 +5,25 @@ import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.OpenOptions;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 
 /**
- * A writable destination of bytes, such as a file, that opens a new stream each time it is written.
+ * A writable destination of bytes, such as a file, that opens a new writer each time it is written.
  *
  * <p>Unlike an {@link OutputStream}, a sink is not an open resource: it can be kept, passed around and written any
- * number of times, and each write method opens a stream and closes it before returning. Only {@link #openStream()} and
- * {@link #openBufferedStream()} leave a stream for the caller to close.
+ * number of times, and each write method opens a writer and closes it before returning. Only {@link #openWriter()}
+ * leaves a writer for the caller to close.
  *
- * <p>The only abstract method is {@link #openStream()}, so a lambda makes a sink:
+ * <p>The only abstract method is {@link #openWriter()}, so a lambda makes a sink:
  *
  * <pre>{@code
- * ByteSink sink = () -> socket.getOutputStream();
+ * ByteSink sink = () -> ByteWriter.of(socket.getOutputStream());
  * ByteSink.of(file).write(bytes);
  * ByteSink.of(log, StandardOpenOption.CREATE, StandardOpenOption.APPEND).write(entry);
  * }</pre>
@@ -46,38 +44,18 @@ public interface ByteSink {
     static ByteSink of(Path file, OpenOption... options) {
         requireNonNull(file, "file");
         var copy = OpenOptions.copyOf(options);
-        return () -> Files.newOutputStream(file, copy);
+        return () -> ByteWriter.of(Files.newOutputStream(file, copy));
     }
 
     /**
-     * Opens a new stream to write the bytes of this sink. The caller must close it.
-     *
-     * @return a new stream
-     * @throws IOException if the stream cannot be opened
-     */
-    OutputStream openStream() throws IOException;
-
-    /**
-     * Opens a new buffered stream to write the bytes of this sink. The caller must close it.
-     *
-     * @return a new buffered stream
-     * @throws IOException if the stream cannot be opened
-     */
-    default OutputStream openBufferedStream() throws IOException {
-        var out = openStream();
-        return out instanceof BufferedOutputStream ? out : new BufferedOutputStream(out);
-    }
-
-    /**
-     * Opens a new writer to write the bytes of this sink. The caller must close it.
+     * Opens a new writer to write the bytes of this sink. The caller must close it. For APIs that take an
+     * {@link OutputStream}, {@link ByteWriter#asOutputStream()} writes through it.
      *
      * @return a new writer
-     * @throws IOException if the stream cannot be opened
+     * @throws IOException if the writer cannot be opened
      * @since 0.1.3
      */
-    default ByteWriter openWriter() throws IOException {
-        return ByteWriter.of(openStream());
-    }
+    ByteWriter openWriter() throws IOException;
 
     /**
      * Writes bytes to this sink.
@@ -87,7 +65,7 @@ public interface ByteSink {
      */
     default void write(byte[] bytes) throws IOException {
         requireNonNull(bytes, "bytes");
-        try (var out = openStream()) {
+        try (var out = openWriter()) {
             out.write(bytes);
         }
     }
@@ -101,8 +79,8 @@ public interface ByteSink {
      */
     default void write(Bytes bytes) throws IOException {
         requireNonNull(bytes, "bytes");
-        try (var out = openStream()) {
-            bytes.writeTo(out);
+        try (var out = openWriter()) {
+            out.write(bytes);
         }
     }
 
@@ -115,8 +93,8 @@ public interface ByteSink {
      */
     default long writeFrom(InputStream in) throws IOException {
         requireNonNull(in, "in");
-        try (var out = openStream()) {
-            return in.transferTo(out);
+        try (var out = openWriter()) {
+            return out.transferFrom(in);
         }
     }
 
@@ -145,6 +123,6 @@ public interface ByteSink {
     default CharSink asCharSink(Charset charset) {
         requireNonNull(charset, "charset");
         checkArgument(charset.canEncode(), "%s does not support encoding", charset);
-        return () -> new OutputStreamWriter(openStream(), charset.newEncoder());
+        return () -> CharWriter.of(new EncodingWriter(openWriter(), charset.newEncoder()));
     }
 }

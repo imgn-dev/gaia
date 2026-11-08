@@ -2,9 +2,9 @@ package be.imgn.gaia.core.io.internal;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.io.ByteReader;
 import be.imgn.gaia.core.io.ByteSource;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.OpenOption;
@@ -35,8 +35,8 @@ public final class PathSource implements ByteSource {
     }
 
     @Override
-    public InputStream openStream() throws IOException {
-        return Files.newInputStream(file, options);
+    public ByteReader openReader() throws IOException {
+        return ByteReader.of(Files.newInputStream(file, options));
     }
 
     // Only a regular file has a size to trust: special files, such as those of /proc on Linux, report a size of 0

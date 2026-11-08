@@ -5,13 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import be.imgn.gaia.core.base.Charsets;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
@@ -70,13 +68,13 @@ class ByteSourceTest {
 
     @Test
     void readsALambda() throws IOException {
-        ByteSource source = () -> new ByteArrayInputStream(BYTES);
+        ByteSource source = () -> ByteReader.of(new ByteArrayInputStream(BYTES));
 
         assertThat(source.read().toByteArray()).containsExactly(1, 2, 3, 4, 5);
         assertThat(source.sizeIfKnown()).isEmpty();
         assertThat(source.size()).isEqualTo(5);
         assertThat(source.isEmpty()).isFalse();
-        assertThat(((ByteSource) () -> new ByteArrayInputStream(new byte[0])).isEmpty())
+        assertThat(((ByteSource) () -> ByteReader.of(new ByteArrayInputStream(new byte[0]))).isEmpty())
                 .isTrue();
     }
 
@@ -137,16 +135,6 @@ class ByteSourceTest {
     }
 
     @Test
-    void opensABufferedStream() throws IOException {
-        ByteSource source = () -> new ByteArrayInputStream(BYTES);
-
-        try (var in = source.openBufferedStream()) {
-            assertThat(in).isInstanceOf(BufferedInputStream.class);
-            assertThat(in.readAllBytes()).containsExactly(1, 2, 3, 4, 5);
-        }
-    }
-
-    @Test
     void copiesToAStream() throws IOException {
         var out = new ByteArrayOutputStream();
 
@@ -158,7 +146,7 @@ class ByteSourceTest {
     void copiesToASink() throws IOException {
         var out = new ByteArrayOutputStream();
 
-        assertThat(ByteSource.wrap(BYTES).copyTo(() -> out)).isEqualTo(5);
+        assertThat(ByteSource.wrap(BYTES).copyTo(() -> ByteWriter.of(out))).isEqualTo(5);
         assertThat(out.toByteArray()).containsExactly(1, 2, 3, 4, 5);
     }
 
@@ -167,13 +155,13 @@ class ByteSourceTest {
         var large = bytes(20_000);
         var changed = large.clone();
         changed[19_999] = 0;
-        ByteSource unknownSize = () -> new ByteArrayInputStream(large);
+        ByteSource unknownSize = () -> ByteReader.of(new ByteArrayInputStream(large));
 
         assertThat(ByteSource.wrap(large).contentEquals(unknownSize)).isTrue();
         assertThat(ByteSource.wrap(changed).contentEquals(unknownSize)).isFalse();
         assertThat(ByteSource.wrap(Arrays.copyOf(large, 19_999)).contentEquals(unknownSize))
                 .isFalse();
-        assertThat(ByteSource.empty().contentEquals(() -> new ByteArrayInputStream(new byte[0])))
+        assertThat(ByteSource.empty().contentEquals(() -> ByteReader.of(new ByteArrayInputStream(new byte[0]))))
                 .isTrue();
     }
 
@@ -181,7 +169,7 @@ class ByteSourceTest {
     void comparesKnownSizesWithoutReading() throws IOException {
         var unreadable = new ByteSource() {
             @Override
-            public InputStream openStream() throws IOException {
+            public ByteReader openReader() throws IOException {
                 throw new IOException("unreadable");
             }
 
@@ -222,24 +210,24 @@ class ByteSourceTest {
     @Test
     void readsASliceOfALargeStreamByteByByte() throws IOException {
         var large = bytes(20_000);
-        ByteSource source = () -> new ByteArrayInputStream(large);
+        ByteSource source = () -> ByteReader.of(new ByteArrayInputStream(large));
         var slice = source.slice(10_000, 3);
 
         assertThat(slice.sizeIfKnown()).isEmpty();
-        try (var in = slice.openStream()) {
-            assertThat(in.read()).isEqualTo(Byte.toUnsignedInt(large[10_000]));
-            assertThat(in.read()).isEqualTo(Byte.toUnsignedInt(large[10_001]));
-            assertThat(in.read()).isEqualTo(Byte.toUnsignedInt(large[10_002]));
-            assertThat(in.read()).isEqualTo(-1);
+        try (var in = slice.openReader()) {
+            assertThat(in.readByte()).isEqualTo(large[10_000]);
+            assertThat(in.readByte()).isEqualTo(large[10_001]);
+            assertThat(in.readByte()).isEqualTo(large[10_002]);
+            assertThat(in.exhausted()).isTrue();
         }
     }
 
     @Test
     void doesNotSkipBackwardsInASlice() throws IOException {
         var file = Files.write(directory.resolve("bytes"), bytes(16));
-        ByteSource source = () -> new FileInputStream(file.toFile());
+        ByteSource source = () -> ByteReader.of(new FileInputStream(file.toFile()));
 
-        try (var in = source.slice(8, 3).openStream()) {
+        try (var in = source.slice(8, 3).openReader().asInputStream()) {
             assertThat(in.skip(-8)).isZero();
             assertThat(in.readAllBytes()).containsExactly(8, 9, 10);
         }
@@ -273,9 +261,9 @@ class ByteSourceTest {
         var source = ByteSource.concat(ByteSource.wrap(new byte[] {1}), ByteSource.empty(), ByteSource.wrap(BYTES));
 
         var read = new ArrayList<Integer>();
-        try (var in = source.openStream()) {
-            for (var b = in.read(); b != -1; b = in.read()) {
-                read.add(b);
+        try (var in = source.openReader()) {
+            while (!in.exhausted()) {
+                read.add(in.readUnsignedByte());
             }
         }
 
@@ -287,10 +275,10 @@ class ByteSourceTest {
         var first = new TrackedSource(new byte[] {1});
         var second = new TrackedSource(new byte[] {2});
 
-        try (var in = ByteSource.concat(first, second).openStream()) {
+        try (var in = ByteSource.concat(first, second).openReader()) {
             assertThat(second.opened).isZero();
-            in.read();
-            in.read();
+            in.readByte();
+            in.readByte();
 
             assertThat(first.closed).isEqualTo(1);
             assertThat(second.opened).isEqualTo(1);
@@ -300,7 +288,7 @@ class ByteSourceTest {
 
     @Test
     void doesNotKnowTheSizeOfConcatenatedSourcesIfOneIsUnknown() throws IOException {
-        var source = ByteSource.concat(ByteSource.wrap(BYTES), () -> new ByteArrayInputStream(BYTES));
+        var source = ByteSource.concat(ByteSource.wrap(BYTES), () -> ByteReader.of(new ByteArrayInputStream(BYTES)));
 
         assertThat(source.sizeIfKnown()).isEmpty();
         assertThat(source.size()).isEqualTo(10);
@@ -341,10 +329,42 @@ class ByteSourceTest {
     }
 
     @Test
+    void decodesCharactersBeyondABuffer() throws IOException {
+        var text = "aé😀".repeat(10_000);
+        ByteSource source = () -> ByteReader.of(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
+
+        assertThat(source.asCharSource(StandardCharsets.UTF_8).read()).isEqualTo(text);
+    }
+
+    @Test
+    void decodesASurrogatePairForRoomForOneCharacter() throws IOException {
+        var bytes = ByteReader.of(Bytes.of("😀".getBytes(StandardCharsets.UTF_8)));
+
+        try (var in = new DecodingReader(bytes, StandardCharsets.UTF_8.newDecoder())) {
+            var c = new char[1];
+            assertThat(in.read(c)).isEqualTo(1);
+            assertThat(c[0]).isEqualTo('\uD83D');
+            assertThat(in.read(c)).isEqualTo(1);
+            assertThat(c[0]).isEqualTo('\uDE00');
+            assertThat(in.read(c)).isEqualTo(-1);
+        }
+    }
+
+    @Test
     void failsOnBytesThatAreNotValidInTheCharset() {
         var source = ByteSource.wrap(new byte[] {'a', (byte) 0xFF, 'b'}).asCharSource(StandardCharsets.UTF_8);
 
         assertThatExceptionOfType(MalformedInputException.class).isThrownBy(source::read);
+    }
+
+    @Test
+    void readsTheCharactersBeforeInvalidBytes() throws IOException {
+        var source = ByteSource.wrap(new byte[] {'a', 'b', (byte) 0xFF}).asCharSource(StandardCharsets.UTF_8);
+
+        try (var in = source.openReader()) {
+            assertThat(in.readString(2)).isEqualTo("ab");
+            assertThatExceptionOfType(MalformedInputException.class).isThrownBy(() -> in.readString(1));
+        }
     }
 
     @Test
@@ -382,15 +402,15 @@ class ByteSourceTest {
         }
 
         @Override
-        public InputStream openStream() {
+        public ByteReader openReader() {
             opened++;
-            return new FilterInputStream(new ByteArrayInputStream(bytes)) {
+            return ByteReader.of(new FilterInputStream(new ByteArrayInputStream(bytes)) {
                 @Override
                 public void close() throws IOException {
                     closed++;
                     super.close();
                 }
-            };
+            });
         }
     }
 }

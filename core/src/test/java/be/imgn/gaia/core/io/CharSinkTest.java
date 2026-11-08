@@ -5,12 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import be.imgn.gaia.core.base.Charsets;
-import java.io.BufferedWriter;
+import be.imgn.gaia.core.io.internal.DecodingOutputStream;
 import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
@@ -102,18 +101,6 @@ class CharSinkTest {
     }
 
     @Test
-    void opensABufferedStream() throws IOException {
-        var sink = new TrackedSink();
-
-        try (var out = sink.openBufferedStream()) {
-            assertThat(out).isInstanceOf(BufferedWriter.class);
-            out.write("text");
-        }
-
-        assertThat(sink.out).hasToString("text");
-    }
-
-    @Test
     void writesATextFile() throws IOException {
         var file = Files.writeString(directory.resolve("text"), "previous content");
 
@@ -173,9 +160,9 @@ class CharSinkTest {
     void decodesACharacterWrittenOneByteAtATime() throws IOException {
         var sink = new TrackedSink();
 
-        try (var out = sink.asByteSink(StandardCharsets.UTF_8).openStream()) {
+        try (var out = sink.asByteSink(StandardCharsets.UTF_8).openWriter()) {
             for (var b : "😀".getBytes(StandardCharsets.UTF_8)) {
-                out.write(b);
+                out.writeByte(b);
                 out.flush();
             }
         }
@@ -189,8 +176,9 @@ class CharSinkTest {
         var text = "aé😀".repeat(10_000);
 
         sink.asByteSink(StandardCharsets.UTF_8)
-                .writeFrom(
-                        ByteSource.wrap(text.getBytes(StandardCharsets.UTF_8)).openStream());
+                .writeFrom(ByteSource.wrap(text.getBytes(StandardCharsets.UTF_8))
+                        .openReader()
+                        .asInputStream());
 
         assertThat(sink.out).hasToString(text);
     }
@@ -218,7 +206,7 @@ class CharSinkTest {
     @Test
     void decodesTheBytesWrittenAfterTheWriterFails() throws IOException {
         var out = new StringWriter();
-        CharSink failingOnce = () -> new FilterWriter(out) {
+        var failingOnce = new FilterWriter(out) {
             private boolean failed;
 
             @Override
@@ -231,7 +219,7 @@ class CharSinkTest {
             }
         };
 
-        try (var stream = failingOnce.asByteSink(StandardCharsets.UTF_8).openStream()) {
+        try (var stream = new DecodingOutputStream(failingOnce, StandardCharsets.UTF_8.newDecoder())) {
             assertThatExceptionOfType(IOException.class)
                     .isThrownBy(() -> stream.write(new byte[] {'a', 'b'}))
                     .withMessage("Failed once");
@@ -276,14 +264,14 @@ class CharSinkTest {
         private int closed;
 
         @Override
-        public Writer openStream() {
-            return new FilterWriter(out) {
+        public CharWriter openWriter() {
+            return CharWriter.of(new FilterWriter(out) {
                 @Override
                 public void close() throws IOException {
                     closed++;
                     super.close();
                 }
-            };
+            });
         }
     }
 }

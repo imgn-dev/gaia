@@ -5,11 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import be.imgn.gaia.core.base.Charsets;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FilterReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
@@ -48,7 +46,7 @@ class CharSourceTest {
         text.append(" two");
 
         assertThat(source.read()).isEqualTo("one two");
-        try (var in = source.openStream()) {
+        try (var in = source.openReader()) {
             assertThat(in.transferTo(new StringWriter())).isEqualTo(7);
         }
     }
@@ -66,13 +64,14 @@ class CharSourceTest {
 
     @Test
     void readsALambda() throws IOException {
-        CharSource source = () -> new StringReader("text");
+        CharSource source = () -> CharReader.of(new StringReader("text"));
 
         assertThat(source.read()).isEqualTo("text");
         assertThat(source.lengthIfKnown()).isEmpty();
         assertThat(source.length()).isEqualTo(4);
         assertThat(source.isEmpty()).isFalse();
-        assertThat(((CharSource) () -> new StringReader("")).isEmpty()).isTrue();
+        assertThat(((CharSource) () -> CharReader.of(new StringReader(""))).isEmpty())
+                .isTrue();
     }
 
     @Test
@@ -122,25 +121,6 @@ class CharSourceTest {
     }
 
     @Test
-    void opensABufferedStream() throws IOException {
-        CharSource source = () -> new StringReader("text");
-
-        try (var in = source.openBufferedStream()) {
-            assertThat(in.readLine()).isEqualTo("text");
-        }
-    }
-
-    @Test
-    void opensTheStreamItselfIfItIsBuffered() throws IOException {
-        var reader = new BufferedReader(new StringReader("text"));
-        CharSource source = () -> reader;
-
-        try (var in = source.openBufferedStream()) {
-            assertThat(in).isSameAs(reader);
-        }
-    }
-
-    @Test
     void copiesToAnAppendable() throws IOException {
         var out = new StringBuilder("> ");
 
@@ -152,7 +132,7 @@ class CharSourceTest {
     void copiesToASink() throws IOException {
         var out = new StringWriter();
 
-        assertThat(CharSource.wrap("text").copyTo(() -> out)).isEqualTo(4);
+        assertThat(CharSource.wrap("text").copyTo(() -> CharWriter.of(out))).isEqualTo(4);
         assertThat(out).hasToString("text");
     }
 
@@ -197,11 +177,10 @@ class CharSourceTest {
         var first = new TrackedSource("1");
         var second = new TrackedSource("2");
 
-        try (var in = CharSource.concat(List.of(first, second)).openStream()) {
+        try (var in = CharSource.concat(List.of(first, second)).openReader()) {
             assertThat(second.opened).isZero();
-            var buffer = new char[2];
-            assertThat(in.read(buffer)).isEqualTo(1);
-            assertThat(in.read(buffer)).isEqualTo(1);
+            assertThat(in.readString(1)).isEqualTo("1");
+            assertThat(in.readString(1)).isEqualTo("2");
 
             assertThat(first.closed).isEqualTo(1);
             assertThat(second.opened).isEqualTo(1);
@@ -211,7 +190,7 @@ class CharSourceTest {
 
     @Test
     void doesNotKnowTheLengthOfConcatenatedSourcesIfOneIsUnknown() throws IOException {
-        var source = CharSource.concat(CharSource.wrap("one"), () -> new StringReader(" two"));
+        var source = CharSource.concat(CharSource.wrap("one"), () -> CharReader.of(new StringReader(" two")));
 
         assertThat(source.lengthIfKnown()).isEmpty();
         assertThat(source.length()).isEqualTo(7);
@@ -245,9 +224,9 @@ class CharSourceTest {
 
         assertThat(source.read().toByteArray()).isEqualTo(expected);
         var out = new ByteArrayOutputStream();
-        try (var in = source.openStream()) {
-            for (var b = in.read(); b != -1; b = in.read()) {
-                out.write(b);
+        try (var in = source.openReader()) {
+            while (!in.exhausted()) {
+                out.write(in.readByte());
             }
         }
         assertThat(out.toByteArray()).isEqualTo(expected);
@@ -277,17 +256,17 @@ class CharSourceTest {
     void readsOnlyTheBytesBeforeACharacterThatFailsToEncode() throws IOException {
         var source = CharSource.wrap("ab\uD800c").asByteSource(StandardCharsets.UTF_8);
 
-        try (var in = source.openStream()) {
-            assertThatExceptionOfType(MalformedInputException.class).isThrownBy(in::read);
-            assertThat(in.read()).isEqualTo('a');
-            assertThat(in.read()).isEqualTo('b');
-            assertThatExceptionOfType(MalformedInputException.class).isThrownBy(in::read);
+        try (var in = source.openReader()) {
+            assertThatExceptionOfType(MalformedInputException.class).isThrownBy(in::readByte);
+            assertThat(in.readByte()).isEqualTo((byte) 'a');
+            assertThat(in.readByte()).isEqualTo((byte) 'b');
+            assertThatExceptionOfType(MalformedInputException.class).isThrownBy(in::readByte);
         }
     }
 
     @Test
     void encodesTheCharactersReadAfterTheReaderFails() throws IOException {
-        CharSource source = () -> new FilterReader(new StringReader("ab")) {
+        CharSource source = () -> CharReader.of(new FilterReader(new StringReader("ab")) {
             private boolean failed;
 
             @Override
@@ -298,11 +277,13 @@ class CharSourceTest {
                 }
                 return super.read(buffer, offset, length);
             }
-        };
+        });
 
-        try (var in = source.asByteSource(StandardCharsets.UTF_8).openStream()) {
-            assertThatExceptionOfType(IOException.class).isThrownBy(in::read).withMessage("Failed once");
-            assertThat(in.readAllBytes()).containsExactly('a', 'b');
+        try (var in = source.asByteSource(StandardCharsets.UTF_8).openReader()) {
+            assertThatExceptionOfType(IOException.class)
+                    .isThrownBy(in::readByte)
+                    .withMessage("Failed once");
+            assertThat(in.readAll().toByteArray()).containsExactly('a', 'b');
         }
     }
 
@@ -342,15 +323,15 @@ class CharSourceTest {
         }
 
         @Override
-        public Reader openStream() {
+        public CharReader openReader() {
             opened++;
-            return new FilterReader(new StringReader(text)) {
+            return CharReader.of(new FilterReader(new StringReader(text)) {
                 @Override
                 public void close() throws IOException {
                     closed++;
                     super.close();
                 }
-            };
+            });
         }
     }
 }

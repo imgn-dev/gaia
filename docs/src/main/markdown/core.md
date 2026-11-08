@@ -127,7 +127,7 @@ The callback form commits the file only if the callback returns normally.
 
 [`ByteSource`](api:be.imgn.gaia.core.io.ByteSource), [`CharSource`](api:be.imgn.gaia.core.io.CharSource),
 [`ByteSink`](api:be.imgn.gaia.core.io.ByteSink) and [`CharSink`](api:be.imgn.gaia.core.io.CharSink) are files, URLs,
-arrays or strings to read or write as a whole, each read or write opening and closing its own stream:
+arrays or strings to read or write as a whole, each read or write opening and closing its own reader or writer:
 
 ```java
 List<String> lines = CharSource.of(file, UTF_8).readLines();
@@ -135,7 +135,7 @@ Bytes magic = ByteSource.of(uri).slice(0, 4).read();
 CharSink.of(file, UTF_8).writeLines(lines);
 ```
 
-Each is a functional interface, so a lambda that opens a stream makes one.
+Each is a functional interface, so a lambda that opens a reader or a writer makes one.
 
 [`ByteReader`](api:be.imgn.gaia.core.io.ByteReader) and [`ByteWriter`](api:be.imgn.gaia.core.io.ByteWriter) read and
 write binary formats on a stream: numbers in big-endian order, as `DataInputStream` does, or in little-endian order

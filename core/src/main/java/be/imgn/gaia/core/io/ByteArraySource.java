@@ -3,8 +3,6 @@ package be.imgn.gaia.core.io;
 import static java.util.Objects.checkFromIndexSize;
 import static java.util.Objects.requireNonNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.OptionalLong;
 
 /** A source that reads an array, or part of one, which it does not copy. */
@@ -39,11 +37,6 @@ final class ByteArraySource implements ByteSource {
         this.bytes = requireNonNull(bytes, "bytes");
         this.offset = checkFromIndexSize(offset, length, bytes.length);
         this.length = length;
-    }
-
-    @Override
-    public InputStream openStream() {
-        return new ByteArrayInputStream(bytes, offset, length);
     }
 
     @Override

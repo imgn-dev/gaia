@@ -2,9 +2,8 @@ package be.imgn.gaia.core.io.internal;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.io.CharReader;
 import be.imgn.gaia.core.io.CharSource;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.OptionalLong;
 
 /** A source that reads a character sequence, which it does not copy. */
@@ -25,8 +24,8 @@ public final class CharSequenceSource implements CharSource {
     }
 
     @Override
-    public Reader openStream() {
-        return new StringReader(chars.toString());
+    public CharReader openReader() {
+        return CharReader.of(chars);
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
@@ -297,19 +298,9 @@ public final class ByteWriter implements Closeable, Flushable {
      */
     public long transferFrom(InputStream in) throws IOException {
         requireNonNull(in, "in");
-        ensureOpen();
-        var total = 0L;
-        while (true) {
-            if (count == buffer.length) {
-                flushBuffer();
-            }
-            var read = in.read(buffer, count, buffer.length - count);
-            if (read < 0) {
-                return total;
-            }
-            count += read;
-            total += read;
-        }
+        // Handed the stream itself, a file transfers its bytes to another file without copying them through memory.
+        flushBuffer();
+        return in.transferTo(out);
     }
 
     /**
@@ -353,6 +344,19 @@ public final class ByteWriter implements Closeable, Flushable {
             buffer = NO_BYTES;
             count = 0;
         }
+    }
+
+    // Room for at least byteCount bytes, which must fit in an empty buffer, for EncodingWriter, which fills it by
+    // moving the position of the buffer and passing it to commit(ByteBuffer).
+    ByteBuffer room(int byteCount) throws IOException {
+        if (buffer.length - count < byteCount) {
+            flushBuffer();
+        }
+        return ByteBuffer.wrap(buffer, count, buffer.length - count);
+    }
+
+    void commit(ByteBuffer bytes) {
+        count = bytes.position();
     }
 
     // Makes room for byteCount bytes, which must fit in an empty buffer, and returns the index where they go.

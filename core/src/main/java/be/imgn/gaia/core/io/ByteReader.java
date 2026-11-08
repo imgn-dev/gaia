@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -676,6 +677,16 @@ public final class ByteReader implements Closeable {
         }
     }
 
+    // The buffered bytes, for DecodingReader, which consumes them by moving the position of the buffer and passing it
+    // to consume(ByteBuffer).
+    ByteBuffer buffered() {
+        return ByteBuffer.wrap(buffer, position, limit - position);
+    }
+
+    void consume(ByteBuffer bytes) {
+        position = bytes.position();
+    }
+
     private static boolean encodesLineTerminatorsAsAscii(Charset charset) {
         return charset.equals(StandardCharsets.UTF_8)
                 || (charset.canEncode() && Arrays.equals("\r\n".getBytes(charset), CRLF));
@@ -774,8 +785,13 @@ public final class ByteReader implements Closeable {
 
         @Override
         public long skip(long n) throws IOException {
-            if (n <= 0 || !fill(1)) {
+            if (n <= 0) {
                 return 0;
+            }
+            ensureOpen();
+            // Past the buffered bytes, the stream skips on its own, as a file does by seeking rather than reading.
+            if (position == limit) {
+                return in == null ? 0 : in.skip(n);
             }
             var skipped = (int) Math.min(n, limit - position);
             position += skipped;

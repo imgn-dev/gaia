@@ -7,7 +7,6 @@ import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.CharSequenceSource;
 import be.imgn.gaia.core.io.internal.ConcatenatedCharSource;
 import be.imgn.gaia.core.io.internal.EncodingInputStream;
-import be.imgn.gaia.core.io.internal.Streams;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -23,20 +22,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
- * A readable source of characters, such as a text file or a string, that opens a new stream each time it is read.
+ * A readable source of characters, such as a text file or a string, that opens a new reader each time it is read.
  *
  * <p>Unlike a {@link Reader}, a source is not an open resource: it can be kept, passed around and read any number of
- * times, and each read method opens a stream and closes it before returning. Only {@link #openStream()},
- * {@link #openBufferedStream()} and {@link #lines()} leave a stream for the caller to close.
+ * times, and each read method opens a reader and closes it before returning. Only {@link #openReader()} and
+ * {@link #lines()} leave something for the caller to close.
  *
- * <p>The only abstract method is {@link #openStream()}, so a lambda makes a source:
+ * <p>The only abstract method is {@link #openReader()}, so a lambda makes a source:
  *
  * <pre>{@code
- * CharSource source = () -> new InputStreamReader(System.in, StandardCharsets.UTF_8);
+ * CharSource source = () -> CharReader.of(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  * List<String> lines = CharSource.of(file, StandardCharsets.UTF_8).readLines();
  * }</pre>
  *
@@ -174,34 +176,14 @@ public interface CharSource {
     }
 
     /**
-     * Opens a new stream on the characters of this source. The caller must close it.
-     *
-     * @return a new stream
-     * @throws IOException if the stream cannot be opened
-     */
-    Reader openStream() throws IOException;
-
-    /**
-     * Opens a new buffered stream on the characters of this source. The caller must close it.
-     *
-     * @return a new buffered stream
-     * @throws IOException if the stream cannot be opened
-     */
-    default BufferedReader openBufferedStream() throws IOException {
-        var in = openStream();
-        return in instanceof BufferedReader buffered ? buffered : new BufferedReader(in);
-    }
-
-    /**
-     * Opens a new reader on the characters of this source. The caller must close it.
+     * Opens a new reader on the characters of this source. The caller must close it. For APIs that take a
+     * {@link Reader}, {@link CharReader#asReader()} reads through it.
      *
      * @return a new reader
-     * @throws IOException if the stream cannot be opened
+     * @throws IOException if the reader cannot be opened
      * @since 0.1.3
      */
-    default CharReader openReader() throws IOException {
-        return CharReader.of(openStream());
-    }
+    CharReader openReader() throws IOException;
 
     /**
      * Tells whether this source has no characters, reading at most one character to find out.
@@ -214,8 +196,8 @@ public interface CharSource {
         if (length.isPresent()) {
             return length.getAsLong() == 0;
         }
-        try (var in = openStream()) {
-            return in.read() == -1;
+        try (var in = openReader()) {
+            return in.exhausted();
         }
     }
 
@@ -240,7 +222,7 @@ public interface CharSource {
         if (length.isPresent()) {
             return length.getAsLong();
         }
-        try (var in = openStream()) {
+        try (var in = openReader()) {
             return in.transferTo(Writer.nullWriter());
         }
     }
@@ -264,8 +246,8 @@ public interface CharSource {
      * @throws IOException if this source cannot be read
      */
     default Optional<String> readFirstLine() throws IOException {
-        try (var in = openBufferedStream()) {
-            return Optional.ofNullable(in.readLine());
+        try (var in = openReader()) {
+            return in.readLine(Integer.MAX_VALUE);
         }
     }
 
@@ -296,8 +278,22 @@ public interface CharSource {
      * @throws IOException if this source cannot be opened
      */
     default Stream<String> lines() throws IOException {
-        var in = openBufferedStream();
-        return in.lines().onClose(() -> {
+        var in = openReader();
+        var lines =
+                new Spliterators.AbstractSpliterator<String>(
+                        Long.MAX_VALUE, Spliterator.ORDERED | Spliterator.NONNULL) {
+                    @Override
+                    public boolean tryAdvance(Consumer<? super String> action) {
+                        try {
+                            var line = in.readLine(Integer.MAX_VALUE);
+                            line.ifPresent(action);
+                            return line.isPresent();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    }
+                };
+        return StreamSupport.stream(lines, false).onClose(() -> {
             try {
                 in.close();
             } catch (IOException e) {
@@ -314,9 +310,9 @@ public interface CharSource {
      */
     default void forEachLine(Consumer<? super String> action) throws IOException {
         requireNonNull(action, "action");
-        try (var in = openBufferedStream()) {
-            for (var line = in.readLine(); line != null; line = in.readLine()) {
-                action.accept(line);
+        try (var in = openReader()) {
+            for (var line = in.readLine(Integer.MAX_VALUE); line.isPresent(); line = in.readLine(Integer.MAX_VALUE)) {
+                action.accept(line.get());
             }
         }
     }
@@ -330,8 +326,8 @@ public interface CharSource {
      */
     default long copyTo(Appendable out) throws IOException {
         requireNonNull(out, "out");
-        try (var in = openStream()) {
-            return Streams.copy(in, out);
+        try (var in = openReader()) {
+            return in.transferTo(out);
         }
     }
 
@@ -344,9 +340,9 @@ public interface CharSource {
      */
     default long copyTo(CharSink sink) throws IOException {
         requireNonNull(sink, "sink");
-        try (var in = openStream();
-                var out = sink.openStream()) {
-            return in.transferTo(out);
+        try (var in = openReader();
+                var out = sink.openWriter()) {
+            return in.transferTo(out.asWriter());
         }
     }
 
@@ -375,6 +371,6 @@ public interface CharSource {
     default ByteSource asByteSource(Charset charset) {
         requireNonNull(charset, "charset");
         checkArgument(charset.canEncode(), "%s does not support encoding", charset);
-        return () -> new EncodingInputStream(openStream(), charset.newEncoder());
+        return () -> ByteReader.of(new EncodingInputStream(openReader().asReader(), charset.newEncoder()));
     }
 }

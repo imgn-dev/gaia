@@ -3,6 +3,7 @@ package be.imgn.gaia.core.io.internal;
 import static java.util.Objects.checkFromIndexSize;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.io.CharReader;
 import be.imgn.gaia.core.io.CharSource;
 import java.io.IOException;
 import java.io.Reader;
@@ -31,8 +32,8 @@ public final class ConcatenatedCharSource implements CharSource {
     }
 
     @Override
-    public Reader openStream() {
-        return new ConcatenatedReader(sources.iterator());
+    public CharReader openReader() {
+        return CharReader.of(new ConcatenatedReader(sources.iterator()));
     }
 
     @Override
@@ -106,7 +107,7 @@ public final class ConcatenatedCharSource implements CharSource {
             }
             var in = current;
             if (in == null && sources.hasNext()) {
-                in = sources.next().openStream();
+                in = sources.next().openReader().asReader();
                 current = in;
             }
             return in;

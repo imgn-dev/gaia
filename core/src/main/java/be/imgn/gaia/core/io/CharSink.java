@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.DecodingOutputStream;
 import be.imgn.gaia.core.io.internal.Streams;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
@@ -16,16 +15,16 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 /**
- * A writable destination of characters, such as a text file, that opens a new stream each time it is written.
+ * A writable destination of characters, such as a text file, that opens a new writer each time it is written.
  *
  * <p>Unlike a {@link Writer}, a sink is not an open resource: it can be kept, passed around and written any number of
- * times, and each write method opens a stream and closes it before returning. Only {@link #openStream()} and
- * {@link #openBufferedStream()} leave a stream for the caller to close.
+ * times, and each write method opens a writer and closes it before returning. Only {@link #openWriter()} leaves a
+ * writer for the caller to close.
  *
- * <p>The only abstract method is {@link #openStream()}, so a lambda makes a sink:
+ * <p>The only abstract method is {@link #openWriter()}, so a lambda makes a sink:
  *
  * <pre>{@code
- * CharSink sink = () -> new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
+ * CharSink sink = () -> CharWriter.of(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
  * CharSink.of(file, StandardCharsets.UTF_8).writeLines(lines);
  * }</pre>
  *
@@ -65,34 +64,14 @@ public interface CharSink {
     }
 
     /**
-     * Opens a new stream to write the characters of this sink. The caller must close it.
-     *
-     * @return a new stream
-     * @throws IOException if the stream cannot be opened
-     */
-    Writer openStream() throws IOException;
-
-    /**
-     * Opens a new buffered stream to write the characters of this sink. The caller must close it.
-     *
-     * @return a new buffered stream
-     * @throws IOException if the stream cannot be opened
-     */
-    default Writer openBufferedStream() throws IOException {
-        var out = openStream();
-        return out instanceof BufferedWriter ? out : new BufferedWriter(out);
-    }
-
-    /**
-     * Opens a new writer to write the characters of this sink. The caller must close it.
+     * Opens a new writer to write the characters of this sink. The caller must close it. For APIs that take a
+     * {@link Writer}, {@link CharWriter#asWriter()} writes through it.
      *
      * @return a new writer
-     * @throws IOException if the stream cannot be opened
+     * @throws IOException if the writer cannot be opened
      * @since 0.1.3
      */
-    default CharWriter openWriter() throws IOException {
-        return CharWriter.of(openStream());
-    }
+    CharWriter openWriter() throws IOException;
 
     /**
      * Writes characters to this sink.
@@ -102,8 +81,8 @@ public interface CharSink {
      */
     default void write(CharSequence chars) throws IOException {
         requireNonNull(chars, "chars");
-        try (var out = openStream()) {
-            out.append(chars);
+        try (var out = openWriter()) {
+            out.write(chars);
         }
     }
 
@@ -168,9 +147,9 @@ public interface CharSink {
 
     // A stream can only be read once, so its lines are checked as they are written.
     private void writeLines(Iterator<? extends CharSequence> lines, String separator) throws IOException {
-        try (var out = openBufferedStream()) {
+        try (var out = openWriter()) {
             while (lines.hasNext()) {
-                out.append(requireNonNull(lines.next(), "lines contains null")).append(separator);
+                out.write(requireNonNull(lines.next(), "lines contains null")).write(separator);
             }
         }
     }
@@ -184,8 +163,8 @@ public interface CharSink {
      */
     default long writeFrom(Readable readable) throws IOException {
         requireNonNull(readable, "readable");
-        try (var out = openStream()) {
-            return Streams.copy(readable, out);
+        try (var out = openWriter()) {
+            return Streams.copy(readable, out.asWriter());
         }
     }
 
@@ -213,6 +192,6 @@ public interface CharSink {
      */
     default ByteSink asByteSink(Charset charset) {
         requireNonNull(charset, "charset");
-        return () -> new DecodingOutputStream(openStream(), charset.newDecoder());
+        return () -> ByteWriter.of(new DecodingOutputStream(openWriter().asWriter(), charset.newDecoder()));
     }
 }
