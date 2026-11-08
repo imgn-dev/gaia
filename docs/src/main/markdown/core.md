@@ -261,6 +261,22 @@ Splitter.on("::").split("a::b");                                           // [a
 
 Unlike `String.split`, a string separator is literal, and nothing is dropped unless asked.
 
+[`Text`](api:be.imgn.gaia.core.text.Text) finds one occurrence in a text, to extract, remove or replace it. A pattern
+selects the first or last occurrence of a character, a literal string or a regular expression, or a prefix or suffix,
+and conditions narrow it down to an occurrence that is, or is not, preceded or followed by a literal string:
+
+```java
+Text.prefix("www.").removeFrom("www.example.com");                 // example.com
+Text.last('.').removeFrom("archive.tar.gz");                       // archive.targz
+Text.first('@').followedBy("gmail.com").replaceFrom(s, " at ");    // the first @ before gmail.com
+Text.first(Pattern.compile("\\d+")).extractFrom("v12.3");          // Optional[12]
+Text.suffix('/').addToIfAbsent("/api");                            // /api/
+```
+
+Conditions are checked against the whole text and aren't part of the occurrence. A prefix or suffix is an
+[`Affix`](api:be.imgn.gaia.core.text.Text.Affix): a `CharSequence` of its literal that can also be added to a text that
+lacks it.
+
 [`NamingConvention`](api:be.imgn.gaia.core.text.NamingConvention) converts names between naming conventions:
 `LOWER_CAMEL`, `UPPER_CAMEL`, `LOWER_HYPHEN`, `LOWER_UNDERSCORE`, `UPPER_UNDERSCORE` and `LOWER_DOT`:
 
