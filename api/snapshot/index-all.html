@@ -397,6 +397,10 @@ types it brings.</div>
 <dd>
 <div class="block">Adds interfaces this type implements, or extends for an interface.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#addToIfAbsent(java.lang.CharSequence)" class="member-name-link">addToIfAbsent(CharSequence)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>
+<div class="block">Adds this affix to <code>text</code> unless it is already there: prepends a prefix, appends a suffix.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Builder.html#addType(be.imgn.gaia.processing.source.Type)" class="member-name-link">addType(Type)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Builder.html" title="class in be.imgn.gaia.processing.source">Type.Builder</a></dt>
 <dd>
 <div class="block">Adds a nested type.</div>
@@ -692,7 +696,7 @@ charset</a>.</div>
 <dd>
 <div class="block">Returns a source of the characters these bytes encode.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" class="type-name-link" title="class in be.imgn.gaia.core.text">Ascii</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/package-summary.html">be.imgn.gaia.core.text</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Ascii</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">Classes, case mapping, comparison and trimming of ASCII characters, as many protocols, file formats and identifiers
 define them.</div>
@@ -893,7 +897,8 @@ wired, without reflection, by code that <code>gaia-processor</code> generates.</
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a> - package be.imgn.gaia.core.base</dt>
 <dd>
-<div class="block">Basic utilities the JDK does not provide.</div>
+<div class="block">The foundation the other packages build on: preconditions, exceptions, charsets, versions, text, time measurement,
+and system properties and environment variables.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/package-summary.html">be.imgn.gaia.core.collect</a> - package be.imgn.gaia.core.collect</dt>
 <dd>
@@ -921,10 +926,6 @@ that <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.ht
 <dd>
 <div class="block">The cross-platform API.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/package-summary.html">be.imgn.gaia.core.system</a> - package be.imgn.gaia.core.system</dt>
-<dd>
-<div class="block">Sources of system properties and environment variables.</div>
-</dd>
 <dt><a href="be.imgn.gaia.core.testing/module-summary.html">be.imgn.gaia.core.testing</a> - module be.imgn.gaia.core.testing</dt>
 <dd>
 <div class="block">Test helpers for code that uses <code>be.imgn.gaia.core</code>, such as a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing"><code>FakeTicker</code></a>,
@@ -933,14 +934,6 @@ a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a> - package be.imgn.gaia.core.testing</dt>
 <dd>
 <div class="block">Test fixtures for <code>be.imgn.gaia.core</code>.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/package-summary.html">be.imgn.gaia.core.text</a> - package be.imgn.gaia.core.text</dt>
-<dd>
-<div class="block">Text utilities the JDK does not provide.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/package-summary.html">be.imgn.gaia.core.time</a> - package be.imgn.gaia.core.time</dt>
-<dd>
-<div class="block">Measuring time.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/module-summary.html">be.imgn.gaia.memfs</a> - module be.imgn.gaia.memfs</dt>
 <dd>
@@ -1157,6 +1150,8 @@ ordered by their bytes.</div>
 <dd>
 <div class="block"><code>char</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#charAt(int)" class="member-name-link">charAt(int)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" class="type-name-link" title="class in be.imgn.gaia.core.io">CharReader</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
 <div class="block">Reads a stream of characters: lines, runs of characters, lookahead and search, for reading text formats.</div>
@@ -1724,7 +1719,7 @@ one by hand.</div>
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#visibility(javax.lang.model.element.Element)">visibility</a> and that of each type, method or other element that encloses it, up
 to its package.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#elapsed()" class="member-name-link">elapsed()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#elapsed()" class="member-name-link">elapsed()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns the elapsed time: the total time this stopwatch has been running since it was created or last reset.</div>
 </dd>
@@ -1873,17 +1868,17 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html#environment()" class="member-name-link">environment()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></dt>
 <dd>
-<div class="block">Returns the environment variables, to give to <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
+<div class="block">Returns the environment variables, to give to <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.base.Environment)"><code>Platform.Builder.environment(Environment)</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html#environment()" class="member-name-link">environment()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html" title="class in be.imgn.gaia.processing">ProcessingContext</a></dt>
 <dd>
 <div class="block">Returns javac's processing environment.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.system.Environment)" class="member-name-link">environment(Environment)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#environment(be.imgn.gaia.core.base.Environment)" class="member-name-link">environment(Environment)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
 <dd>
 <div class="block">Sets the environment variables to read.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" class="type-name-link" title="interface in be.imgn.gaia.core.system">Environment</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/system/package-summary.html">be.imgn.gaia.core.system</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" class="type-name-link" title="interface in be.imgn.gaia.core.base">Environment</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">A source of environment variables: the running JVM's, or fixed ones for tests.</div>
 </dd>
@@ -1891,6 +1886,8 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dd>
 <div class="block">Sets an environment variable, replacing the preset's value if it has one.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a></dt>
@@ -1979,7 +1976,7 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#equalsIgnoreCase(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">equalsIgnoreCase(CharSequence, CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#equalsIgnoreCase(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">equalsIgnoreCase(CharSequence, CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether two texts are equal when ASCII uppercase letters are taken as lowercase: <code>DocType</code> equals
 <code>DOCTYPE</code>, but <code>PUBLıC</code> does not equal <code>PUBLIC</code>.</div>
@@ -2057,6 +2054,12 @@ creates: to deliver them right away in tests, for instance.</div>
 <dd>
 <div class="block">Tells whether the stream has no more characters, reading one ahead if none is buffered.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#extractFrom(java.lang.CharSequence)" class="member-name-link">extractFrom(CharSequence)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#extractFrom(java.lang.CharSequence)" class="member-name-link">extractFrom(CharSequence)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
+<dd>
+<div class="block">Returns the occurrence this pattern selects in <code>text</code>.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:F">F</h2>
 <dl class="index">
@@ -2092,7 +2095,7 @@ test's temporary directory.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" class="type-name-link" title="class in be.imgn.gaia.core.testing">FakeTicker</a> - Class in <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/package-summary.html">be.imgn.gaia.core.testing</a></dt>
 <dd>
-<div class="block">A <a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.</div>
+<div class="block">A <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html#%3Cinit%3E()" class="member-name-link">FakeTicker()</a> - Constructor for class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing">FakeTicker</a></dt>
 <dd>
@@ -2127,7 +2130,7 @@ test's temporary directory.</div>
 <div class="block"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html" title="class or interface in java.nio.channels" class="external-link"><code>FileChannel</code></a>s: <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html#open(java.nio.file.Path,java.util.Set,java.nio.file.attribute.FileAttribute...)" title="class or interface in java.nio.channels" class="external-link"><code>FileChannel.open(Path, Set, FileAttribute...)</code></a> and
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/AsynchronousFileChannel.html#open(java.nio.file.Path,java.util.Set,java.util.concurrent.ExecutorService,java.nio.file.attribute.FileAttribute...)" title="class or interface in java.nio.channels" class="external-link"><code>AsynchronousFileChannel.open(Path, Set, ExecutorService, FileAttribute...)</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#fileEncoding()" class="member-name-link">fileEncoding()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#fileEncoding()" class="member-name-link">fileEncoding()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the name of the default charset.</div>
 </dd>
@@ -2135,7 +2138,7 @@ test's temporary directory.</div>
 <dd>
 <div class="block">Returns the filer, to create source, class and resource files.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#fileSeparator()" class="member-name-link">fileSeparator()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#fileSeparator()" class="member-name-link">fileSeparator()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the file separator, <code>"/"</code> on Unix: the <code>file.separator</code> property.</div>
 </dd>
@@ -2153,6 +2156,18 @@ test's temporary directory.</div>
 <dd>
 <div class="block">Returns a gatherer that keeps the elements that satisfy a predicate of the element and its index in the stream,
 counted from 0.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#first(char)" class="member-name-link">first(char)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns a pattern that selects the first occurrence of a character.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#first(java.lang.String)" class="member-name-link">first(String)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns a pattern that selects the first occurrence of a literal string.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#first(java.util.regex.Pattern)" class="member-name-link">first(Pattern)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns a pattern that selects the first match of a regular expression, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/regex/Matcher.html#find()" title="class or interface in java.util.regex" class="external-link"><code>Matcher.find()</code></a> finds it.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html#firstEntry()" class="member-name-link">firstEntry()</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html" title="interface in be.imgn.gaia.core.collect">SortedMultiset</a></dt>
 <dd>
@@ -2191,6 +2206,12 @@ processor has not generated it yet.</div>
 <dd>
 <div class="block">Writes the buffered characters to the stream, and flushes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Flushable.html" title="class or interface in java.io" class="external-link"><code>Flushable</code></a>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#followedBy(java.lang.String)" class="member-name-link">followedBy(String)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#followedBy(java.lang.String)" class="member-name-link">followedBy(String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
+<dd>
+<div class="block">Returns a pattern like this one that selects only an occurrence immediately followed by <code>literal</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#forCurrentPlatform()" class="member-name-link">forCurrentPlatform()</a> - Static method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
 <div class="block">Returns the configuration that looks like the file system of the operating system the JVM runs on:
@@ -2222,7 +2243,7 @@ item.</div>
 <dd>
 <div class="block">Reads the lines of this source one at a time, without keeping them.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#from(java.lang.String)" class="member-name-link">from(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#from(java.lang.String)" class="member-name-link">from(String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Converts text that follows any convention to this one.</div>
 </dd>
@@ -2320,11 +2341,11 @@ and the kind of the generated type.</div>
 <dd>
 <div class="block">Returns the name handed out for a tag.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></dt>
 <dd>
 <div class="block">Returns the value of a variable.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the value of a property.</div>
 </dd>
@@ -2400,6 +2421,8 @@ to the processors that support <code>*</code> when none is annotated.</div>
 <dd>
 <div class="block">Returns whether any error was reported through these diagnostics.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
@@ -2523,13 +2546,13 @@ in a <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/ListMultimap.html" tit
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#higherEntry(E)" class="member-name-link">higherEntry(E)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html#home()" class="member-name-link">home()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></dt>
+<dd>
+<div class="block">Returns the user's home directory: the <code>HOME</code> variable, set on Unix-like systems.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html#home()" class="member-name-link">home()</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></dt>
 <dd>
 <div class="block">Returns the user's home directory.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html#home()" class="member-name-link">home()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></dt>
-<dd>
-<div class="block">Returns the user's home directory: the <code>HOME</code> variable, set on Unix-like systems.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html#home()" class="member-name-link">home()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></dt>
 <dd>&nbsp;</dd>
@@ -2665,11 +2688,11 @@ extend the type that declares the element: generated code, unless it is such a s
 <div class="block">Returns whether a class in a package that extends another class can access an element, as JLS 6.6 says: the
 generated subclass of a processor, for instance.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isAlpha(int)" class="member-name-link">isAlpha(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isAlpha(int)" class="member-name-link">isAlpha(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII letter: <code>A</code> to <code>Z</code>, or <code>a</code> to <code>z</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isAlphanumeric(int)" class="member-name-link">isAlphanumeric(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isAlphanumeric(int)" class="member-name-link">isAlphanumeric(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII letter or digit.</div>
 </dd>
@@ -2722,7 +2745,7 @@ that javac warns about it.</div>
 <dd>
 <div class="block">Returns whether this is a constructor, compact or not.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isDigit(int)" class="member-name-link">isDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isDigit(int)" class="member-name-link">isDigit(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII digit: <code>0</code> to <code>9</code>.</div>
 </dd>
@@ -2788,7 +2811,7 @@ element's module, and the element's module exports the element's package to it.<
 <div class="block">Returns whether an element comes from a source file of this compilation, and so is compiled with the code a
 processor generates, rather than read from a class file compiled before.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isHexDigit(int)" class="member-name-link">isHexDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isHexDigit(int)" class="member-name-link">isHexDigit(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII hexadecimal digit: <code>0</code> to <code>9</code>, <code>A</code> to <code>F</code>, or
 <code>a</code> to <code>f</code>.</div>
@@ -2804,11 +2827,11 @@ JLS 8.1.3 defines it.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html#isLinux()" class="member-name-link">isLinux()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isLowerAlpha(int)" class="member-name-link">isLowerAlpha(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isLowerAlpha(int)" class="member-name-link">isLowerAlpha(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII lowercase letter: <code>a</code> to <code>z</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isLowerHexDigit(int)" class="member-name-link">isLowerHexDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isLowerHexDigit(int)" class="member-name-link">isLowerHexDigit(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII lowercase hexadecimal digit: <code>0</code> to <code>9</code>, or <code>a</code> to
 <code>f</code>.</div>
@@ -2869,7 +2892,7 @@ JLS 8.1.3 defines it.</div>
 <code>META-INF/services/javax.annotation.processing.Processor</code> on the class path, or through <code>provides
 javax.annotation.processing.Processor with ...</code> in its <code>module-info.java</code> on the module path.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#isRunning()" class="member-name-link">isRunning()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#isRunning()" class="member-name-link">isRunning()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns whether this stopwatch is running.</div>
 </dd>
@@ -2907,11 +2930,11 @@ compilation unit, not in another type or in a block.</div>
 <dd>
 <div class="block">Returns whether a type is the declared type of a name, ignoring type arguments.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isUpperAlpha(int)" class="member-name-link">isUpperAlpha(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isUpperAlpha(int)" class="member-name-link">isUpperAlpha(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII uppercase letter: <code>A</code> to <code>Z</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isUpperHexDigit(int)" class="member-name-link">isUpperHexDigit(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isUpperHexDigit(int)" class="member-name-link">isUpperHexDigit(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is an ASCII uppercase hexadecimal digit: <code>0</code> to <code>9</code>, or <code>A</code> to
 <code>F</code>.</div>
@@ -2924,7 +2947,7 @@ compilation unit, not in another type or in a block.</div>
 <dd>
 <div class="block">Returns whether the last component of a record is variable arity, written <code>String... names</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)" class="member-name-link">isWhitespace(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isWhitespace(int)" class="member-name-link">isWhitespace(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a code point is ASCII whitespace: tab (U+0009), line feed (U+000A), form feed (U+000C), carriage
 return (U+000D) or space (U+0020).</div>
@@ -2946,11 +2969,11 @@ return (U+000D) or space (U+0020).</div>
 <dd>
 <div class="block">Returns a compiler with no annotation processor and no option.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaClassPath()" class="member-name-link">javaClassPath()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaClassPath()" class="member-name-link">javaClassPath()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the class path, split on the path separator: the <code>java.class.path</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaClassVersion()" class="member-name-link">javaClassVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaClassVersion()" class="member-name-link">javaClassVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the latest class file format version the Java runtime recognizes, as <code>MAJOR.MINOR</code>: the
 <code>java.class.version</code> property.</div>
@@ -2980,98 +3003,98 @@ written.</div>
 <dd>
 <div class="block">A builder of <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html" title="class in be.imgn.gaia.processing.source"><code>JavaFile</code></a>s.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaHome()" class="member-name-link">javaHome()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaHome()" class="member-name-link">javaHome()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the installation directory of Java: the <code>java.home</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaIoTmpdir()" class="member-name-link">javaIoTmpdir()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaIoTmpdir()" class="member-name-link">javaIoTmpdir()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the default temporary file directory: the <code>java.io.tmpdir</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaLibraryPath()" class="member-name-link">javaLibraryPath()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaLibraryPath()" class="member-name-link">javaLibraryPath()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the paths searched when loading libraries, split on the path separator: the <code>java.library.path</code>
 property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaSpecificationMaintenanceVersion()" class="member-name-link">javaSpecificationMaintenanceVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaSpecificationMaintenanceVersion()" class="member-name-link">javaSpecificationMaintenanceVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the maintenance version of the Java Runtime Environment specification, which is set only after a
 maintenance release: the <code>java.specification.maintenance.version</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaSpecificationName()" class="member-name-link">javaSpecificationName()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaSpecificationName()" class="member-name-link">javaSpecificationName()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the name of the Java Runtime Environment specification: the <code>java.specification.name</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaSpecificationVendor()" class="member-name-link">javaSpecificationVendor()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaSpecificationVendor()" class="member-name-link">javaSpecificationVendor()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the vendor of the Java Runtime Environment specification: the <code>java.specification.vendor</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaSpecificationVersion()" class="member-name-link">javaSpecificationVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaSpecificationVersion()" class="member-name-link">javaSpecificationVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the version of the Java Runtime Environment specification: the feature element of the runtime version,
 such as <code>21</code>: the <code>java.specification.version</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVendor()" class="member-name-link">javaVendor()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVendor()" class="member-name-link">javaVendor()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the vendor of the Java Runtime Environment: the <code>java.vendor</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVendorUrl()" class="member-name-link">javaVendorUrl()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVendorUrl()" class="member-name-link">javaVendorUrl()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the URL of the Java vendor: the <code>java.vendor.url</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVendorVersion()" class="member-name-link">javaVendorVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVendorVersion()" class="member-name-link">javaVendorVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the version of the Java vendor, which is optional: the <code>java.vendor.version</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVersion()" class="member-name-link">javaVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVersion()" class="member-name-link">javaVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the version of the Java Runtime Environment: the <code>java.version</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVersionDate()" class="member-name-link">javaVersionDate()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVersionDate()" class="member-name-link">javaVersionDate()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the version date of the Java Runtime Environment: the <code>java.version.date</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVmName()" class="member-name-link">javaVmName()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVmName()" class="member-name-link">javaVmName()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the name of the Java Virtual Machine implementation: the <code>java.vm.name</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVmSpecificationName()" class="member-name-link">javaVmSpecificationName()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVmSpecificationName()" class="member-name-link">javaVmSpecificationName()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the name of the Java Virtual Machine specification: the <code>java.vm.specification.name</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVmSpecificationVendor()" class="member-name-link">javaVmSpecificationVendor()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVmSpecificationVendor()" class="member-name-link">javaVmSpecificationVendor()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the vendor of the Java Virtual Machine specification: the <code>java.vm.specification.vendor</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVmSpecificationVersion()" class="member-name-link">javaVmSpecificationVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVmSpecificationVersion()" class="member-name-link">javaVmSpecificationVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the version of the Java Virtual Machine specification: the feature element of the runtime version, such
 as <code>21</code>: the <code>java.vm.specification.version</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVmVendor()" class="member-name-link">javaVmVendor()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVmVendor()" class="member-name-link">javaVmVendor()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the vendor of the Java Virtual Machine implementation: the <code>java.vm.vendor</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#javaVmVersion()" class="member-name-link">javaVmVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#javaVmVersion()" class="member-name-link">javaVmVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the version of the Java Virtual Machine implementation: the <code>java.vm.version</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#jdkModuleMain()" class="member-name-link">jdkModuleMain()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#jdkModuleMain()" class="member-name-link">jdkModuleMain()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the name of the initial (main) module, if the application was launched from a module: the
 <code>jdk.module.main</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#jdkModuleMainClass()" class="member-name-link">jdkModuleMainClass()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#jdkModuleMainClass()" class="member-name-link">jdkModuleMainClass()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the main class of the initial module, if the application was launched from a module: the
 <code>jdk.module.main.class</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#jdkModulePath()" class="member-name-link">jdkModulePath()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#jdkModulePath()" class="member-name-link">jdkModulePath()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the application module path, split on the path separator; empty when the application does not use one:
 the <code>jdk.module.path</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#jdkModuleUpgradePath()" class="member-name-link">jdkModuleUpgradePath()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#jdkModuleUpgradePath()" class="member-name-link">jdkModuleUpgradePath()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the upgrade module path, split on the path separator; empty when there is none: the
 <code>jdk.module.upgrade.path</code> property.</div>
@@ -3111,6 +3134,19 @@ and <code>")"</code>.</div>
 </dl>
 <h2 class="title" id="I:L">L</h2>
 <dl class="index">
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#last(char)" class="member-name-link">last(char)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns a pattern that selects the last occurrence of a character.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#last(java.lang.String)" class="member-name-link">last(String)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns a pattern that selects the last occurrence of a literal string.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#last(java.util.regex.Pattern)" class="member-name-link">last(Pattern)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns a pattern that selects the last match of a regular expression: the last of the matches that
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/regex/Matcher.html#find()" title="class or interface in java.util.regex" class="external-link"><code>Matcher.find()</code></a> finds in turn, from left to right.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html#lastEntry()" class="member-name-link">lastEntry()</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SortedMultiset.html" title="interface in be.imgn.gaia.core.collect">SortedMultiset</a></dt>
 <dd>
 <div class="block">Returns the entry of the highest element.</div>
@@ -3127,6 +3163,8 @@ is 0.</div>
 <div class="block">Returns the least common multiple of two values: the smallest positive integer that both divide, or 0 if either
 is 0.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#length()" class="member-name-link">length()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#length()" class="member-name-link">length()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
 <dd>
 <div class="block">Returns the number of characters in this source, reading them all if <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#lengthIfKnown()"><code>CharSource.lengthIfKnown()</code></a> does not know it.</div>
@@ -3139,7 +3177,7 @@ is 0.</div>
 <dd>
 <div class="block">Returns the range of the values less than an endpoint: <code>(-∞, upper)</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#limit(int)" class="member-name-link">limit(int)</a> - Method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#limit(int)" class="member-name-link">limit(int)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Returns a splitter like this one that stops after <code>limit</code> parts: the last part holds the rest of the text,
 separators included.</div>
@@ -3148,7 +3186,7 @@ separators included.</div>
 <dd>
 <div class="block">Opens a stream of the lines of this source, read as the stream is consumed.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#lineSeparator()" class="member-name-link">lineSeparator()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#lineSeparator()" class="member-name-link">lineSeparator()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the line separator, <code>"\n"</code> on Unix: the <code>line.separator</code> property.</div>
 </dd>
@@ -3201,19 +3239,19 @@ divisions with a rounding mode, saturated arithmetic, combinatorics and primalit
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html#param-lower"><code>lower</code></a> record component.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_CAMEL" class="member-name-link">LOWER_CAMEL</a> - Enum constant in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_CAMEL" class="member-name-link">LOWER_CAMEL</a> - Enum constant in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Words joined together, each one capitalized except the first: <code>timeoutSeconds</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_DOT" class="member-name-link">LOWER_DOT</a> - Enum constant in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_DOT" class="member-name-link">LOWER_DOT</a> - Enum constant in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Lowercase words separated by dots: <code>timeout.seconds</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_HYPHEN" class="member-name-link">LOWER_HYPHEN</a> - Enum constant in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_HYPHEN" class="member-name-link">LOWER_HYPHEN</a> - Enum constant in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Lowercase words separated by hyphens: <code>timeout-seconds</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_UNDERSCORE" class="member-name-link">LOWER_UNDERSCORE</a> - Enum constant in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_UNDERSCORE" class="member-name-link">LOWER_UNDERSCORE</a> - Enum constant in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Lowercase words separated by underscores: <code>timeout_seconds</code>.</div>
 </dd>
@@ -3532,12 +3570,12 @@ underscores appended as needed to differ from the keywords and the names already
 <dd>
 <div class="block">How the names of the files of a directory are matched when they are looked up.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" class="type-name-link" title="enum class in be.imgn.gaia.core.text">NamingConvention</a> - Enum Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/package-summary.html">be.imgn.gaia.core.text</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" class="type-name-link" title="enum class in be.imgn.gaia.core.base">NamingConvention</a> - Enum Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">A naming convention: a way to write a name made of several words, such as <code>timeoutSeconds</code> or
 <code>timeout-seconds</code>, and the conversion from one to another.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#nativeEncoding()" class="member-name-link">nativeEncoding()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#nativeEncoding()" class="member-name-link">nativeEncoding()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the character encoding derived from the host environment and the user's settings: the
 <code>native.encoding</code> property.</div>
@@ -3724,6 +3762,18 @@ before the components are assigned.</div>
 <dd>
 <div class="block">Reports a note.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#notFollowedBy(java.lang.String)" class="member-name-link">notFollowedBy(String)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#notFollowedBy(java.lang.String)" class="member-name-link">notFollowedBy(String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
+<dd>
+<div class="block">Returns a pattern like this one that selects only an occurrence not immediately followed by <code>literal</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#notPrecededBy(java.lang.String)" class="member-name-link">notPrecededBy(String)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#notPrecededBy(java.lang.String)" class="member-name-link">notPrecededBy(String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
+<dd>
+<div class="block">Returns a pattern like this one that selects only an occurrence not immediately preceded by <code>literal</code>.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:O">O</h2>
 <dl class="index">
@@ -3895,11 +3945,11 @@ encoded in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#D
 <div class="block">Returns a source that reads a text file encoded in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default
 charset</a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html#of(java.util.Map)" class="member-name-link">of(Map)</a> - Static method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html#of(java.util.Map)" class="member-name-link">of(Map)</a> - Static method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></dt>
 <dd>
 <div class="block">Returns a fixed environment.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#of(java.util.Map)" class="member-name-link">of(Map)</a> - Static method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#of(java.util.Map)" class="member-name-link">of(Map)</a> - Static method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns fixed system properties.</div>
 </dd>
@@ -3959,19 +4009,19 @@ member of a parameterized type.</div>
 <div class="block">Returns a copy of an annotation found in the source, with every value it has: those written in it, and the
 defaults of the others, in the order the annotation type declares its members.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#omitEmptyStrings()" class="member-name-link">omitEmptyStrings()</a> - Method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#omitEmptyStrings()" class="member-name-link">omitEmptyStrings()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Returns a splitter like this one that leaves out empty parts.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#on(char)" class="member-name-link">on(char)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#on(char)" class="member-name-link">on(char)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Returns a splitter on a character.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#on(java.lang.String)" class="member-name-link">on(String)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#on(java.lang.String)" class="member-name-link">on(String)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Returns a splitter on a literal string.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#on(java.util.regex.Pattern)" class="member-name-link">on(Pattern)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#on(java.util.regex.Pattern)" class="member-name-link">on(Pattern)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Returns a splitter on the matches of a regular expression.</div>
 </dd>
@@ -3987,7 +4037,7 @@ defaults of the others, in the order the annotation type declares its members.</
 <dd>
 <div class="block">Returns a collector of the one element of a stream, which must contain exactly one.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#onPattern(java.lang.String)" class="member-name-link">onPattern(String)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#onPattern(java.lang.String)" class="member-name-link">onPattern(String)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Returns a splitter on the matches of a regular expression, given as a string.</div>
 </dd>
@@ -4074,15 +4124,15 @@ three are <code>false</code>.</div>
 <dd>
 <div class="block">Returns the options this processor accepts, given to javac as <code>-Aname=value</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#osArch()" class="member-name-link">osArch()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#osArch()" class="member-name-link">osArch()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the architecture of the operating system: the <code>os.arch</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#osName()" class="member-name-link">osName()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#osName()" class="member-name-link">osName()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the name of the operating system: the <code>os.name</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#osVersion()" class="member-name-link">osVersion()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#osVersion()" class="member-name-link">osVersion()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the version of the operating system: the <code>os.version</code> property.</div>
 </dd>
@@ -4161,12 +4211,12 @@ type has type arguments or annotations, such as <code>Outer&lt;String&gt;.Inner<
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html#param-patch"><code>patch</code></a> record component.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html#path()" class="member-name-link">path()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html#path()" class="member-name-link">path()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></dt>
 <dd>
 <div class="block">Returns the directories searched for executables: the <code>PATH</code> variable, split on the running JVM's path
 separator (<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/File.html#pathSeparator" title="class or interface in java.io" class="external-link"><code>File.pathSeparator</code></a>).</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#pathSeparator()" class="member-name-link">pathSeparator()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#pathSeparator()" class="member-name-link">pathSeparator()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the path separator, <code>":"</code> on Unix: the <code>path.separator</code> property.</div>
 </dd>
@@ -4243,9 +4293,23 @@ separator (<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base
 <dd>
 <div class="block">Returns a value to a power, modulo a modulus.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#precededBy(java.lang.String)" class="member-name-link">precededBy(String)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#precededBy(java.lang.String)" class="member-name-link">precededBy(String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
+<dd>
+<div class="block">Returns a pattern like this one that selects only an occurrence immediately preceded by <code>literal</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Preconditions.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Preconditions</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">Checks that a method is called correctly, and throws the matching exception if not.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#prefix(char)" class="member-name-link">prefix(char)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns an affix of one character that a text must start with.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#prefix(java.lang.String)" class="member-name-link">prefix(String)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns an affix that a text must start with.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html#preRelease()" class="member-name-link">preRelease()</a> - Method in record class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></dt>
 <dd>
@@ -4408,6 +4472,10 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.processing/be/imgn/gaia/processing/source/ParameterizedTypeName.html#param-rawType"><code>rawType</code></a> record component.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html#read()" class="member-name-link">read()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base">Ticker</a></dt>
+<dd>
+<div class="block">Returns the current reading, in nanoseconds since an arbitrary origin.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#read()" class="member-name-link">read()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
 <div class="block">Reads all the bytes of this source.</div>
@@ -4418,10 +4486,6 @@ implementations of a service before its file is written.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html#read()" class="member-name-link">read()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing">FakeTicker</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html#read()" class="member-name-link">read()</a> - Method in interface be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time">Ticker</a></dt>
-<dd>
-<div class="block">Returns the current reading, in nanoseconds since an arbitrary origin.</div>
-</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#read(byte%5B%5D,int,int)" class="member-name-link">read(byte[], int, int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
 <dd>
 <div class="block">Reads at least one byte into an array, unless the stream has no more, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html#read(byte%5B%5D,int,int)" title="class or interface in java.io" class="external-link"><code>InputStream.read(byte[], int, int)</code></a> does.</div>
@@ -4566,7 +4630,7 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Returns the binary name of this type, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html#forName(java.lang.String)" title="class or interface in java.lang" class="external-link"><code>Class.forName(String)</code></a> expects it.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#regionMatchesIgnoreCase(java.lang.CharSequence,int,java.lang.CharSequence)" class="member-name-link">regionMatchesIgnoreCase(CharSequence, int, CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#regionMatchesIgnoreCase(java.lang.CharSequence,int,java.lang.CharSequence)" class="member-name-link">regionMatchesIgnoreCase(CharSequence, int, CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a region of a text, starting at an offset and as long as another text, equals that other text,
 ignoring ASCII case.</div>
@@ -4621,10 +4685,22 @@ extends, through the code <code>gaia-processor</code> generated for each of thes
 <div class="block">Removes an environment variable, such as <code>HOME</code> or <code>APPDATA</code>, to test what happens when it is not
 set.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#removeFrom(java.lang.CharSequence)" class="member-name-link">removeFrom(CharSequence)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#removeFrom(java.lang.CharSequence)" class="member-name-link">removeFrom(CharSequence)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
+<dd>
+<div class="block">Removes the occurrence this pattern selects from <code>text</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html#removeIf(java.util.function.Predicate)" class="member-name-link">removeIf(Predicate)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#removeIf(java.util.function.Predicate)" class="member-name-link">removeIf(Predicate)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#replaceFrom(java.lang.CharSequence,java.lang.String)" class="member-name-link">replaceFrom(CharSequence, String)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#replaceFrom(java.lang.CharSequence,java.lang.String)" class="member-name-link">replaceFrom(CharSequence, String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
+<dd>
+<div class="block">Replaces the occurrence this pattern selects in <code>text</code>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#replaceValues(K,java.lang.Iterable)" class="member-name-link">replaceValues(K, Iterable)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html#replaceValues(K,java.lang.Iterable)" class="member-name-link">replaceValues(K, Iterable)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a></dt>
@@ -4657,7 +4733,7 @@ set.</div>
 <dd>
 <div class="block">Buffers characters ahead, without consuming them, or fails if the stream ends first.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#reset()" class="member-name-link">reset()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#reset()" class="member-name-link">reset()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Stops this stopwatch, if it is running, and sets its elapsed time to zero.</div>
 </dd>
@@ -4936,7 +5012,7 @@ name the types it refers to.</div>
 <div class="block">Returns the smallest range that encloses this range and another one, with the values between them if they are not
 connected.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#split(java.lang.CharSequence)" class="member-name-link">split(CharSequence)</a> - Method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#split(java.lang.CharSequence)" class="member-name-link">split(CharSequence)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Splits <code>text</code>.</div>
 </dd>
@@ -4944,11 +5020,11 @@ connected.</div>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#spliterator()" class="member-name-link">spliterator()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" class="type-name-link" title="class in be.imgn.gaia.core.text">Splitter</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/package-summary.html">be.imgn.gaia.core.text</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Splitter</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">Splits text into parts around a separator: a character, a literal string or a regular expression.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#splitToStream(java.lang.CharSequence)" class="member-name-link">splitToStream(CharSequence)</a> - Method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#splitToStream(java.lang.CharSequence)" class="member-name-link">splitToStream(CharSequence)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Splits <code>text</code> lazily: each part is found when the stream reaches it.</div>
 </dd>
@@ -4960,15 +5036,15 @@ connected.</div>
 <dd>
 <div class="block">Returns the square root of a value, rounded to an integer.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#start()" class="member-name-link">start()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#start()" class="member-name-link">start()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Starts this stopwatch, resuming from its elapsed time.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#started()" class="member-name-link">started()</a> - Static method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#started()" class="member-name-link">started()</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns a running stopwatch on the system ticker.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#started(be.imgn.gaia.core.time.Ticker)" class="member-name-link">started(Ticker)</a> - Static method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#started(be.imgn.gaia.core.base.Ticker)" class="member-name-link">started(Ticker)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns a running stopwatch on <code>ticker</code>.</div>
 </dd>
@@ -4984,7 +5060,7 @@ connected.</div>
 <dd>
 <div class="block">Tells whether the next characters are some others, without consuming them.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#startsWithIgnoreCase(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">startsWithIgnoreCase(CharSequence, CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#startsWithIgnoreCase(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">startsWithIgnoreCase(CharSequence, CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns whether a text starts with a prefix, ignoring ASCII case.</div>
 </dd>
@@ -5012,11 +5088,11 @@ portable enough for <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Direct
 <dd>
 <div class="block">Returns the static imports.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#stderrEncoding()" class="member-name-link">stderrEncoding()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#stderrEncoding()" class="member-name-link">stderrEncoding()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#err" title="class or interface in java.lang" class="external-link"><code>System.err</code></a>: the <code>stderr.encoding</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#stdoutEncoding()" class="member-name-link">stdoutEncoding()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#stdoutEncoding()" class="member-name-link">stdoutEncoding()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#out" title="class or interface in java.lang" class="external-link"><code>System.out</code></a>: the <code>stdout.encoding</code> property.</div>
 </dd>
@@ -5038,13 +5114,13 @@ annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/S
 <dd>
 <div class="block">Returns the steps of this processor.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#stop()" class="member-name-link">stop()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#stop()" class="member-name-link">stop()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Stops this stopwatch, keeping its elapsed time.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" class="type-name-link" title="class in be.imgn.gaia.core.time">Stopwatch</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/time/package-summary.html">be.imgn.gaia.core.time</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Stopwatch</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
-<div class="block">Measures elapsed time, on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time"><code>Ticker</code></a> rather than on the wall clock.</div>
+<div class="block">Measures elapsed time, on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base"><code>Ticker</code></a> rather than on the wall clock.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html#string(java.lang.String)" class="member-name-link">string(String)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html" title="class in be.imgn.gaia.processing">AnnotationReader</a></dt>
 <dd>
@@ -5054,17 +5130,17 @@ annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/S
 <dd>
 <div class="block">Returns the values of a <code>String[]</code> attribute.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#strip(java.lang.CharSequence)" class="member-name-link">strip(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#strip(java.lang.CharSequence)" class="member-name-link">strip(CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
-<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its start and its end.</div>
+<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its start and its end.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#stripLeading(java.lang.CharSequence)" class="member-name-link">stripLeading(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#stripLeading(java.lang.CharSequence)" class="member-name-link">stripLeading(CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
-<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its start.</div>
+<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its start.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#stripTrailing(java.lang.CharSequence)" class="member-name-link">stripTrailing(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#stripTrailing(java.lang.CharSequence)" class="member-name-link">stripTrailing(CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
-<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its end.</div>
+<div class="block">Returns text without the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#isWhitespace(int)">ASCII whitespace</a> at its end.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#style()" class="member-name-link">style()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
@@ -5119,6 +5195,8 @@ deliver their events through an executor, such as on a given thread.</div>
 <div class="block">What <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)"><code>EventBus.subscribe(Class, java.util.function.Consumer)</code></a> or <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> subscribed,
 until it is closed.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#subSequence(int,int)" class="member-name-link">subSequence(int, int)</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html#subtypeOf(be.imgn.gaia.processing.source.TypeName)" class="member-name-link">subtypeOf(TypeName)</a> - Static method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html" title="class in be.imgn.gaia.processing.source">WildcardTypeName</a></dt>
 <dd>
 <div class="block">Returns <code>? extends bound</code>.</div>
@@ -5134,6 +5212,14 @@ until it is closed.</div>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/Compilation.html#success()" class="member-name-link">success()</a> - Method in record class be.imgn.gaia.processing.testing.<a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/Compilation.html" title="class in be.imgn.gaia.processing.testing">Compilation</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/Compilation.html#param-success"><code>success</code></a> record component.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#suffix(char)" class="member-name-link">suffix(char)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns an affix of one character that a text must end with.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html#suffix(java.lang.String)" class="member-name-link">suffix(String)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></dt>
+<dd>
+<div class="block">Returns an affix that a text must end with.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html#superclass()" class="member-name-link">superclass()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html" title="class in be.imgn.gaia.processing.source">Type</a></dt>
 <dd>
@@ -5176,27 +5262,27 @@ superclass: <code>AbstractList&lt;String&gt;</code> for <code>ArrayList&lt;Strin
 <dd>
 <div class="block">Symbolic links: <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html#createSymbolicLink(java.nio.file.Path,java.nio.file.Path,java.nio.file.attribute.FileAttribute...)" title="class or interface in java.nio.file" class="external-link"><code>Files.createSymbolicLink(Path, Path, FileAttribute...)</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html#system()" class="member-name-link">system()</a> - Static method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html#system()" class="member-name-link">system()</a> - Static method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></dt>
 <dd>
 <div class="block">Returns the environment of the running JVM.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#system()" class="member-name-link">system()</a> - Static method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#system()" class="member-name-link">system()</a> - Static method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the system properties of the running JVM.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html#system()" class="member-name-link">system()</a> - Static method in interface be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time">Ticker</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html#system()" class="member-name-link">system()</a> - Static method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base">Ticker</a></dt>
 <dd>
 <div class="block">Returns the ticker of the running JVM, which reads <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#nanoTime()" title="class or interface in java.lang" class="external-link"><code>System.nanoTime()</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html#systemProperties()" class="member-name-link">systemProperties()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/PlatformPreset.html" title="class in be.imgn.gaia.core.testing">PlatformPreset</a></dt>
 <dd>
-<div class="block">Returns the system properties, to give to <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
+<div class="block">Returns the system properties, to give to <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.base.SystemProperties)"><code>Platform.Builder.systemProperties(SystemProperties)</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.system.SystemProperties)" class="member-name-link">systemProperties(SystemProperties)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html#systemProperties(be.imgn.gaia.core.base.SystemProperties)" class="member-name-link">systemProperties(SystemProperties)</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></dt>
 <dd>
 <div class="block">Sets the system properties to read; <code>os.name</code> and <code>user.home</code> are required.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" class="type-name-link" title="interface in be.imgn.gaia.core.system">SystemProperties</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/system/package-summary.html">be.imgn.gaia.core.system</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" class="type-name-link" title="interface in be.imgn.gaia.core.base">SystemProperties</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">A source of system properties: the running JVM's, or fixed ones for tests.</div>
 </dd>
@@ -5230,15 +5316,27 @@ stops.</div>
 <dd>
 <div class="block">Compiles in-memory sources with the system Java compiler, in process, running the given annotation processors.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Text</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
+<dd>
+<div class="block">Finds text in a string, to extract, remove or replace it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Text.Affix</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
+<dd>
+<div class="block">A literal string that a text starts or ends with: a prefix or a suffix.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" class="type-name-link" title="interface in be.imgn.gaia.core.base">Text.Pattern</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
+<dd>
+<div class="block">Selects at most one occurrence in a text, to extract, remove or replace it.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Throwables.html" class="type-name-link" title="class in be.imgn.gaia.core.base">Throwables</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">Creates exceptions from the exception that caused them.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" class="type-name-link" title="interface in be.imgn.gaia.core.time">Ticker</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/time/package-summary.html">be.imgn.gaia.core.time</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" class="type-name-link" title="interface in be.imgn.gaia.core.base">Ticker</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/package-summary.html">be.imgn.gaia.core.base</a></dt>
 <dd>
 <div class="block">A source of nanosecond time, for measuring elapsed time: only the difference between two readings is meaningful.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#to(be.imgn.gaia.core.text.NamingConvention,java.lang.String)" class="member-name-link">to(NamingConvention, String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#to(be.imgn.gaia.core.base.NamingConvention,java.lang.String)" class="member-name-link">to(NamingConvention, String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Converts text that follows this convention to another convention.</div>
 </dd>
@@ -5311,33 +5409,33 @@ by an underscore, and an underscore goes first if the first character cannot sta
 <div class="block">Returns a collector into an unmodifiable list multimap that iterates in encounter order: over its keys in the
 order they are first encountered, and over the values of a key in the order they are encountered.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toLowerCamel(java.lang.String)" class="member-name-link">toLowerCamel(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#toLowerCamel(java.lang.String)" class="member-name-link">toLowerCamel(String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
-<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_CAMEL"><code>NamingConvention.LOWER_CAMEL</code></a>.</div>
+<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_CAMEL"><code>NamingConvention.LOWER_CAMEL</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toLowerCase(char)" class="member-name-link">toLowerCase(char)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#toLowerCase(char)" class="member-name-link">toLowerCase(char)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns the lowercase of a character if it is an ASCII uppercase letter, or the character itself.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toLowerCase(int)" class="member-name-link">toLowerCase(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#toLowerCase(int)" class="member-name-link">toLowerCase(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns the lowercase of a code point if it is an ASCII uppercase letter, or the code point itself.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toLowerCase(java.lang.CharSequence)" class="member-name-link">toLowerCase(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#toLowerCase(java.lang.CharSequence)" class="member-name-link">toLowerCase(CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns text with its ASCII uppercase letters in lowercase.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toLowerDot(java.lang.String)" class="member-name-link">toLowerDot(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#toLowerDot(java.lang.String)" class="member-name-link">toLowerDot(String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
-<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_DOT"><code>NamingConvention.LOWER_DOT</code></a>.</div>
+<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_DOT"><code>NamingConvention.LOWER_DOT</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toLowerHyphen(java.lang.String)" class="member-name-link">toLowerHyphen(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#toLowerHyphen(java.lang.String)" class="member-name-link">toLowerHyphen(String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
-<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_HYPHEN"><code>NamingConvention.LOWER_HYPHEN</code></a>.</div>
+<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_HYPHEN"><code>NamingConvention.LOWER_HYPHEN</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toLowerUnderscore(java.lang.String)" class="member-name-link">toLowerUnderscore(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#toLowerUnderscore(java.lang.String)" class="member-name-link">toLowerUnderscore(String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
-<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#LOWER_UNDERSCORE"><code>NamingConvention.LOWER_UNDERSCORE</code></a>.</div>
+<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#LOWER_UNDERSCORE"><code>NamingConvention.LOWER_UNDERSCORE</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Maps.html#toMap(java.util.function.Function,java.util.function.Function)" class="member-name-link">toMap(Function, Function)</a> - Static method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Maps.html" title="class in be.imgn.gaia.core.collect">Maps</a></dt>
 <dd>
@@ -5374,6 +5472,16 @@ order they are first encountered, and over the values of a key in the order they
 <dd>
 <div class="block">Returns a collector into an unmodifiable set multimap that iterates in encounter order: over its keys in the
 order they are first encountered, and over the values of a key in the order they are first encountered.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
+<dd>
+<div class="block">Returns the elapsed time in the largest unit in which it is at least 1 once rounded to four significant digits,
+with those four digits, as <code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's
+abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></dt>
+<dd>
+<div class="block">Returns the literal of this affix.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html#toString()" class="member-name-link">toString()</a> - Method in record class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></dt>
 <dd>
@@ -5413,12 +5521,6 @@ order they are first encountered, and over the values of a key in the order they
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
 <dd>
 <div class="block">Returns a description of the bytes, for debugging, such as <code>Bytes[size=3, hex=cafeba]</code>.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
-<dd>
-<div class="block">Returns the elapsed time in the largest unit in which it is at least 1 once rounded to four significant digits,
-with those four digits, as <code>String.format(Locale.ROOT, "%.4g", value)</code> prints them, followed by the unit's
-abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code> or <code>d</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>&nbsp;</dd>
@@ -5474,25 +5576,25 @@ abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/TypeKey.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/TypeKey.html" title="class in be.imgn.gaia.processing">TypeKey</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toUpperCamel(java.lang.String)" class="member-name-link">toUpperCamel(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#toUpperCamel(java.lang.String)" class="member-name-link">toUpperCamel(String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
-<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#UPPER_CAMEL"><code>NamingConvention.UPPER_CAMEL</code></a>.</div>
+<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#UPPER_CAMEL"><code>NamingConvention.UPPER_CAMEL</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toUpperCase(char)" class="member-name-link">toUpperCase(char)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#toUpperCase(char)" class="member-name-link">toUpperCase(char)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns the uppercase of a character if it is an ASCII lowercase letter, or the character itself.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toUpperCase(int)" class="member-name-link">toUpperCase(int)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#toUpperCase(int)" class="member-name-link">toUpperCase(int)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns the uppercase of a code point if it is an ASCII lowercase letter, or the code point itself.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html#toUpperCase(java.lang.CharSequence)" class="member-name-link">toUpperCase(CharSequence)</a> - Static method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html#toUpperCase(java.lang.CharSequence)" class="member-name-link">toUpperCase(CharSequence)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></dt>
 <dd>
 <div class="block">Returns text with its ASCII lowercase letters in uppercase.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#toUpperUnderscore(java.lang.String)" class="member-name-link">toUpperUnderscore(String)</a> - Method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#toUpperUnderscore(java.lang.String)" class="member-name-link">toUpperUnderscore(String)</a> - Method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
-<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#UPPER_UNDERSCORE"><code>NamingConvention.UPPER_UNDERSCORE</code></a>.</div>
+<div class="block">Converts text that follows this convention to <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#UPPER_UNDERSCORE"><code>NamingConvention.UPPER_UNDERSCORE</code></a>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html#transferFrom(java.io.InputStream)" class="member-name-link">transferFrom(InputStream)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" title="class in be.imgn.gaia.core.io">ByteWriter</a></dt>
 <dd>
@@ -5515,7 +5617,7 @@ abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>
 <dd>
 <div class="block">A modifiable sorted multiset backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html" title="class or interface in java.util" class="external-link"><code>TreeMap</code></a>, the multiset counterpart of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html" title="class or interface in java.util" class="external-link"><code>TreeSet</code></a>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html#trimResults()" class="member-name-link">trimResults()</a> - Method in class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html#trimResults()" class="member-name-link">trimResults()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></dt>
 <dd>
 <div class="block">Returns a splitter like this one that removes leading and trailing whitespace from each part, as
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html#strip()" title="class or interface in java.lang" class="external-link"><code>String.strip()</code></a> does.</div>
@@ -5667,11 +5769,11 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <div class="block">As on Linux and macOS: <code>/</code> is the one root and the separator, and a name may have any character but
 <code>/</code> and <code>NUL</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#unstarted()" class="member-name-link">unstarted()</a> - Static method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#unstarted()" class="member-name-link">unstarted()</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns a stopped stopwatch, with no elapsed time, on the system ticker.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html#unstarted(be.imgn.gaia.core.time.Ticker)" class="member-name-link">unstarted(Ticker)</a> - Static method in class be.imgn.gaia.core.time.<a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#unstarted(be.imgn.gaia.core.base.Ticker)" class="member-name-link">unstarted(Ticker)</a> - Static method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Returns a stopped stopwatch, with no elapsed time, on <code>ticker</code>.</div>
 </dd>
@@ -5679,11 +5781,11 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html#param-upper"><code>upper</code></a> record component.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#UPPER_CAMEL" class="member-name-link">UPPER_CAMEL</a> - Enum constant in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#UPPER_CAMEL" class="member-name-link">UPPER_CAMEL</a> - Enum constant in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Words joined together, each one capitalized: <code>TimeoutSeconds</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#UPPER_UNDERSCORE" class="member-name-link">UPPER_UNDERSCORE</a> - Enum constant in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#UPPER_UNDERSCORE" class="member-name-link">UPPER_UNDERSCORE</a> - Enum constant in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Uppercase words separated by underscores: <code>TIMEOUT_SECONDS</code>.</div>
 </dd>
@@ -5691,15 +5793,15 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html#param-upperBound"><code>upperBound</code></a> record component.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#userDir()" class="member-name-link">userDir()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#userDir()" class="member-name-link">userDir()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the current working directory of the user: the <code>user.dir</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#userHome()" class="member-name-link">userHome()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#userHome()" class="member-name-link">userHome()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the home directory of the user: the <code>user.home</code> property.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html#userName()" class="member-name-link">userName()</a> - Method in interface be.imgn.gaia.core.system.<a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#userName()" class="member-name-link">userName()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the name of the user account: the <code>user.name</code> property.</div>
 </dd>
@@ -5714,11 +5816,11 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dd>
 <div class="block">Returns the value of an attribute of a primitive type or <code>String</code>.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
+<dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
@@ -5742,6 +5844,11 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#values()" class="member-name-link">values()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html#values()" class="member-name-link">values()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a></dt>
@@ -5751,11 +5858,6 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <div class="block">Returns a live view of the values of all keys, each value as many times as it occurs, grouped by key.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/OperatingSystem.html" title="enum class in be.imgn.gaia.core.testing">OperatingSystem</a></dt>
-<dd>
-<div class="block">Returns an array containing the constants of this enum class, in
-the order they are declared.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.core.text.<a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>

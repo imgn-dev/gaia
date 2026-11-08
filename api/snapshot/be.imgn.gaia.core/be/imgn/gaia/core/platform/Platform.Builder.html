@@ -58,8 +58,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#systemProperties(be.imgn.gaia.core.system.SystemProperties)" tabindex="0">systemProperties(SystemProperties)</a></li>
-<li><a href="#environment(be.imgn.gaia.core.system.Environment)" tabindex="0">environment(Environment)</a></li>
+<li><a href="#systemProperties(be.imgn.gaia.core.base.SystemProperties)" tabindex="0">systemProperties(SystemProperties)</a></li>
+<li><a href="#environment(be.imgn.gaia.core.base.Environment)" tabindex="0">environment(Environment)</a></li>
 <li><a href="#fileSystem(java.nio.file.FileSystem)" tabindex="0">fileSystem(FileSystem)</a></li>
 <li><a href="#detect()" tabindex="0">detect()</a></li>
 </ol>
@@ -84,7 +84,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public static final class </span><span class="element-name type-name-label">Platform.Builder</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Detects a <a href="Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> from its sources. Each source defaults to the running JVM's:
-<a href="../system/SystemProperties.html#system()"><code>SystemProperties.system()</code></a>, <a href="../system/Environment.html#system()"><code>Environment.system()</code></a> and <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileSystems.html#getDefault()" title="class or interface in java.nio.file" class="external-link"><code>FileSystems.getDefault()</code></a>.
+<a href="../base/SystemProperties.html#system()"><code>SystemProperties.system()</code></a>, <a href="../base/Environment.html#system()"><code>Environment.system()</code></a> and <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileSystems.html#getDefault()" title="class or interface in java.nio.file" class="external-link"><code>FileSystems.getDefault()</code></a>.
 
 <p>The operating system comes from the <code>os.name</code> property; any value not recognized as Linux, macOS or
 Windows is taken for another Unix-like system. Every path of the platform belongs to the file system.</div>
@@ -113,7 +113,7 @@ Windows is taken for another Unix-like system. Every path of the platform belong
 <div class="block">Detects the platform from this builder's sources.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#environment(be.imgn.gaia.core.system.Environment)" class="member-name-link">environment</a><wbr>(<a href="../system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a>&nbsp;environment)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#environment(be.imgn.gaia.core.base.Environment)" class="member-name-link">environment</a><wbr>(<a href="../base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a>&nbsp;environment)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the environment variables to read.</div>
 </div>
@@ -123,7 +123,7 @@ Windows is taken for another Unix-like system. Every path of the platform belong
 <div class="block">Sets the file system the platform's paths belong to.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#systemProperties(be.imgn.gaia.core.system.SystemProperties)" class="member-name-link">systemProperties</a><wbr>(<a href="../system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a>&nbsp;systemProperties)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#systemProperties(be.imgn.gaia.core.base.SystemProperties)" class="member-name-link">systemProperties</a><wbr>(<a href="../base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a>&nbsp;systemProperties)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the system properties to read; <code>os.name</code> and <code>user.home</code> are required.</div>
 </div>
@@ -145,10 +145,10 @@ Windows is taken for another Unix-like system. Every path of the platform belong
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="systemProperties(be.imgn.gaia.core.system.SystemProperties)">
+<section class="detail" id="systemProperties(be.imgn.gaia.core.base.SystemProperties)">
 <h3>systemProperties</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></span>&nbsp;<span class="element-name">systemProperties</span><wbr><span class="parameters">(<a href="../system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a>&nbsp;systemProperties)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></span>&nbsp;<span class="element-name">systemProperties</span><wbr><span class="parameters">(<a href="../base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a>&nbsp;systemProperties)</span></div>
 <div class="block">Sets the system properties to read; <code>os.name</code> and <code>user.home</code> are required.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -160,10 +160,10 @@ Windows is taken for another Unix-like system. Every path of the platform belong
 </section>
 </li>
 <li>
-<section class="detail" id="environment(be.imgn.gaia.core.system.Environment)">
+<section class="detail" id="environment(be.imgn.gaia.core.base.Environment)">
 <h3>environment</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></span>&nbsp;<span class="element-name">environment</span><wbr><span class="parameters">(<a href="../system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a>&nbsp;environment)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Platform.Builder.html" title="class in be.imgn.gaia.core.platform">Platform.Builder</a></span>&nbsp;<span class="element-name">environment</span><wbr><span class="parameters">(<a href="../base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a>&nbsp;environment)</span></div>
 <div class="block">Sets the environment variables to read.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

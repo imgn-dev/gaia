@@ -82,7 +82,7 @@ one for each kind of file, never shared with another kind.</div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">The name of an array type, such as <code>String[]</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Ascii.html" title="class in be.imgn.gaia.core.text">Ascii</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ascii.html" title="class in be.imgn.gaia.core.base">Ascii</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Classes, case mapping, comparison and trimming of ASCII characters, as many protocols, file formats and identifiers
 define them.</div>
@@ -190,7 +190,7 @@ attribute of that annotation.</div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">The base directories where applications store their files, as defined by the <a href="https://specifications.freedesktop.org/basedir-spec/latest/">XDG Base Directory Specification</a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/Environment.html" title="interface in be.imgn.gaia.core.system">Environment</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A source of environment variables: the running JVM's, or fixed ones for tests.</div>
 </div>
@@ -222,7 +222,7 @@ test's temporary directory.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing">FakeTicker</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A <a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.</div>
+<div class="block">A <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Feature.html" title="enum class in be.imgn.gaia.memfs">Feature</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
@@ -358,7 +358,7 @@ underscores appended as needed to differ from the keywords and the names already
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
 <div class="block">How the names of the files of a directory are matched when they are looked up.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/NamingConvention.html" title="enum class in be.imgn.gaia.core.text">NamingConvention</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/NamingConvention.html" title="enum class in be.imgn.gaia.core.base">NamingConvention</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">A naming convention: a way to write a name made of several words, such as <code>timeoutSeconds</code> or
 <code>timeout-seconds</code>, and the conversion from one to another.</div>
@@ -486,7 +486,7 @@ classes, instead of starting one per test.</div>
 <div class="block">The names a generated source file uses, and the imports they need: a <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html#write(be.imgn.gaia.processing.source.JavaFile,javax.lang.model.element.Element...)"><code>GeneratedSources.write(JavaFile, Element...)</code></a> body gets one to
 name the types it refers to.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/text/Splitter.html" title="class in be.imgn.gaia.core.text">Splitter</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Splitter.html" title="class in be.imgn.gaia.core.base">Splitter</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Splits text into parts around a separator: a character, a literal string or a regular expression.</div>
 </div>
@@ -500,9 +500,9 @@ annotations that some <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/S
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An annotation processor made of <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Step.html" title="interface in be.imgn.gaia.processing"><code>Step</code></a>s, which takes care of processing rounds.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Stopwatch.html" title="class in be.imgn.gaia.core.time">Stopwatch</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Measures elapsed time, on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time"><code>Ticker</code></a> rather than on the wall clock.</div>
+<div class="block">Measures elapsed time, on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base"><code>Ticker</code></a> rather than on the wall clock.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab6"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event">Subscribe</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab6">
@@ -530,7 +530,7 @@ deliver their events through an executor, such as on a given thread.</div>
 <div class="block">What <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#subscribe(java.lang.Class,java.util.function.Consumer)"><code>EventBus.subscribe(Class, java.util.function.Consumer)</code></a> or <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html#register(java.lang.Object)"><code>EventBus.register(Object)</code></a> subscribed,
 until it is closed.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/system/SystemProperties.html" title="interface in be.imgn.gaia.core.system">SystemProperties</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A source of system properties: the running JVM's, or fixed ones for tests.</div>
 </div>
@@ -538,62 +538,74 @@ until it is closed.</div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Compiles in-memory sources with the system Java compiler, in process, running the given annotation processors.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Throwables.html" title="class in be.imgn.gaia.core.base">Throwables</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.html" title="class in be.imgn.gaia.core.base">Text</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Finds text in a string, to extract, remove or replace it.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Affix.html" title="class in be.imgn.gaia.core.base">Text.Affix</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">A literal string that a text starts or ends with: a prefix or a suffix.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Selects at most one occurrence in a text, to extract, remove or replace it.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Throwables.html" title="class in be.imgn.gaia.core.base">Throwables</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates exceptions from the exception that caused them.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time">Ticker</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base">Ticker</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A source of nanosecond time, for measuring elapsed time: only the difference between two readings is meaningful.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset&lt;E&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset&lt;E&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A modifiable sorted multiset backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html" title="class or interface in java.util" class="external-link"><code>TreeMap</code></a>, the multiset counterpart of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html" title="class or interface in java.util" class="external-link"><code>TreeSet</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html" title="class in be.imgn.gaia.processing.source">Type</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html" title="class in be.imgn.gaia.processing.source">Type</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A class, interface, enum, record or annotation type, or an anonymous class.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Builder.html" title="class in be.imgn.gaia.processing.source">Type.Builder</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Builder.html" title="class in be.imgn.gaia.processing.source">Type.Builder</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A builder of <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html" title="class in be.imgn.gaia.processing.source"><code>Type</code></a>s.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Kind.html" title="enum class in be.imgn.gaia.processing.source">Type.Kind</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.Kind.html" title="enum class in be.imgn.gaia.processing.source">Type.Kind</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">The kinds of type.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/TypeKey.html" title="class in be.imgn.gaia.processing">TypeKey</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/TypeKey.html" title="class in be.imgn.gaia.processing">TypeKey</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link"><code>TypeMirror</code></a> with the <code>equals</code> and <code>hashCode</code> of the type it denotes, for use in sets and maps:
 <code>TypeMirror</code> itself does not define them, and two mirrors of <code>List&lt;String&gt;</code> need not be equal.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeName.html" title="interface in be.imgn.gaia.processing.source">TypeName</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeName.html" title="interface in be.imgn.gaia.processing.source">TypeName</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">The name of a type as it is written in source code: a primitive, a class, a parameterized type, an array, a type
 variable or a wildcard, possibly with type annotations such as <code>@Nullable</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeVariableName.html" title="class in be.imgn.gaia.processing.source">TypeVariableName</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/TypeVariableName.html" title="class in be.imgn.gaia.processing.source">TypeVariableName</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">The name of a type variable, such as <code>T</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">A version number as <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a> defines it, such as
 <code>1.4.0-rc.1+build.5</code>: a major, minor and patch version, then optional pre-release identifiers after <code>-</code>,
 then optional build metadata identifiers after <code>+</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" title="class in be.imgn.gaia.core.event">VirtualThreadExecutor</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" title="class in be.imgn.gaia.core.event">VirtualThreadExecutor</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Runs each task on a new virtual thread: the executor of <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/OnVirtualThread.html" title="annotation interface in be.imgn.gaia.core.event"><code>@OnVirtualThread</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Visibility.html" title="enum class in be.imgn.gaia.processing">Visibility</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Visibility.html" title="enum class in be.imgn.gaia.processing">Visibility</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">How widely an element can be accessed, as its access modifier, or the lack of one, says: see
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#visibility(javax.lang.model.element.Element)"><code>MoreElements.visibility(javax.lang.model.element.Element)</code></a> and
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#effectiveVisibility(javax.lang.model.element.Element)"><code>MoreElements.effectiveVisibility(javax.lang.model.element.Element)</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html" title="class in be.imgn.gaia.processing.source">WildcardTypeName</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html" title="class in be.imgn.gaia.processing.source">WildcardTypeName</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">The name of a wildcard type argument: <code>?</code>, <code>? extends T</code> or <code>? super T</code>.</div>
 </div>
 </div>

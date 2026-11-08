@@ -80,14 +80,14 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time">Ticker</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base">Ticker</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">FakeTicker</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time">Ticker</a></span></div>
-<div class="block">A <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.
+implements <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base">Ticker</a></span></div>
+<div class="block">A <a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.
 
 <pre><code>FakeTicker ticker = new FakeTicker();
 Stopwatch stopwatch = Stopwatch.started(ticker);
@@ -193,11 +193,11 @@ assertThat(stopwatch.elapsed()).isEqualTo(Duration.ofSeconds(2));
 <h3>read</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">read</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html#read()">Ticker</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html#read()">Ticker</a></code></span></div>
 <div class="block">Returns the current reading, in nanoseconds since an arbitrary origin.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html#read()">read</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/time/Ticker.html" title="interface in be.imgn.gaia.core.time">Ticker</a></code></dd>
+<dd><code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html#read()">read</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base">Ticker</a></code></dd>
 <dt>Returns:</dt>
 <dd>the current reading</dd>
 </dl>
