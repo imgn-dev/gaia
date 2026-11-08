@@ -1101,11 +1101,11 @@ ordered by their bytes.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">ByteSink</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
-<div class="block">A writable destination of bytes, such as a file, that opens a new stream each time it is written.</div>
+<div class="block">A writable destination of bytes, such as a file, that opens a new writer each time it is written.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">ByteSource</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
-<div class="block">A readable source of bytes, such as a file or a URL, that opens a new stream each time it is read.</div>
+<div class="block">A readable source of bytes, such as a file or a URL, that opens a new reader each time it is read.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteWriter.html" class="type-name-link" title="class in be.imgn.gaia.core.io">ByteWriter</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
@@ -1162,11 +1162,11 @@ ordered by their bytes.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">CharSink</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
-<div class="block">A writable destination of characters, such as a text file, that opens a new stream each time it is written.</div>
+<div class="block">A writable destination of characters, such as a text file, that opens a new writer each time it is written.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" class="type-name-link" title="interface in be.imgn.gaia.core.io">CharSource</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
-<div class="block">A readable source of characters, such as a text file or a string, that opens a new stream each time it is read.</div>
+<div class="block">A readable source of characters, such as a text file or a string, that opens a new reader each time it is read.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharWriter.html" class="type-name-link" title="class in be.imgn.gaia.core.io">CharWriter</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a></dt>
 <dd>
@@ -4054,22 +4054,6 @@ thread, with <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExe
 <dd>
 <div class="block">Creates an open bound.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#openBufferedStream()" class="member-name-link">openBufferedStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
-<dd>
-<div class="block">Opens a new buffered stream to write the bytes of this sink.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#openBufferedStream()" class="member-name-link">openBufferedStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
-<dd>
-<div class="block">Opens a new buffered stream on the bytes of this source.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#openBufferedStream()" class="member-name-link">openBufferedStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
-<dd>
-<div class="block">Opens a new buffered stream to write the characters of this sink.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#openBufferedStream()" class="member-name-link">openBufferedStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
-<dd>
-<div class="block">Opens a new buffered stream on the characters of this source.</div>
-</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html#openClosed(C,C)" class="member-name-link">openClosed(C, C)</a> - Static method in record class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect">Range</a></dt>
 <dd>
 <div class="block">Returns the range of the values between two endpoints, the upper one included: <code>(lower, upper]</code>.</div>
@@ -4081,22 +4065,6 @@ thread, with <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExe
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#openReader()" class="member-name-link">openReader()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
 <dd>
 <div class="block">Opens a new reader on the characters of this source.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#openStream()" class="member-name-link">openStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
-<dd>
-<div class="block">Opens a new stream to write the bytes of this sink.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#openStream()" class="member-name-link">openStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
-<dd>
-<div class="block">Opens a new stream on the bytes of this source.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#openStream()" class="member-name-link">openStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
-<dd>
-<div class="block">Opens a new stream to write the characters of this sink.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html#openStream()" class="member-name-link">openStream()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></dt>
-<dd>
-<div class="block">Opens a new stream on the characters of this source.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#openWriter()" class="member-name-link">openWriter()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
 <dd>

@@ -67,8 +67,6 @@ loadScripts(document, 'script');</script>
 <li><a href="#of(java.net.URI,java.nio.charset.Charset)" tabindex="0">of(URI, Charset)</a></li>
 <li><a href="#concat(be.imgn.gaia.core.io.CharSource...)" tabindex="0">concat(CharSource...)</a></li>
 <li><a href="#concat(java.lang.Iterable)" tabindex="0">concat(Iterable)</a></li>
-<li><a href="#openStream()" tabindex="0">openStream()</a></li>
-<li><a href="#openBufferedStream()" tabindex="0">openBufferedStream()</a></li>
 <li><a href="#openReader()" tabindex="0">openReader()</a></li>
 <li><a href="#isEmpty()" tabindex="0">isEmpty()</a></li>
 <li><a href="#lengthIfKnown()" tabindex="0">lengthIfKnown()</a></li>
@@ -100,15 +98,15 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/FunctionalInterface.html" title="class or interface in java.lang" class="external-link">@FunctionalInterface</a>
 </span><span class="modifiers">public interface </span><span class="element-name type-name-label">CharSource</span></div>
-<div class="block">A readable source of characters, such as a text file or a string, that opens a new stream each time it is read.
+<div class="block">A readable source of characters, such as a text file or a string, that opens a new reader each time it is read.
 
 <p>Unlike a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link"><code>Reader</code></a>, a source is not an open resource: it can be kept, passed around and read any number of
-times, and each read method opens a stream and closes it before returning. Only <a href="#openStream()"><code>openStream()</code></a>,
-<a href="#openBufferedStream()"><code>openBufferedStream()</code></a> and <a href="#lines()"><code>lines()</code></a> leave a stream for the caller to close.
+times, and each read method opens a reader and closes it before returning. Only <a href="#openReader()"><code>openReader()</code></a> and
+<a href="#lines()"><code>lines()</code></a> leave something for the caller to close.
 
-<p>The only abstract method is <a href="#openStream()"><code>openStream()</code></a>, so a lambda makes a source:
+<p>The only abstract method is <a href="#openReader()"><code>openReader()</code></a>, so a lambda makes a source:
 
-<pre><code>CharSource source = () -&gt; new InputStreamReader(System.in, StandardCharsets.UTF_8);
+<pre><code>CharSource source = () -&gt; CharReader.of(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 List&lt;String&gt; lines = CharSource.of(file, StandardCharsets.UTF_8).readLines();
 </code></pre>
 
@@ -235,20 +233,10 @@ encoded in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default c
 <div class="block">Returns a source that reads a text file encoded in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default
 charset</a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html" title="class or interface in java.io" class="external-link">BufferedReader</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#openBufferedStream()" class="member-name-link">openBufferedStream</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Opens a new buffered stream on the characters of this source.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#openReader()" class="member-name-link">openReader</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Opens a new reader on the characters of this source.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link">Reader</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#openStream()" class="member-name-link">openStream</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#openReader()" class="member-name-link">openReader</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Opens a new stream on the characters of this source.</div>
+<div class="block">Opens a new reader on the characters of this source.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#read()" class="member-name-link">read</a>()</code></div>
@@ -496,49 +484,18 @@ is read to its end. The sources are copied: later changes to <code>sources</code
 </section>
 </li>
 <li>
-<section class="detail" id="openStream()">
-<h3>openStream</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link">Reader</a></span>&nbsp;<span class="element-name">openStream</span>()
-           throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
-<div class="block">Opens a new stream on the characters of this source. The caller must close it.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a new stream</dd>
-<dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the stream cannot be opened</dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="openBufferedStream()">
-<h3>openBufferedStream</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html" title="class or interface in java.io" class="external-link">BufferedReader</a></span>&nbsp;<span class="element-name">openBufferedStream</span>()
-                                   throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
-<div class="block">Opens a new buffered stream on the characters of this source. The caller must close it.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a new buffered stream</dd>
-<dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the stream cannot be opened</dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="openReader()">
 <h3>openReader</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></span>&nbsp;<span class="element-name">openReader</span>()
-                       throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
-<div class="block">Opens a new reader on the characters of this source. The caller must close it.</div>
+<div class="member-signature"><span class="return-type"><a href="CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></span>&nbsp;<span class="element-name">openReader</span>()
+               throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Opens a new reader on the characters of this source. The caller must close it. For APIs that take a
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link"><code>Reader</code></a>, <a href="CharReader.html#asReader()"><code>CharReader.asReader()</code></a> reads through it.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>a new reader</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the stream cannot be opened</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the reader cannot be opened</dd>
 <dt>Since:</dt>
 <dd>0.1.3</dd>
 </dl>
