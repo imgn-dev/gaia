@@ -3868,7 +3868,7 @@ flushes it if it is <a href="https://docs.oracle.com/en/java/javase/25/docs/api/
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html#of(java.lang.CharSequence)" class="member-name-link">of(CharSequence)</a> - Static method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></dt>
 <dd>
-<div class="block">Returns a reader that reads characters.</div>
+<div class="block">Returns a reader that reads characters, without copying them.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html#of(java.lang.Class)" class="member-name-link">of(Class)</a> - Static method in record class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/ClassName.html" title="class in be.imgn.gaia.processing.source">ClassName</a></dt>
 <dd>
@@ -4272,14 +4272,6 @@ separator (<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongMath.html#pow(long,int)" class="member-name-link">pow(long, int)</a> - Static method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongMath.html" title="class in be.imgn.gaia.core.math">LongMath</a></dt>
 <dd>
 <div class="block">Returns a value to a power, wrapping around on overflow like <code>long</code> multiplication.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntMath.html#powExact(int,int)" class="member-name-link">powExact(int, int)</a> - Static method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntMath.html" title="class in be.imgn.gaia.core.math">IntMath</a></dt>
-<dd>
-<div class="block">Returns a value to a power.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongMath.html#powExact(long,int)" class="member-name-link">powExact(long, int)</a> - Static method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongMath.html" title="class in be.imgn.gaia.core.math">LongMath</a></dt>
-<dd>
-<div class="block">Returns a value to a power.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntMath.html#powMod(int,int,int)" class="member-name-link">powMod(int, int, int)</a> - Static method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntMath.html" title="class in be.imgn.gaia.core.math">IntMath</a></dt>
 <dd>
@@ -5100,6 +5092,10 @@ portable enough for <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Direct
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#stderrEncoding()" class="member-name-link">stderrEncoding()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>
 <div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#err" title="class or interface in java.lang" class="external-link"><code>System.err</code></a>: the <code>stderr.encoding</code> property.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#stdinEncoding()" class="member-name-link">stdinEncoding()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
+<dd>
+<div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#in" title="class or interface in java.lang" class="external-link"><code>System.in</code></a>: the <code>stdin.encoding</code> property.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html#stdoutEncoding()" class="member-name-link">stdoutEncoding()</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></dt>
 <dd>

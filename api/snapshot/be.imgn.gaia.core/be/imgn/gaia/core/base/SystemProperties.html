@@ -90,6 +90,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#userHome()" tabindex="0">userHome()</a></li>
 <li><a href="#userDir()" tabindex="0">userDir()</a></li>
 <li><a href="#nativeEncoding()" tabindex="0">nativeEncoding()</a></li>
+<li><a href="#stdinEncoding()" tabindex="0">stdinEncoding()</a></li>
 <li><a href="#stdoutEncoding()" tabindex="0">stdoutEncoding()</a></li>
 <li><a href="#stderrEncoding()" tabindex="0">stderrEncoding()</a></li>
 <li><a href="#jdkModulePath()" tabindex="0">jdkModulePath()</a></li>
@@ -121,7 +122,7 @@ loadScripts(document, 'script');</script>
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#getProperty(java.lang.String)" title="class or interface in java.lang" class="external-link"><code>System.getProperty(String)</code></a>, can be tested with <a href="#of(java.util.Map)"><code>of(Map)</code></a>.
 
 <p>Besides <a href="#get(java.lang.String)"><code>get(String)</code></a>, which reads any property, there is a typed method for each property listed in the
-Java SE 21 documentation of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#getProperties()" title="class or interface in java.lang" class="external-link"><code>System.getProperties()</code></a>, followed by the ones the JDK supports. The properties
+Java SE 25 documentation of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#getProperties()" title="class or interface in java.lang" class="external-link"><code>System.getProperties()</code></a>, followed by the ones the JDK supports. The properties
 every Java runtime must define are returned as is, and throw <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link"><code>NoSuchElementException</code></a> if the source lacks them,
 which only a fixed source can. The others are returned as an <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>, or as an empty list for paths.
 
@@ -330,28 +331,33 @@ the <code>jdk.module.path</code> property.</div>
 <div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#err" title="class or interface in java.lang" class="external-link"><code>System.err</code></a>: the <code>stderr.encoding</code> property.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#stdoutEncoding()" class="member-name-link">stdoutEncoding</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#stdinEncoding()" class="member-name-link">stdinEncoding</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#in" title="class or interface in java.lang" class="external-link"><code>System.in</code></a>: the <code>stdin.encoding</code> property.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#stdoutEncoding()" class="member-name-link">stdoutEncoding</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#out" title="class or interface in java.lang" class="external-link"><code>System.out</code></a>: the <code>stdout.encoding</code> property.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#system()" class="member-name-link">system</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SystemProperties.html" title="interface in be.imgn.gaia.core.base">SystemProperties</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#system()" class="member-name-link">system</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns the system properties of the running JVM.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userDir()" class="member-name-link">userDir</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userDir()" class="member-name-link">userDir</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the current working directory of the user: the <code>user.dir</code> property.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userHome()" class="member-name-link">userHome</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userHome()" class="member-name-link">userHome</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the home directory of the user: the <code>user.home</code> property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userName()" class="member-name-link">userName</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#userName()" class="member-name-link">userName</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the name of the user account: the <code>user.name</code> property.</div>
 </div>
 </div>
@@ -904,6 +910,25 @@ given, which tests can replace.</div>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is not set</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/IllegalCharsetNameException.html" title="class or interface in java.nio.charset" class="external-link">IllegalCharsetNameException</a></code> - if the property is not a legal charset name</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/UnsupportedCharsetException.html" title="class or interface in java.nio.charset" class="external-link">UnsupportedCharsetException</a></code> - if this JVM does not support the charset the property names</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="stdinEncoding()">
+<h3>stdinEncoding</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a></span>&nbsp;<span class="element-name">stdinEncoding</span>()</div>
+<div class="block">Returns the character encoding of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#in" title="class or interface in java.lang" class="external-link"><code>System.in</code></a>: the <code>stdin.encoding</code> property.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NoSuchElementException.html" title="class or interface in java.util" class="external-link">NoSuchElementException</a></code> - if the property is not set</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/IllegalCharsetNameException.html" title="class or interface in java.nio.charset" class="external-link">IllegalCharsetNameException</a></code> - if the property is not a legal charset name</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/UnsupportedCharsetException.html" title="class or interface in java.nio.charset" class="external-link">UnsupportedCharsetException</a></code> - if this JVM does not support the charset the property names</dd>
+<dt>Since:</dt>
+<dd>0.2.0</dd>
 </dl>
 </div>
 </section>

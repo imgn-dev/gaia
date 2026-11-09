@@ -186,7 +186,7 @@ while (!in.exhausted()) {
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.CharSequence)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;chars)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns a reader that reads characters.</div>
+<div class="block">Returns a reader that reads characters, without copying them.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#peek()" class="member-name-link">peek</a>()</code></div>
@@ -293,7 +293,8 @@ view</a> of a reader, returns that reader rather than buffering its characters a
 <h3>of</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;chars)</span></div>
-<div class="block">Returns a reader that reads characters.</div>
+<div class="block">Returns a reader that reads characters, without copying them. The characters must not change until the reader is
+closed.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>chars</code> - the characters to read</dd>

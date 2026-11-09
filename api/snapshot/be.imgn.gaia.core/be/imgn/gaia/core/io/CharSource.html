@@ -291,7 +291,7 @@ charset</a>.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="CharSource.html" title="interface in be.imgn.gaia.core.io">CharSource</a></span>&nbsp;<span class="element-name">wrap</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;chars)</span></div>
 <div class="block">Returns a source that reads a character sequence. The sequence is not copied: changes to it, as in a
-<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html" title="class or interface in java.lang" class="external-link"><code>StringBuilder</code></a>, show in the reads that follow.</div>
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html" title="class or interface in java.lang" class="external-link"><code>StringBuilder</code></a>, show in the reads that follow. It must not change while a reader of this source is open.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>chars</code> - the sequence to read</dd>

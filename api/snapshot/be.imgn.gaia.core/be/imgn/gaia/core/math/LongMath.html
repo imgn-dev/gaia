@@ -67,7 +67,6 @@ loadScripts(document, 'script');</script>
 <li><a href="#sqrt(long,java.math.RoundingMode)" tabindex="0">sqrt(long, RoundingMode)</a></li>
 <li><a href="#divide(long,long,java.math.RoundingMode)" tabindex="0">divide(long, long, RoundingMode)</a></li>
 <li><a href="#pow(long,int)" tabindex="0">pow(long, int)</a></li>
-<li><a href="#powExact(long,int)" tabindex="0">powExact(long, int)</a></li>
 <li><a href="#saturatedAdd(long,long)" tabindex="0">saturatedAdd(long, long)</a></li>
 <li><a href="#saturatedSubtract(long,long)" tabindex="0">saturatedSubtract(long, long)</a></li>
 <li><a href="#saturatedMultiply(long,long)" tabindex="0">saturatedMultiply(long, long)</a></li>
@@ -210,46 +209,40 @@ is 0.</div>
 <div class="block">Returns a value to a power, wrapping around on overflow like <code>long</code> multiplication.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#powExact(long,int)" class="member-name-link">powExact</a><wbr>(long&nbsp;base,
- int&nbsp;exponent)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns a value to a power.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#powMod(long,long,long)" class="member-name-link">powMod</a><wbr>(long&nbsp;base,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#powMod(long,long,long)" class="member-name-link">powMod</a><wbr>(long&nbsp;base,
  long&nbsp;exponent,
  long&nbsp;modulus)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a value to a power, modulo a modulus.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedAdd(long,long)" class="member-name-link">saturatedAdd</a><wbr>(long&nbsp;a,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedAdd(long,long)" class="member-name-link">saturatedAdd</a><wbr>(long&nbsp;a,
  long&nbsp;b)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the sum of two values, or the <code>long</code> closest to it if it doesn't fit.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedMultiply(long,long)" class="member-name-link">saturatedMultiply</a><wbr>(long&nbsp;a,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedMultiply(long,long)" class="member-name-link">saturatedMultiply</a><wbr>(long&nbsp;a,
  long&nbsp;b)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the product of two values, or the <code>long</code> closest to it if it doesn't fit.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedPow(long,int)" class="member-name-link">saturatedPow</a><wbr>(long&nbsp;base,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedPow(long,int)" class="member-name-link">saturatedPow</a><wbr>(long&nbsp;base,
  int&nbsp;exponent)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a value to a power, or the <code>long</code> closest to it if it doesn't fit.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedSubtract(long,long)" class="member-name-link">saturatedSubtract</a><wbr>(long&nbsp;a,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saturatedSubtract(long,long)" class="member-name-link">saturatedSubtract</a><wbr>(long&nbsp;a,
  long&nbsp;b)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the difference of two values, or the <code>long</code> closest to it if it doesn't fit.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sqrt(long,java.math.RoundingMode)" class="member-name-link">sqrt</a><wbr>(long&nbsp;x,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sqrt(long,java.math.RoundingMode)" class="member-name-link">sqrt</a><wbr>(long&nbsp;x,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/RoundingMode.html" title="class or interface in java.math" class="external-link">RoundingMode</a>&nbsp;mode)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the square root of a value, rounded to an integer.</div>
 </div>
 </div>
@@ -473,26 +466,6 @@ which overflows.</div>
 <dd><code>base</code> to the power of <code>exponent</code>, keeping only its 64 lowest bits</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>exponent</code> is negative</dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="powExact(long,int)">
-<h3>powExact</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">powExact</span><wbr><span class="parameters">(long&nbsp;base,
- int&nbsp;exponent)</span></div>
-<div class="block">Returns a value to a power.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>base</code> - the base</dd>
-<dd><code>exponent</code> - the exponent</dd>
-<dt>Returns:</dt>
-<dd><code>base</code> to the power of <code>exponent</code></dd>
-<dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>exponent</code> is negative</dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArithmeticException.html" title="class or interface in java.lang" class="external-link">ArithmeticException</a></code> - if the result doesn't fit in a <code>long</code></dd>
 </dl>
 </div>
 </section>
