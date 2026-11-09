@@ -31,7 +31,7 @@ import org.jspecify.annotations.Nullable;
  * var frame = Bytes.build(out -> out.writeShort(type).writeInt(body.size()).write(body));
  * }</pre>
  *
- * @since 0.1.3
+ * @since 0.2.0
  */
 public final class Bytes implements Comparable<Bytes> {
 
@@ -505,7 +505,7 @@ public final class Bytes implements Comparable<Bytes> {
     /**
      * Writes bytes to a writer, for {@link #build(Content)}.
      *
-     * @since 0.1.3
+     * @since 0.2.0
      */
     @FunctionalInterface
     public interface Content {

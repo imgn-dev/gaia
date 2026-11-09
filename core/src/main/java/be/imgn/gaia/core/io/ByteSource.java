@@ -66,7 +66,7 @@ public interface ByteSource {
      *
      * @param bytes the bytes to read
      * @return a source that reads {@code bytes}
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static ByteSource wrap(Bytes bytes) {
         requireNonNull(bytes, "bytes");
@@ -144,7 +144,7 @@ public interface ByteSource {
      *
      * @return a new reader
      * @throws IOException if the reader cannot be opened
-     * @since 0.1.3
+     * @since 0.2.0
      */
     ByteReader openReader() throws IOException;
 

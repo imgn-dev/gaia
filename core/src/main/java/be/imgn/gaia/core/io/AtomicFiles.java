@@ -89,7 +89,7 @@ public final class AtomicFiles {
      * @param file the file to write
      * @param bytes the new content of the file
      * @throws IOException if the file cannot be written, which leaves it as it was
-     * @since 0.1.3
+     * @since 0.2.0
      */
     public static void write(Path file, Bytes bytes) throws IOException {
         requireNonNull(file, "file");

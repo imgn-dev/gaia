@@ -6,8 +6,8 @@
 # module, and links from one module to another and to the JDK.
 #
 # The published modules are those with a src/main/java/module-info.java; the
-# *-tests modules have none. A module's src/main/java24, if any, is part of its
-# sources, as in its javadoc jar.
+# *-tests modules have none. In tags before 0.2.0, gaia-core's src/main/java24
+# is part of its sources, as in its javadoc jar.
 #
 # It works on the sources of any tag, so that older versions can be documented
 # with the script of today.
@@ -17,8 +17,8 @@
 
 set -euo pipefail
 
-# The JDK whose API the documentation links to. Every JDK type gaia uses is in
-# it, including the Java 24 ones of src/main/java24.
+# The JDK whose API the documentation links to, which has every JDK type gaia
+# uses.
 JDK=25
 # The element-list of its documentation, committed beside this script, so that
 # building the documentation does not depend on docs.oracle.com being reachable:

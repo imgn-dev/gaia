@@ -286,7 +286,7 @@ class ElementKindsTest {
         analyze(element -> outcomes.putIfAbsent(element.getKind(), castOutcomes(element)), EVERYTHING);
         Map<String, Set<ElementKind>> succeeded = new LinkedHashMap<>();
         outcomes.forEach((kind, byCast) -> byCast.forEach((cast, outcome) -> {
-            Set<ElementKind> kinds = succeeded.computeIfAbsent(cast, ignored -> EnumSet.noneOf(ElementKind.class));
+            Set<ElementKind> kinds = succeeded.computeIfAbsent(cast, _ -> EnumSet.noneOf(ElementKind.class));
             if (outcome.equals("ok")) {
                 kinds.add(kind);
             } else {

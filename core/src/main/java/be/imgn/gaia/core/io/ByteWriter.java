@@ -38,7 +38,7 @@ import java.nio.charset.Charset;
  * <p>A writer owns its stream: {@link #close()} closes it, and any write after that throws {@link IOException}. A
  * writer is not safe for use by several threads at once.
  *
- * @since 0.1.3
+ * @since 0.2.0
  */
 public final class ByteWriter implements Closeable, Flushable {
 

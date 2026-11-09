@@ -442,11 +442,9 @@ public abstract class StepProcessor extends AbstractProcessor {
             if (!isResolved(element, true)) {
                 return;
             }
-            byAnnotation
-                    .computeIfAbsent(annotation, ignored -> new LinkedHashSet<>())
-                    .add(element);
+            byAnnotation.computeIfAbsent(annotation, _ -> new LinkedHashSet<>()).add(element);
             annotationMetaAnnotations.forEach(meta -> byMetaAnnotation
-                    .computeIfAbsent(meta, ignored -> new LinkedHashSet<>())
+                    .computeIfAbsent(meta, _ -> new LinkedHashSet<>())
                     .add(element));
         }
 

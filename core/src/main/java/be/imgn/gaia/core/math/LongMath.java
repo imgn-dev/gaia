@@ -23,7 +23,7 @@ import java.util.Arrays;
  * return {@link Long#MAX_VALUE} or {@link Long#MIN_VALUE} instead, and {@link #divide(long, long, RoundingMode)}, which
  * overflows like {@link Math#floorDiv(long, long)}.
  *
- * @since 0.1.3
+ * @since 0.2.0
  * @see IntMath
  */
 public final class LongMath {

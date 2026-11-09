@@ -136,7 +136,7 @@ final class MemoryAsynchronousFileChannel extends AsynchronousFileChannel {
 
     private static <T, A> void complete(
             CompletableFuture<T> future, A attachment, CompletionHandler<T, ? super A> handler) {
-        CompletableFuture<T> unused = future.whenComplete((result, failure) -> {
+        var _ = future.whenComplete((result, failure) -> {
             if (failure == null) {
                 handler.completed(result, attachment);
             } else {

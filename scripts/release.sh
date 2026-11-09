@@ -77,12 +77,10 @@ preflight() {
     ok 'git, gpg, java, curl present'
 
     local feature
-    # -Prelease builds gaia-core's multi-release jar, whose Java 24 part needs a
-    # JDK 24 compiler.
     feature=$(java -XshowSettings:properties -version 2>&1 \
               | awk -F'= ' '/java.specification.version/ {print $2}')
-    [[ ${feature%%.*} -ge 24 ]] \
-        || die "JDK $feature found; the build needs JDK 24 or later (25 recommended)."
+    [[ ${feature%%.*} -ge 25 ]] \
+        || die "JDK $feature found; the build needs JDK 25 or later."
     ok "JDK $feature"
 
     [[ -z $(git status --porcelain) ]] \

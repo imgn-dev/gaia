@@ -54,7 +54,7 @@ public interface ByteSink {
      *
      * @param file the file to write
      * @return a sink that replaces the content of {@code file}
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static ByteSink replacing(Path file) {
         return of(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
@@ -65,7 +65,7 @@ public interface ByteSink {
      *
      * @param file the file to write
      * @return a sink that appends to {@code file}
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static ByteSink appending(Path file) {
         return of(file, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -77,7 +77,7 @@ public interface ByteSink {
      *
      * @param file the file to create
      * @return a sink that creates {@code file}
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static ByteSink creatingNew(Path file) {
         return of(file, StandardOpenOption.CREATE_NEW);
@@ -89,7 +89,7 @@ public interface ByteSink {
      *
      * @return a new writer
      * @throws IOException if the writer cannot be opened
-     * @since 0.1.3
+     * @since 0.2.0
      */
     ByteWriter openWriter() throws IOException;
 
@@ -111,7 +111,7 @@ public interface ByteSink {
      *
      * @param bytes the bytes to write
      * @throws IOException if this sink cannot be written
-     * @since 0.1.3
+     * @since 0.2.0
      */
     default void write(Bytes bytes) throws IOException {
         requireNonNull(bytes, "bytes");

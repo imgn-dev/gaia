@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
  * or the end. Conditions narrow it down to occurrences that are, or are not, preceded or followed by a literal string.
  * A literal string or character is never a regular expression, and an empty one is rejected.
  *
- * @since 0.1.3
+ * @since 0.2.0
  */
 public final class Text {
 
@@ -166,7 +166,7 @@ public final class Text {
      *
      * <p>A pattern is immutable and thread-safe.
      *
-     * @since 0.1.3
+     * @since 0.2.0
      */
     public sealed interface Pattern permits Affix, Search {
 
@@ -242,7 +242,7 @@ public final class Text {
      *
      * <p>Conditions return a plain {@link Pattern}, not an affix.
      *
-     * @since 0.1.3
+     * @since 0.2.0
      */
     public static final class Affix implements Pattern, CharSequence {
 

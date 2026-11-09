@@ -48,7 +48,7 @@ import org.jspecify.annotations.Nullable;
  * <p>A reader owns its stream: {@link #close()} closes it, and any other call that needs the stream after that throws
  * {@link IOException}. A reader is not safe for use by several threads at once.
  *
- * @since 0.1.3
+ * @since 0.2.0
  */
 public final class ByteReader implements Closeable {
 

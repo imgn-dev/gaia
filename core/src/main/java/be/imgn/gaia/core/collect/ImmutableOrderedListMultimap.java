@@ -116,7 +116,7 @@ final class ImmutableOrderedListMultimap<K, V> extends AbstractMapListMultimap<K
         private long total;
 
         Builder<K, V> put(K key, V value) {
-            map.computeIfAbsent(key, unused -> new ArrayList<>()).add(value);
+            map.computeIfAbsent(key, _ -> new ArrayList<>()).add(value);
             total++;
             return this;
         }

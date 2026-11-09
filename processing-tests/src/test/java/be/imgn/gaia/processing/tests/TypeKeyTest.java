@@ -542,16 +542,8 @@ class TypeKeyTest {
                     assertDifferentKeys(types.get("missing"), types.get("qualifiedMissing"), "foo.Missing");
                     assertDifferentKeys(types.get("missing"), types.get("other"), "Other");
                     assertDifferentKeys(types.get("missing"), types.get("parameterizedMissing"), "Missing<String>");
-                    if (((DeclaredType) types.get("parameterizedMissing"))
-                            .getTypeArguments()
-                            .isEmpty()) {
-                        // Some JDKs, as JDK 21, give any unresolved parameterized type as <any>.
-                        assertThat(types.get("parameterizedMissing")).hasToString("<any>");
-                        assertEqualKeys(types.get("parameterizedMissing"), types.get("missingOfInteger"), "both <any>");
-                    } else {
-                        assertDifferentKeys(
-                                types.get("parameterizedMissing"), types.get("missingOfInteger"), "Missing<Integer>");
-                    }
+                    assertDifferentKeys(
+                            types.get("parameterizedMissing"), types.get("missingOfInteger"), "Missing<Integer>");
                     assertDifferentKeys(types.get("listOfMissing"), types.get("listOfOther"), "List<Other>");
                     assertDifferentKeys(types.get("missing"), context.type(String.class), "String");
                 }))

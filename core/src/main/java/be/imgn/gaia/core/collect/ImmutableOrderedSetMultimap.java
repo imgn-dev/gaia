@@ -120,7 +120,7 @@ final class ImmutableOrderedSetMultimap<K, V> extends AbstractMapSetMultimap<K, 
         private long total;
 
         Builder<K, V> put(K key, V value) {
-            if (map.computeIfAbsent(key, unused -> new LinkedHashSet<>()).add(value)) {
+            if (map.computeIfAbsent(key, _ -> new LinkedHashSet<>()).add(value)) {
                 total++;
             }
             return this;

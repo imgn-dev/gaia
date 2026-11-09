@@ -181,7 +181,7 @@ public interface CharSource {
      *
      * @return a new reader
      * @throws IOException if the reader cannot be opened
-     * @since 0.1.3
+     * @since 0.2.0
      */
     CharReader openReader() throws IOException;
 

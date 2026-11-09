@@ -252,7 +252,7 @@ public final class Annotation {
             if (!SourceVersion.isIdentifier(name) || SourceVersion.isKeyword(name)) {
                 throw new IllegalArgumentException("Not a member name: " + name);
             }
-            return members.computeIfAbsent(name, ignored -> new ArrayList<>());
+            return members.computeIfAbsent(name, _ -> new ArrayList<>());
         }
 
         private void addValue(String name, AnnotationValue value) {

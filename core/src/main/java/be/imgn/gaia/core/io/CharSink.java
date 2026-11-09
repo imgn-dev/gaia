@@ -71,7 +71,7 @@ public interface CharSink {
      * @param file the file to write
      * @return a sink that replaces the content of {@code file}
      * @see #replacing(Path, Charset)
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static CharSink replacing(Path file) {
         return replacing(file, Charsets.DEFAULT_CHARSET);
@@ -86,7 +86,7 @@ public interface CharSink {
      * @return a sink that replaces the content of {@code file}
      * @throws IllegalArgumentException if {@code charset} does not support encoding
      * @see ByteSink#replacing(Path)
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static CharSink replacing(Path file, Charset charset) {
         return ByteSink.replacing(file).asCharSink(charset);
@@ -99,7 +99,7 @@ public interface CharSink {
      * @param file the file to write
      * @return a sink that appends to {@code file}
      * @see #appending(Path, Charset)
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static CharSink appending(Path file) {
         return appending(file, Charsets.DEFAULT_CHARSET);
@@ -113,7 +113,7 @@ public interface CharSink {
      * @return a sink that appends to {@code file}
      * @throws IllegalArgumentException if {@code charset} does not support encoding
      * @see ByteSink#appending(Path)
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static CharSink appending(Path file, Charset charset) {
         return ByteSink.appending(file).asCharSink(charset);
@@ -127,7 +127,7 @@ public interface CharSink {
      * @param file the file to create
      * @return a sink that creates {@code file}
      * @see #creatingNew(Path, Charset)
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static CharSink creatingNew(Path file) {
         return creatingNew(file, Charsets.DEFAULT_CHARSET);
@@ -142,7 +142,7 @@ public interface CharSink {
      * @return a sink that creates {@code file}
      * @throws IllegalArgumentException if {@code charset} does not support encoding
      * @see ByteSink#creatingNew(Path)
-     * @since 0.1.3
+     * @since 0.2.0
      */
     static CharSink creatingNew(Path file, Charset charset) {
         return ByteSink.creatingNew(file).asCharSink(charset);
@@ -154,7 +154,7 @@ public interface CharSink {
      *
      * @return a new writer
      * @throws IOException if the writer cannot be opened
-     * @since 0.1.3
+     * @since 0.2.0
      */
     CharWriter openWriter() throws IOException;
 

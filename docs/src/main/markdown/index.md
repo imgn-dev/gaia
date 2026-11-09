@@ -4,7 +4,7 @@ Gaia is a family of Java libraries: utilities the JDK doesn't provide, including
 file system, and helpers for writing annotation processors. `gaia-core` and `gaia-processing` each have a matching
 testing library, for testing the code that uses them.
 
-The libraries require Java 21 or later, and are released together under one version. Every class is documented in
+The libraries require Java 25 or later, and are released together under one version. Every class is documented in
 the [API documentation](https://imgn-dev.github.io/gaia/api/latest/).
 
 ## Libraries

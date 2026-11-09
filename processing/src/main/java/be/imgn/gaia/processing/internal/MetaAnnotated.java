@@ -115,8 +115,7 @@ public final class MetaAnnotated {
             for (AnnotationMirror annotation : annotationsOf(element)) {
                 TypeElement type = typeOf(annotation);
                 if (!of(type).isEmpty()) {
-                    found.computeIfAbsent(type, ignored -> new LinkedHashSet<>())
-                            .add(element);
+                    found.computeIfAbsent(type, _ -> new LinkedHashSet<>()).add(element);
                 }
             }
             return super.scan(element, found);

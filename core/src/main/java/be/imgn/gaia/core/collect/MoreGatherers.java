@@ -21,9 +21,6 @@ import org.jspecify.annotations.Nullable;
 /**
  * Gatherers that {@link Gatherers} does not provide.
  *
- * <p>Gatherers exist since Java 24, so this class is only present when gaia runs on Java 24 or later: it lives in the
- * {@code META-INF/versions/24} part of the multi-release jar.
- *
  * <p>Like streams, the gatherers accept {@code null} elements, and the key functions may return {@code null}. Keys and
  * elements are compared with {@link Objects#equals(Object, Object)}.
  *

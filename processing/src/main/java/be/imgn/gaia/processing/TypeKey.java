@@ -47,9 +47,7 @@ import org.jspecify.annotations.Nullable;
  *   <li>a type javac could not resolve, of kind {@link TypeKind#ERROR}, is the same type as any type for
  *       {@code isSameType}, which is no equivalence relation. Its key is equal to the key of an unresolved type only,
  *       with the same name as written in the source, without its annotations, the same type arguments and the same
- *       enclosing type: {@code @Nullable Missing} has the key of {@code Missing}, but {@code foo.Missing} does not.
- *       Some JDKs, as JDK 21, keep neither the name nor the type arguments of an unresolved parameterized type, which
- *       they give as {@code <any>}: {@code Missing<String>} then has the key of {@code Other<Integer>};
+ *       enclosing type: {@code @Nullable Missing} has the key of {@code Missing}, but {@code foo.Missing} does not;
  *   <li>a generic executable type is the same type for {@code isSameType} as another one that only names its type
  *       variables differently, as the types of {@code <A> void a(A)} and {@code <B> void b(B)}, while their keys
  *       compare their type variables as any other and differ;

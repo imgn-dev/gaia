@@ -405,7 +405,7 @@ class AnnotationLookupTest {
                         """));
 
         Run run = run(
-                (context, ignored) -> {
+                (context, _) -> {
                     TypeElement compiled = type(context, "dependency.Compiled");
                     List<AnnotationReader> all = new ArrayList<>(context.annotations(compiled, "example.Tag"));
                     for (ExecutableElement method : ElementFilter.methodsIn(compiled.getEnclosedElements())) {
@@ -672,7 +672,7 @@ class AnnotationLookupTest {
                 """));
 
         Run run = run(
-                (context, ignored) -> context.annotationsMetaAnnotatedWith(
+                (context, _) -> context.annotationsMetaAnnotatedWith(
                         type(context, "dependency.Compiled"), "dependency.Component"),
                 List.of("-classpath", classOutput.toString()),
                 source("example.Seed", """
@@ -889,7 +889,7 @@ class AnnotationLookupTest {
     @Test
     void ignoresAnnotationTypesAndSuperclassesJavacCouldNotResolve() {
         Run run = run(
-                (context, ignored) -> {
+                (context, _) -> {
                     TypeElement broken = type(context, "example.Broken");
                     List<AnnotationReader> all = new ArrayList<>();
                     all.addAll(context.annotations(broken, "example.Tag"));
@@ -939,7 +939,7 @@ class AnnotationLookupTest {
     void findsNoAnnotationOfATypeJavacCouldNotResolveByTheNameItIsWrittenWith() {
         Map<String, Boolean> found = new LinkedHashMap<>();
         Run run = run(
-                (context, ignored) -> {
+                (context, _) -> {
                     TypeElement broken = type(context, "example.Broken");
                     for (String name : List.of(
                             "Missing", "example.Missing", "com.example.Missing", "example.Marker", "example.Tag")) {

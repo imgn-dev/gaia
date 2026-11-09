@@ -107,7 +107,7 @@ public final class ServiceFiles {
             throw new IllegalStateException(
                     file + " was already written: register its implementations before writing the service files");
         }
-        Service entries = pending.computeIfAbsent(file, ignored -> new Service(service.withoutAnnotations()));
+        Service entries = pending.computeIfAbsent(file, _ -> new Service(service.withoutAnnotations()));
         entries.implementations.putIfAbsent(implementation.reflectionName(), implementation.withoutAnnotations());
         for (Element element : originatingElements) {
             ElementKey.of(element).ifPresentOrElse(entries.keys::add, () -> entries.unkeyed.add(element));

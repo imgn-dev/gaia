@@ -24,7 +24,7 @@ import java.util.Arrays;
  * return {@link Integer#MAX_VALUE} or {@link Integer#MIN_VALUE} instead, and {@link #divide(int, int, RoundingMode)},
  * which overflows like {@link Math#floorDiv(int, int)}.
  *
- * @since 0.1.3
+ * @since 0.2.0
  * @see LongMath
  */
 public final class IntMath {

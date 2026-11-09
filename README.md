@@ -4,7 +4,7 @@ A family of Java libraries: utilities the JDK doesn't provide, a cross-platform 
 annotation processors. `gaia-core` and `gaia-processing` each have a matching testing library, for testing the code
 that uses them.
 
-The libraries require Java 21 or later and are released together under one version.
+The libraries require Java 25 or later and are released together under one version.
 
 API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 [every released version](https://imgn-dev.github.io/gaia/api/).
@@ -50,7 +50,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `Range.Bound` that `switch` can match.
 - **`collect.MoreCollectors`**: `onlyElement()` collects the only element of a stream, and `toOptional()` collects
   zero or one element.
-- **`collect.MoreGatherers`** (Java 24+): gatherers the JDK lacks. `instanceOf(type)` keeps the elements of a type,
+- **`collect.MoreGatherers`**: gatherers the JDK lacks. `instanceOf(type)` keeps the elements of a type,
   cast to it: `stream.gather(MoreGatherers.instanceOf(Circle.class))`. `distinctBy(key)`, `distinctAdjacent()` and
   `distinctAdjacentBy(key)` drop duplicates; `takeWhileInclusive(predicate)` keeps the element that ends the run;
   `groupRuns(key)` groups consecutive elements with equal keys; `takeLast(n)` and `dropLast(n)` work at the end of a
@@ -288,10 +288,6 @@ The BOM manages gaia's own artifacts only, so importing it doesn't change the ve
 dependencies.
 
 On the module path, require the modules you use, for example `requires be.imgn.gaia.core;`.
-
-`MoreGatherers` exists only on Java 24 and later: `gaia-core` is a multi-release jar that adds it there. Tools that
-validate multi-release jars strictly, such as `jar --validate`, report it as a public class missing from the
-Java 21 version. That doesn't affect compiling or running.
 
 ### Annotation processors
 

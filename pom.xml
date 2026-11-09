@@ -59,10 +59,6 @@
          than here: gaia-bom has no parent, so a property defined in this POM
          would not reach it. A release overrides it: -Drevision=1.2.3. -->
 
-    <!-- The baseline every gaia library runs on. The parent wires this into the
-         compiler's and javadoc's release and into requireJavaVersion. -->
-    <java.release>21</java.release>
-
     <!-- Reproducible builds. A release sets it to the time of the commit it
          releases (-Dproject.build.outputTimestamp, in release.yml and
          scripts/release.sh); this value only serves other builds. -->
@@ -116,39 +112,6 @@
   </build>
 
   <profiles>
-    <!-- Adds to the parent's release profile, which is activated by the same
-         -Prelease. gaia-core is a multi-release jar whose Java 24 classes a
-         JDK older than 24 silently leaves out (see core/pom.xml), so a release
-         built there would be incomplete. -->
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-release-jdk</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireJavaVersion>
-                      <version>[24,)</version>
-                      <message>Build releases on JDK 24 or later, or gaia-core lacks its Java 24 classes.</message>
-                    </requireJavaVersion>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <!-- Library POMs keep their parent chain (gaia-parent and
          be.imgn.parent:parent are both on Central), with ${revision} resolved.
          Their dependencies are flattened: written with concrete versions, and
@@ -180,32 +143,6 @@
             </configuration>
           </plugin>
         </plugins>
-      </build>
-    </profile>
-
-    <!-- CI also builds on JDK 21, the baseline. There, Error Prone refuses to
-         start without this javac flag, which the parent (written for JDK 25)
-         does not pass. Appended to the parent's compilerArgs, not replacing
-         them, and only when the build itself runs on JDK 21. -->
-    <profile>
-      <id>error-prone-on-jdk-21</id>
-      <activation>
-        <jdk>21</jdk>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-                <compilerArgs combine.children="append">
-                  <arg>-XDaddTypeAnnotationsToSymbol=true</arg>
-                </compilerArgs>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
       </build>
     </profile>
   </profiles>

@@ -86,7 +86,7 @@ Its `lower()` and `upper()` bounds are a sealed [`Range.Bound`](api:be.imgn.gaia
 [`MoreCollectors`](api:be.imgn.gaia.core.collect.MoreCollectors) has `onlyElement()`, which collects the only element
 of a stream, and `toOptional()`, which collects zero or one element.
 
-On Java 24 and later, `MoreGatherers` has the gatherers the JDK lacks:
+`MoreGatherers` has the gatherers the JDK lacks:
 
 ```java
 Stream<Circle> circles = shapes.stream().gather(MoreGatherers.instanceOf(Circle.class));
@@ -108,10 +108,6 @@ scores.stream().gather(MoreGatherers.max(3, Comparator.naturalOrder()));        
 
 They accept `null` elements, as streams do. In a parallel stream, `instanceOf`, `takeWhileInclusive`, `takeLast`,
 `max` and `min` run in parallel; the others depend on the elements before each one, so they run sequentially.
-
-`gaia-core` is a multi-release jar that adds `MoreGatherers` on Java 24. Tools that validate multi-release jars
-strictly, such as `jar --validate`, report it as a public class missing from the Java 21 version. That doesn't affect
-compiling or running.
 
 ## Files and streams
 
