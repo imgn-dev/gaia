@@ -1,29 +1,25 @@
 package be.imgn.gaia.maven;
 
 import java.io.IOException;
+import java.lang.classfile.Attributes;
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.attribute.ModuleAttribute;
+import java.lang.classfile.attribute.ModuleProvideInfo;
+import java.lang.classfile.constantpool.ClassEntry;
+import java.lang.constant.ClassDesc;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.jspecify.annotations.Nullable;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.ModuleVisitor;
-import org.objectweb.asm.Opcodes;
 
 /** Rewrites the {@code provides} directives of a compiled {@code module-info.class}. */
 final class ModuleInfo {
 
     static final String FILE_NAME = "module-info.class";
-
-    private static final int API = Opcodes.ASM9;
 
     private static final String VERSIONS = "META-INF/versions";
 
@@ -65,85 +61,83 @@ final class ModuleInfo {
      * @param file the {@code module-info.class} file
      * @param providers the providers of each service, by binary name, possibly none
      * @return whether the file changed
-     * @throws MojoExecutionException if ASM cannot read the file: malformed, or from a Java version newer than ASM
+     * @throws MojoExecutionException if the JDK cannot read the file: malformed, or from a Java version newer than the
+     *     JDK
      */
     static boolean provide(Path file, Map<String, List<String>> providers) throws IOException, MojoExecutionException {
-        var original = Files.readAllBytes(file);
-        var writer = new ClassWriter(0);
+        var classFile = ClassFile.of();
         byte[] patched;
         try {
-            new ClassReader(original).accept(new ProvidingClass(writer, providers), 0);
-            patched = writer.toByteArray();
-        } catch (IllegalArgumentException
-                | IndexOutOfBoundsException
-                | ClassCastException
-                | NegativeArraySizeException e) {
-            // ASM rejects a class file of a Java version it does not support with IllegalArgumentException; a
-            // malformed one fails with whichever of these reading it runs into.
-            var asm = Objects.requireNonNullElse(
-                    ClassReader.class.getPackage().getImplementationVersion(), "(unknown version)");
-            throw new MojoExecutionException(
-                    "Could not rewrite " + file + " with ASM " + asm + ": " + e.getMessage(), e);
-        }
-        if (Arrays.equals(original, patched)) {
-            return false;
+            var model = classFile.parse(Files.readAllBytes(file));
+            var module = model.findAttribute(Attributes.module()).orElse(null);
+            if (module == null) {
+                return false;
+            }
+            var provides = provides(module.provides(), providers);
+            if (names(provides).equals(names(module.provides()))) {
+                return false;
+            }
+            var replacement = ModuleAttribute.of(
+                    module.moduleName(),
+                    module.moduleFlagsMask(),
+                    module.moduleVersion().orElse(null),
+                    module.requires(),
+                    module.exports(),
+                    module.opens(),
+                    module.uses(),
+                    provides);
+            patched = classFile.transformClass(
+                    model,
+                    (builder, element) -> builder.with(element instanceof ModuleAttribute ? replacement : element));
+        } catch (IllegalArgumentException e) {
+            // The JDK rejects a class file that is malformed, or of a Java version it does not support.
+            throw new MojoExecutionException("Could not rewrite " + file + ": " + e.getMessage(), e);
         }
         Files.write(file, patched);
         return true;
     }
 
-    private static String internalName(String binaryName) {
-        return binaryName.replace('.', '/');
-    }
-
-    private static final class ProvidingClass extends ClassVisitor {
-
-        private final Map<String, List<String>> providers;
-
-        ProvidingClass(ClassVisitor next, Map<String, List<String>> providers) {
-            super(API, next);
-            this.providers = providers;
-        }
-
-        @Override
-        public ModuleVisitor visitModule(String name, int access, @Nullable String version) {
-            return new ProvidingModule(super.visitModule(name, access, version), providers);
-        }
-    }
-
-    private static final class ProvidingModule extends ModuleVisitor {
-
+    private static List<ModuleProvideInfo> provides(
+            List<ModuleProvideInfo> directives, Map<String, List<String>> providers) {
         // The services whose directive is still to write, by internal name.
-        private final Map<String, List<String>> pending = new LinkedHashMap<>();
-
-        ProvidingModule(ModuleVisitor next, Map<String, List<String>> providers) {
-            super(API, next);
-            providers.forEach((service, implementations) -> pending.put(internalName(service), implementations));
-        }
-
-        @Override
-        public void visitProvide(String service, String... providers) {
+        var pending = new LinkedHashMap<String, List<String>>();
+        providers.forEach((service, implementations) -> pending.put(internalName(service), implementations));
+        var provides = new ArrayList<ModuleProvideInfo>();
+        for (var directive : directives) {
+            var service = directive.provides().asInternalName();
             var replacement = pending.remove(service);
             if (replacement == null) {
-                super.visitProvide(service, providers);
+                provides.add(directive);
             } else {
-                provide(service, replacement);
+                addDirective(provides, service, replacement);
             }
         }
+        pending.forEach((service, implementations) -> addDirective(provides, service, implementations));
+        return provides;
+    }
 
-        @Override
-        public void visitEnd() {
-            pending.forEach(this::provide);
-            super.visitEnd();
+    private static void addDirective(List<ModuleProvideInfo> provides, String service, List<String> providers) {
+        // A class file cannot hold a directive without providers.
+        if (providers.isEmpty()) {
+            return;
         }
+        provides.add(ModuleProvideInfo.of(
+                ClassDesc.ofInternalName(service),
+                providers.stream().map(ClassDesc::of).toList()));
+    }
 
-        private void provide(String service, List<String> providers) {
-            // A class file cannot hold a directive without providers.
-            if (providers.isEmpty()) {
-                return;
-            }
-            super.visitProvide(
-                    service, providers.stream().map(ModuleInfo::internalName).toArray(String[]::new));
-        }
+    // The services and providers of directives, by internal name, to compare them.
+    private static List<Map.Entry<String, List<String>>> names(List<ModuleProvideInfo> provides) {
+        return provides.stream()
+                .map(provide -> Map.entry(
+                        provide.provides().asInternalName(),
+                        provide.providesWith().stream()
+                                .map(ClassEntry::asInternalName)
+                                .toList()))
+                .toList();
+    }
+
+    private static String internalName(String binaryName) {
+        return binaryName.replace('.', '/');
     }
 }

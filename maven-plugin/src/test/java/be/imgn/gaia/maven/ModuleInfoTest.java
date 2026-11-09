@@ -108,7 +108,7 @@ class ModuleInfoTest {
     }
 
     @Test
-    void rejectsAClassFileTooNewForAsm() throws Exception {
+    void rejectsAClassFileTooNewForTheJdk() throws Exception {
         var moduleInfo = compile("module m { exports p; }");
         var bytes = Files.readAllBytes(moduleInfo);
         // The major version, after the magic number and the minor version.
@@ -118,8 +118,8 @@ class ModuleInfoTest {
 
         assertThatExceptionOfType(MojoExecutionException.class)
                 .isThrownBy(() -> ModuleInfo.provide(moduleInfo, Map.of("p.Service", List.of("p.A"))))
-                .withMessageStartingWith("Could not rewrite %s with ASM ", moduleInfo)
-                .withMessageContaining("Unsupported class file version 99")
+                .withMessageStartingWith("Could not rewrite %s: ", moduleInfo)
+                .withMessageContaining("Unsupported class file version: 99")
                 .withCauseInstanceOf(IllegalArgumentException.class);
     }
 
@@ -131,8 +131,8 @@ class ModuleInfoTest {
 
         assertThatExceptionOfType(MojoExecutionException.class)
                 .isThrownBy(() -> ModuleInfo.provide(moduleInfo, Map.of("p.Service", List.of("p.A"))))
-                .withMessageStartingWith("Could not rewrite %s with ASM ", moduleInfo)
-                .withCauseInstanceOf(RuntimeException.class);
+                .withMessageStartingWith("Could not rewrite %s: ", moduleInfo)
+                .withCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
