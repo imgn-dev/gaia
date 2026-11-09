@@ -51,7 +51,7 @@ public final class SlicedByteSource implements ByteSource {
         if (size.isEmpty()) {
             return size;
         }
-        return OptionalLong.of(Math.min(length, Math.max(0, size.getAsLong() - offset)));
+        return OptionalLong.of(Math.clamp(size.getAsLong() - offset, 0, length));
     }
 
     // Mark and reset are not supported: they would have to restore the count of bytes left too.

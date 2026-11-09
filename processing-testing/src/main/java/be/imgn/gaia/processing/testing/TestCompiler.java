@@ -90,12 +90,7 @@ public final class TestCompiler {
         requireNonNull(text, "text");
         Checks.checkSourceName(qualifiedName);
         URI uri = URI.create("mem:///" + qualifiedName.replace('.', '/') + JavaFileObject.Kind.SOURCE.extension);
-        return new SimpleJavaFileObject(uri, JavaFileObject.Kind.SOURCE) {
-            @Override
-            public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-                return text;
-            }
-        };
+        return SimpleJavaFileObject.forSource(uri, text);
     }
 
     /**

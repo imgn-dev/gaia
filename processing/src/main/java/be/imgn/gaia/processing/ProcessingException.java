@@ -61,7 +61,10 @@ public final class ProcessingException extends RuntimeException {
      * @throws IllegalArgumentException if the annotation is not on the element
      */
     public ProcessingException(String message, Element element, AnnotationMirror annotation) {
-        this(element, checkedAnnotation(message, element, annotation), null, message);
+        requireNonNull(message, "message");
+        requireNonNull(element, "element");
+        requireNonNull(annotation, "annotation");
+        this(element, Diagnostics.requireAnnotationOf(element, annotation), null, message);
     }
 
     /**
@@ -73,7 +76,10 @@ public final class ProcessingException extends RuntimeException {
      * @throws IllegalArgumentException if the element has no such annotation
      */
     public ProcessingException(String message, Element element, String annotation) {
-        this(element, checkedAnnotation(message, element, annotation), null, message);
+        requireNonNull(message, "message");
+        requireNonNull(element, "element");
+        requireNonNull(annotation, "annotation");
+        this(element, Diagnostics.annotationOf(element, annotation), null, message);
     }
 
     /**
@@ -89,7 +95,15 @@ public final class ProcessingException extends RuntimeException {
      * @throws IllegalArgumentException if the annotation is not on the element, or has no such attribute
      */
     public ProcessingException(String message, Element element, AnnotationMirror annotation, String attribute) {
-        this(element, annotation, checkedAttribute(message, element, annotation, attribute), message);
+        requireNonNull(message, "message");
+        requireNonNull(element, "element");
+        requireNonNull(annotation, "annotation");
+        requireNonNull(attribute, "attribute");
+        this(
+                element,
+                annotation,
+                Diagnostics.requireAttribute(Diagnostics.requireAnnotationOf(element, annotation), attribute),
+                message);
     }
 
     /**
@@ -103,7 +117,11 @@ public final class ProcessingException extends RuntimeException {
      * @throws IllegalArgumentException if the element has no such annotation, or the annotation no such attribute
      */
     public ProcessingException(String message, Element element, String annotation, String attribute) {
-        this(message, element, checkedAnnotation(message, element, annotation, attribute), attribute);
+        requireNonNull(message, "message");
+        requireNonNull(element, "element");
+        requireNonNull(annotation, "annotation");
+        requireNonNull(attribute, "attribute");
+        this(message, element, Diagnostics.annotationOf(element, annotation), attribute);
     }
 
     // The annotation and the attribute are checked already; the order of the parameters sets it apart.
@@ -140,33 +158,6 @@ public final class ProcessingException extends RuntimeException {
      */
     public Optional<String> attribute() {
         return Optional.ofNullable(attribute);
-    }
-
-    // The checks of the constructors, which come before they read the element; each returns the annotation.
-    private static AnnotationMirror checkedAnnotation(String message, Element element, AnnotationMirror annotation) {
-        requireNonNull(message, "message");
-        requireNonNull(element, "element");
-        requireNonNull(annotation, "annotation");
-        return Diagnostics.requireAnnotationOf(element, annotation);
-    }
-
-    private static AnnotationMirror checkedAnnotation(String message, Element element, String annotation) {
-        requireNonNull(message, "message");
-        requireNonNull(element, "element");
-        requireNonNull(annotation, "annotation");
-        return Diagnostics.annotationOf(element, annotation);
-    }
-
-    private static AnnotationMirror checkedAnnotation(
-            String message, Element element, String annotation, String attribute) {
-        requireNonNull(attribute, "attribute");
-        return checkedAnnotation(message, element, annotation);
-    }
-
-    private static String checkedAttribute(
-            String message, Element element, AnnotationMirror annotation, String attribute) {
-        requireNonNull(attribute, "attribute");
-        return Diagnostics.requireAttribute(checkedAnnotation(message, element, annotation), attribute);
     }
 
     @Serial

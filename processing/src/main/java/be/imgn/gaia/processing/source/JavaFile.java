@@ -143,13 +143,7 @@ public final class JavaFile {
      */
     public JavaFileObject toJavaFileObject() {
         String path = className().canonicalName().replace('.', '/') + JavaFileObject.Kind.SOURCE.extension;
-        String source = toString();
-        return new SimpleJavaFileObject(URI.create(path), JavaFileObject.Kind.SOURCE) {
-            @Override
-            public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-                return source;
-            }
-        };
+        return SimpleJavaFileObject.forSource(URI.create(path), toString());
     }
 
     /**

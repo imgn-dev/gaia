@@ -1002,7 +1002,7 @@ final class CodeWriter {
                 newLine();
             } else {
                 if (lineStart) {
-                    line.append(indentUnit.repeat(indentLevel + continuation())).append(linePrefix);
+                    line.repeat(indentUnit, indentLevel + continuation()).append(linePrefix);
                     lineStart = false;
                 }
                 // "*/" in the text of a Javadoc comment would end it: its slash is written as an HTML entity.

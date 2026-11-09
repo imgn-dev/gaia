@@ -299,18 +299,7 @@ public final class IntMath {
      */
     public static int powExact(int base, int exponent) {
         checkNotNegative("exponent", exponent);
-        var result = 1;
-        while (true) {
-            if ((exponent & 1) != 0) {
-                result = Math.multiplyExact(result, base);
-            }
-            exponent >>>= 1;
-            if (exponent == 0) {
-                return result;
-            }
-            // A factor of the result, which overflows too if this does.
-            base = Math.multiplyExact(base, base);
-        }
+        return Math.powExact(base, exponent);
     }
 
     /**

@@ -133,7 +133,7 @@ public final class ApplicationDirectories {
     }
 
     private static Path under(Path base, @Nullable String vendor, String application) {
-        return vendor == null ? base.resolve(application) : base.resolve(vendor).resolve(application);
+        return vendor == null ? base.resolve(application) : base.resolve(vendor, application);
     }
 
     // Application Support holds configuration, data and state alike, hence one subdirectory for each.

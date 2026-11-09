@@ -308,13 +308,7 @@ public final class CharWriter implements Appendable, Closeable, Flushable {
                 return;
             }
         }
-        if (chars instanceof String string) {
-            string.getChars(start, end, buffer, count);
-        } else {
-            for (int i = start; i < end; i++) {
-                buffer[count + i - start] = chars.charAt(i);
-            }
-        }
+        chars.getChars(start, end, buffer, count);
         count += length;
     }
 

@@ -39,10 +39,8 @@ public final class WindowsDirectories implements Directories {
      */
     public WindowsDirectories(FileSystem fileSystem, String userHome, Environment environment) {
         home = fileSystem.getPath(userHome);
-        roamingAppData =
-                path(fileSystem, environment, APPDATA, home.resolve("AppData").resolve("Roaming"));
-        localAppData = path(
-                fileSystem, environment, LOCALAPPDATA, home.resolve("AppData").resolve("Local"));
+        roamingAppData = path(fileSystem, environment, APPDATA, home.resolve("AppData", "Roaming"));
+        localAppData = path(fileSystem, environment, LOCALAPPDATA, home.resolve("AppData", "Local"));
         String systemDrive = environment
                 .get(SYSTEM_DRIVE)
                 .filter(drive -> DRIVE.matcher(drive).matches())

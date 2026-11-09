@@ -24,8 +24,8 @@ public final class MacOSDirectories implements Directories {
      */
     public MacOSDirectories(FileSystem fileSystem, String userHome) {
         home = fileSystem.getPath(userHome);
-        applicationSupport = home.resolve("Library").resolve("Application Support");
-        caches = home.resolve("Library").resolve("Caches");
+        applicationSupport = home.resolve("Library", "Application Support");
+        caches = home.resolve("Library", "Caches");
         systemApplicationSupport = fileSystem.getPath("/Library/Application Support");
     }
 

@@ -47,11 +47,9 @@ public final class XdgDirectories implements Directories {
                 .filter(XdgDirectories::isAbsolute)
                 .map(fileSystem::getPath)
                 .orElse(fileSystem.getPath(userHome));
-        dataHome = absolutePath(fileSystem, environment, XDG_DATA_HOME)
-                .orElse(home.resolve(".local").resolve("share"));
+        dataHome = absolutePath(fileSystem, environment, XDG_DATA_HOME).orElse(home.resolve(".local", "share"));
         configHome = absolutePath(fileSystem, environment, XDG_CONFIG_HOME).orElse(home.resolve(".config"));
-        stateHome = absolutePath(fileSystem, environment, XDG_STATE_HOME)
-                .orElse(home.resolve(".local").resolve("state"));
+        stateHome = absolutePath(fileSystem, environment, XDG_STATE_HOME).orElse(home.resolve(".local", "state"));
         cacheHome = absolutePath(fileSystem, environment, XDG_CACHE_HOME).orElse(home.resolve(".cache"));
         runtimeDir = absolutePath(fileSystem, environment, XDG_RUNTIME_DIR).orElse(null);
         dataDirs = absolutePaths(
