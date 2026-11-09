@@ -64,7 +64,7 @@ public interface CharSource {
 
     /**
      * Returns a source that reads a character sequence. The sequence is not copied: changes to it, as in a
-     * {@link StringBuilder}, show in the reads that follow.
+     * {@link StringBuilder}, show in the reads that follow. It must not change while a reader of this source is open.
      *
      * @param chars the sequence to read
      * @return a source of {@code chars}

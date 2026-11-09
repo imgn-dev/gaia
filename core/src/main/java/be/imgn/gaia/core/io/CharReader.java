@@ -9,7 +9,6 @@ import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.Writer;
 import java.nio.CharBuffer;
 import java.util.Optional;
@@ -87,14 +86,15 @@ public final class CharReader implements Closeable {
     }
 
     /**
-     * Returns a reader that reads characters.
+     * Returns a reader that reads characters, without copying them. The characters must not change until the reader is
+     * closed.
      *
      * @param chars the characters to read
      * @return a reader that reads {@code chars}
      */
     public static CharReader of(CharSequence chars) {
         requireNonNull(chars, "chars");
-        return new CharReader(new StringReader(chars.toString()));
+        return new CharReader(Reader.of(chars));
     }
 
     /**
