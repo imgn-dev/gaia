@@ -294,13 +294,10 @@ class LongMathTest {
                 var exact = big(base).pow(exponent);
                 Supplier<String> description = () -> "%d^%d".formatted(base, e);
                 assertThat(LongMath.pow(base, e)).as(description).isEqualTo(exact.longValue());
-                assertExact(() -> LongMath.powExact(base, e), exact, description);
                 assertThat(LongMath.saturatedPow(base, e)).as(description).isEqualTo(saturated(exact));
             }
         }
-        assertThat(LongMath.powExact(-2, 63)).isEqualTo(Long.MIN_VALUE);
         assertThat(LongMath.pow(-1, Integer.MAX_VALUE)).isEqualTo(-1);
-        assertThat(LongMath.powExact(1, Integer.MAX_VALUE)).isEqualTo(1);
         assertThat(LongMath.saturatedPow(-3, Integer.MAX_VALUE)).isEqualTo(Long.MIN_VALUE);
     }
 
@@ -309,7 +306,6 @@ class LongMathTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> LongMath.pow(2, -1))
                 .withMessage("exponent must not be negative: -1");
-        assertThatIllegalArgumentException().isThrownBy(() -> LongMath.powExact(2, -1));
         assertThatIllegalArgumentException().isThrownBy(() -> LongMath.saturatedPow(2, -1));
         assertThatIllegalArgumentException().isThrownBy(() -> LongMath.powMod(2, -1, 3));
     }

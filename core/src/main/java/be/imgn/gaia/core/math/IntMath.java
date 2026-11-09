@@ -289,20 +289,6 @@ public final class IntMath {
     }
 
     /**
-     * Returns a value to a power.
-     *
-     * @param base the base
-     * @param exponent the exponent
-     * @return {@code base} to the power of {@code exponent}
-     * @throws IllegalArgumentException if {@code exponent} is negative
-     * @throws ArithmeticException if the result doesn't fit in an {@code int}
-     */
-    public static int powExact(int base, int exponent) {
-        checkNotNegative("exponent", exponent);
-        return Math.powExact(base, exponent);
-    }
-
-    /**
      * Returns the sum of two values, or the {@code int} closest to it if it doesn't fit.
      *
      * @param a a value

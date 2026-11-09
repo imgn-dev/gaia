@@ -340,20 +340,6 @@ public final class LongMath {
     }
 
     /**
-     * Returns a value to a power.
-     *
-     * @param base the base
-     * @param exponent the exponent
-     * @return {@code base} to the power of {@code exponent}
-     * @throws IllegalArgumentException if {@code exponent} is negative
-     * @throws ArithmeticException if the result doesn't fit in a {@code long}
-     */
-    public static long powExact(long base, int exponent) {
-        checkNotNegative("exponent", exponent);
-        return Math.powExact(base, exponent);
-    }
-
-    /**
      * Returns the sum of two values, or the {@code long} closest to it if it doesn't fit.
      *
      * @param a a value
