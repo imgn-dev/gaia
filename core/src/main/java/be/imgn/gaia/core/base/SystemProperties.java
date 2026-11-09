@@ -21,7 +21,7 @@ import java.util.OptionalInt;
  * {@link System#getProperty(String)}, can be tested with {@link #of(Map)}.
  *
  * <p>Besides {@link #get(String)}, which reads any property, there is a typed method for each property listed in the
- * Java SE 21 documentation of {@link System#getProperties()}, followed by the ones the JDK supports. The properties
+ * Java SE 25 documentation of {@link System#getProperties()}, followed by the ones the JDK supports. The properties
  * every Java runtime must define are returned as is, and throw {@link NoSuchElementException} if the source lacks them,
  * which only a fixed source can. The others are returned as an {@link Optional}, or as an empty list for paths.
  *
@@ -409,6 +409,19 @@ public interface SystemProperties {
      */
     default Charset nativeEncoding() {
         return Charset.forName(required("native.encoding"));
+    }
+
+    /**
+     * Returns the character encoding of {@link System#in}: the {@code stdin.encoding} property.
+     *
+     * @return the value
+     * @throws NoSuchElementException if the property is not set
+     * @throws java.nio.charset.IllegalCharsetNameException if the property is not a legal charset name
+     * @throws java.nio.charset.UnsupportedCharsetException if this JVM does not support the charset the property names
+     * @since 0.2.0
+     */
+    default Charset stdinEncoding() {
+        return Charset.forName(required("stdin.encoding"));
     }
 
     /**

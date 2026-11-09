@@ -52,6 +52,7 @@ class SystemPropertiesTest {
             SystemProperties::userHome,
             SystemProperties::userDir,
             SystemProperties::nativeEncoding,
+            SystemProperties::stdinEncoding,
             SystemProperties::stdoutEncoding,
             SystemProperties::stderrEncoding);
 
