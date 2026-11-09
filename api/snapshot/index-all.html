@@ -623,6 +623,19 @@ meta-annotated with <code>@Component</code>.</div>
 <div class="block">Writes part of a character sequence, or of <code>"null"</code> for a null sequence, as
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Appendable.html#append(java.lang.CharSequence,int,int)" title="class or interface in java.lang" class="external-link"><code>Appendable.append(CharSequence, int, int)</code></a> specifies.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#appending(java.nio.file.Path)" class="member-name-link">appending(Path)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes to the end of a file, creating it if it does not exist.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#appending(java.nio.file.Path)" class="member-name-link">appending(Path)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes text to the end of a file in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default
+charset</a>, creating the file if it does not exist.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#appending(java.nio.file.Path,java.nio.charset.Charset)" class="member-name-link">appending(Path, Charset)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes text to the end of a file, creating the file if it does not exist.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#applicationDirectories(java.lang.String)" class="member-name-link">applicationDirectories(String)</a> - Method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
 <div class="block">Returns the directories of an application, named by its name alone.</div>
@@ -1527,6 +1540,21 @@ each as many times as it occurs there.</div>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#createDirectories(boolean)" class="member-name-link">createDirectories(boolean)</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></dt>
 <dd>
 <div class="block">Sets whether <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html#build()"><code>FakeDirectories.Builder.build()</code></a> creates every directory, with its parents, if it does not exist yet.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#creatingNew(java.nio.file.Path)" class="member-name-link">creatingNew(Path)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes a new file, and fails with a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileAlreadyExistsException.html" title="class or interface in java.nio.file" class="external-link"><code>FileAlreadyExistsException</code></a> if it
+exists.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#creatingNew(java.nio.file.Path)" class="member-name-link">creatingNew(Path)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes a new text file in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default charset</a>,
+and fails with a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileAlreadyExistsException.html" title="class or interface in java.nio.file" class="external-link"><code>FileAlreadyExistsException</code></a> if it exists.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#creatingNew(java.nio.file.Path,java.nio.charset.Charset)" class="member-name-link">creatingNew(Path, Charset)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes a new text file, and fails with a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileAlreadyExistsException.html" title="class or interface in java.nio.file" class="external-link"><code>FileAlreadyExistsException</code></a> if
+it exists.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html#current()" class="member-name-link">current()</a> - Static method in interface be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform">Platform</a></dt>
 <dd>
@@ -4684,6 +4712,19 @@ set.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SetMultimap.html#replaceValues(K,java.lang.Iterable)" class="member-name-link">replaceValues(K, Iterable)</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/SetMultimap.html" title="interface in be.imgn.gaia.core.collect">SetMultimap</a></dt>
 <dd>
 <div class="block">Replaces all the values of a key.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html#replacing(java.nio.file.Path)" class="member-name-link">replacing(Path)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes a file, creating it or replacing its content on each write.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#replacing(java.nio.file.Path)" class="member-name-link">replacing(Path)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes a text file in the <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Charsets.html#DEFAULT_CHARSET">current default charset</a>,
+creating it or replacing its content on each write.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html#replacing(java.nio.file.Path,java.nio.charset.Charset)" class="member-name-link">replacing(Path, Charset)</a> - Static method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></dt>
+<dd>
+<div class="block">Returns a sink that writes a text file, creating it or replacing its content on each write.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html#request(int)" class="member-name-link">request(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteReader.html" title="class in be.imgn.gaia.core.io">ByteReader</a></dt>
 <dd>

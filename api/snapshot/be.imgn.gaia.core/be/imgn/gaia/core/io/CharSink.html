@@ -59,6 +59,12 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#of(java.nio.file.Path,java.nio.file.OpenOption...)" tabindex="0">of(Path, OpenOption...)</a></li>
 <li><a href="#of(java.nio.file.Path,java.nio.charset.Charset,java.nio.file.OpenOption...)" tabindex="0">of(Path, Charset, OpenOption...)</a></li>
+<li><a href="#replacing(java.nio.file.Path)" tabindex="0">replacing(Path)</a></li>
+<li><a href="#replacing(java.nio.file.Path,java.nio.charset.Charset)" tabindex="0">replacing(Path, Charset)</a></li>
+<li><a href="#appending(java.nio.file.Path)" tabindex="0">appending(Path)</a></li>
+<li><a href="#appending(java.nio.file.Path,java.nio.charset.Charset)" tabindex="0">appending(Path, Charset)</a></li>
+<li><a href="#creatingNew(java.nio.file.Path)" tabindex="0">creatingNew(Path)</a></li>
+<li><a href="#creatingNew(java.nio.file.Path,java.nio.charset.Charset)" tabindex="0">creatingNew(Path, Charset)</a></li>
 <li><a href="#openWriter()" tabindex="0">openWriter()</a></li>
 <li><a href="#write(java.lang.CharSequence)" tabindex="0">write(CharSequence)</a></li>
 <li><a href="#writeLines(java.lang.Iterable)" tabindex="0">writeLines(Iterable)</a></li>
@@ -116,6 +122,18 @@ CharSink.of(file, StandardCharsets.UTF_8).writeLines(lines);
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#appending(java.nio.file.Path)" class="member-name-link">appending</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a sink that writes text to the end of a file in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default
+charset</a>, creating the file if it does not exist.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#appending(java.nio.file.Path,java.nio.charset.Charset)" class="member-name-link">appending</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a sink that writes text to the end of a file, creating the file if it does not exist.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="ByteSink.html" title="interface in be.imgn.gaia.core.io">ByteSink</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#asByteSink()" class="member-name-link">asByteSink</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -126,6 +144,19 @@ default charset</a>.</div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#asByteSink(java.nio.charset.Charset)" class="member-name-link">asByteSink</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns a sink that writes bytes to this one, decoded from a charset.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#creatingNew(java.nio.file.Path)" class="member-name-link">creatingNew</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a sink that writes a new text file in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default charset</a>,
+and fails with a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileAlreadyExistsException.html" title="class or interface in java.nio.file" class="external-link"><code>FileAlreadyExistsException</code></a> if it exists.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#creatingNew(java.nio.file.Path,java.nio.charset.Charset)" class="member-name-link">creatingNew</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a sink that writes a new text file, and fails with a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileAlreadyExistsException.html" title="class or interface in java.nio.file" class="external-link"><code>FileAlreadyExistsException</code></a> if
+it exists.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(java.nio.file.Path,java.nio.charset.Charset,java.nio.file.OpenOption...)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
@@ -144,6 +175,18 @@ default charset</a>.</div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#openWriter()" class="member-name-link">openWriter</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Opens a new writer to write the characters of this sink.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#replacing(java.nio.file.Path)" class="member-name-link">replacing</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a sink that writes a text file in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default charset</a>,
+creating it or replacing its content on each write.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#replacing(java.nio.file.Path,java.nio.charset.Charset)" class="member-name-link">replacing</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a sink that writes a text file, creating it or replacing its content on each write.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#write(java.lang.CharSequence)" class="member-name-link">write</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;chars)</code></div>
@@ -240,6 +283,163 @@ is not atomic: see <a href="AtomicFiles.html" title="class in be.imgn.gaia.core.
 <dd>
 <ul class="tag-list">
 <li><a href="ByteSink.html#asCharSink(java.nio.charset.Charset)"><code>ByteSink.asCharSink(Charset)</code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="replacing(java.nio.file.Path)">
+<h3>replacing</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></span>&nbsp;<span class="element-name">replacing</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file)</span></div>
+<div class="block">Returns a sink that writes a text file in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default charset</a>,
+creating it or replacing its content on each write. The replacement is not atomic: see <a href="AtomicFiles.html" title="class in be.imgn.gaia.core.io"><code>AtomicFiles</code></a> for
+that.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>file</code> - the file to write</dd>
+<dt>Returns:</dt>
+<dd>a sink that replaces the content of <code>file</code></dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="#replacing(java.nio.file.Path,java.nio.charset.Charset)"><code>replacing(Path, Charset)</code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="replacing(java.nio.file.Path,java.nio.charset.Charset)">
+<h3>replacing</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></span>&nbsp;<span class="element-name">replacing</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</span></div>
+<div class="block">Returns a sink that writes a text file, creating it or replacing its content on each write. The replacement is
+not atomic: see <a href="AtomicFiles.html" title="class in be.imgn.gaia.core.io"><code>AtomicFiles</code></a> for that.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>file</code> - the file to write</dd>
+<dd><code>charset</code> - the charset to encode the text in</dd>
+<dt>Returns:</dt>
+<dd>a sink that replaces the content of <code>file</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>charset</code> does not support encoding</dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="ByteSink.html#replacing(java.nio.file.Path)"><code>ByteSink.replacing(Path)</code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="appending(java.nio.file.Path)">
+<h3>appending</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></span>&nbsp;<span class="element-name">appending</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file)</span></div>
+<div class="block">Returns a sink that writes text to the end of a file in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default
+charset</a>, creating the file if it does not exist.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>file</code> - the file to write</dd>
+<dt>Returns:</dt>
+<dd>a sink that appends to <code>file</code></dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="#appending(java.nio.file.Path,java.nio.charset.Charset)"><code>appending(Path, Charset)</code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="appending(java.nio.file.Path,java.nio.charset.Charset)">
+<h3>appending</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></span>&nbsp;<span class="element-name">appending</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</span></div>
+<div class="block">Returns a sink that writes text to the end of a file, creating the file if it does not exist.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>file</code> - the file to write</dd>
+<dd><code>charset</code> - the charset to encode the text in</dd>
+<dt>Returns:</dt>
+<dd>a sink that appends to <code>file</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>charset</code> does not support encoding</dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="ByteSink.html#appending(java.nio.file.Path)"><code>ByteSink.appending(Path)</code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="creatingNew(java.nio.file.Path)">
+<h3>creatingNew</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></span>&nbsp;<span class="element-name">creatingNew</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file)</span></div>
+<div class="block">Returns a sink that writes a new text file in the <a href="../base/Charsets.html#DEFAULT_CHARSET">current default charset</a>,
+and fails with a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileAlreadyExistsException.html" title="class or interface in java.nio.file" class="external-link"><code>FileAlreadyExistsException</code></a> if it exists. Each write creates the file, so
+only the first one can succeed.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>file</code> - the file to create</dd>
+<dt>Returns:</dt>
+<dd>a sink that creates <code>file</code></dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="#creatingNew(java.nio.file.Path,java.nio.charset.Charset)"><code>creatingNew(Path, Charset)</code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="creatingNew(java.nio.file.Path,java.nio.charset.Charset)">
+<h3>creatingNew</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="CharSink.html" title="interface in be.imgn.gaia.core.io">CharSink</a></span>&nbsp;<span class="element-name">creatingNew</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;file,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html" title="class or interface in java.nio.charset" class="external-link">Charset</a>&nbsp;charset)</span></div>
+<div class="block">Returns a sink that writes a new text file, and fails with a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/FileAlreadyExistsException.html" title="class or interface in java.nio.file" class="external-link"><code>FileAlreadyExistsException</code></a> if
+it exists. Each write creates the file, so only the first one can succeed.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>file</code> - the file to create</dd>
+<dd><code>charset</code> - the charset to encode the text in</dd>
+<dt>Returns:</dt>
+<dd>a sink that creates <code>file</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>charset</code> does not support encoding</dd>
+<dt>Since:</dt>
+<dd>0.1.3</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="ByteSink.html#creatingNew(java.nio.file.Path)"><code>ByteSink.creatingNew(Path)</code></a></li>
 </ul>
 </dd>
 </dl>
