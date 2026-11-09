@@ -14,6 +14,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -134,6 +135,70 @@ class CharSinkTest {
         CharSink.of(file, StandardCharsets.UTF_8, StandardOpenOption.APPEND).write("b");
 
         assertThat(file).hasContent("ab");
+    }
+
+    @Test
+    void replacesATextFileItCreates() throws IOException {
+        var file = directory.resolve("text");
+        var sink = CharSink.replacing(file, StandardCharsets.ISO_8859_1);
+
+        sink.write("previous content");
+        sink.write("café");
+
+        assertThat(file).hasBinaryContent("café".getBytes(StandardCharsets.ISO_8859_1));
+    }
+
+    @Test
+    void replacesATextFileInTheDefaultCharset() throws IOException {
+        var file = directory.resolve("text");
+        var sink = CharSink.replacing(file);
+
+        sink.write("previous content");
+        sink.write("café ✓");
+
+        assertThat(file).hasBinaryContent("café ✓".getBytes(Charsets.DEFAULT_CHARSET));
+    }
+
+    @Test
+    void appendsToATextFileItCreates() throws IOException {
+        var file = directory.resolve("text");
+        var sink = CharSink.appending(file, StandardCharsets.ISO_8859_1);
+
+        sink.write("a");
+        sink.write("é");
+
+        assertThat(file).hasBinaryContent("aé".getBytes(StandardCharsets.ISO_8859_1));
+    }
+
+    @Test
+    void appendsToATextFileItCreatesInTheDefaultCharset() throws IOException {
+        var file = directory.resolve("text");
+        var sink = CharSink.appending(file);
+
+        sink.write("a");
+        sink.write("✓");
+
+        assertThat(file).hasBinaryContent("a✓".getBytes(Charsets.DEFAULT_CHARSET));
+    }
+
+    @Test
+    void createsANewTextFileOnlyOnce() throws IOException {
+        var file = directory.resolve("text");
+        var sink = CharSink.creatingNew(file, StandardCharsets.ISO_8859_1);
+
+        sink.write("café");
+
+        assertThatExceptionOfType(FileAlreadyExistsException.class).isThrownBy(() -> sink.write("b"));
+        assertThat(file).hasBinaryContent("café".getBytes(StandardCharsets.ISO_8859_1));
+    }
+
+    @Test
+    void createsANewTextFileInTheDefaultCharset() throws IOException {
+        var file = directory.resolve("text");
+
+        CharSink.creatingNew(file).write("café ✓");
+
+        assertThat(file).hasBinaryContent("café ✓".getBytes(Charsets.DEFAULT_CHARSET));
     }
 
     @Test

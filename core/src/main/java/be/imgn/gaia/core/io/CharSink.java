@@ -64,6 +64,91 @@ public interface CharSink {
     }
 
     /**
+     * Returns a sink that writes a text file in the {@linkplain Charsets#DEFAULT_CHARSET current default charset},
+     * creating it or replacing its content on each write. The replacement is not atomic: see {@link AtomicFiles} for
+     * that.
+     *
+     * @param file the file to write
+     * @return a sink that replaces the content of {@code file}
+     * @see #replacing(Path, Charset)
+     * @since 0.1.3
+     */
+    static CharSink replacing(Path file) {
+        return replacing(file, Charsets.DEFAULT_CHARSET);
+    }
+
+    /**
+     * Returns a sink that writes a text file, creating it or replacing its content on each write. The replacement is
+     * not atomic: see {@link AtomicFiles} for that.
+     *
+     * @param file the file to write
+     * @param charset the charset to encode the text in
+     * @return a sink that replaces the content of {@code file}
+     * @throws IllegalArgumentException if {@code charset} does not support encoding
+     * @see ByteSink#replacing(Path)
+     * @since 0.1.3
+     */
+    static CharSink replacing(Path file, Charset charset) {
+        return ByteSink.replacing(file).asCharSink(charset);
+    }
+
+    /**
+     * Returns a sink that writes text to the end of a file in the {@linkplain Charsets#DEFAULT_CHARSET current default
+     * charset}, creating the file if it does not exist.
+     *
+     * @param file the file to write
+     * @return a sink that appends to {@code file}
+     * @see #appending(Path, Charset)
+     * @since 0.1.3
+     */
+    static CharSink appending(Path file) {
+        return appending(file, Charsets.DEFAULT_CHARSET);
+    }
+
+    /**
+     * Returns a sink that writes text to the end of a file, creating the file if it does not exist.
+     *
+     * @param file the file to write
+     * @param charset the charset to encode the text in
+     * @return a sink that appends to {@code file}
+     * @throws IllegalArgumentException if {@code charset} does not support encoding
+     * @see ByteSink#appending(Path)
+     * @since 0.1.3
+     */
+    static CharSink appending(Path file, Charset charset) {
+        return ByteSink.appending(file).asCharSink(charset);
+    }
+
+    /**
+     * Returns a sink that writes a new text file in the {@linkplain Charsets#DEFAULT_CHARSET current default charset},
+     * and fails with a {@link java.nio.file.FileAlreadyExistsException} if it exists. Each write creates the file, so
+     * only the first one can succeed.
+     *
+     * @param file the file to create
+     * @return a sink that creates {@code file}
+     * @see #creatingNew(Path, Charset)
+     * @since 0.1.3
+     */
+    static CharSink creatingNew(Path file) {
+        return creatingNew(file, Charsets.DEFAULT_CHARSET);
+    }
+
+    /**
+     * Returns a sink that writes a new text file, and fails with a {@link java.nio.file.FileAlreadyExistsException} if
+     * it exists. Each write creates the file, so only the first one can succeed.
+     *
+     * @param file the file to create
+     * @param charset the charset to encode the text in
+     * @return a sink that creates {@code file}
+     * @throws IllegalArgumentException if {@code charset} does not support encoding
+     * @see ByteSink#creatingNew(Path)
+     * @since 0.1.3
+     */
+    static CharSink creatingNew(Path file, Charset charset) {
+        return ByteSink.creatingNew(file).asCharSink(charset);
+    }
+
+    /**
      * Opens a new writer to write the characters of this sink. The caller must close it. For APIs that take a
      * {@link Writer}, {@link CharWriter#asWriter()} writes through it.
      *

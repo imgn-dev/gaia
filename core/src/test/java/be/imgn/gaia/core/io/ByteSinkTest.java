@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -79,6 +80,39 @@ class ByteSinkTest {
         ByteSink.of(file, StandardOpenOption.APPEND).write(new byte[] {3});
 
         assertThat(file).hasBinaryContent(new byte[] {1, 2, 3});
+    }
+
+    @Test
+    void replacesAFileItCreates() throws IOException {
+        var file = directory.resolve("data");
+        var sink = ByteSink.replacing(file);
+
+        sink.write(new byte[] {1, 2});
+        sink.write(new byte[] {3});
+
+        assertThat(file).hasBinaryContent(new byte[] {3});
+    }
+
+    @Test
+    void appendsToAFileItCreates() throws IOException {
+        var file = directory.resolve("data");
+        var sink = ByteSink.appending(file);
+
+        sink.write(new byte[] {1, 2});
+        sink.write(new byte[] {3});
+
+        assertThat(file).hasBinaryContent(new byte[] {1, 2, 3});
+    }
+
+    @Test
+    void createsANewFileOnlyOnce() throws IOException {
+        var file = directory.resolve("data");
+        var sink = ByteSink.creatingNew(file);
+
+        sink.write(new byte[] {1, 2});
+
+        assertThatExceptionOfType(FileAlreadyExistsException.class).isThrownBy(() -> sink.write(new byte[] {3}));
+        assertThat(file).hasBinaryContent(new byte[] {1, 2});
     }
 
     @Test

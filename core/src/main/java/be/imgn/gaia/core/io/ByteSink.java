@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 /**
  * A writable destination of bytes, such as a file, that opens a new writer each time it is written.
@@ -25,7 +26,7 @@ import java.nio.file.Path;
  * <pre>{@code
  * ByteSink sink = () -> ByteWriter.of(socket.getOutputStream());
  * ByteSink.of(file).write(bytes);
- * ByteSink.of(log, StandardOpenOption.CREATE, StandardOpenOption.APPEND).write(entry);
+ * ByteSink.appending(log).write(entry);
  * }</pre>
  *
  * @since 0.1.1
@@ -45,6 +46,41 @@ public interface ByteSink {
         requireNonNull(file, "file");
         var copy = OpenOptions.copyOf(options);
         return () -> ByteWriter.of(Files.newOutputStream(file, copy));
+    }
+
+    /**
+     * Returns a sink that writes a file, creating it or replacing its content on each write. The replacement is not
+     * atomic: see {@link AtomicFiles} for that.
+     *
+     * @param file the file to write
+     * @return a sink that replaces the content of {@code file}
+     * @since 0.1.3
+     */
+    static ByteSink replacing(Path file) {
+        return of(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+    }
+
+    /**
+     * Returns a sink that writes to the end of a file, creating it if it does not exist.
+     *
+     * @param file the file to write
+     * @return a sink that appends to {@code file}
+     * @since 0.1.3
+     */
+    static ByteSink appending(Path file) {
+        return of(file, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
+    /**
+     * Returns a sink that writes a new file, and fails with a {@link java.nio.file.FileAlreadyExistsException} if it
+     * exists. Each write creates the file, so only the first one can succeed.
+     *
+     * @param file the file to create
+     * @return a sink that creates {@code file}
+     * @since 0.1.3
+     */
+    static ByteSink creatingNew(Path file) {
+        return of(file, StandardOpenOption.CREATE_NEW);
     }
 
     /**

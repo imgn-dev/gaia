@@ -137,6 +137,15 @@ CharSink.of(file, UTF_8).writeLines(lines);
 
 Each is a functional interface, so a lambda that opens a reader or a writer makes one.
 
+A sink writes a file in one of the usual ways, `replacing`, `appending` or `creatingNew`, or opens it with the
+options given to `of`:
+
+```java
+CharSink.appending(log, UTF_8).write(entry);
+ByteSink.creatingNew(file).write(bytes);
+ByteSink.of(file, CREATE, APPEND, SYNC).write(bytes);
+```
+
 [`ByteReader`](api:be.imgn.gaia.core.io.ByteReader) and [`ByteWriter`](api:be.imgn.gaia.core.io.ByteWriter) read and
 write binary formats on a stream: numbers in big-endian order, as `DataInputStream` does, or in little-endian order
 with the methods that end in `Le`, runs of bytes, text and lines. [`CharReader`](api:be.imgn.gaia.core.io.CharReader)
