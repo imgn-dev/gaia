@@ -231,6 +231,25 @@ class ServiceFilesTest {
     }
 
     @Test
+    void endsLinesWhereServiceLoaderDoes(@TempDir Path classOutput) throws IOException {
+        compileEarlier(classOutput, implementation("Old"), implementation("Hidden"));
+        Path existing = classOutput.resolve(SERVICE_FILE);
+        Files.createDirectories(existing.getParent());
+        // ServiceLoader ends lines with \n, \r or \r\n only, so the whole line is a comment.
+        Files.writeString(
+                existing,
+                "# A comment" + Character.toString(0x2028) + "example.Hidden\nexample.Old\n",
+                StandardCharsets.UTF_8);
+
+        Compilation compilation = javac().withProcessors(new Registering(ServiceFilesTest::asService))
+                .withOptions("-Xlint:all,-processing", "-Werror", "-d", classOutput.toString())
+                .compile(SERVICE_SOURCE, PROVIDE, GENERATE, implementation("Fresh"));
+
+        assertThat(compilation).succeeded().hadNoWarnings();
+        assertThat(Files.readString(existing, StandardCharsets.UTF_8)).isEqualTo("example.Fresh\nexample.Old\n");
+    }
+
+    @Test
     void dropsTheEntriesOfClassesThatNoLongerExist(@TempDir Path classOutput) throws IOException {
         compileEarlier(classOutput, implementation("Compiled"));
         Path existing = classOutput.resolve(SERVICE_FILE);

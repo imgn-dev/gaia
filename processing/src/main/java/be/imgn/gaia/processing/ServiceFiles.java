@@ -6,8 +6,9 @@ import be.imgn.gaia.processing.internal.ElementKey;
 import be.imgn.gaia.processing.source.ClassName;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
@@ -332,10 +333,10 @@ public final class ServiceFiles {
     // The filer refuses to read a file created in this compilation, as it refuses to create it again.
     private Set<String> read(String file) throws FilerException {
         Set<String> entries = new LinkedHashSet<>();
-        try (InputStream in =
-                filer.getResource(StandardLocation.CLASS_OUTPUT, "", file).openInputStream()) {
-            String text = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-            for (String line : text.split("\\R", -1)) {
+        // Lines end where ServiceLoader ends them: at \n, \r or \r\n only.
+        try (Reader in = new InputStreamReader(
+                filer.getResource(StandardLocation.CLASS_OUTPUT, "", file).openInputStream(), StandardCharsets.UTF_8)) {
+            for (String line : in.readAllLines()) {
                 int comment = line.indexOf('#');
                 String entry = (comment < 0 ? line : line.substring(0, comment)).strip();
                 if (!entry.isEmpty()) {
