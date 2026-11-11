@@ -15,6 +15,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 |---------------------------|-----------------------------------|-------------------------------------------------------------|
 | `gaia-core`               | `be.imgn.gaia.core`               | JDK extensions, the platform the JVM runs on, an event bus  |
 | `gaia-core-testing`       | `be.imgn.gaia.core.testing`       | Test helpers for code using `gaia-core`                     |
+| `gaia-fast`               | `be.imgn.gaia.fast`               | Fast collections of primitives, without boxing              |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | An in-memory file system for the `mem:` URI scheme          |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | Helpers for writing annotation processors                   |
 | `gaia-processing-testing` | `be.imgn.gaia.processing.testing` | Compile sources through annotation processors in tests      |
@@ -119,6 +120,15 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `hasDistinctSize(n)` and `containsExactlyCounts(Map.of("foo", 2, "bar", 1))`.
 - **`MultimapAssert`**: AssertJ assertions on a `Multimap`: `hasSize`, `containsKeys`, `containsEntry` and
   `hasValues(key, values...)`, in order for a `ListMultimap`.
+
+### `gaia-fast`
+
+- **`collect.IntIntMap`**: a hash map from `int` keys to `int` values that never boxes them. Lookups for absent keys
+  return a missing value set when the map is created (`0` by default), as do `put` and `remove`; `containsKey` tells
+  it apart from a stored value. Entries are walked with a cursor, which can change values and remove entries:
+  `for (var cursor = map.cursor(); cursor.next(); ) { ... cursor.key() ... cursor.value() ... }`. `forEach` and
+  `removeIf` take an `IntIntConsumer` and an `IntIntPredicate`. Open addressing with linear probing over one `long[]`,
+  each entry its key and value packed together, and a configurable load factor (`0.5` by default).
 
 ### `gaia-memfs`
 
@@ -383,6 +393,13 @@ being faster than `decodedAsAStream`.
 
 ```sh
 ./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="TextReadBenchmark"
+```
+
+The same module measures the `gaia-fast` collections: `IntIntMapBenchmark` runs the operations of `IntIntMap`, and
+`HashMapBenchmark` the same ones on a `HashMap<Integer, Integer>`:
+
+```sh
+./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="IntIntMapBenchmark|HashMapBenchmark"
 ```
 
 ## License

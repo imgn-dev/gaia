@@ -14,7 +14,7 @@
   <artifactId>gaia-benchmarks</artifactId>
 
   <name>Gaia Benchmarks</name>
-  <description>JMH benchmarks of gaia-core's I/O, against the JDK. Not published.</description>
+  <description>JMH benchmarks of gaia-core's I/O and of the gaia-fast collections, against the JDK. Not published.</description>
 
   <properties>
     <!-- Never installed or deployed. -->
@@ -36,6 +36,11 @@
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-core</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-fast</artifactId>
       <version>${revision}</version>
     </dependency>
     <dependency>

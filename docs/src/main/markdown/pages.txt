@@ -3,6 +3,7 @@
 index.md
 core.md
 event-bus.md
+fast.md
 memfs.md
 processing.md
 testing.md

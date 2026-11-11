@@ -12,6 +12,7 @@ the [API documentation](https://imgn-dev.github.io/gaia/api/latest/).
 | Artifact                  | Module                            | What it does                                           |
 |---------------------------|-----------------------------------|--------------------------------------------------------|
 | `gaia-core`               | `be.imgn.gaia.core`               | [Extensions to the JDK](core.md), including [the platform the JVM runs on](core.md#platform) and [an event bus](event-bus.md) |
+| `gaia-fast`               | `be.imgn.gaia.fast`               | [Fast collections of primitives](fast.md)              |
 | `gaia-memfs`              | `be.imgn.gaia.memfs`              | [An in-memory file system](memfs.md)                   |
 | `gaia-processing`         | `be.imgn.gaia.processing`         | [Helpers for writing annotation processors](processing.md) |
 | `gaia-processor`          | `be.imgn.gaia.processor`          | [The annotation processor of the event bus](event-bus.md) |
