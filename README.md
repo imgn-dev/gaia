@@ -366,6 +366,16 @@ that `module-info.java` declares, and the `provides` directives of other service
 must be a class of the module, or the build fails. Without `module-info.java`, the goal does nothing. Set
 `gaia.registerServices.skip` to skip it.
 
+## Benchmarks
+
+JMH benchmarks of `gaia-core`'s I/O against the JDK's: reading files whole and by lines, and copying them; encoding
+and decoding UTF-8, for ASCII and for mixed text, of 1 KB, 64 KB and 8 MB; and reading and writing 64 KB of binary
+data an `int` or a byte at a time:
+
+```sh
+./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="Utf8Benchmark -prof gc"
+```
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).

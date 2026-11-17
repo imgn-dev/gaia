@@ -119,6 +119,8 @@
               <goal>java</goal>
             </goals>
             <configuration>
+              <!-- gaia-parent skips exec everywhere but in the modules that use it. -->
+              <skip>false</skip>
               <mainClass>be.imgn.gaia.docs.SiteGenerator</mainClass>
               <!-- The test class path: AssertJ, a dependency of
                    gaia-processing-testing that this module also declares for

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.imgn.gaia</groupId>
+    <artifactId>gaia-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>gaia-benchmarks</artifactId>
+
+  <name>Gaia Benchmarks</name>
+  <description>JMH benchmarks of gaia-core's I/O, against the JDK. Not published.</description>
+
+  <properties>
+    <!-- Never installed or deployed. -->
+    <maven.install.skip>true</maven.install.skip>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <gpg.skip>true</gpg.skip>
+
+    <jmh.version>1.37</jmh.version>
+
+    <!-- The arguments of the JMH runner:
+         ./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="Utf8Benchmark -prof gc" -->
+    <jmh.args>.*</jmh.args>
+
+    <!-- JMH sets the @Param fields of the benchmark states, which it requires to be public. -->
+    <checkstyle.visibility.ignoredAnnotations>org.openjdk.jmh.annotations.Param</checkstyle.visibility.ignoredAnnotations>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-core</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>${jmh.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Keeps the jar out of the Central bundle under -Prelease. -->
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <configuration>
+            <excludeArtifacts>
+              <excludeArtifact>${project.artifactId}</excludeArtifact>
+            </excludeArtifacts>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- Appended to the parent's processors: JMH generates the code that runs the benchmarks. -->
+          <annotationProcessorPaths combine.children="append">
+            <path>
+              <groupId>org.openjdk.jmh</groupId>
+              <artifactId>jmh-generator-annprocess</artifactId>
+              <version>${jmh.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <!-- gaia-parent skips exec everywhere but in the modules that use it. -->
+          <skip>false</skip>
+          <executable>java</executable>
+          <commandlineArgs>-cp %classpath org.openjdk.jmh.Main ${jmh.args}</commandlineArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -50,7 +50,8 @@
     <!-- Not published: tests that exercise X through X-testing. -->
     <module>core-tests</module>
     <module>processing-tests</module>
-    <!-- Not published: the guide, which goes to GitHub Pages. -->
+    <!-- Not published: the JMH benchmarks, and the guide, which goes to GitHub Pages. -->
+    <module>benchmarks</module>
     <module>docs</module>
   </modules>
 
@@ -71,6 +72,17 @@
   <build>
     <pluginManagement>
       <plugins>
+        <!-- Only the modules that run something with exec turn it on: benchmarks, so that the reactor can build
+             what the benchmarks need and run them in one command, and docs, which generates the guide. -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+            <!-- Checked before skip is. -->
+            <executable>java</executable>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>

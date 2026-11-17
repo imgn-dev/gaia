@@ -6,8 +6,9 @@
 # module, and links from one module to another and to the JDK.
 #
 # The published modules are those with a src/main/java/module-info.java; the
-# *-tests modules have none. In tags before 0.2.0, gaia-core's src/main/java24
-# is part of its sources, as in its javadoc jar.
+# *-tests modules, the benchmarks and the docs module have none. In tags before
+# 0.2.0, gaia-core's src/main/java24 is part of its sources, as in its javadoc
+# jar.
 #
 # It works on the sources of any tag, so that older versions can be documented
 # with the script of today.

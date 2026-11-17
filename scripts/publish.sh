@@ -12,8 +12,8 @@
 #   be.imgn.gaia:gaia-processing           and gaia-processing-testing
 #   be.imgn.gaia:gaia-processor            the annotation processor of gaia-core
 #
-# The two *-tests modules are built and run, but neither installed nor
-# deployed.
+# The two *-tests modules, the benchmarks and the docs module, the guide, are
+# built, but neither installed nor deployed.
 #
 # Safe to re-run: every step detects what is already done and skips it. Nothing
 # becomes public until you press Publish in the Central portal, which this
@@ -127,7 +127,7 @@ portal_contents() {
     info '  gaia-maven-plugin, gaia-memfs,'
     info '  gaia-processing, gaia-processing-testing,'
     info '  gaia-processor                      jar, sources, javadoc'
-    info 'No gaia-core-tests or gaia-processing-tests: they are never deployed.'
+    info 'No gaia-core-tests, gaia-processing-tests, gaia-benchmarks or gaia-docs: they are never deployed.'
 }
 
 # --- steps --------------------------------------------------------------------
