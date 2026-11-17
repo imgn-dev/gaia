@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.base.Charsets;
 import be.imgn.gaia.core.io.internal.ConcatenatedByteSource;
-import be.imgn.gaia.core.io.internal.PathSource;
 import be.imgn.gaia.core.io.internal.SlicedByteSource;
 import be.imgn.gaia.core.io.internal.Streams;
 import java.io.IOException;
@@ -291,6 +290,6 @@ public interface ByteSource {
      */
     default CharSource asCharSource(Charset charset) {
         requireNonNull(charset, "charset");
-        return () -> CharReader.of(new DecodingReader(openReader(), charset.newDecoder()));
+        return new DecodedCharSource(this, charset);
     }
 }

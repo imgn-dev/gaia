@@ -69,6 +69,8 @@ public final class ByteReader implements Closeable {
 
     // Null when the reader reads Bytes, whose array is then the buffer, which must not be written to.
     private final @Nullable InputStream in;
+    // Reading a stream, empty until a read needs it, so that a reader that only hands the stream on, as readAll and
+    // transferTo do, allocates none. Empty again once closed.
     private byte[] buffer;
     // The buffered bytes are those from position, included, to limit, excluded.
     private int position;
@@ -94,7 +96,7 @@ public final class ByteReader implements Closeable {
         if (in instanceof View view) {
             return view.owner();
         }
-        return new ByteReader(in, new byte[Streams.BUFFER_SIZE], 0, 0);
+        return new ByteReader(in, NO_BYTES, 0, 0);
     }
 
     /**
@@ -414,7 +416,7 @@ public final class ByteReader implements Closeable {
      */
     public Bytes readBytes(int byteCount) throws IOException {
         checkNotNegative("byteCount", byteCount);
-        if (byteCount <= buffer.length || in == null) {
+        if (byteCount <= capacity() || in == null) {
             var index = take(byteCount);
             return Bytes.wrap(Arrays.copyOfRange(buffer, index, index + byteCount));
         }
@@ -454,7 +456,7 @@ public final class ByteReader implements Closeable {
             return;
         }
         ensureOpen();
-        if (in != null && remaining >= buffer.length) {
+        if (in != null && remaining >= capacity()) {
             if (in.readNBytes(b, offset + copied, remaining) < remaining) {
                 throw new EOFException();
             }
@@ -484,7 +486,7 @@ public final class ByteReader implements Closeable {
         }
         if (position == limit) {
             ensureOpen();
-            if (in != null && length >= buffer.length) {
+            if (in != null && length >= capacity()) {
                 return in.read(b, offset, length);
             }
             if (!fill(1)) {
@@ -584,7 +586,7 @@ public final class ByteReader implements Closeable {
     public String readString(int byteCount, Charset charset) throws IOException {
         checkNotNegative("byteCount", byteCount);
         requireNonNull(charset, "charset");
-        if (byteCount <= buffer.length || in == null) {
+        if (byteCount <= capacity() || in == null) {
             var index = take(byteCount);
             return new String(buffer, index, byteCount, charset);
         }
@@ -707,9 +709,7 @@ public final class ByteReader implements Closeable {
         }
         if (buffer.length - position < byteCount) {
             var buffered = limit - position;
-            var target = byteCount <= buffer.length
-                    ? buffer
-                    : new byte[Math.max(byteCount, (int) Math.min(2L * buffer.length, MAX_ARRAY_LENGTH))];
+            var target = byteCount <= buffer.length ? buffer : new byte[Math.max(byteCount, grownCapacity())];
             System.arraycopy(buffer, position, target, 0, buffered);
             buffer = target;
             position = 0;
@@ -723,6 +723,16 @@ public final class ByteReader implements Closeable {
             limit += read;
         }
         return true;
+    }
+
+    // The size of the buffer, or the size it gets when first needed: runs as large go straight to the stream.
+    private int capacity() {
+        return Math.max(buffer.length, Streams.BUFFER_SIZE);
+    }
+
+    // The size of the buffer to replace one too small.
+    private int grownCapacity() {
+        return buffer.length == 0 ? Streams.BUFFER_SIZE : (int) Math.min(2L * buffer.length, MAX_ARRAY_LENGTH);
     }
 
     // Consumes a line and its terminator, -1 at the end of the stream, and returns the line.

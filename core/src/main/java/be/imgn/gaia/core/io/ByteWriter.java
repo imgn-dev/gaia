@@ -54,8 +54,10 @@ public final class ByteWriter implements Closeable, Flushable {
     private static final byte[] NO_BYTES = {};
 
     private final OutputStream out;
-    // Empty once closed, so that any write that needs room goes through flushBuffer(), which then fails.
-    private byte[] buffer = new byte[Streams.BUFFER_SIZE];
+    // Empty until a write needs it, so that a writer that only hands a stream on, as transferFrom does, allocates
+    // none; and empty again once closed, so that any write that needs room goes through flushBuffer(), which then
+    // fails.
+    private byte[] buffer = NO_BYTES;
     private int count;
     private boolean closed;
 
@@ -350,7 +352,7 @@ public final class ByteWriter implements Closeable, Flushable {
     // moving the position of the buffer and passing it to commit(ByteBuffer).
     ByteBuffer room(int byteCount) throws IOException {
         if (buffer.length - count < byteCount) {
-            flushBuffer();
+            makeRoom();
         }
         return ByteBuffer.wrap(buffer, count, buffer.length - count);
     }
@@ -362,7 +364,7 @@ public final class ByteWriter implements Closeable, Flushable {
     // Makes room for byteCount bytes, which must fit in an empty buffer, and returns the index where they go.
     private int reserve(int byteCount) throws IOException {
         if (buffer.length - count < byteCount) {
-            flushBuffer();
+            makeRoom();
         }
         var index = count;
         count += byteCount;
@@ -372,13 +374,26 @@ public final class ByteWriter implements Closeable, Flushable {
     private void writeBytes(byte[] b, int offset, int length) throws IOException {
         if (length > buffer.length - count) {
             flushBuffer();
-            if (length >= buffer.length) {
+            if (length >= Streams.BUFFER_SIZE) {
                 out.write(b, offset, length);
                 return;
             }
+            allocate();
         }
         System.arraycopy(b, offset, buffer, count, length);
         count += length;
+    }
+
+    // Empties the buffer, and allocates it if the writer has not yet.
+    private void makeRoom() throws IOException {
+        flushBuffer();
+        allocate();
+    }
+
+    private void allocate() {
+        if (buffer.length == 0) {
+            buffer = new byte[Streams.BUFFER_SIZE];
+        }
     }
 
     private void flushBuffer() throws IOException {

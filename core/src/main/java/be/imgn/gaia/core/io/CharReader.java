@@ -391,8 +391,11 @@ public final class CharReader implements Closeable {
         var total = 0L;
         while (fill(1)) {
             var count = limit - position;
+            // A StringBuilder copies an array at once, but a CharSequence one character at a time.
             if (out instanceof Writer writer) {
                 writer.write(buffer, position, count);
+            } else if (out instanceof StringBuilder builder) {
+                builder.append(buffer, position, count);
             } else {
                 out.append(CharBuffer.wrap(buffer, position, count));
             }

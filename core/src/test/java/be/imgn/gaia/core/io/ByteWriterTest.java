@@ -177,6 +177,65 @@ class ByteWriterTest {
     }
 
     @Test
+    void buffersSmallWritesIntoFewStreamWrites() throws IOException {
+        var stream = new FlushCountingOutputStream();
+        try (var out = ByteWriter.of(stream)) {
+            for (var i = 0; i < SIZE; i++) {
+                out.writeByte(i);
+            }
+        }
+
+        assertThat(stream.size()).isEqualTo(SIZE);
+        // A buffer of 8 KiB, written whole each time it is full, and once more on closing.
+        assertThat(stream.writeCount()).isEqualTo(SIZE / 8192 + 1);
+    }
+
+    @Test
+    void writesAroundTheSizeOfTheBuffer() throws IOException {
+        for (var size : new int[] {8191, 8192, 8193}) {
+            var bytes = randomBytes(size, size);
+            var stream = new ByteArrayOutputStream();
+            try (var out = ByteWriter.of(stream)) {
+                out.write(bytes).writeInt(size).write(bytes);
+            }
+
+            var expected =
+                    ByteBuffer.allocate(2 * size + 4).put(bytes).putInt(size).put(bytes);
+            assertThat(stream.toByteArray()).as("%s bytes", size).isEqualTo(expected.array());
+        }
+    }
+
+    @Test
+    void closesWithoutHavingWritten() throws IOException {
+        var stream = new FlushCountingOutputStream();
+        var out = ByteWriter.of(stream);
+
+        out.flush();
+        out.close();
+
+        assertThat(stream.size()).isZero();
+        assertThat(stream.writeCount()).isZero();
+        assertThat(stream.flushCount()).isOne();
+        assertThat(stream.closeCount()).isOne();
+        assertThatIOException().isThrownBy(() -> out.writeByte(1)).withMessage("Writer closed");
+        assertThatIOException().isThrownBy(() -> out.writeLong(1)).withMessage("Writer closed");
+        assertThatIOException().isThrownBy(() -> out.write(new byte[1])).withMessage("Writer closed");
+        assertThatIOException().isThrownBy(() -> out.write(new byte[10_000])).withMessage("Writer closed");
+        assertThatIOException().isThrownBy(() -> out.writeString("a")).withMessage("Writer closed");
+    }
+
+    @Test
+    void encodesTextFromTheStart() throws IOException {
+        var text = "é😀a".repeat(5000);
+        var stream = new ByteArrayOutputStream();
+        try (var out = CharWriter.of(new EncodingWriter(ByteWriter.of(stream), UTF_8.newEncoder()))) {
+            out.write(text);
+        }
+
+        assertThat(stream.toString(UTF_8)).isEqualTo(text);
+    }
+
+    @Test
     void flushesAndClosesItsStreamOnce() throws IOException {
         var stream = new FlushCountingOutputStream();
         var out = ByteWriter.of(stream);
@@ -273,6 +332,7 @@ class ByteWriterTest {
     private static final class FlushCountingOutputStream extends ByteArrayOutputStream {
 
         private int flushCount;
+        private int writeCount;
         private int closeCount;
 
         @Override
@@ -283,6 +343,16 @@ class ByteWriterTest {
         @Override
         public void close() {
             closeCount++;
+        }
+
+        @Override
+        public synchronized void write(byte[] b, int offset, int length) {
+            writeCount++;
+            super.write(b, offset, length);
+        }
+
+        int writeCount() {
+            return writeCount;
         }
 
         int flushCount() {

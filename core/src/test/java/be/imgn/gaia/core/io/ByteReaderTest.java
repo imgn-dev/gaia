@@ -260,6 +260,76 @@ class ByteReaderTest {
     }
 
     @Test
+    void buffersSmallReadsFromAStream() throws IOException {
+        var bytes = randomBytes(10, SIZE);
+        var stream = new ReadCountingInputStream(bytes);
+        var in = ByteReader.of(stream);
+        var data = new DataInputStream(new ByteArrayInputStream(bytes));
+
+        for (var i = 0; i < SIZE / Integer.BYTES; i++) {
+            assertThat(in.readInt()).isEqualTo(data.readInt());
+        }
+
+        // A buffer of 8 KiB, filled whole by each read.
+        assertThat(stream.readCount()).isLessThanOrEqualTo(SIZE / 8192 + 1);
+    }
+
+    @Test
+    void readsAroundTheSizeOfTheBuffer() throws IOException {
+        for (var size : new int[] {8191, 8192, 8193}) {
+            var bytes = randomBytes(size, size + 100);
+            for (var reader : readers(bytes)) {
+                var in = reader.value();
+                assertThat(in.request(size)).as(reader.name()).isTrue();
+                assertThat(in.readBytes(size).toByteArray()).as(reader.name()).isEqualTo(Arrays.copyOf(bytes, size));
+                assertThat(in.readAll().toByteArray())
+                        .as(reader.name())
+                        .isEqualTo(Arrays.copyOfRange(bytes, size, size + 100));
+            }
+        }
+    }
+
+    @Test
+    void readsSmallThenLargeRunsFromTheStart() throws IOException {
+        var bytes = randomBytes(11, SIZE);
+        for (var reader : readers(bytes)) {
+            var in = reader.value();
+            var small = new byte[10];
+            in.readFully(small, 0, small.length);
+            var large = new byte[9000];
+            in.readFully(large, 0, large.length);
+            var string = in.readString(8192, ISO_8859_1);
+            var rest = new byte[SIZE - 10 - 9000 - 8192];
+            in.readFully(rest, 0, rest.length);
+
+            assertThat(small).as(reader.name()).isEqualTo(Arrays.copyOf(bytes, 10));
+            assertThat(large).as(reader.name()).isEqualTo(Arrays.copyOfRange(bytes, 10, 9010));
+            assertThat(string).as(reader.name()).isEqualTo(new String(bytes, 9010, 8192, ISO_8859_1));
+            assertThat(rest).as(reader.name()).isEqualTo(Arrays.copyOfRange(bytes, 9010 + 8192, SIZE));
+            assertThat(in.exhausted()).as(reader.name()).isTrue();
+        }
+    }
+
+    @Test
+    void readsALargeRunFromTheStart() throws IOException {
+        var bytes = randomBytes(12, SIZE);
+        for (var reader : readers(bytes)) {
+            assertThat(reader.value().readBytes(SIZE).toByteArray())
+                    .as(reader.name())
+                    .isEqualTo(bytes);
+        }
+    }
+
+    @Test
+    void readsTheStreamAfterItsViewReadsOneByte() throws IOException {
+        var bytes = randomBytes(13, 100);
+        var in = ByteReader.of(new ChunkedInputStream(bytes, () -> 1));
+
+        assertThat(in.asInputStream().read()).isEqualTo(Byte.toUnsignedInt(bytes[0]));
+        assertThat(in.readAll().toByteArray()).isEqualTo(Arrays.copyOfRange(bytes, 1, 100));
+    }
+
+    @Test
     void transfersTheRestToAStream() throws IOException {
         var bytes = randomBytes(9, SIZE);
         for (var reader : readers(bytes)) {
@@ -406,6 +476,16 @@ class ByteReaderTest {
         assertThatIOException().isThrownBy(() -> in.transferTo(new ByteArrayOutputStream()));
         assertThatIOException().isThrownBy(() -> in.asInputStream().read());
         assertThatIOException().isThrownBy(() -> in.asInputStream().available());
+        assertThatIOException().isThrownBy(() -> in.readBytes(1)).withMessage("Reader closed");
+        assertThatIOException().isThrownBy(() -> in.readBytes(10_000)).withMessage("Reader closed");
+        assertThatIOException().isThrownBy(() -> in.readString(1, UTF_8)).withMessage("Reader closed");
+        assertThatIOException().isThrownBy(() -> in.readString(10_000, UTF_8));
+        assertThatIOException().isThrownBy(() -> in.readFully(new byte[10_000], 0, 10_000));
+        assertThatIOException().isThrownBy(() -> in.read(new byte[10_000], 0, 10_000));
+        assertThatIOException().isThrownBy(() -> in.request(1));
+        assertThatIOException().isThrownBy(in::exhausted);
+        assertThatIOException().isThrownBy(() -> in.readLine(10));
+        assertThatIOException().isThrownBy(() -> in.indexOf((byte) 1, 10));
     }
 
     @Test
@@ -483,5 +563,25 @@ class ByteReaderTest {
     @FunctionalInterface
     private interface ByteReaderCall {
         void accept(ByteReader in) throws IOException;
+    }
+
+    // Counts the reads that reach it.
+    private static final class ReadCountingInputStream extends ByteArrayInputStream {
+
+        private int readCount;
+
+        ReadCountingInputStream(byte[] bytes) {
+            super(bytes);
+        }
+
+        @Override
+        public synchronized int read(byte[] b, int offset, int length) {
+            readCount++;
+            return super.read(b, offset, length);
+        }
+
+        int readCount() {
+            return readCount;
+        }
     }
 }

@@ -376,6 +376,15 @@ data an `int` or a byte at a time:
 ./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="Utf8Benchmark -prof gc"
 ```
 
+`CharSource.read()` on bytes decodes them at once up to a size, `WHOLE_LIMIT` in `DecodedCharSource`, and as a stream
+past it, which is faster once the bytes outgrow the processor's caches. `TextReadBenchmark` measures both from 1 to
+16 MiB, for ASCII and for mixed text, to check the limit on another processor: it fits where `decodedAtOnce` stops
+being faster than `decodedAsAStream`.
+
+```sh
+./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="TextReadBenchmark"
+```
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).

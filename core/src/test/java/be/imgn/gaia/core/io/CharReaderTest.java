@@ -232,6 +232,22 @@ class CharReaderTest {
             assertThat(reader.value().transferTo(builder)).as(reader.name()).isEqualTo(text.length());
             assertThat(builder.toString()).as(reader.name()).isEqualTo(text);
         }
+        for (var reader : readers(text)) {
+            var buffer = CharBuffer.allocate(text.length());
+            assertThat(reader.value().transferTo(buffer)).as(reader.name()).isEqualTo(text.length());
+            assertThat(buffer.flip().toString()).as(reader.name()).isEqualTo(text);
+        }
+    }
+
+    @Test
+    void transfersTheRestToAStringBuilderThatHasText() throws IOException {
+        var text = randomText(7);
+        for (var reader : readers(text)) {
+            var builder = new StringBuilder("é");
+            reader.value().readChar();
+            assertThat(reader.value().transferTo(builder)).as(reader.name()).isEqualTo(text.length() - 1);
+            assertThat(builder.toString()).as(reader.name()).isEqualTo("é" + text.substring(1));
+        }
     }
 
     @Test
