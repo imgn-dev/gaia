@@ -57,6 +57,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the abstract methods a type leaves to its implementations: the abstract ones among its
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html#methods(javax.lang.model.element.TypeElement)">methods</a>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntConsumer.html#accept(int,int)" class="member-name-link">accept(int, int)</a> - Method in interface be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntConsumer.html" title="interface in be.imgn.gaia.fast.collect">IntIntConsumer</a></dt>
+<dd>
+<div class="block">Performs this operation on a key and its value.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ServiceFiles.html#add(be.imgn.gaia.processing.source.ClassName,be.imgn.gaia.processing.source.ClassName,javax.lang.model.element.Element...)" class="member-name-link">add(ClassName, ClassName, Element...)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ServiceFiles.html" title="class in be.imgn.gaia.processing">ServiceFiles</a></dt>
 <dd>
 <div class="block">Registers an implementation of a service, to list in the service's file when the files are written.</div>
@@ -948,6 +952,15 @@ a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html
 <dd>
 <div class="block">Test fixtures for <code>be.imgn.gaia.core</code>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/module-summary.html">be.imgn.gaia.fast</a> - module be.imgn.gaia.fast</dt>
+<dd>
+<div class="block">Fast collections of primitives, which store them without boxing.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/package-summary.html">be.imgn.gaia.fast.collect</a> - package be.imgn.gaia.fast.collect</dt>
+<dd>
+<div class="block">Collections of primitives, which store them without boxing and are walked with cursors rather than iterators:
+<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect"><code>IntIntMap</code></a>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.memfs/module-summary.html">be.imgn.gaia.memfs</a> - module be.imgn.gaia.memfs</dt>
 <dd>
 <div class="block">An in-memory file system, for the <code>mem:</code> URI scheme.</div>
@@ -1242,6 +1255,10 @@ of its vendor, or of its vendor's qualifier.</div>
 <dd>
 <div class="block">Removes all entries.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#clear()" class="member-name-link">clear()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Removes every entry.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.Builder.html#clear()" class="member-name-link">clear()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.Builder.html" title="class in be.imgn.gaia.processing.source">CodeBlock.Builder</a></dt>
 <dd>
 <div class="block">Removes everything added so far.</div>
@@ -1431,6 +1448,10 @@ default attributes, clock and features.</div>
 <dd>
 <div class="block">Verifies that the multiset contains exactly the given elements, each the given number of times.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#containsKey(int)" class="member-name-link">containsKey(int)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns whether the map has an entry for a key.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#containsKey(java.lang.Object)" class="member-name-link">containsKey(Object)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html#containsKey(java.lang.Object)" class="member-name-link">containsKey(Object)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a></dt>
@@ -1572,6 +1593,10 @@ it exists.</div>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html#currentUser(java.lang.String,java.lang.String...)" class="member-name-link">currentUser(String, String...)</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html" title="class in be.imgn.gaia.memfs">Configuration.Builder</a></dt>
 <dd>
 <div class="block">Enforces permissions, checking them against a user and their groups.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#cursor()" class="member-name-link">cursor()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns a cursor over the entries, positioned before the first one.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:D">D</h2>
@@ -1940,6 +1965,10 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dd>
 <div class="block">Tells whether an object is an instance with the same bytes.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns whether an object is an <code>IntIntMap</code> with the same entries.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html" title="class in be.imgn.gaia.processing.source">Annotation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.html" title="class in be.imgn.gaia.processing.source">CodeBlock</a></dt>
@@ -2245,6 +2274,10 @@ processor has not generated it yet.</div>
 <div class="block">Returns the configuration that looks like the file system of the operating system the JVM runs on:
 <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#windows()"><code>Configuration.windows()</code></a>, <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#macOS()"><code>Configuration.macOS()</code></a> or <a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#unix()"><code>Configuration.unix()</code></a>.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#forEach(be.imgn.gaia.fast.collect.IntIntConsumer)" class="member-name-link">forEach(IntIntConsumer)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Performs an action on each entry.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html#forEach(java.lang.Iterable,java.util.function.Consumer)" class="member-name-link">forEach(Iterable, Consumer)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingContext.html" title="class in be.imgn.gaia.processing">ProcessingContext</a></dt>
 <dd>
 <div class="block">Runs an action on each item in turn, typically an element, reporting a <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ProcessingException.html" title="class in be.imgn.gaia.processing"><code>ProcessingException</code></a> the action
@@ -2364,6 +2397,10 @@ and the kind of the generated type.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#get(int)" class="member-name-link">get(int)</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
 <dd>
 <div class="block">Returns the byte at an index.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#get(int)" class="member-name-link">get(int)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns the value of a key.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/NameAllocator.html#get(java.lang.Object)" class="member-name-link">get(Object)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/NameAllocator.html" title="class in be.imgn.gaia.processing.source">NameAllocator</a></dt>
 <dd>
@@ -2495,6 +2532,11 @@ its entries.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
 <dd>
 <div class="block">Returns a hash code of the bytes, the same as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html#hashCode(byte%5B%5D)" title="class or interface in java.util" class="external-link"><code>Arrays.hashCode(byte[])</code></a> on a copy of them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns the sum, over the entries, of each key XOR its value: the hash code that a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a> from
+<code>Integer</code> to <code>Integer</code> with the same entries has.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Annotation.html" title="class in be.imgn.gaia.processing.source">Annotation</a></dt>
 <dd>&nbsp;</dd>
@@ -2700,6 +2742,38 @@ annotation type is <code>@Inherited</code>, the nearest superclass that declares
 <dd>
 <div class="block">Returns the values that this range and another one have in common.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntConsumer.html" class="type-name-link" title="interface in be.imgn.gaia.fast.collect">IntIntConsumer</a> - Interface in <a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/package-summary.html">be.imgn.gaia.fast.collect</a></dt>
+<dd>
+<div class="block">An operation on an <code>int</code> key and its <code>int</code> value, such as an entry of an <a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect"><code>IntIntMap</code></a>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" class="type-name-link" title="class in be.imgn.gaia.fast.collect">IntIntMap</a> - Class in <a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/package-summary.html">be.imgn.gaia.fast.collect</a></dt>
+<dd>
+<div class="block">A hash map from <code>int</code> keys to <code>int</code> values, which stores both without boxing them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#%3Cinit%3E()" class="member-name-link">IntIntMap()</a> - Constructor for class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Creates a map with room for 16 entries, the missing value <code>0</code> and the load factor <code>0.5</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#%3Cinit%3E(int)" class="member-name-link">IntIntMap(int)</a> - Constructor for class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Creates a map with room for a number of entries, the missing value <code>0</code> and the load factor <code>0.5</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#%3Cinit%3E(int,int)" class="member-name-link">IntIntMap(int, int)</a> - Constructor for class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Creates a map with room for a number of entries, a missing value and the load factor <code>0.5</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#%3Cinit%3E(int,int,float)" class="member-name-link">IntIntMap(int, int, float)</a> - Constructor for class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Creates a map with room for a number of entries, a missing value and a load factor.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html" class="type-name-link" title="class in be.imgn.gaia.fast.collect">IntIntMap.Cursor</a> - Class in <a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/package-summary.html">be.imgn.gaia.fast.collect</a></dt>
+<dd>
+<div class="block">A position among the entries of an <a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect"><code>IntIntMap</code></a>, which it walks without boxing them.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntPredicate.html" class="type-name-link" title="interface in be.imgn.gaia.fast.collect">IntIntPredicate</a> - Interface in <a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/package-summary.html">be.imgn.gaia.fast.collect</a></dt>
+<dd>
+<div class="block">A condition on an <code>int</code> key and its <code>int</code> value, such as an entry of an <a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect"><code>IntIntMap</code></a>.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntMath.html" class="type-name-link" title="class in be.imgn.gaia.core.math">IntMath</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/math/package-summary.html">be.imgn.gaia.core.math</a></dt>
 <dd>
 <div class="block">Arithmetic on <code>int</code> values that <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Math.html" title="class or interface in java.lang" class="external-link"><code>Math</code></a> doesn't provide: divisors, powers, logarithms, square roots and
@@ -2812,6 +2886,10 @@ that javac warns about it.</div>
 <dt><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/RangeAssert.html#isEmpty()" class="member-name-link">isEmpty()</a> - Method in class be.imgn.gaia.core.testing.<a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/RangeAssert.html" title="class in be.imgn.gaia.core.testing">RangeAssert</a></dt>
 <dd>
 <div class="block">Verifies that the range is empty, as <code>[3, 3)</code> is.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#isEmpty()" class="member-name-link">isEmpty()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns whether the map has no entries.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotatedElements.html#isEmpty()" class="member-name-link">isEmpty()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotatedElements.html" title="class in be.imgn.gaia.processing">AnnotatedElements</a></dt>
 <dd>
@@ -3143,6 +3221,10 @@ and <code>")"</code>.</div>
 </dl>
 <h2 class="title" id="I:K">K</h2>
 <dl class="index">
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html#key()" class="member-name-link">key()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html" title="class in be.imgn.gaia.fast.collect">IntIntMap.Cursor</a></dt>
+<dd>
+<div class="block">Returns the key of the current entry.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#keySet()" class="member-name-link">keySet()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html#keySet()" class="member-name-link">keySet()</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a></dt>
@@ -3442,6 +3524,10 @@ fewer.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html#mirror()" class="member-name-link">mirror()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html" title="class in be.imgn.gaia.processing">AnnotationReader</a></dt>
 <dd>
 <div class="block">Returns the annotation this reader reads.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#missingValue()" class="member-name-link">missingValue()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns the value returned for keys the map does not contain.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.html#modifiers()" class="member-name-link">modifiers()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.html" title="class in be.imgn.gaia.processing.source">Field</a></dt>
 <dd>
@@ -3761,6 +3847,10 @@ before the components are assigned.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html#newRecordBuilder(java.lang.String)" class="member-name-link">newRecordBuilder(String)</a> - Static method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Type.html" title="class in be.imgn.gaia.processing.source">Type</a></dt>
 <dd>
 <div class="block">Returns a builder of records.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html#next()" class="member-name-link">next()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html" title="class in be.imgn.gaia.fast.collect">IntIntMap.Cursor</a></dt>
+<dd>
+<div class="block">Moves to the next entry.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.Builder.html#nextControlFlow(be.imgn.gaia.processing.source.CodeBlock)" class="member-name-link">nextControlFlow(CodeBlock)</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/CodeBlock.Builder.html" title="class in be.imgn.gaia.processing.source">CodeBlock.Builder</a></dt>
 <dd>
@@ -4390,6 +4480,10 @@ implementations of a service before its file is written.</div>
 <dd>
 <div class="block">Delivers an event to the subscribers of its class and of its supertypes.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#put(int,int)" class="member-name-link">put(int, int)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Sets the value of a key.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html#put(K,V)" class="member-name-link">put(K, V)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html#put(K,V)" class="member-name-link">put(K, V)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap</a></dt>
@@ -4628,6 +4722,14 @@ ignoring ASCII case.</div>
 <div class="block">Subscribes the <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/Subscribe.html" title="annotation interface in be.imgn.gaia.core.event"><code>@Subscribe</code></a> methods of a listener, those of its class and of the classes it
 extends, through the code <code>gaia-processor</code> generated for each of these classes.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html#remove()" class="member-name-link">remove()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html" title="class in be.imgn.gaia.fast.collect">IntIntMap.Cursor</a></dt>
+<dd>
+<div class="block">Removes the current entry from the map.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#remove(int)" class="member-name-link">remove(int)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Removes the entry of a key.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html#remove(java.lang.Object)" class="member-name-link">remove(Object)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#remove(java.lang.Object)" class="member-name-link">remove(Object)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
@@ -4678,6 +4780,10 @@ set.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#removeFrom(java.lang.CharSequence)" class="member-name-link">removeFrom(CharSequence)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
 <dd>
 <div class="block">Removes the occurrence this pattern selects from <code>text</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#removeIf(be.imgn.gaia.fast.collect.IntIntPredicate)" class="member-name-link">removeIf(IntIntPredicate)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Removes the entries that meet a condition.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html#removeIf(java.util.function.Predicate)" class="member-name-link">removeIf(Predicate)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset</a></dt>
 <dd>&nbsp;</dd>
@@ -4921,6 +5027,10 @@ it unchanged.</div>
 <dd>
 <div class="block">Static factories and a collector for unmodifiable sets that iterate in the order their elements are given.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html#setValue(int)" class="member-name-link">setValue(int)</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html" title="class in be.imgn.gaia.fast.collect">IntIntMap.Cursor</a></dt>
+<dd>
+<div class="block">Sets the value of the current entry.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/SharedCompilation.html" class="type-name-link" title="annotation interface in be.imgn.gaia.processing.testing">SharedCompilation</a> - Annotation Interface in <a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/package-summary.html">be.imgn.gaia.processing.testing</a></dt>
 <dd>
 <div class="block">Makes <a href="be.imgn.gaia.processing.testing/be/imgn/gaia/processing/testing/CompilationExtension.html" title="class in be.imgn.gaia.processing.testing"><code>CompilationExtension</code></a> share one compilation across all the tests of the annotated class, and its nested
@@ -4961,6 +5071,10 @@ classes, instead of starting one per test.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#size()" class="member-name-link">size()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
 <div class="block">Returns the number of bytes in this source, reading them all if <a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#sizeIfKnown()"><code>ByteSource.sizeIfKnown()</code></a> does not know it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#size()" class="member-name-link">size()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns the number of entries.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html#sizeIfKnown()" class="member-name-link">sizeIfKnown()</a> - Method in interface be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/ByteSource.html" title="interface in be.imgn.gaia.core.io">ByteSource</a></dt>
 <dd>
@@ -5313,6 +5427,10 @@ superclass: <code>AbstractList&lt;String&gt;</code> for <code>ArrayList&lt;Strin
 <div class="block">Returns a gatherer that keeps the elements while a predicate holds, and the first element that fails it, then
 stops.</div>
 </dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntPredicate.html#test(int,int)" class="member-name-link">test(int, int)</a> - Method in interface be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntPredicate.html" title="interface in be.imgn.gaia.fast.collect">IntIntPredicate</a></dt>
+<dd>
+<div class="block">Tests a key and its value.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedPredicate.html#test(long,T)" class="member-name-link">test(long, T)</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedPredicate.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedPredicate</a></dt>
 <dd>
 <div class="block">Evaluates this predicate.</div>
@@ -5526,6 +5644,10 @@ abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.core.io.<a href="be.imgn.gaia.core/be/imgn/gaia/core/io/Bytes.html" title="class in be.imgn.gaia.core.io">Bytes</a></dt>
 <dd>
 <div class="block">Returns a description of the bytes, for debugging, such as <code>Bytes[size=3, hex=cafeba]</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.html" title="class in be.imgn.gaia.fast.collect">IntIntMap</a></dt>
+<dd>
+<div class="block">Returns the entries, as <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/AbstractMap.html#toString()" title="class or interface in java.util" class="external-link"><code>AbstractMap.toString()</code></a> does: <code>{1=10, 2=20}</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#toString()" class="member-name-link">toString()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>&nbsp;</dd>
@@ -5817,6 +5939,10 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 </dl>
 <h2 class="title" id="I:V">V</h2>
 <dl class="index">
+<dt><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html#value()" class="member-name-link">value()</a> - Method in class be.imgn.gaia.fast.collect.<a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntMap.Cursor.html" title="class in be.imgn.gaia.fast.collect">IntIntMap.Cursor</a></dt>
+<dd>
+<div class="block">Returns the value of the current entry.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html#value(java.lang.String,java.lang.Class)" class="member-name-link">value(String, Class)</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/AnnotationReader.html" title="class in be.imgn.gaia.processing">AnnotationReader</a></dt>
 <dd>
 <div class="block">Returns the value of an attribute of a primitive type or <code>String</code>.</div>

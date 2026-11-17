@@ -8,6 +8,8 @@ be.imgn.gaia.core.math
 be.imgn.gaia.core.platform
 module:be.imgn.gaia.core.testing
 be.imgn.gaia.core.testing
+module:be.imgn.gaia.fast
+be.imgn.gaia.fast.collect
 module:be.imgn.gaia.memfs
 be.imgn.gaia.memfs
 module:be.imgn.gaia.processing
