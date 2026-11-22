@@ -8,9 +8,9 @@
 #   -SNAPSHOT version, commit, push, create the GitHub release, and start the
 #   API docs workflow.
 #
-# The version lives in one place: -Drevision in .mvn/maven.config. Every POM
-# reads ${revision}, and flatten-maven-plugin writes the resolved version into
-# the published POMs, so no POM is rewritten.
+# versions:set at the root rewrites the version of every module and its parent
+# reference, gaia-bom included. Nothing else carries the version: sibling
+# dependencies use ${project.version}.
 #
 # Nothing becomes public until you press Publish in the Central portal:
 # autoPublish is false in be.imgn.parent:parent.
@@ -56,14 +56,9 @@ set -o errtrace
 
 MVN=("$ROOT/mvnw" -B --no-transfer-progress)
 SIGNING_KEY_STEP=2
-MAVEN_CONFIG="$ROOT/.mvn/maven.config"
-
-# Sets -Drevision in .mvn/maven.config, the only place the version is written.
-set_revision() {
-    grep -q -- '-Drevision=' "$MAVEN_CONFIG" \
-        || die "$MAVEN_CONFIG has no -Drevision=... to replace."
-    sed -E "s/-Drevision=[^[:space:]]+/-Drevision=$1/" "$MAVEN_CONFIG" >"$MAVEN_CONFIG.tmp"
-    mv "$MAVEN_CONFIG.tmp" "$MAVEN_CONFIG"
+# Sets the version of every POM in the reactor.
+set_version() {
+    "${MVN[@]}" --quiet versions:set -DnewVersion="$1" -DgenerateBackupPoms=false
 }
 
 # --- steps --------------------------------------------------------------------
@@ -252,7 +247,7 @@ dry_run_deploy() {
 build() {
     bold '4. Build'
     info "Setting version $RELEASE_VERSION"
-    set_revision "$RELEASE_VERSION"
+    set_version "$RELEASE_VERSION"
 
     # On any failure from here on, put the version back.
     trap 'warn "Failed: restoring the version."; restore_version' ERR
@@ -305,7 +300,7 @@ tag_and_bump() {
     git tag -a "v$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
     ok "tagged v$RELEASE_VERSION"
 
-    set_revision "$next"
+    set_version "$next"
     git commit --quiet -am "Start $next"
     ok "started $next"
 

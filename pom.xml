@@ -18,7 +18,7 @@
 
   <groupId>be.imgn.gaia</groupId>
   <artifactId>gaia-parent</artifactId>
-  <version>${revision}</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Gaia Parent</name>
@@ -57,16 +57,11 @@
   </modules>
 
   <properties>
-    <!-- ${revision}, the one gaia version, is set in .mvn/maven.config rather
-         than here: gaia-bom has no parent, so a property defined in this POM
-         would not reach it. A release overrides it: -Drevision=1.2.3. -->
-
     <!-- Reproducible builds. A release sets it to the time of the commit it
          releases (-Dproject.build.outputTimestamp, in release.yml and
          scripts/release.sh); this value only serves other builds. -->
     <project.build.outputTimestamp>2026-10-17T19:51:24Z</project.build.outputTimestamp>
 
-    <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
     <build-helper-maven-plugin.version>3.6.2</build-helper-maven-plugin.version>
   </properties>
 
@@ -86,78 +81,11 @@
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>flatten-maven-plugin</artifactId>
-          <version>${flatten-maven-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>${build-helper-maven-plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
-
-    <plugins>
-      <!-- Replaces ${revision} in the installed and deployed POMs. This
-           configuration is for gaia-parent itself, which is published as a
-           parent: only the CI-friendly properties are resolved and everything
-           else, build configuration included, is kept. Library modules switch
-           to the flatten-library-poms profile below. -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
-        <configuration>
-          <flattenMode>resolveCiFriendliesOnly</flattenMode>
-          <updatePomFile>true</updatePomFile>
-          <outputDirectory>${project.build.directory}</outputDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>flatten</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>flatten</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
-
-  <profiles>
-    <!-- Library POMs keep their parent chain (gaia-parent and
-         be.imgn.parent:parent are both on Central), with ${revision} resolved.
-         Their dependencies are flattened: written with concrete versions, and
-         without the test-scoped ones, which mean nothing to a user. Activated
-         the way the parent activates Checkstyle, by the presence of Java
-         sources, so it never applies to gaia-parent. (resolveCiFriendliesOnly
-         cannot be combined with flattened dependencies: flatten 1.8.0 fails
-         with a NullPointerException in CiModelInterpolator.) -->
-    <profile>
-      <id>flatten-library-poms</id>
-      <activation>
-        <file>
-          <exists>${basedir}/src/main/java</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>flatten-maven-plugin</artifactId>
-            <configuration>
-              <flattenMode>defaults</flattenMode>
-              <pomElements>
-                <parent>interpolate</parent>
-                <name>interpolate</name>
-                <description>interpolate</description>
-                <dependencies>flatten</dependencies>
-              </pomElements>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>

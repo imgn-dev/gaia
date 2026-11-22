@@ -20,7 +20,7 @@
 
   <groupId>be.imgn.gaia</groupId>
   <artifactId>gaia-bom</artifactId>
-  <version>${revision}</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!-- Central reads each POM on its own: the metadata is restated, gaia's. -->
@@ -53,12 +53,8 @@
   </scm>
 
   <properties>
-    <!-- ${revision} comes from ../.mvn/maven.config, shared with gaia-parent. -->
-
     <!-- As in the parent: a release overrides it. -->
     <project.build.outputTimestamp>2026-10-17T19:51:24Z</project.build.outputTimestamp>
-    <!-- Same as gaia-parent: bom-parent does not manage flatten. -->
-    <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
   </properties>
 
   <!-- Only gaia artifacts. Every published module is listed; the unpublished
@@ -68,81 +64,39 @@
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-core</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-core-testing</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-fast</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-memfs</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-processing</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-processing-testing</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.imgn.gaia</groupId>
         <artifactId>gaia-processor</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>flatten-maven-plugin</artifactId>
-          <version>${flatten-maven-plugin.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
-    <plugins>
-      <!-- bom mode keeps dependencyManagement and drops build and profiles.
-           It keeps dependencyManagement as written, though, so it is
-           interpolated explicitly: otherwise ${revision} reaches the published
-           POM unresolved. Properties are dropped: they are build settings, of
-           no use to an importing project. -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
-        <configuration>
-          <flattenMode>bom</flattenMode>
-          <updatePomFile>true</updatePomFile>
-          <outputDirectory>${project.build.directory}</outputDirectory>
-          <pomElements>
-            <dependencyManagement>interpolate</dependencyManagement>
-            <properties>remove</properties>
-          </pomElements>
-        </configuration>
-        <executions>
-          <execution>
-            <id>flatten</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>flatten</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

@@ -8,7 +8,7 @@
   <parent>
     <groupId>be.imgn.gaia</groupId>
     <artifactId>gaia-parent</artifactId>
-    <version>${revision}</version>
+    <version>0.2.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>gaia-processing-tests</artifactId>
@@ -28,13 +28,13 @@
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-processing</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-processing-testing</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

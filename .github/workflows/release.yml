@@ -80,10 +80,11 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # The version lives only in .mvn/maven.config, as -Drevision. Every POM
-      # reads ${revision}; flatten-maven-plugin resolves it in the published POMs.
+      # versions:set at the root rewrites the version of every module and its
+      # parent reference, gaia-bom included. Nothing else carries the version:
+      # sibling dependencies use ${project.version}.
       - name: Set release version
-        run: sed -i -E "s/-Drevision=[^[:space:]]+/-Drevision=$RELEASE_VERSION/" .mvn/maven.config
+        run: ./mvnw -B --no-transfer-progress versions:set -DnewVersion="$RELEASE_VERSION" -DgenerateBackupPoms=false
 
       # As scripts/release.sh does, before the long build: a release whose tag
       # exists, or whose commits main no longer leads to, would upload to
@@ -180,7 +181,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           next=$NEXT_VERSION-SNAPSHOT
-          sed -i -E "s/-Drevision=[^[:space:]]+/-Drevision=$next/" .mvn/maven.config
+          ./mvnw -B --no-transfer-progress versions:set -DnewVersion="$next" -DgenerateBackupPoms=false
           git commit -am "Start $next"
           # The token goes to this command only, as the header actions/checkout
           # would have stored in .git/config.

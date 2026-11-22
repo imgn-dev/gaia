@@ -8,7 +8,7 @@
   <parent>
     <groupId>be.imgn.gaia</groupId>
     <artifactId>gaia-parent</artifactId>
-    <version>${revision}</version>
+    <version>0.2.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>gaia-benchmarks</artifactId>
@@ -36,12 +36,12 @@
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-core</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-fast</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jspecify</groupId>

@@ -8,7 +8,7 @@
   <parent>
     <groupId>be.imgn.gaia</groupId>
     <artifactId>gaia-parent</artifactId>
-    <version>${revision}</version>
+    <version>0.2.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>gaia-docs</artifactId>
@@ -45,43 +45,43 @@
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-core</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-core-testing</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-fast</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-memfs</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-processing</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-processing-testing</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>be.imgn.gaia</groupId>
       <artifactId>gaia-processor</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

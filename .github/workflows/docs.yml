@@ -92,7 +92,8 @@ jobs:
         name: Check snapshot version
         working-directory: source
         run: |
-          version=$(sed -nE 's/.*-Drevision=([^[:space:]]+).*/\1/p' .mvn/maven.config)
+          # The project's version is the first <version> after the parent's.
+          version=$(awk '/<\/parent>/ { found = 1 } found && /<version>/ { gsub(/.*<version>|<\/version>.*/, ""); print; exit }' pom.xml)
           if [[ $version =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-SNAPSHOT$ ]]; then
             echo "version=$version" >>"$GITHUB_OUTPUT"
             echo "commit=$(git rev-parse --short HEAD)" >>"$GITHUB_OUTPUT"
