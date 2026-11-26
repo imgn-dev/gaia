@@ -100,7 +100,7 @@ class RandomSelectorTest {
 
         var selector = (Selectors.AliasSelector<Integer>) RandomSelector.weighted(elements, i -> weights[i]);
 
-        var chances = selector.chances();
+        var chances = selector.tableChances();
         for (int i = 0; i < size; i++) {
             assertThat(chances[i]).isCloseTo(weights[i] / total, within(1e-12));
         }

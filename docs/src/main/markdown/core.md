@@ -333,7 +333,10 @@ half.doubleValue();                         // 0.5
 ```
 
 Intermediate results are computed on `long` values; a result that doesn't fit once reduced throws
-`ArithmeticException`.
+`ArithmeticException`. [`LongFraction`](api:be.imgn.gaia.core.math.LongFraction) is the same on `long` values, and
+[`BigFraction`](api:be.imgn.gaia.core.math.BigFraction) on `BigInteger` values, which never overflows. Each converts
+to the other ones, with `toBigFraction()` or `toIntFractionExact()` for instance, and `BigFraction.of(0.1)` is the
+fraction that a `double` is exactly.
 
 ## Random selection
 
@@ -386,9 +389,34 @@ var chest = RandomTable.<Item>builder()
 Multiset<Item> drawn = chest.draw(random);      // such as [key, gold x 57, ruby]
 ```
 
-A quantity or a number of draws is fixed, or a `RandomSelector<Integer>`. A [dice expression](#dice) is turned into
-one with a lambda: `random -> expression.roll(random).value()`. Tables are immutable and only refer to tables built
-before them, so they never refer to each other in a circle.
+A quantity or a number of draws is fixed, or a `RandomSelector<Integer>`, such as a [dice expression](#dice) with
+`DiceExpression.parse("2d6").selector()`. Tables are immutable and only refer to tables built before them, so they
+never refer to each other in a circle.
+
+### Chances
+
+[`Chances`](api:be.imgn.gaia.core.random.Chances) are the exact chances of each outcome, as `IntFraction`s. A
+selector made by `RandomSelector` knows the chances of its elements, and so do those made from it with `map` and
+`flatten`; a table knows the chances of each multiset it may draw:
+
+```java
+var rarity = RandomSelector.weighted(Maps.map("common", 70, "rare", 25, "legendary", 5));
+rarity.chances().of("rare");                                // 1/4
+rarity.chances().where(name -> !name.equals("common"));     // 3/10
+
+var table = RandomTable.<String>builder()
+        .add(60, "gold", DiceExpression.parse("2d6").selector())
+        .add(30, "gem")
+        .addNothing(10)
+        .build();
+table.chances().where(drawn -> drawn.count("gold") >= 10);  // 1/10
+```
+
+A selector that is only a function of a `RandomGenerator` doesn't know its chances, and `chances()` then throws
+`UnsupportedOperationException`. Weights that are whole numbers give simple fractions; a weight such as `0.1` is the
+`double` nearest to a tenth, whose exact fraction has very large terms, so `of` may throw `ArithmeticException` where
+`exactOutcomes()`, which returns `BigFraction`s, doesn't. `chances.selector()` goes the other way: it selects each
+outcome with its chance, in constant time.
 
 ### Changing weights
 
@@ -429,6 +457,19 @@ RandomSamples.weightedSample(prizes, Prize::tickets, 3, random);
 lines.collect(RandomSamples.toSample(100, random));
 ```
 
+[`RandomPermutation`](api:be.imgn.gaia.core.random.RandomPermutation) is the numbers from zero to a size in a random
+order, each exactly once. Past a few thousand numbers the order is computed, not stored, so it visits a range of any
+size without shuffling it:
+
+```java
+var order = RandomPermutation.of(1_000_000_000_000L, random);
+order.get(0);                                   // the first number
+order.stream().limit(100);                      // a hundred different numbers
+order.indexOf(order.get(42));                   // 42
+```
+
+A computed order looks random, but not every order may come up: where each one must be as likely, shuffle a list.
+
 ### Seeds
 
 [`Seed`](api:be.imgn.gaia.core.random.Seed) derives seeds from a seed, by name or by number, so that each part of a
@@ -458,7 +499,8 @@ RandomStrings.length(128, RandomStrings.HEXADECIMAL);           // 32
 
 A string that must not be guessed needs a `SecureRandom`, not a seeded generator.
 
-In tests, a [`FakeRandom`](testing.md#randomness) gives the numbers that the test scripted.
+In tests, a [`FakeRandom`](testing.md#randomness) gives the numbers that the test scripted, and
+[`RandomSelectorAssert`](testing.md#randomness) checks how often a selector selects each element.
 
 ## Dice
 
@@ -515,8 +557,8 @@ List<Integer> faces = rolled.<List<Integer>>fold(node -> switch (node) {
 });
 ```
 
-[`Chances`](api:be.imgn.gaia.core.random.dice.Chances) counts the outcomes exactly, values and tags together, and returns
-`IntFraction`s:
+[`DiceChances`](api:be.imgn.gaia.core.random.dice.DiceChances) counts the outcomes exactly, values and tags
+together, and returns `IntFraction`s:
 
 ```java
 var chances = DiceExpression.parse("(2d20kh1:critical>=20)+5").chances();
@@ -530,6 +572,10 @@ Dice that are kept or dropped aren't enumerated roll by roll: their faces are ta
 for each number of dice to show that face, so `30d20kh3` is counted at once. The counts are whole numbers of any
 size, but a chance is an `IntFraction`: asking for one that doesn't fit once reduced, such as a single outcome of
 `15d20`, throws `ArithmeticException`.
+
+An expression is also a selector: `expression.selector()` rolls it on each selection, and
+`expression.chances().selector()` selects a value with its chance without rolling any die. Both know their
+[chances](#chances), as `chances.values()` gives them.
 
 ## Versions
 

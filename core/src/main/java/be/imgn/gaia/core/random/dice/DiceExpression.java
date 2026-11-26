@@ -2,6 +2,8 @@ package be.imgn.gaia.core.random.dice;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.random.Chances;
+import be.imgn.gaia.core.random.RandomSelector;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -256,9 +258,32 @@ public final class DiceExpression {
      *     negative or more than 10,000, or a number of sides less than one, or if some dice have more than 1,000,000
      *     sides in total
      */
-    public Chances chances() {
+    public DiceChances chances() {
         checkResolved();
-        return new Chances(this.<Distribution>fold(Distribution::of));
+        return new DiceChances(this.<Distribution>fold(Distribution::of));
+    }
+
+    /**
+     * Returns this expression as a selector of the values it evaluates to: each selection rolls the dice, and the
+     * chances of the selector are those of {@link #chances()}. It's how a quantity of a
+     * {@link be.imgn.gaia.core.random.RandomTable} is given as dice.
+     *
+     * @return a selector that rolls this expression
+     * @throws UnresolvedVariableException if a variable has no value
+     */
+    public RandomSelector<Integer> selector() {
+        checkResolved();
+        return new RandomSelector<>() {
+            @Override
+            public Integer next(RandomGenerator random) {
+                return roll(random).value();
+            }
+
+            @Override
+            public Chances<Integer> chances() {
+                return DiceExpression.this.chances().values();
+            }
+        };
     }
 
     private void checkResolved() {

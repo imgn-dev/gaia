@@ -3,8 +3,10 @@ package be.imgn.gaia.core.random;
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.math.BigFraction;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 import org.jspecify.annotations.Nullable;
@@ -189,6 +191,26 @@ public final class MutableRandomSelector<T> implements RandomSelector<T> {
         @SuppressWarnings("unchecked")
         T selected = (T) requireNonNull(elements[index]);
         return selected;
+    }
+
+    /**
+     * Returns the exact chance of each element, from the weights as they are now.
+     *
+     * @return the chances of the elements whose weight is positive
+     * @throws IllegalStateException if no element has a positive weight
+     */
+    @Override
+    public Chances<T> chances() {
+        var shares = new LinkedHashMap<T, BigFraction>();
+        for (int i = 0; i < size; i++) {
+            @SuppressWarnings("unchecked")
+            T element = (T) requireNonNull(elements[i]);
+            shares.put(element, BigFraction.of(weights[i]));
+        }
+        if (shares.values().stream().noneMatch(share -> share.signum() > 0)) {
+            throw new IllegalStateException("No element has a positive weight");
+        }
+        return Chances.ofShares(shares);
     }
 
     /** The sums are rounded, so a target at the very end of an element may fall past it: takes one next to it. */

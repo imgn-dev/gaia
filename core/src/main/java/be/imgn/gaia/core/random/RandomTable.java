@@ -6,8 +6,13 @@ import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.collect.HashMultiset;
 import be.imgn.gaia.core.collect.Multiset;
+import be.imgn.gaia.core.collect.Multisets;
+import be.imgn.gaia.core.math.BigFraction;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.random.RandomGenerator;
 import org.jspecify.annotations.Nullable;
 
@@ -87,6 +92,90 @@ public final class RandomTable<T> {
         Multiset<T> drawn = HashMultiset.create();
         drawInto(drawn, random);
         return drawn;
+    }
+
+    /**
+     * Returns the exact chance of each multiset of elements that a draw may give.
+     *
+     * <p>Every quantity and number of draws must be fixed, or a selector that knows its chances. The outcomes are
+     * counted one by one, so a table with many entries that is drawn from many times takes long.
+     *
+     * @return the chances of the draws, each an unmodifiable multiset
+     * @throws UnsupportedOperationException if a selector doesn't know its chances
+     * @throws IllegalStateException if a selector may give a negative quantity or number of draws
+     */
+    public Chances<Multiset<T>> chances() {
+        return Chances.ofChances(distribution());
+    }
+
+    private Map<Multiset<T>, BigFraction> distribution() {
+        Map<Multiset<T>, BigFraction> result = Map.of(Multisets.multiset(), BigFraction.ONE);
+        for (var entry : always) {
+            result = sum(result, distribution(entry));
+        }
+        if (selector == null) {
+            return result;
+        }
+        // What one weighted entry gives.
+        var once = new LinkedHashMap<Multiset<T>, BigFraction>();
+        selector.chances()
+                .exactOutcomes()
+                .forEach((entry, chance) -> distribution(entry)
+                        .forEach((drawn, share) -> once.merge(drawn, chance.times(share), BigFraction::plus)));
+        // What each number of them gives, weighted by the chance of that number.
+        var counts = new TreeMap<>(counts(draws, "number of draws"));
+        var weighted = new LinkedHashMap<Multiset<T>, BigFraction>();
+        Map<Multiset<T>, BigFraction> drawn = Map.of(Multisets.multiset(), BigFraction.ONE);
+        for (int count = 0; count <= counts.lastKey(); count++) {
+            var chance = counts.get(count);
+            if (chance != null) {
+                drawn.forEach((multiset, share) -> weighted.merge(multiset, chance.times(share), BigFraction::plus));
+            }
+            if (count < counts.lastKey()) {
+                drawn = sum(drawn, once);
+            }
+        }
+        return sum(result, weighted);
+    }
+
+    private Map<Multiset<T>, BigFraction> distribution(Entry<T> entry) {
+        return switch (entry) {
+            case Entry.Element<T> element -> {
+                var result = new LinkedHashMap<Multiset<T>, BigFraction>();
+                counts(element.quantity(), "quantity").forEach((quantity, chance) -> {
+                    Multiset<T> multiset = HashMultiset.create();
+                    multiset.add(element.element(), quantity);
+                    result.merge(Multisets.multisetCopy(multiset), chance, BigFraction::plus);
+                });
+                yield result;
+            }
+            case Entry.Table<T> table -> {
+                var result = new LinkedHashMap<Multiset<T>, BigFraction>();
+                table.table()
+                        .distribution()
+                        .forEach((multiset, chance) -> result.put(Multisets.multisetCopy(multiset), chance));
+                yield result;
+            }
+            case Entry.Nothing<T> nothing -> Map.of(Multisets.multiset(), BigFraction.ONE);
+        };
+    }
+
+    private static Map<Integer, BigFraction> counts(RandomSelector<Integer> selector, String name) {
+        var counts = selector.chances().exactOutcomes();
+        counts.keySet().forEach(count -> checkState(count >= 0, "Negative %s: %d", name, count));
+        return counts;
+    }
+
+    /** The chances of the sums of two independent draws. */
+    private static <T> Map<Multiset<T>, BigFraction> sum(
+            Map<Multiset<T>, BigFraction> left, Map<Multiset<T>, BigFraction> right) {
+        var sums = new LinkedHashMap<Multiset<T>, BigFraction>();
+        left.forEach((leftDrawn, leftChance) -> right.forEach((rightDrawn, rightChance) -> {
+            Multiset<T> sum = HashMultiset.create(leftDrawn);
+            rightDrawn.forEachEntry(sum::add);
+            sums.merge(Multisets.multisetCopy(sum), leftChance.times(rightChance), BigFraction::plus);
+        }));
+        return sums;
     }
 
     private void drawInto(Multiset<? super T> drawn, RandomGenerator random) {

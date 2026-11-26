@@ -100,6 +100,9 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`random.MutableRandomSelector`**: a weighted selector whose elements and weights change, in logarithmic time.
 - **`random.RandomBag`** and **`random.RandomSamples`**: elements drawn without being put back, from a bag that can
   be refilled, or as a sample of a collection or of a stream of any length, uniformly or by weight.
+- **`random.Chances`**: the exact chances of each element of a selector, or of each draw of a table, as fractions.
+- **`random.RandomPermutation`**: the numbers below a size in a random order, each once, computed without storing
+  them when there are many.
 - **`random.Seed`**: derives seeds by name or by number, the same in every version and on every JVM, so that each
   part of a program has a reproducible random sequence of its own.
 - **`random.RandomStrings`**: identifiers, tokens and codes from an alphabet, sized by bits of randomness.
@@ -125,6 +128,9 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`FakeTicker`**: a `Ticker` that tests advance by hand, for exact and instant tests of timing code.
 - **`FakeRandom`**: a `RandomGenerator` that gives the numbers a test scripted, such as the faces of dice, and fails
   when the code under test asks for something else.
+- **`RecordingRandom`**: records the numbers of a real generator, and plays them again as a `FakeRandom`.
+- **`RandomSelectorAssert`**: AssertJ assertions on how often a `RandomSelector` selects each element, with a
+  chi-squared test.
 - **`FakePlatform`** and **`FakeDirectories`**: a `Platform` with the operating system of your choice and its
   directories under a test's temporary directory, so that code that receives a `Platform` can be tested on any
   operating system.

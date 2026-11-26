@@ -69,6 +69,20 @@ public interface RandomSelector<T> {
     }
 
     /**
+     * Returns the exact chance of each element that this selector selects.
+     *
+     * <p>The selectors that this interface creates know their chances, and so do those made from them with
+     * {@link #map(Function)} and {@link #flatten(RandomSelector)}. A selector that is a function of a
+     * {@link RandomGenerator} doesn't, unless it overrides this method.
+     *
+     * @return the chances of the elements
+     * @throws UnsupportedOperationException if this selector doesn't know its chances
+     */
+    default Chances<T> chances() {
+        throw new UnsupportedOperationException("This selector doesn't know its chances");
+    }
+
+    /**
      * Returns a selector of what a function returns for the elements that this selector selects. It uses the same
      * randomness as this selector.
      *
@@ -78,7 +92,7 @@ public interface RandomSelector<T> {
      */
     default <R> RandomSelector<R> map(Function<? super T, ? extends R> mapper) {
         requireNonNull(mapper, "mapper");
-        return random -> mapper.apply(next(random));
+        return new Selectors.Mapped<>(this, mapper);
     }
 
     /**
@@ -89,11 +103,7 @@ public interface RandomSelector<T> {
      * @return a selector of {@code element}
      */
     static <T> RandomSelector<T> constant(T element) {
-        requireNonNull(element, "element");
-        return random -> {
-            requireNonNull(random, "random");
-            return element;
-        };
+        return Selectors.constant(requireNonNull(element, "element"));
     }
 
     /**
@@ -169,7 +179,6 @@ public interface RandomSelector<T> {
      * @return a selector of the elements of the selected selectors
      */
     static <T> RandomSelector<T> flatten(RandomSelector<? extends RandomSelector<? extends T>> selectors) {
-        requireNonNull(selectors, "selectors");
-        return random -> selectors.next(random).next(random);
+        return new Selectors.Flattened<>(requireNonNull(selectors, "selectors"));
     }
 }

@@ -1,25 +1,30 @@
 package be.imgn.gaia.core.random;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.math.BigFraction;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.random.RandomGenerator;
+import org.jspecify.annotations.Nullable;
 
 /** The selectors that {@link RandomSelector} creates. */
 final class Selectors {
 
     private Selectors() {}
 
+    static <T> RandomSelector<T> constant(T element) {
+        return new Constant<>(element);
+    }
+
     static <T> RandomSelector<T> uniform(List<T> elements) {
         checkArgument(!elements.isEmpty(), "No element to select from");
-        if (elements.size() == 1) {
-            return RandomSelector.constant(elements.getFirst());
-        }
-        var array = elements.toArray();
-        @SuppressWarnings("unchecked")
-        RandomSelector<T> selector = random -> (T) array[random.nextInt(array.length)];
-        return selector;
+        return elements.size() == 1 ? constant(elements.getFirst()) : new Uniform<>(elements.toArray());
     }
 
     /** Creates the selector of the elements that have a positive weight. */
@@ -43,6 +48,17 @@ final class Selectors {
         return equal ? uniform(List.copyOf(selected)) : AliasSelector.of(List.copyOf(selected), positive, total);
     }
 
+    /** The chances of elements that each have a share: equal elements add theirs up. */
+    @SuppressWarnings("unchecked")
+    private static <T> Chances<T> chancesOf(Object[] elements, double @Nullable [] weights) {
+        var shares = new LinkedHashMap<T, BigFraction>();
+        for (int i = 0; i < elements.length; i++) {
+            var share = weights == null ? BigFraction.ONE : BigFraction.of(weights[i]);
+            shares.merge((T) elements[i], share, BigFraction::plus);
+        }
+        return Chances.ofShares(shares);
+    }
+
     /**
      * A weighted selector that uses Walker's alias method, with a table built by Vose's algorithm.
      *
@@ -64,9 +80,12 @@ final class Selectors {
         // For each slot, its threshold then its alias, next to each other so that a selection reads them together.
         private final long[] table;
 
-        private AliasSelector(Object[] elements, long[] table) {
+        private final double[] weights;
+
+        private AliasSelector(Object[] elements, long[] table, double[] weights) {
             this.elements = elements;
             this.table = table;
+            this.weights = weights;
         }
 
         static <T> AliasSelector<T> of(List<T> elements, double[] weights, double total) {
@@ -106,7 +125,7 @@ final class Selectors {
                 int index = pending[heavy++];
                 set(table, index, 1, index);
             }
-            return new AliasSelector<>(elements.toArray(), table);
+            return new AliasSelector<>(elements.toArray(), table, Arrays.copyOf(weights, size));
         }
 
         private static void set(long[] table, int slot, double threshold, int alias) {
@@ -126,8 +145,13 @@ final class Selectors {
             return (T) elements[index];
         }
 
+        @Override
+        public Chances<T> chances() {
+            return chancesOf(elements, weights);
+        }
+
         /** The chance of each element, as the table gives it. */
-        double[] chances() {
+        double[] tableChances() {
             int size = elements.length;
             var chances = new double[size];
             for (int slot = 0; slot < size; slot++) {
@@ -136,6 +160,75 @@ final class Selectors {
                 chances[(int) table[2 * slot + 1]] += (1 - threshold) / size;
             }
             return chances;
+        }
+    }
+
+    private record Constant<T>(T element) implements RandomSelector<T> {
+
+        @Override
+        public T next(RandomGenerator random) {
+            requireNonNull(random, "random");
+            return element;
+        }
+
+        @Override
+        public Chances<T> chances() {
+            return Chances.ofChances(Map.of(element, BigFraction.ONE));
+        }
+    }
+
+    private static final class Uniform<T> implements RandomSelector<T> {
+
+        private final Object[] elements;
+
+        Uniform(Object[] elements) {
+            this.elements = elements;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public T next(RandomGenerator random) {
+            return (T) elements[random.nextInt(elements.length)];
+        }
+
+        @Override
+        public Chances<T> chances() {
+            return chancesOf(elements, null);
+        }
+    }
+
+    record Mapped<T, R>(RandomSelector<T> selector, Function<? super T, ? extends R> mapper)
+            implements RandomSelector<R> {
+
+        @Override
+        public R next(RandomGenerator random) {
+            return mapper.apply(selector.next(random));
+        }
+
+        @Override
+        public Chances<R> chances() {
+            return selector.chances().map(mapper);
+        }
+    }
+
+    record Flattened<T>(RandomSelector<? extends RandomSelector<? extends T>> selectors) implements RandomSelector<T> {
+
+        @Override
+        public T next(RandomGenerator random) {
+            return selectors.next(random).next(random);
+        }
+
+        @Override
+        public Chances<T> chances() {
+            var chances = new LinkedHashMap<T, BigFraction>();
+            selectors
+                    .chances()
+                    .exactOutcomes()
+                    .forEach((selector, chance) -> selector.chances()
+                            .exactOutcomes()
+                            .forEach((element, share) ->
+                                    chances.merge(element, chance.times(share), BigFraction::plus)));
+            return Chances.ofChances(chances);
         }
     }
 }

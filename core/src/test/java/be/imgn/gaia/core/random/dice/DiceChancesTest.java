@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class ChancesTest {
+class DiceChancesTest {
 
-    private static Chances chances(String text) {
+    private static DiceChances chances(String text) {
         return DiceExpression.parse(text).chances();
     }
 

@@ -1,6 +1,6 @@
 package be.imgn.gaia.core.random.dice;
 
-import be.imgn.gaia.core.random.dice.Chances.Outcome;
+import be.imgn.gaia.core.random.dice.DiceChances.Outcome;
 import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import java.math.BigInteger;
 import java.util.ArrayList;
