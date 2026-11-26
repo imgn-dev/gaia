@@ -1,11 +1,11 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.random.DiceNode.Condition;
-import be.imgn.gaia.core.random.DiceNode.Keep;
-import be.imgn.gaia.core.random.DiceNode.Operator;
-import be.imgn.gaia.core.random.DiceNode.Relation;
+import be.imgn.gaia.core.random.dice.DiceNode.Condition;
+import be.imgn.gaia.core.random.dice.DiceNode.Keep;
+import be.imgn.gaia.core.random.dice.DiceNode.Operator;
+import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -105,25 +105,26 @@ public sealed interface RolledNode<T> {
      *
      * @param count how many dice were rolled
      * @param sides how many sides each die has
-     * @param keep which dice count in the sum, or null if they all do
+     * @param keep which dice count in the sum
      * @param dice the dice, in the order they were rolled
      * @param value the sum of the dice that were kept
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, T sides, @Nullable Keep keep, List<Die> dice, int value) implements RolledNode<T> {
+    record Dice<T>(T count, T sides, Keep keep, List<Die> dice, int value) implements RolledNode<T> {
 
         /**
          * Creates rolled dice.
          *
          * @param count how many dice were rolled
          * @param sides how many sides each die has
-         * @param keep which dice count in the sum, or null if they all do
+         * @param keep which dice count in the sum
          * @param dice the dice, in the order they were rolled
          * @param value the sum of the dice that were kept
          */
         public Dice {
             requireNonNull(count, "count");
             requireNonNull(sides, "sides");
+            requireNonNull(keep, "keep");
             dice = List.copyOf(dice);
         }
 

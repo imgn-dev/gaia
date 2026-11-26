@@ -337,7 +337,7 @@ Intermediate results are computed on `long` values; a result that doesn't fit on
 
 ## Dice
 
-[`DiceExpression`](api:be.imgn.gaia.core.random.DiceExpression) parses dice expressions, rolls them, and computes
+[`DiceExpression`](api:be.imgn.gaia.core.random.dice.DiceExpression) parses dice expressions, rolls them, and computes
 the exact chances of their outcomes:
 
 ```java
@@ -363,11 +363,11 @@ parentheses may end with tags, such as `:fire`, which always applies, or `:criti
 value of the group satisfies the condition.
 
 `roll` and `chances` throw
-[`UnresolvedVariableException`](api:be.imgn.gaia.core.random.UnresolvedVariableException) until every variable has a
+[`UnresolvedVariableException`](api:be.imgn.gaia.core.random.dice.UnresolvedVariableException) until every variable has a
 value. `bind` returns a new expression, in which the variable is still written as its name, and may give a variable
 another expression as its value.
 
-An expression is a tree of [`DiceNode`](api:be.imgn.gaia.core.random.DiceNode) records. `node()` returns its root,
+An expression is a tree of [`DiceNode`](api:be.imgn.gaia.core.random.dice.DiceNode) records. `node()` returns its root,
 and `fold` reduces the tree from its leaves: the function is given each node with its children already replaced by
 what it returned for them, and tells the nodes apart with a `switch`:
 
@@ -379,8 +379,8 @@ int dice = expression.<Integer>fold(node -> switch (node) {
 ```
 
 `toString`, `variables`, `bind`, `roll` and `chances` are all folds.
-[`RolledExpression`](api:be.imgn.gaia.core.random.RolledExpression), which `roll` returns, is inspected the same
-way, as a tree of [`RolledNode`](api:be.imgn.gaia.core.random.RolledNode) records that hold the value of each node,
+[`RolledExpression`](api:be.imgn.gaia.core.random.dice.RolledExpression), which `roll` returns, is inspected the same
+way, as a tree of [`RolledNode`](api:be.imgn.gaia.core.random.dice.RolledNode) records that hold the value of each node,
 the face of each die and whether it was kept, and the tags that apply:
 
 ```java
@@ -390,7 +390,7 @@ List<Integer> faces = rolled.<List<Integer>>fold(node -> switch (node) {
 });
 ```
 
-[`Chances`](api:be.imgn.gaia.core.random.Chances) counts the outcomes exactly, values and tags together, and returns
+[`Chances`](api:be.imgn.gaia.core.random.dice.Chances) counts the outcomes exactly, values and tags together, and returns
 `IntFraction`s:
 
 ```java

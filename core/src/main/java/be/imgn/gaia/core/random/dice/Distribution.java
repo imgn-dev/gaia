@@ -1,7 +1,7 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
-import be.imgn.gaia.core.random.Chances.Outcome;
-import be.imgn.gaia.core.random.DiceNode.Keep;
+import be.imgn.gaia.core.random.dice.Chances.Outcome;
+import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
-import org.jspecify.annotations.Nullable;
 
 /**
  * The outcomes of an expression, each with the number of equally likely cases that lead to it, among {@code total}
@@ -86,7 +85,7 @@ final class Distribution {
         return result;
     }
 
-    private static Distribution dice(Distribution count, Distribution sides, @Nullable Keep keep) {
+    private static Distribution dice(Distribution count, Distribution sides, Keep keep) {
         // One pool for each number of dice and of sides, weighted by the cases that lead to those numbers.
         record Part(BigInteger weight, Set<String> tags, Pools.Pool pool) {}
         var parts = new ArrayList<Part>();

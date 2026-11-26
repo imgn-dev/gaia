@@ -1,12 +1,11 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
-import be.imgn.gaia.core.random.DiceNode.Keep;
+import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
-import org.jspecify.annotations.Nullable;
 
 /** Evaluates one node whose children are already rolled. */
 final class Rolls {
@@ -68,7 +67,7 @@ final class Rolls {
     }
 
     private static RolledNode<RolledExpression> dice(
-            RolledExpression count, RolledExpression sides, @Nullable Keep keep, RandomGenerator random) {
+            RolledExpression count, RolledExpression sides, Keep keep, RandomGenerator random) {
         int rolled = count.value();
         int faceCount = sides.value();
         checkDice(rolled, faceCount);
@@ -77,7 +76,7 @@ final class Rolls {
             faces[i] = random.nextInt(faceCount) + 1;
         }
         boolean[] kept = new boolean[rolled];
-        if (keep == null) {
+        if (keep.kept(rolled) == rolled) {
             Arrays.fill(kept, true);
         } else {
             // Among equal faces, the dice rolled first are the ones that are kept.

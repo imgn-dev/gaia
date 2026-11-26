@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 /**
  * Thrown when a text isn't a dice expression.

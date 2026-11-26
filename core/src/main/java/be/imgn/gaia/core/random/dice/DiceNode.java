@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -155,21 +155,22 @@ public sealed interface DiceNode<T> {
      *
      * @param count how many dice are rolled
      * @param sides how many sides each die has, numbered from one
-     * @param keep which dice count in the sum, or null if they all do
+     * @param keep which dice count in the sum
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, T sides, @Nullable Keep keep) implements DiceNode<T> {
+    record Dice<T>(T count, T sides, Keep keep) implements DiceNode<T> {
 
         /**
          * Creates dice.
          *
          * @param count how many dice are rolled
          * @param sides how many sides each die has, numbered from one
-         * @param keep which dice count in the sum, or null if they all do
+         * @param keep which dice count in the sum
          */
         public Dice {
             requireNonNull(count, "count");
             requireNonNull(sides, "sides");
+            requireNonNull(keep, "keep");
         }
 
         @Override
@@ -378,23 +379,28 @@ public sealed interface DiceNode<T> {
     }
 
     /**
-     * Which of the rolled dice count in the sum.
+     * Which of the rolled dice count in the sum: {@link #ALL} of them, or the highest or the lowest ones.
      *
      * @param mode whether dice are kept or dropped, and from which end
-     * @param count how many dice are kept or dropped
+     * @param count how many dice are kept or dropped, which is zero if they all count
      */
     record Keep(Mode mode, int count) {
+
+        /** Every die counts: nothing is written after the dice. */
+        public static final Keep ALL = new Keep(Mode.ALL, 0);
 
         /**
          * Creates a rule.
          *
          * @param mode whether dice are kept or dropped, and from which end
-         * @param count how many dice are kept or dropped
-         * @throws IllegalArgumentException if {@code count} is negative
+         * @param count how many dice are kept or dropped, which is zero if they all count
+         * @throws IllegalArgumentException if {@code count} is negative, or if it isn't zero while {@code mode} is
+         *     {@link Mode#ALL}
          */
         public Keep {
             requireNonNull(mode, "mode");
             checkArgument(count >= 0, "count must not be negative: %d", count);
+            checkArgument(mode != Mode.ALL || count == 0, "count must be zero when every die counts: %d", count);
         }
 
         /**
@@ -405,32 +411,36 @@ public sealed interface DiceNode<T> {
          */
         public int kept(int rolled) {
             return switch (mode) {
+                case ALL -> rolled;
                 case KEEP_HIGHEST, KEEP_LOWEST -> Math.min(count, rolled);
                 case DROP_HIGHEST, DROP_LOWEST -> Math.max(rolled - count, 0);
             };
         }
 
         /**
-         * Returns whether the dice that count are the highest ones, rather than the lowest ones.
+         * Returns whether the dice that count are the highest ones, rather than the lowest ones. It's true when they
+         * all count.
          *
          * @return whether the dice that count are the highest ones, rather than the lowest ones
          */
         public boolean highest() {
-            return mode == Mode.KEEP_HIGHEST || mode == Mode.DROP_LOWEST;
+            return mode != Mode.KEEP_LOWEST && mode != Mode.DROP_HIGHEST;
         }
 
         /**
-         * Returns this rule as it's written, such as {@code kh1}.
+         * Returns this rule as it's written, such as {@code kh1}, which is empty when every die counts.
          *
          * @return this rule as it's written, such as {@code kh1}
          */
         @Override
         public String toString() {
-            return mode.symbol + count;
+            return mode == Mode.ALL ? "" : mode.symbol + count;
         }
 
         /** Whether dice are kept or dropped, and from which end. */
         public enum Mode {
+            /** Keeps every die: nothing is written. */
+            ALL(""),
             /** Keeps the highest dice: {@code kh}. */
             KEEP_HIGHEST("kh"),
             /** Keeps the lowest dice: {@code kl}. */

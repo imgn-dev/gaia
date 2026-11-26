@@ -1,6 +1,6 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
-import be.imgn.gaia.core.random.DiceNode.Keep;
+import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import java.math.BigInteger;
 import org.jspecify.annotations.Nullable;
 
@@ -19,16 +19,16 @@ final class Pools {
 
     private Pools() {}
 
-    static Pool pool(int count, int sides, @Nullable Keep keep) {
+    static Pool pool(int count, int sides, Keep keep) {
         Rolls.checkDice(count, sides);
         if ((long) count * sides > MAX_TOTAL_SIDES) {
             throw new ArithmeticException("Too many outcomes: " + count + "d" + sides);
         }
-        int kept = keep == null ? count : keep.kept(count);
+        int kept = keep.kept(count);
         if (kept == 0) {
             return new Pool(new BigInteger[] {BigInteger.ONE}, BigInteger.ONE);
         }
-        var ways = keep == null || kept == count ? sums(count, sides) : keptSums(count, sides, kept, keep.highest());
+        var ways = kept == count ? sums(count, sides) : keptSums(count, sides, kept, keep.highest());
         return new Pool(ways, BigInteger.valueOf(sides).pow(count));
     }
 

@@ -1,13 +1,13 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-import be.imgn.gaia.core.random.DiceNode.Keep;
-import be.imgn.gaia.core.random.DiceNode.Operator;
-import be.imgn.gaia.core.random.DiceNode.Relation;
+import be.imgn.gaia.core.random.dice.DiceNode.Keep;
+import be.imgn.gaia.core.random.dice.DiceNode.Operator;
+import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +194,7 @@ class DiceExpressionTest {
 
         assertThat(product).hasToString("(1+2)*-3");
         assertThat(negated).hasToString("-((1+2)*-3)");
-        assertThat(DiceExpression.of(new DiceNode.Dice<>(constant(-1), sum, null)))
+        assertThat(DiceExpression.of(new DiceNode.Dice<>(constant(-1), sum, Keep.ALL)))
                 .hasToString("(-1)d(1+2)");
     }
 
@@ -235,6 +235,32 @@ class DiceExpressionTest {
                         .roll(new FakeRandom(10))
                         .value())
                 .isEqualTo(15);
+    }
+
+    @Test
+    void bindAsksAFunctionForEachVariable() {
+        var expression = DiceExpression.parse("1d20+STR+SNEAKd6+OTHER");
+
+        var bound = expression.bind(name -> switch (name) {
+            case "STR" -> constant(3);
+            case "SNEAK" -> DiceExpression.parse("1+1");
+            default -> null;
+        });
+
+        assertThat(bound.variables()).containsExactly("OTHER");
+        assertThat(bound).hasToString("1d20+STR+SNEAKd6+OTHER");
+        assertThat(bound.bind("OTHER", 0).roll(new FakeRandom(10, 4, 5)).value())
+                .isEqualTo(22);
+    }
+
+    @Test
+    void allDiceCountByDefault() {
+        var dice = (DiceNode.Dice<DiceExpression>) DiceExpression.parse("3d6").node();
+
+        assertThat(dice.keep()).isSameAs(Keep.ALL);
+        assertThat(Keep.ALL.kept(3)).isEqualTo(3);
+        assertThat(Keep.ALL).hasToString("");
+        assertThatIllegalArgumentException().isThrownBy(() -> new Keep(Keep.Mode.ALL, 1));
     }
 
     @Test

@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 import static java.util.Objects.requireNonNull;
 
@@ -174,7 +174,24 @@ public final class DiceExpression {
         });
     }
 
-    private DiceExpression bind(Function<String, @Nullable DiceExpression> values) {
+    /**
+     * Returns this expression with each variable standing for what a function returns for its name, or left as it is if
+     * the function returns null. The function is called once per occurrence of a variable, and what it returns is
+     * evaluated again for each of them: dice in it are rolled once per occurrence.
+     *
+     * <pre>{@code
+     * expression.bind(name -> switch (name) {
+     *     case "STR" -> DiceExpression.parse("3");
+     *     case "SNEAK" -> DiceExpression.parse("3d6");
+     *     default -> null;
+     * });
+     * }</pre>
+     *
+     * @param values what each variable stands for, by name
+     * @return the expression with the values
+     */
+    public DiceExpression bind(Function<? super String, ? extends @Nullable DiceExpression> values) {
+        requireNonNull(values, "values");
         return this.<DiceExpression>fold(node -> {
             if (node instanceof DiceNode.Variable<DiceExpression> variable) {
                 var value = values.apply(variable.name());

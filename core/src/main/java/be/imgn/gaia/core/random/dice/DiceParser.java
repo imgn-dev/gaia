@@ -1,12 +1,12 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 import static java.util.Objects.requireNonNull;
 
-import be.imgn.gaia.core.random.DiceNode.Condition;
-import be.imgn.gaia.core.random.DiceNode.Keep;
-import be.imgn.gaia.core.random.DiceNode.Operator;
-import be.imgn.gaia.core.random.DiceNode.Relation;
-import be.imgn.gaia.core.random.DiceNode.Tag;
+import be.imgn.gaia.core.random.dice.DiceNode.Condition;
+import be.imgn.gaia.core.random.dice.DiceNode.Keep;
+import be.imgn.gaia.core.random.dice.DiceNode.Operator;
+import be.imgn.gaia.core.random.dice.DiceNode.Relation;
+import be.imgn.gaia.core.random.dice.DiceNode.Tag;
 import java.util.ArrayList;
 import org.jspecify.annotations.Nullable;
 
@@ -114,7 +114,7 @@ final class DiceParser {
         return DiceExpression.of(new DiceNode.Dice<>(count, sides, keep()));
     }
 
-    private @Nullable Keep keep() {
+    private Keep keep() {
         char end = index + 1 < text.length() ? text.charAt(index + 1) : END;
         Keep.Mode mode;
         if (peek() == 'k') {
@@ -122,7 +122,7 @@ final class DiceParser {
         } else if (peek() == 'd') {
             mode = end == 'h' ? Keep.Mode.DROP_HIGHEST : end == 'l' ? Keep.Mode.DROP_LOWEST : null;
         } else {
-            return null;
+            return Keep.ALL;
         }
         if (mode == null) {
             throw error("Expected kh, kl, dh or dl");

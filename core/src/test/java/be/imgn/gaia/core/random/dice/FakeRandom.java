@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

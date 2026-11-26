@@ -1,4 +1,4 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;

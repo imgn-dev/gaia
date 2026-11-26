@@ -93,7 +93,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   directories, kept apart on every operating system: `platform.applicationDirectories("Quuz")`, or with the vendor
   (`"bar", "Quuz"`), which Windows nests the application under, and a qualifier (`"foo", "bar", "Quuz"`), which
   names the macOS directories `foo.bar.Quuz`.
-- **`random.DiceExpression`**: parses dice expressions such as `4d6dl1` or
+- **`random.dice.DiceExpression`**: parses dice expressions such as `4d6dl1` or
   `(1d20:critical>=20)+STR>=AC`, with variables and conditional tags, rolls them into a tree that keeps every die,
   and computes the exact chances of their outcomes without enumerating the rolls. Expressions and rolls are trees of
   sealed records, reduced with `fold` and a `switch`.

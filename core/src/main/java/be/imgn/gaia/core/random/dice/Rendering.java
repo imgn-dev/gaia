@@ -1,7 +1,7 @@
-package be.imgn.gaia.core.random;
+package be.imgn.gaia.core.random.dice;
 
-import be.imgn.gaia.core.random.DiceNode.Condition;
-import be.imgn.gaia.core.random.DiceNode.Operator;
+import be.imgn.gaia.core.random.dice.DiceNode.Condition;
+import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import java.util.StringJoiner;
 import org.jspecify.annotations.Nullable;
 
@@ -22,8 +22,7 @@ final class Rendering {
             case DiceNode.Constant<Rendered> constant -> constant(constant.value());
             case DiceNode.Variable<Rendered> variable -> new Rendered(variable.name(), PRIMARY);
             case DiceNode.Bound<Rendered> bound -> new Rendered(bound.name(), PRIMARY);
-            case DiceNode.Dice<Rendered> dice ->
-                new Rendered(dice(dice.count(), dice.sides()) + (dice.keep() == null ? "" : dice.keep()), DICE);
+            case DiceNode.Dice<Rendered> dice -> new Rendered(dice(dice.count(), dice.sides()) + dice.keep(), DICE);
             case DiceNode.Negate<Rendered> negate -> negate(negate.operand());
             case DiceNode.Arithmetic<Rendered> arithmetic ->
                 arithmetic(arithmetic.operator(), arithmetic.left(), arithmetic.right());
@@ -52,8 +51,7 @@ final class Rendering {
                 for (var die : dice.dice()) {
                     faces.add(die.kept() ? Integer.toString(die.face()) : "~" + die.face() + "~");
                 }
-                yield new Rendered(
-                        dice(dice.count(), dice.sides()) + (dice.keep() == null ? "" : dice.keep()) + faces, DICE);
+                yield new Rendered(dice(dice.count(), dice.sides()) + dice.keep() + faces, DICE);
             }
             case RolledNode.Negate<Rendered> negate -> negate(negate.operand());
             case RolledNode.Arithmetic<Rendered> arithmetic ->
