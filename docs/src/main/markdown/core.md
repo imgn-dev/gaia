@@ -533,7 +533,9 @@ chances.tagged("critical");                     // 1/20
 An expression is made of whole numbers, variables in upper case, `+ - * /` with a division that rounds down, a
 unary `-`, one comparison among `= != < <= > >=`, which evaluates to 1 or 0, and parentheses. Dice are a count, `d`
 and a number of sides, or `%` for 100, optionally followed by the dice that count in the sum: `2d20kh1` keeps the
-highest die, `2d20kl1` the lowest, and `4d6dl1` and `4d6dh1` drop the lowest and the highest. A group between
+highest die, `2d20kl1` the lowest, and `4d6dl1` and `4d6dh1` drop the lowest and the highest. Before that, `2d6r<=2`
+rerolls once a die that shows 2 or less, `2d6rr<=2` rerolls it until it shows more, and `3d6x` or `3d6x>=5` makes a
+die that shows its highest face, or 5 or more, add another die that may explode too. A group between
 parentheses may end with tags, such as `:fire`, which always applies, or `:critical>=20` and `:tier2>=12<=16`, which
 apply when the value of the group satisfies all their conditions.
 
@@ -580,6 +582,10 @@ Dice that are kept or dropped aren't enumerated roll by roll: their faces are ta
 for each number of dice to show that face, so `30d20kh3` is counted at once. The counts are whole numbers of any
 size, but a chance is an `IntFraction`: asking for one that doesn't fit once reduced, such as a single outcome of
 `15d20`, throws `ArithmeticException`.
+
+A die that is rerolled is counted as a die whose faces aren't equally likely, and one that explodes as the sum of the
+dice it may add, ten at most. The chances of dice that both explode and have some dice kept or dropped aren't
+supported, and throw `UnsupportedOperationException`.
 
 An expression is also a selector: `expression.selector()` rolls it on each selection, and
 `expression.chances().selector()` selects a value with its chance without rolling any die. Both know their

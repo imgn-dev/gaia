@@ -52,8 +52,10 @@ class Dnd5ExampleTest {
 
     static DiceExpression critical(DiceExpression damage) {
         return switch (damage.node()) {
-            case DiceNode.Dice<DiceExpression>(var count, var sides, var keep)
-            when keep.equals(Keep.ALL) -> DiceExpression.of(new DiceNode.Dice<>(twice(count), sides, keep));
+            case DiceNode.Dice<DiceExpression> dice
+            when dice.keep().equals(Keep.ALL) ->
+                DiceExpression.of(new DiceNode.Dice<>(
+                        twice(dice.count()), dice.sides(), dice.reroll(), dice.explode(), dice.keep()));
             case DiceNode.Dice<DiceExpression> dice ->
                 DiceExpression.of(new DiceNode.Arithmetic<>(Operator.ADD, damage, damage));
             case DiceNode<DiceExpression> node -> DiceExpression.of(node.map(Dnd5ExampleTest::critical));
@@ -97,6 +99,7 @@ class Dnd5ExampleTest {
         assertThat(critical(DiceExpression.parse("1d8+SNEAKd6+3"))).hasToString("2d8+(SNEAK*2)d6+3");
         assertThat(critical(DiceExpression.parse("4d6dl1*2"))).hasToString("(4d6dl1+4d6dl1)*2");
         assertThat(critical(DiceExpression.parse("(1d4+1)d6"))).hasToString("((1d4+1)*2)d6");
+        assertThat(critical(DiceExpression.parse("2d6r<=2+3"))).hasToString("4d6r<=2+3");
     }
 
     @Test

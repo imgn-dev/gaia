@@ -3,9 +3,11 @@ package be.imgn.gaia.core.random.dice;
 import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.random.dice.DiceNode.Condition;
+import be.imgn.gaia.core.random.dice.DiceNode.Explode;
 import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
+import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -102,27 +104,35 @@ public sealed interface RolledNode<T> {
     /**
      * Dice that were rolled.
      *
-     * @param count how many dice were rolled
+     * @param count how many dice were rolled at first
      * @param sides how many sides each die has
+     * @param reroll which dice were rolled again
+     * @param explode which dice added another die
      * @param keep which dice count in the sum
-     * @param dice the dice, in the order they were rolled
+     * @param dice every die that was rolled, in order: a die that was rerolled is followed by the one that replaces it,
+     *     and a die that exploded by the one it adds
      * @param value the sum of the dice that were kept
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, T sides, Keep keep, List<Die> dice, int value) implements RolledNode<T> {
+    record Dice<T>(T count, T sides, Reroll reroll, Explode explode, Keep keep, List<Die> dice, int value)
+            implements RolledNode<T> {
 
         /**
          * Creates rolled dice.
          *
-         * @param count how many dice were rolled
+         * @param count how many dice were rolled at first
          * @param sides how many sides each die has
+         * @param reroll which dice were rolled again
+         * @param explode which dice added another die
          * @param keep which dice count in the sum
-         * @param dice the dice, in the order they were rolled
+         * @param dice every die that was rolled, in order
          * @param value the sum of the dice that were kept
          */
         public Dice {
             requireNonNull(count, "count");
             requireNonNull(sides, "sides");
+            requireNonNull(reroll, "reroll");
+            requireNonNull(explode, "explode");
             requireNonNull(keep, "keep");
             dice = List.copyOf(dice);
         }
@@ -135,7 +145,7 @@ public sealed interface RolledNode<T> {
         @Override
         public <U> Dice<U> map(Function<? super T, ? extends U> mapper) {
             U mappedCount = mapper.apply(count);
-            return new Dice<>(mappedCount, mapper.apply(sides), keep, dice, value);
+            return new Dice<>(mappedCount, mapper.apply(sides), reroll, explode, keep, dice, value);
         }
     }
 
@@ -342,7 +352,20 @@ public sealed interface RolledNode<T> {
      * One die that was rolled.
      *
      * @param face the face it shows
-     * @param kept whether it counts in the sum
+     * @param kept whether it counts in the sum: neither rerolled nor dropped
+     * @param rerolled whether it was rolled again, so that the next die replaces it
+     * @param exploded whether it exploded, so that the next die that isn't rerolled was added by it
      */
-    record Die(int face, boolean kept) {}
+    record Die(int face, boolean kept, boolean rerolled, boolean exploded) {
+
+        /**
+         * Creates a die that was neither rerolled nor exploded.
+         *
+         * @param face the face it shows
+         * @param kept whether it counts in the sum
+         */
+        public Die(int face, boolean kept) {
+            this(face, kept, false, false);
+        }
+    }
 }

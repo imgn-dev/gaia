@@ -1,7 +1,6 @@
 package be.imgn.gaia.core.random.dice;
 
 import be.imgn.gaia.core.random.dice.DiceChances.Outcome;
-import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,7 @@ final class Distribution {
                 new Distribution(Map.of(new Outcome(constant.value(), Set.of()), BigInteger.ONE), BigInteger.ONE);
             case DiceNode.Variable<Distribution> variable -> throw new AssertionError(variable.name());
             case DiceNode.Bound<Distribution> bound -> bound.value();
-            case DiceNode.Dice<Distribution> dice -> dice(dice.count(), dice.sides(), dice.keep());
+            case DiceNode.Dice<Distribution> dice -> dice(dice);
             case DiceNode.Negate<Distribution> negate ->
                 negate.operand().map(outcome -> new Outcome(Math.negateExact(outcome.value()), outcome.tags()));
             case DiceNode.Arithmetic<Distribution> arithmetic ->
@@ -94,7 +93,9 @@ final class Distribution {
         return result;
     }
 
-    private static Distribution dice(Distribution count, Distribution sides, Keep keep) {
+    private static Distribution dice(DiceNode.Dice<Distribution> node) {
+        var count = node.count();
+        var sides = node.sides();
         // One pool for each number of dice and of sides, weighted by the cases that lead to those numbers.
         record Part(BigInteger weight, Set<String> tags, Pools.Pool pool) {}
         var parts = new ArrayList<Part>();
@@ -104,7 +105,9 @@ final class Distribution {
             for (var sidesCase : sides.cases.entrySet()) {
                 int dice = countCase.getKey().value();
                 int faces = sidesCase.getKey().value();
-                var pool = pools.computeIfAbsent(List.of(dice, faces), key -> Pools.pool(dice, faces, keep));
+                var pool = pools.computeIfAbsent(
+                        List.of(dice, faces),
+                        key -> Pools.pool(dice, faces, node.reroll(), node.explode(), node.keep()));
                 parts.add(new Part(
                         countCase.getValue().multiply(sidesCase.getValue()),
                         union(countCase.getKey().tags(), sidesCase.getKey().tags()),
@@ -119,7 +122,9 @@ final class Distribution {
             var ways = part.pool.ways();
             for (int sum = 0; sum < ways.length; sum++) {
                 if (ways[sum] != null) {
-                    cases.merge(new Outcome(sum, part.tags), ways[sum].multiply(weight), BigInteger::add);
+                    if (ways[sum].signum() != 0) {
+                        cases.merge(new Outcome(sum, part.tags), ways[sum].multiply(weight), BigInteger::add);
+                    }
                 }
             }
         }

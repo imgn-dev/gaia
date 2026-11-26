@@ -1,7 +1,10 @@
 package be.imgn.gaia.core.random.dice;
 
+import be.imgn.gaia.core.random.dice.DiceNode.Explode;
 import be.imgn.gaia.core.random.dice.DiceNode.Keep;
+import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import java.math.BigInteger;
+import java.util.Arrays;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -11,6 +14,10 @@ import org.jspecify.annotations.Nullable;
  * number of dice that show it is chosen among those that remain: there are a binomial coefficient of ways to do so.
  * What is left to remember is how many dice remain and the sum of those kept so far, so rolls that agree on both are
  * counted together. Once enough dice are kept, the remaining ones may show any of the remaining faces.
+ *
+ * <p>A die that is rerolled is a die whose faces aren't equally likely: each face has a weight, the number of ways for
+ * the die to end on it. A face that is always rerolled has none, and a face that is rerolled once has those of the
+ * second roll only.
  */
 final class Pools {
 
@@ -19,17 +26,109 @@ final class Pools {
 
     private Pools() {}
 
-    static Pool pool(int count, int sides, Keep keep) {
+    static Pool pool(int count, int sides, Reroll reroll, Explode explode, Keep keep) {
         Rolls.checkDice(count, sides);
         if ((long) count * sides > MAX_TOTAL_SIDES) {
             throw new ArithmeticException("Too many outcomes: " + count + "d" + sides);
+        }
+        Rolls.checkRules(reroll, explode, sides);
+        var weights = weights(sides, reroll);
+        var weight = Arrays.stream(weights).reduce(BigInteger.ZERO, BigInteger::add);
+        if (!explode.equals(Explode.NONE)) {
+            if (!keep.equals(Keep.ALL)) {
+                throw new UnsupportedOperationException(
+                        "The chances of dice that explode and of which some are kept or dropped aren't supported");
+            }
+            return new Pool(
+                    power(chain(weights, weight, explode), count), weight.pow((Explode.MAX_EXPLOSIONS + 1) * count));
         }
         int kept = keep.kept(count);
         if (kept == 0) {
             return new Pool(new BigInteger[] {BigInteger.ONE}, BigInteger.ONE);
         }
-        var ways = kept == count ? sums(count, sides) : keptSums(count, sides, kept, keep.highest());
-        return new Pool(ways, BigInteger.valueOf(sides).pow(count));
+        @Nullable BigInteger[] ways;
+        if (kept < count) {
+            ways = keptSums(count, weights, kept, keep.highest());
+        } else if (reroll.equals(Reroll.NONE)) {
+            ways = sums(count, sides);
+        } else {
+            // Index zero is the sum of no die.
+            var faces = new @Nullable BigInteger[sides + 1];
+            System.arraycopy(weights, 0, faces, 1, sides);
+            ways = power(faces, count);
+        }
+        return new Pool(ways, weight.pow(count));
+    }
+
+    /** The number of ways for one die to end on each face, from the face one. */
+    private static BigInteger[] weights(int sides, Reroll reroll) {
+        var matching = BigInteger.valueOf(Rolls.matching(reroll.relation(), reroll.value(), sides));
+        var all = BigInteger.valueOf(sides);
+        var weights = new BigInteger[sides];
+        for (int face = 1; face <= sides; face++) {
+            boolean rerolled = reroll.matches(face);
+            weights[face - 1] = switch (reroll.times()) {
+                case NEVER -> BigInteger.ONE;
+                // Among the sides squared rolls of two dice: the first one if it stays, and any rerolled one.
+                case ONCE -> rerolled ? matching : matching.add(all);
+                case ALWAYS -> rerolled ? BigInteger.ZERO : BigInteger.ONE;
+            };
+        }
+        return weights;
+    }
+
+    /**
+     * The ways for one die and the dice it adds to reach each sum, among the weight of a die to the power of the most
+     * dice there may be.
+     */
+    private static @Nullable BigInteger[] chain(BigInteger[] weights, BigInteger weight, Explode explode) {
+        int sides = weights.length;
+        // The last die that may be added doesn't explode.
+        var chain = new @Nullable BigInteger[sides + 1];
+        System.arraycopy(weights, 0, chain, 1, sides);
+        var scale = BigInteger.ONE;
+        for (int added = 1; added <= Explode.MAX_EXPLOSIONS; added++) {
+            scale = scale.multiply(weight);
+            var longer = new @Nullable BigInteger[chain.length + sides];
+            for (int face = 1; face <= sides; face++) {
+                var faceWeight = weights[face - 1];
+                if (faceWeight.signum() == 0) {
+                    continue;
+                }
+                if (explode.matches(face, sides)) {
+                    for (int sum = 0; sum < chain.length; sum++) {
+                        if (chain[sum] != null) {
+                            add(longer, sum + face, chain[sum].multiply(faceWeight));
+                        }
+                    }
+                } else {
+                    // A die that stops there is as many cases as the longer chains have.
+                    add(longer, face, faceWeight.multiply(scale));
+                }
+            }
+            chain = longer;
+        }
+        return chain;
+    }
+
+    /** The ways for a number of independent copies of something to reach each sum. */
+    private static @Nullable BigInteger[] power(@Nullable BigInteger[] ways, int count) {
+        @Nullable BigInteger[] result = {BigInteger.ONE};
+        for (int copy = 0; copy < count; copy++) {
+            var next = new @Nullable BigInteger[result.length + ways.length - 1];
+            for (int left = 0; left < result.length; left++) {
+                if (result[left] == null) {
+                    continue;
+                }
+                for (int right = 0; right < ways.length; right++) {
+                    if (ways[right] != null && ways[right].signum() != 0) {
+                        add(next, left + right, result[left].multiply(ways[right]));
+                    }
+                }
+            }
+            result = next;
+        }
+        return result;
     }
 
     /** The ways to reach each sum with all the dice: each die turns the counts into their sums over a window. */
@@ -57,17 +156,21 @@ final class Pools {
     }
 
     /** The ways to reach each sum of the {@code kept} highest or lowest dice, where {@code 0 < kept < count}. */
-    private static @Nullable BigInteger[] keptSums(int count, int sides, int kept, boolean highest) {
+    private static @Nullable BigInteger[] keptSums(int count, BigInteger[] weights, int kept, boolean highest) {
+        int sides = weights.length;
         var binomials = binomials(count);
         var result = new @Nullable BigInteger[kept * sides + 1];
         // By number of remaining dice, then by sum of the dice kept so far. Dice remain to be kept in every state.
         var current = new @Nullable BigInteger[count + 1][];
         current[count] = new BigInteger[] {BigInteger.ONE};
+        var weightLeft = Arrays.stream(weights).reduce(BigInteger.ZERO, BigInteger::add);
         for (int face = 0; face < sides; face++) {
             int value = highest ? sides - face : face + 1;
-            int facesLeft = sides - 1 - face;
-            // The ways for some dice to show any of the faces that are left, by number of dice.
-            var anyFaceLeft = new @Nullable BigInteger[count + 1];
+            var weight = weights[value - 1];
+            weightLeft = weightLeft.subtract(weight);
+            // The ways for some dice to show this face, and to show any of the faces that are left, by number of dice.
+            var showingThis = powers(weight, count);
+            var showingLeft = powers(weightLeft, count);
             var next = new @Nullable BigInteger[count + 1][];
             for (int remaining = count - kept + 1; remaining <= count; remaining++) {
                 var bySum = current[remaining];
@@ -80,18 +183,17 @@ final class Pools {
                     if (ways == null) {
                         continue;
                     }
-                    // Every remaining die shows the last face.
-                    for (int showing = facesLeft == 0 ? remaining : 0; showing <= remaining; showing++) {
-                        var newWays = ways.multiply(binomials[remaining][showing]);
+                    // Every remaining die shows this face if no other one is left; none does if it has no weight.
+                    int least = weightLeft.signum() == 0 ? remaining : 0;
+                    int most = weight.signum() == 0 ? 0 : remaining;
+                    for (int showing = least; showing <= most; showing++) {
+                        var newWays =
+                                ways.multiply(binomials[remaining][showing]).multiply(showingThis[showing]);
                         int taken = Math.min(showing, toKeep);
                         int newSum = sum + taken * value;
                         int newRemaining = remaining - showing;
                         if (taken == toKeep) {
-                            if (anyFaceLeft[newRemaining] == null) {
-                                anyFaceLeft[newRemaining] =
-                                        BigInteger.valueOf(facesLeft).pow(newRemaining);
-                            }
-                            add(result, newSum, newWays.multiply(anyFaceLeft[newRemaining]));
+                            add(result, newSum, newWays.multiply(showingLeft[newRemaining]));
                         } else {
                             if (next[newRemaining] == null) {
                                 next[newRemaining] = new BigInteger[(count - newRemaining) * sides + 1];
@@ -104,6 +206,15 @@ final class Pools {
             current = next;
         }
         return result;
+    }
+
+    private static BigInteger[] powers(BigInteger base, int most) {
+        var powers = new BigInteger[most + 1];
+        powers[0] = BigInteger.ONE;
+        for (int exponent = 1; exponent <= most; exponent++) {
+            powers[exponent] = powers[exponent - 1].multiply(base);
+        }
+        return powers;
     }
 
     private static void add(@Nullable BigInteger[] ways, int sum, BigInteger added) {

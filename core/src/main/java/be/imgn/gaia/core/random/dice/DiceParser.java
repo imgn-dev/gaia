@@ -3,9 +3,11 @@ package be.imgn.gaia.core.random.dice;
 import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.random.dice.DiceNode.Condition;
+import be.imgn.gaia.core.random.dice.DiceNode.Explode;
 import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
+import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import be.imgn.gaia.core.random.dice.DiceNode.Tag;
 import java.util.ArrayList;
 import org.jspecify.annotations.Nullable;
@@ -41,6 +43,10 @@ final class DiceParser {
 
     private @Nullable Relation relation() {
         skipSpaces();
+        return relationHere();
+    }
+
+    private @Nullable Relation relationHere() {
         char next = index + 1 < text.length() ? text.charAt(index + 1) : END;
         Relation relation = switch (peek()) {
             case '=' -> Relation.EQUAL;
@@ -111,7 +117,40 @@ final class DiceParser {
         } else {
             sides = primary();
         }
-        return DiceExpression.of(new DiceNode.Dice<>(count, sides, keep()));
+        var reroll = reroll();
+        var explode = explode();
+        return DiceExpression.of(new DiceNode.Dice<>(count, sides, reroll, explode, keep()));
+    }
+
+    private Reroll reroll() {
+        if (peek() != 'r') {
+            return Reroll.NONE;
+        }
+        index++;
+        var times = Reroll.Times.ONCE;
+        if (peek() == 'r') {
+            index++;
+            times = Reroll.Times.ALWAYS;
+        }
+        // A condition follows with no space: after a space, a comparison is of the whole dice.
+        var relation = relationHere();
+        return relation == null ? new Reroll(times, Relation.EQUAL, 1) : new Reroll(times, relation, conditionValue());
+    }
+
+    private Explode explode() {
+        if (peek() != 'x') {
+            return Explode.NONE;
+        }
+        index++;
+        var relation = relationHere();
+        return relation == null ? Explode.HIGHEST : new Explode(Explode.Faces.MATCHING, relation, conditionValue());
+    }
+
+    private int conditionValue() {
+        if (!isDigit(peek())) {
+            throw error("Expected a number");
+        }
+        return number();
     }
 
     private Keep keep() {

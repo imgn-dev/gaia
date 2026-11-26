@@ -1,6 +1,7 @@
 package be.imgn.gaia.core.random.dice;
 
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
+import java.util.List;
 import java.util.StringJoiner;
 
 /** Writes expressions and rolled expressions back as text, with the parentheses that the precedences require. */
@@ -20,13 +21,14 @@ final class Rendering {
             case DiceNode.Constant<Rendered> constant -> constant(constant.value());
             case DiceNode.Variable<Rendered> variable -> new Rendered(variable.name(), PRIMARY);
             case DiceNode.Bound<Rendered> bound -> new Rendered(bound.name(), PRIMARY);
-            case DiceNode.Dice<Rendered> dice -> new Rendered(dice(dice.count(), dice.sides()) + dice.keep(), DICE);
+            case DiceNode.Dice<Rendered> dice ->
+                new Rendered(dice(dice.count(), dice.sides()) + dice.reroll() + dice.explode() + dice.keep(), DICE);
             case DiceNode.Negate<Rendered> negate -> negate(negate.operand());
             case DiceNode.Arithmetic<Rendered> arithmetic ->
                 arithmetic(arithmetic.operator(), arithmetic.left(), arithmetic.right());
             case DiceNode.Comparison<Rendered> comparison ->
                 new Rendered(
-                        comparison.left().at(SUM)
+                        beforeRelation(comparison.left())
                                 + comparison.relation().symbol()
                                 + comparison.right().at(SUM),
                         COMPARISON);
@@ -35,8 +37,7 @@ final class Rendering {
                 for (var tag : group.tags()) {
                     text.append(':').append(tag.name());
                     for (var condition : tag.conditions()) {
-                        text.append(condition.relation().symbol())
-                                .append(condition.operand().at(SUM));
+                        text.append(condition.relation().symbol()).append(beforeRelation(condition.operand()));
                     }
                 }
                 yield new Rendered(text.append(')').toString(), PRIMARY);
@@ -48,19 +49,20 @@ final class Rendering {
         return switch (node) {
             case RolledNode.Constant<Rendered> constant -> constant(constant.value());
             case RolledNode.Bound<Rendered> bound -> new Rendered(bound.name() + "[" + bound.value() + "]", PRIMARY);
-            case RolledNode.Dice<Rendered> dice -> {
-                var faces = new StringJoiner(", ", "[", "]");
-                for (var die : dice.dice()) {
-                    faces.add(die.kept() ? Integer.toString(die.face()) : "~" + die.face() + "~");
-                }
-                yield new Rendered(dice(dice.count(), dice.sides()) + dice.keep() + faces, DICE);
-            }
+            case RolledNode.Dice<Rendered> dice ->
+                new Rendered(
+                        dice(dice.count(), dice.sides())
+                                + dice.reroll()
+                                + dice.explode()
+                                + dice.keep()
+                                + faces(dice.dice()),
+                        DICE);
             case RolledNode.Negate<Rendered> negate -> negate(negate.operand());
             case RolledNode.Arithmetic<Rendered> arithmetic ->
                 arithmetic(arithmetic.operator(), arithmetic.left(), arithmetic.right());
             case RolledNode.Comparison<Rendered> comparison ->
                 new Rendered(
-                        comparison.left().at(SUM)
+                        beforeRelation(comparison.left())
                                 + comparison.relation().symbol()
                                 + comparison.right().at(SUM),
                         COMPARISON);
@@ -72,6 +74,25 @@ final class Rendering {
                 yield new Rendered(text.append(')').toString(), PRIMARY);
             }
         };
+    }
+
+    /** The dice in brackets: a rerolled one with an r, an exploded one with an x, a dropped one between tildes. */
+    private static String faces(List<RolledNode.Die> dice) {
+        var faces = new StringJoiner(", ", "[", "]");
+        for (var die : dice) {
+            var face = die.face() + (die.rerolled() ? "r" : die.exploded() ? "x" : "");
+            faces.add(die.kept() || die.rerolled() ? face : "~" + face + "~");
+        }
+        return faces.toString();
+    }
+
+    /**
+     * The text of a sum that a comparison operator may follow: dice that end with a bare {@code x} get parentheses, or
+     * the operator would read as the condition of their explosions.
+     */
+    private static String beforeRelation(Rendered sum) {
+        var text = sum.at(SUM);
+        return text.endsWith("x") ? "(" + text + ")" : text;
     }
 
     private static Rendered constant(int value) {

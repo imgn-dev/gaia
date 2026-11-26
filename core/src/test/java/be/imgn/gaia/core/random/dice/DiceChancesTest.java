@@ -2,11 +2,13 @@ package be.imgn.gaia.core.random.dice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.within;
 
 import be.imgn.gaia.core.math.IntFraction;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.SplittableRandom;
 import java.util.TreeMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -126,6 +128,76 @@ class DiceChancesTest {
             chances.put(roll.getKey(), IntFraction.of(roll.getValue(), total));
         }
         return chances;
+    }
+
+    @Test
+    void aDieRerolledOnceFavorsTheFacesThatStay() {
+        var chances = chances("1d6r<=2");
+
+        // A 1 comes from a rerolled die only: two faces in six, then one in six.
+        assertThat(chances.of(1)).isEqualTo(IntFraction.of(1, 18));
+        assertThat(chances.of(6)).isEqualTo(IntFraction.of(1, 6).plus(IntFraction.of(1, 18)));
+        assertThat(chances.mean()).isEqualTo(IntFraction.of(25, 6));
+        assertThat(chances("2d6r<=2").mean()).isEqualTo(IntFraction.of(25, 3));
+    }
+
+    @Test
+    void aDieRerolledUntilItStaysNeverShowsTheOtherFaces() {
+        var chances = chances("1d6rr<=2");
+
+        assertThat(chances.outcomes().keySet()).containsExactly(3, 4, 5, 6);
+        assertThat(chances.outcomes().values()).containsOnly(IntFraction.of(1, 4));
+        assertThat(chances("2d6rr<=2").of(6)).isEqualTo(IntFraction.of(1, 16));
+        assertThat(chances("4d6rr=1dl1").min()).isEqualTo(6);
+    }
+
+    @Test
+    void anExplodingDieAddsDice() {
+        var chances = chances("1d6x");
+
+        assertThat(chances.of(5)).isEqualTo(IntFraction.of(1, 6));
+        assertThat(chances.of(6)).isEqualTo(IntFraction.ZERO);
+        assertThat(chances.of(7)).isEqualTo(IntFraction.of(1, 36));
+        assertThat(chances.of(13)).isEqualTo(IntFraction.of(1, 216));
+        assertThat(chances.atLeast(7)).isEqualTo(IntFraction.of(1, 6));
+        // Ten added dice at most: the eleventh may show a six that doesn't explode.
+        assertThat(chances.max()).isEqualTo(66);
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "2d6r<=2",
+                "3d6r=1kh2",
+                "3d6rr<=2kl2",
+                "4d6r=1dl1",
+                "2d6x",
+                "3d4x>=3",
+                "2d6r=1x",
+                "2d6rr<=3x>=6",
+                "(1d2)d6r=6x=5",
+            })
+    void chancesAgreeWithRolls(String text) {
+        var expression = DiceExpression.parse(text);
+        var chances = expression.chances().values().exactOutcomes();
+        var random = new SplittableRandom(text.hashCode());
+        var counts = new TreeMap<Integer, Integer>();
+        int rolls = 400_000;
+
+        for (int i = 0; i < rolls; i++) {
+            counts.merge(expression.roll(random).value(), 1, Integer::sum);
+        }
+
+        assertThat(chances.keySet()).containsAll(counts.keySet());
+        chances.forEach((value, chance) -> assertThat((double) counts.getOrDefault(value, 0) / rolls)
+                .as("%s = %d", text, value)
+                .isCloseTo(chance.doubleValue(), within(0.004)));
+    }
+
+    @Test
+    void explodingDiceOfWhichSomeAreDroppedAreNotCounted() {
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> chances("4d6xkh3"));
+        assertThat(chances("4d6x").min()).isEqualTo(4);
     }
 
     @Test

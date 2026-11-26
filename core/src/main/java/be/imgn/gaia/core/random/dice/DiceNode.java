@@ -150,26 +150,52 @@ public sealed interface DiceNode<T> {
     }
 
     /**
-     * Dice that are rolled and summed, such as {@code 4d6dl1}.
+     * Dice that are rolled and summed, such as {@code 4d6dl1} or {@code 2d8r<=2x}. Dice are rerolled first, then
+     * explode, then some are kept.
      *
      * @param count how many dice are rolled
      * @param sides how many sides each die has, numbered from one
+     * @param reroll which dice are rolled again
+     * @param explode which dice add another die
      * @param keep which dice count in the sum
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, T sides, Keep keep) implements DiceNode<T> {
+    record Dice<T>(T count, T sides, Reroll reroll, Explode explode, Keep keep) implements DiceNode<T> {
 
         /**
          * Creates dice.
          *
          * @param count how many dice are rolled
          * @param sides how many sides each die has, numbered from one
+         * @param reroll which dice are rolled again
+         * @param explode which dice add another die
          * @param keep which dice count in the sum
          */
         public Dice {
             requireNonNull(count, "count");
             requireNonNull(sides, "sides");
+            requireNonNull(reroll, "reroll");
+            requireNonNull(explode, "explode");
             requireNonNull(keep, "keep");
+        }
+
+        /**
+         * Creates dice that are rolled once and all count.
+         *
+         * @param count how many dice are rolled
+         * @param sides how many sides each die has, numbered from one
+         */
+        public Dice(T count, T sides) {
+            this(count, sides, Reroll.NONE, Explode.NONE, Keep.ALL);
+        }
+
+        /**
+         * Returns whether the dice are rolled once and all count: no reroll, no explosion, and nothing dropped.
+         *
+         * @return whether these dice have no rule
+         */
+        public boolean isPlain() {
+            return reroll.equals(Reroll.NONE) && explode.equals(Explode.NONE) && keep.equals(Keep.ALL);
         }
 
         @Override
@@ -180,7 +206,7 @@ public sealed interface DiceNode<T> {
         @Override
         public <U> Dice<U> map(Function<? super T, ? extends U> mapper) {
             U mappedCount = mapper.apply(count);
-            return new Dice<>(mappedCount, mapper.apply(sides), keep);
+            return new Dice<>(mappedCount, mapper.apply(sides), reroll, explode, keep);
         }
     }
 
@@ -376,6 +402,162 @@ public sealed interface DiceNode<T> {
         public Condition {
             requireNonNull(relation, "relation");
             requireNonNull(operand, "operand");
+        }
+    }
+
+    /**
+     * Which dice are rolled again: {@link #NONE}, or those whose face satisfies a condition, either once or until the
+     * face no longer does.
+     *
+     * @param times whether dice are rerolled, and how many times
+     * @param relation how the face of a die is compared to {@code value}
+     * @param value the right operand of the comparison
+     */
+    record Reroll(Times times, Relation relation, int value) {
+
+        /** No die is rerolled: nothing is written after the dice. */
+        public static final Reroll NONE = new Reroll(Times.NEVER, Relation.EQUAL, 0);
+
+        /**
+         * Creates a rule.
+         *
+         * @param times whether dice are rerolled, and how many times
+         * @param relation how the face of a die is compared to {@code value}
+         * @param value the right operand of the comparison
+         * @throws IllegalArgumentException if {@code times} is {@link Times#NEVER} with another condition than that of
+         *     {@link #NONE}
+         */
+        public Reroll {
+            requireNonNull(times, "times");
+            requireNonNull(relation, "relation");
+            checkArgument(
+                    times != Times.NEVER || (relation == Relation.EQUAL && value == 0),
+                    "No reroll has no condition: %s%d",
+                    relation.symbol(),
+                    value);
+        }
+
+        /**
+         * Returns whether a die that shows a face is rolled again.
+         *
+         * @param face the face
+         * @return whether the face satisfies the condition
+         */
+        public boolean matches(int face) {
+            return times != Times.NEVER && relation.test(face, value);
+        }
+
+        /**
+         * Returns this rule as it's written, such as {@code r<=2}, which is empty when no die is rerolled.
+         *
+         * @return this rule as it's written
+         */
+        @Override
+        public String toString() {
+            return times == Times.NEVER ? "" : times.symbol + relation.symbol() + value;
+        }
+
+        /** Whether dice are rerolled, and how many times. */
+        public enum Times {
+            /** Rerolls no die: nothing is written. */
+            NEVER(""),
+            /** Rerolls a die once, and keeps its new face whatever it is: {@code r}. */
+            ONCE("r"),
+            /** Rerolls a die until its face no longer satisfies the condition: {@code rr}. */
+            ALWAYS("rr");
+
+            private final String symbol;
+
+            Times(String symbol) {
+                this.symbol = symbol;
+            }
+
+            /**
+             * Returns how this number of times is written.
+             *
+             * @return the symbol
+             */
+            public String symbol() {
+                return symbol;
+            }
+        }
+    }
+
+    /**
+     * Which dice explode, that is, add another die that may explode too: {@link #NONE}, those that show their
+     * {@link #HIGHEST} face, or those whose face satisfies a condition.
+     *
+     * @param faces whether dice explode, and on which faces
+     * @param relation how the face of a die is compared to {@code value}
+     * @param value the right operand of the comparison
+     */
+    record Explode(Faces faces, Relation relation, int value) {
+
+        /** No die explodes: nothing is written after the dice. */
+        public static final Explode NONE = new Explode(Faces.NONE, Relation.EQUAL, 0);
+
+        /** A die explodes when it shows its highest face: {@code x}. */
+        public static final Explode HIGHEST = new Explode(Faces.HIGHEST, Relation.EQUAL, 0);
+
+        /** How many dice one die may add, one explosion after the other. */
+        public static final int MAX_EXPLOSIONS = 10;
+
+        /**
+         * Creates a rule.
+         *
+         * @param faces whether dice explode, and on which faces
+         * @param relation how the face of a die is compared to {@code value}
+         * @param value the right operand of the comparison
+         * @throws IllegalArgumentException if {@code faces} isn't {@link Faces#MATCHING} and the condition isn't that
+         *     of {@link #NONE}
+         */
+        public Explode {
+            requireNonNull(faces, "faces");
+            requireNonNull(relation, "relation");
+            checkArgument(
+                    faces == Faces.MATCHING || (relation == Relation.EQUAL && value == 0),
+                    "Only matching faces have a condition: %s%d",
+                    relation.symbol(),
+                    value);
+        }
+
+        /**
+         * Returns whether a die that shows a face explodes.
+         *
+         * @param face the face
+         * @param sides how many sides the die has
+         * @return whether the die adds another die
+         */
+        public boolean matches(int face, int sides) {
+            return switch (faces) {
+                case NONE -> false;
+                case HIGHEST -> face == sides;
+                case MATCHING -> relation.test(face, value);
+            };
+        }
+
+        /**
+         * Returns this rule as it's written, such as {@code x} or {@code x>=5}, which is empty when no die explodes.
+         *
+         * @return this rule as it's written
+         */
+        @Override
+        public String toString() {
+            return switch (faces) {
+                case NONE -> "";
+                case HIGHEST -> "x";
+                case MATCHING -> "x" + relation.symbol() + value;
+            };
+        }
+
+        /** Whether dice explode, and on which faces. */
+        public enum Faces {
+            /** No die explodes. */
+            NONE,
+            /** A die explodes on its highest face. */
+            HIGHEST,
+            /** A die explodes on the faces that satisfy the condition. */
+            MATCHING
         }
     }
 

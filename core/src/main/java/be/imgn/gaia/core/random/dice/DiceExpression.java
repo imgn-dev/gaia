@@ -39,8 +39,15 @@ import org.jspecify.annotations.Nullable;
  *   <li>{@code + -}, then {@code * /}, from left to right; a division is rounded down;
  *   <li>a unary {@code -};
  *   <li>dice, {@code 3d6}: a count, which is 1 if omitted, {@code d}, a number of sides or {@code %} for 100, then
- *       optionally which dice count in the sum: {@code kh2} keeps the two highest, {@code kl2} the two lowest,
- *       {@code dh2} drops the two highest and {@code dl2} the two lowest;
+ *       optionally, in this order:
+ *       <ul>
+ *         <li>which dice are rolled again: {@code r<=2} rerolls once a die that shows 2 or less, and keeps its new face
+ *             whatever it is; {@code rr<=2} rerolls it until it shows more; {@code r} alone is {@code r=1};
+ *         <li>which dice explode, that is, add another die that may explode too, up to ten times for one die: {@code x}
+ *             on the highest face, {@code x>=5} on 5 or more;
+ *         <li>which dice count in the sum: {@code kh2} keeps the two highest, {@code kl2} the two lowest, {@code dh2}
+ *             drops the two highest and {@code dl2} the two lowest;
+ *       </ul>
  *   <li>a whole number, a variable, whose name is made of upper-case letters, digits and underscores, or a group
  *       between parentheses.
  * </ul>
@@ -58,7 +65,9 @@ import org.jspecify.annotations.Nullable;
  * sum        := product (('+' | '-') product)*
  * product    := unary (('*' | '/') unary)*
  * unary      := '-' unary | dice
- * dice       := primary? 'd' (primary | '%') keep? | primary
+ * dice       := primary? 'd' (primary | '%') reroll? explode? keep? | primary
+ * reroll     := ('r' | 'rr') (relation number)?
+ * explode    := 'x' (relation number)?
  * keep       := ('kh' | 'kl' | 'dh' | 'dl') number
  * primary    := number | variable | group
  * group      := '(' expression tag* ')'
@@ -68,8 +77,9 @@ import org.jspecify.annotations.Nullable;
  * name       := [A-Za-z_] [A-Za-z0-9_]*
  * }</pre>
  *
- * <p>A number is at most {@link Integer#MAX_VALUE}. The parts of {@code dice} and of {@code keep} follow each other
- * with no space in between.
+ * <p>A number is at most {@link Integer#MAX_VALUE}. The parts of {@code dice} follow each other with no space in
+ * between, down to the condition of a reroll or of an explosion: {@code 1d6x>=5} explodes on 5 or more, while
+ * {@code 1d6x >=5} compares dice that explode on a 6 with 5.
  *
  * <h2>Inspection</h2>
  *
@@ -230,9 +240,10 @@ public final class DiceExpression {
     /**
      * Rolls the dice of this expression, from left to right, and evaluates it.
      *
-     * <p>Each die calls {@link RandomGenerator#nextInt(int) nextInt(sides)} once, and shows that number plus one. The
-     * dice of a count and of a number of sides are rolled before the dice they count, and those of a group before those
-     * of the conditions of its tags. Nothing else uses the source of randomness.
+     * <p>Each die calls {@link RandomGenerator#nextInt(int) nextInt(sides)} once, and shows that number plus one. A die
+     * that is rerolled calls it again right away, and a die that explodes is followed by the one it adds. The dice of a
+     * count and of a number of sides are rolled before the dice they count, and those of a group before those of the
+     * conditions of its tags. Nothing else uses the source of randomness.
      *
      * @param random the source of randomness
      * @return the tree of what each node evaluated to
@@ -250,13 +261,15 @@ public final class DiceExpression {
      * Computes the exact chances of each outcome of this expression, without rolling.
      *
      * <p>Dice that are kept or dropped aren't enumerated roll by roll: their faces are taken one at a time, counting
-     * the ways for each number of dice to show that face.
+     * the ways for each number of dice to show that face. A die that is rerolled is counted as a die whose faces aren't
+     * equally likely, and a die that explodes as the sum of the dice it may add.
      *
      * @return the chances of each outcome
      * @throws UnresolvedVariableException if a variable has no value
      * @throws ArithmeticException if a value overflows an {@code int}, on a division by zero, if a number of dice is
      *     negative or more than 10,000, or a number of sides less than one, or if some dice have more than 1,000,000
      *     sides in total
+     * @throws UnsupportedOperationException if some dice both explode and have dice kept or dropped
      */
     public DiceChances chances() {
         checkResolved();
