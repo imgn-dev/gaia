@@ -121,6 +121,15 @@ ordered by their bytes.</div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Writes a stream of bytes: numbers in either byte order, runs of bytes and text.</div>
 </div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/Chances.html" title="class in be.imgn.gaia.core.random.dice">Chances</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">The exact chances of each outcome of a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceExpression.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceExpression</code></a>: the value it evaluates to, together with the tags that
+apply.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/Chances.Outcome.html" title="class in be.imgn.gaia.core.random.dice">Chances.Outcome</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">One way for an expression to turn out.</div>
+</div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/CharReader.html" title="class in be.imgn.gaia.core.io">CharReader</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Reads a stream of characters: lines, runs of characters, lookahead and search, for reading text formats.</div>
@@ -186,72 +195,145 @@ default attributes, clock and features.</div>
 <div class="block">Reports errors, warnings and notes at a precise place in the source: an element, one of its annotations, or one
 attribute of that annotation.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">A dice expression, such as <code>4d6dl1</code> or <code>(1d20:critical&gt;=20:miss=1)+STR+BONUS&gt;=AC</code>: a tree of
+<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.html" title="interface in be.imgn.gaia.core.random.dice"><code>DiceNode</code></a>s that is parsed from a text, inspected, rolled, and whose chances are computed exactly.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">One node of a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceExpression.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceExpression</code></a>, whose children are of type <code>T</code>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Arithmetic&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">An arithmetic operation on two values, such as <code>1d8+3</code>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Bound&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A variable that was given a value.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Comparison&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A comparison of two values, such as <code>1d20+5&gt;=AC</code>, which evaluates to 1 if it holds and to 0 if not.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Condition.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Condition&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">One condition of a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Tag.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceNode.Tag</code></a>: the value of the group, compared to an operand.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A whole number, such as <code>20</code>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A value between parentheses, with the tags it's given, such as <code>(1d20:critical&gt;=20:miss=1)</code>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Which of the rolled dice count in the sum: <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Keep.html#ALL"><code>DiceNode.Keep.ALL</code></a> of them, or the highest or the lowest ones.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Keep.Mode.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Keep.Mode</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
+<div class="block">Whether dice are kept or dropped, and from which end.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">The opposite of a value, such as <code>-STR</code>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Operator.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Operator</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
+<div class="block">An arithmetic operation.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Relation.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="block">How two values are compared.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Tag.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A tag on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceNode.Group</code></a>, such as <code>:critical&gt;=20</code> or <code>:tier2&gt;=12&lt;=16</code>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A variable that has no value yet, such as <code>STR</code>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab5"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceParseException.html" title="class in be.imgn.gaia.core.random.dice">DiceParseException</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab5">
+<div class="block">Thrown when a text isn't a dice expression.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform">Directories</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">The base directories where applications store their files, as defined by the <a href="https://specifications.freedesktop.org/basedir-spec/latest/">XDG Base Directory Specification</a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Environment.html" title="interface in be.imgn.gaia.core.base">Environment</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A source of environment variables: the running JVM's, or fixed ones for tests.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event">EventBus</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Delivers each event it is given to the subscribers of the event's class and of all its supertypes.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html" title="class in be.imgn.gaia.core.event">EventBus.Builder</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.Builder.html" title="class in be.imgn.gaia.core.event">EventBus.Builder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Builds an <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event"><code>EventBus</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing">FakeDirectories</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block"><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Directories.html" title="interface in be.imgn.gaia.core.platform"><code>Directories</code></a> under one root directory, such as a test's temporary directory, so that code under test never
 touches the real ones.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.Builder.html" title="class in be.imgn.gaia.core.testing">FakeDirectories.Builder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Builds <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeDirectories.html" title="class in be.imgn.gaia.core.testing"><code>FakeDirectories</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing">FakePlatform</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/Platform.html" title="interface in be.imgn.gaia.core.platform"><code>Platform</code></a> with the operating system of your choice and its directories under a root directory, such as a
 test's temporary directory.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.Builder.html" title="class in be.imgn.gaia.core.testing">FakePlatform.Builder</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.Builder.html" title="class in be.imgn.gaia.core.testing">FakePlatform.Builder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Builds a <a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakePlatform.html" title="class in be.imgn.gaia.core.testing"><code>FakePlatform</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing">FakeTicker</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/FakeTicker.html" title="class in be.imgn.gaia.core.testing">FakeTicker</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Ticker.html" title="interface in be.imgn.gaia.core.base"><code>Ticker</code></a> that only moves when told to, so that tests of timing code are exact and instant.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Feature.html" title="enum class in be.imgn.gaia.memfs">Feature</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Feature.html" title="enum class in be.imgn.gaia.memfs">Feature</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">An optional capability of a file system.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.html" title="class in be.imgn.gaia.processing.source">Field</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.html" title="class in be.imgn.gaia.processing.source">Field</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A field, such as <code>private static final int LIMIT = 10;</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.Builder.html" title="class in be.imgn.gaia.processing.source">Field.Builder</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.Builder.html" title="class in be.imgn.gaia.processing.source">Field.Builder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A builder of <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.html" title="class in be.imgn.gaia.processing.source"><code>Field</code></a>s.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html" title="class in be.imgn.gaia.processing">GeneratedSources</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/GeneratedSources.html" title="class in be.imgn.gaia.processing">GeneratedSources</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Writes the Java source files a processor generates, with their package declaration and imports: modelled as a
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html" title="class in be.imgn.gaia.processing.source"><code>JavaFile</code></a>, or written as text.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap&lt;K,<wbr>V&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashListMultimap.html" title="class in be.imgn.gaia.core.collect">HashListMultimap&lt;K,<wbr>V&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A modifiable list multimap backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a> from each key to a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link"><code>ArrayList</code></a> of its values.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset&lt;E&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashMultiset.html" title="class in be.imgn.gaia.core.collect">HashMultiset&lt;E&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A modifiable multiset backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a>, the multiset counterpart of <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html" title="class or interface in java.util" class="external-link"><code>HashSet</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap&lt;K,<wbr>V&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/HashSetMultimap.html" title="class in be.imgn.gaia.core.collect">HashSetMultimap&lt;K,<wbr>V&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A modifiable set multimap backed by a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a> from each key to a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html" title="class or interface in java.util" class="external-link"><code>HashSet</code></a> of its values.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">An exact fraction of two <code>int</code> values, always in lowest terms and with a positive denominator.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.fast/be/imgn/gaia/fast/collect/IntIntConsumer.html" title="interface in be.imgn.gaia.fast.collect">IntIntConsumer</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
@@ -445,29 +527,88 @@ one of its annotations, or one attribute of that annotation, as <a href="be.imgn
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An option of an annotation processor, given to javac as <code>-Aname=value</code>, with its type and default value.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect">Range&lt;C&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Selects an element at random, each time it's asked to, with the source of randomness it's given.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/RandomTable.html" title="class in be.imgn.gaia.core.random">RandomTable&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">A table to draw from at random: each draw gives a multiset of elements, made of the entries that are always given and
+of entries selected by weight, each of which is an element in some quantity, another table, or nothing.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/RandomTable.Builder.html" title="class in be.imgn.gaia.core.random">RandomTable.Builder&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Builds a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/RandomTable.html" title="class in be.imgn.gaia.core.random"><code>RandomTable</code></a>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect">Range&lt;C&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">An interval of comparable values: all the values between a lower and an upper bound.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.html" title="interface in be.imgn.gaia.core.collect">Range.Bound&lt;C&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.html" title="interface in be.imgn.gaia.core.collect">Range.Bound&lt;C&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A bound of a range: closed, open, or absent.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Closed.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Closed&lt;C&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Closed.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Closed&lt;C&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">A bound that includes its endpoint.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Open.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Open&lt;C&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Open.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Open&lt;C&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">A bound that excludes its endpoint.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Unbounded.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Unbounded&lt;C&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.Bound.Unbounded.html" title="class in be.imgn.gaia.core.collect">Range.Bound.Unbounded&lt;C&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">The absence of a bound: the range extends forever on that side.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/RangeAssert.html" title="class in be.imgn.gaia.core.testing">RangeAssert&lt;C&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core.testing/be/imgn/gaia/core/testing/RangeAssert.html" title="class in be.imgn.gaia.core.testing">RangeAssert&lt;C&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">AssertJ assertions on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Range.html" title="class in be.imgn.gaia.core.collect"><code>Range</code></a>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledExpression.html" title="class in be.imgn.gaia.core.random.dice">RolledExpression</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">What a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceExpression.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceExpression</code></a> evaluated to: a tree of <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.html" title="interface in be.imgn.gaia.core.random.dice"><code>RolledNode</code></a>s with the same shape as the expression, in
+which each node has a value, each die a face, and each tag applies or not.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.html" title="interface in be.imgn.gaia.core.random.dice">RolledNode&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">One node of a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledExpression.html" title="class in be.imgn.gaia.core.random.dice"><code>RolledExpression</code></a>, whose children are of type <code>T</code>: a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.html" title="interface in be.imgn.gaia.core.random.dice"><code>DiceNode</code></a> together with what
+it evaluated to.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Arithmetic&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">An arithmetic operation on two values.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Bound&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A variable and the value it was given.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Comparison&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A comparison of two values.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Constant&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A whole number.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Dice&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Dice that were rolled.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Die.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Die</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">One die that was rolled.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Group.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Group&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A value between parentheses, with its tags.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Negate&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">The opposite of a value.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Tag.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Tag&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">A tag on a <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Group.html" title="class in be.imgn.gaia.core.random.dice"><code>RolledNode.Group</code></a>, and whether it applies to this roll.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/ServiceFiles.html" title="class in be.imgn.gaia.processing">ServiceFiles</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -600,24 +741,28 @@ variable or a wildcard, possibly with type annotations such as <code>@Nullable</
 <div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">The name of a type variable, such as <code>T</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab5"><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/UnresolvedVariableException.html" title="class in be.imgn.gaia.core.random.dice">UnresolvedVariableException</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab5">
+<div class="block">Thrown when a dice expression is rolled, or its chances computed, while some of its variables have no value.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Version.html" title="class in be.imgn.gaia.core.base">Version</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">A version number as <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a> defines it, such as
 <code>1.4.0-rc.1+build.5</code>: a major, minor and patch version, then optional pre-release identifiers after <code>-</code>,
 then optional build metadata identifiers after <code>+</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" title="class in be.imgn.gaia.core.event">VirtualThreadExecutor</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="be.imgn.gaia.core/be/imgn/gaia/core/event/VirtualThreadExecutor.html" title="class in be.imgn.gaia.core.event">VirtualThreadExecutor</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Runs each task on a new virtual thread: the executor of <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/OnVirtualThread.html" title="annotation interface in be.imgn.gaia.core.event"><code>@OnVirtualThread</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Visibility.html" title="enum class in be.imgn.gaia.processing">Visibility</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/Visibility.html" title="enum class in be.imgn.gaia.processing">Visibility</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">How widely an element can be accessed, as its access modifier, or the lack of one, says: see
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#visibility(javax.lang.model.element.Element)"><code>MoreElements.visibility(javax.lang.model.element.Element)</code></a> and
 <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#effectiveVisibility(javax.lang.model.element.Element)"><code>MoreElements.effectiveVisibility(javax.lang.model.element.Element)</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html" title="class in be.imgn.gaia.processing.source">WildcardTypeName</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/WildcardTypeName.html" title="class in be.imgn.gaia.processing.source">WildcardTypeName</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">The name of a wildcard type argument: <code>?</code>, <code>? extends T</code> or <code>? super T</code>.</div>
 </div>
 </div>
