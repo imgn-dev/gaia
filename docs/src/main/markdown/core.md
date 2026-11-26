@@ -1,8 +1,8 @@
 # Core
 
 `gaia-core` extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
-system properties, the [platform](#platform) the JVM runs on, text, math, [dice](#dice), [versions](#versions) and
-time. It also has an [event bus](event-bus.md).
+system properties, the [platform](#platform) the JVM runs on, text, math, [random selection](#random-selection),
+[dice](#dice), [versions](#versions) and time. It also has an [event bus](event-bus.md).
 
 ```xml
 <dependency>
@@ -334,6 +334,61 @@ half.doubleValue();                         // 0.5
 
 Intermediate results are computed on `long` values; a result that doesn't fit once reduced throws
 `ArithmeticException`.
+
+## Random selection
+
+[`RandomSelector`](api:be.imgn.gaia.core.random.RandomSelector) selects an element at random, uniformly or by weight,
+with the `RandomGenerator` it's given:
+
+```java
+var rarity = RandomSelector.weighted(Maps.map("common", 70, "rare", 25, "legendary", 5));
+rarity.next(random);                            // "common", 70% of the time
+rarity.stream(random).limit(10).toList();
+
+var monster = RandomSelector.weighted(bestiary, Monster::frequency);
+var card = RandomSelector.uniform(deck);
+```
+
+A weighted selection takes the same time whatever the number of elements, since the weights are turned into an alias
+table when the selector is created. A weight of zero is allowed, and its element is never selected. With a seeded
+generator, the selections depend on the order of the elements, so give `weighted` a map with a defined order, such as
+one from `Maps.map`.
+
+`RandomSelector` is a functional interface, so any function of a `RandomGenerator` is a selector, and selectors
+combine: `map` transforms the selected element, `constant` always selects the same one, and `flatten` selects a
+selector, then an element from it, which lets a table of elements refer to other tables:
+
+```java
+var gems = RandomSelector.weighted(Maps.map(ruby, 3, diamond, 1));
+var weapons = RandomSelector.uniform(List.of(sword, axe, bow));
+var chest = RandomSelector.flatten(
+        RandomSelector.weighted(Maps.map(gems, 30, weapons, 10, RandomSelector.constant(gold), 60)));
+```
+
+[`RandomTable`](api:be.imgn.gaia.core.random.RandomTable) draws several elements at once, as a
+[`Multiset`](api:be.imgn.gaia.core.collect.Multiset). A table has entries that every draw gives, and weighted entries
+of which a draw selects one, or as many as `draws` says. An entry is an element in some quantity, another table, or
+nothing:
+
+```java
+var gems = RandomTable.<Item>builder()
+        .add(3, ruby)
+        .add(1, diamond)
+        .build();
+var chest = RandomTable.<Item>builder()
+        .always(key)
+        .add(60, gold, random -> random.nextInt(10, 101))
+        .addTable(30, gems)
+        .addNothing(10)
+        .draws(random -> random.nextInt(1, 4))
+        .build();
+
+Multiset<Item> drawn = chest.draw(random);      // such as [key, gold x 57, ruby]
+```
+
+A quantity or a number of draws is fixed, or a `RandomSelector<Integer>`. A [dice expression](#dice) is turned into
+one with a lambda: `random -> expression.roll(random).value()`. Tables are immutable and only refer to tables built
+before them, so they never refer to each other in a circle.
 
 ## Dice
 

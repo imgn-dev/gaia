@@ -93,6 +93,10 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   directories, kept apart on every operating system: `platform.applicationDirectories("Quuz")`, or with the vendor
   (`"bar", "Quuz"`), which Windows nests the application under, and a qualifier (`"foo", "bar", "Quuz"`), which
   names the macOS directories `foo.bar.Quuz`.
+- **`random.RandomSelector`**: selects an element at random with a `RandomGenerator`, uniformly or by weight, in
+  constant time whatever the number of elements. Selectors combine with `map` and `flatten`.
+- **`random.RandomTable`**: draws a `Multiset` of elements at once, from entries that are always given and from
+  weighted entries, each an element in a fixed or random quantity, another table, or nothing.
 - **`random.dice.DiceExpression`**: parses dice expressions such as `4d6dl1` or
   `(1d20:critical>=20)+STR>=AC`, with variables and conditional tags, rolls them into a tree that keeps every die,
   and computes the exact chances of their outcomes without enumerating the rolls. Expressions and rolls are trees of
