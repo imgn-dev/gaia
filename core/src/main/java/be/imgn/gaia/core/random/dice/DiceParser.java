@@ -170,8 +170,11 @@ final class DiceParser {
                 throw error("Expected a tag name");
             }
             var name = text.substring(start, index);
-            var relation = relation();
-            tags.add(new Tag<>(name, relation == null ? null : new Condition<>(relation, unary())));
+            var conditions = new ArrayList<Condition<DiceExpression>>();
+            for (var relation = relation(); relation != null; relation = relation()) {
+                conditions.add(new Condition<>(relation, sum()));
+            }
+            tags.add(new Tag<>(name, conditions));
             skipSpaces();
         }
         if (peek() != ')') {

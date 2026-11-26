@@ -6,7 +6,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import org.jspecify.annotations.Nullable;
 
 /**
  * One node of a {@link DiceExpression}, whose children are of type {@code T}.
@@ -304,17 +303,17 @@ public sealed interface DiceNode<T> {
         }
 
         /**
-         * Returns the inner value, then the operand of each tag that has a condition.
+         * Returns the inner value, then the operand of each condition of each tag.
          *
-         * @return the inner value, then the operand of each tag that has a condition
+         * @return the inner value, then the operand of each condition of each tag
          */
         @Override
         public List<T> children() {
             var children = new ArrayList<T>();
             children.add(inner);
             for (var tag : tags) {
-                if (tag.condition() != null) {
-                    children.add(tag.condition().operand());
+                for (var condition : tag.conditions()) {
+                    children.add(condition.operand());
                 }
             }
             return List.copyOf(children);
@@ -325,40 +324,42 @@ public sealed interface DiceNode<T> {
             U mappedInner = mapper.apply(inner);
             var mappedTags = new ArrayList<Tag<U>>();
             for (var tag : tags) {
-                var condition = tag.condition();
-                mappedTags.add(new Tag<>(
-                        tag.name(),
-                        condition == null
-                                ? null
-                                : new Condition<>(condition.relation(), mapper.apply(condition.operand()))));
+                var conditions = new ArrayList<Condition<U>>();
+                for (var condition : tag.conditions()) {
+                    conditions.add(new Condition<>(condition.relation(), mapper.apply(condition.operand())));
+                }
+                mappedTags.add(new Tag<>(tag.name(), conditions));
             }
             return new Group<>(mappedInner, mappedTags);
         }
     }
 
     /**
-     * A tag on a {@link Group}, such as {@code :critical>=20}.
+     * A tag on a {@link Group}, such as {@code :critical>=20} or {@code :tier2>=12<=16}.
      *
      * @param name the name: ASCII letters, digits and underscores, not starting with a digit
-     * @param condition what the value of the group must satisfy for the tag to apply, or null if it always applies
+     * @param conditions what the value of the group must satisfy, all at once, for the tag to apply: none if it always
+     *     applies
      * @param <T> the type of the children
      */
-    record Tag<T>(String name, @Nullable Condition<T> condition) {
+    record Tag<T>(String name, List<Condition<T>> conditions) {
 
         /**
          * Creates a tag.
          *
          * @param name the name: ASCII letters, digits and underscores, not starting with a digit
-         * @param condition what the value of the group must satisfy for the tag to apply, or null if it always applies
+         * @param conditions what the value of the group must satisfy, all at once, for the tag to apply: none if it
+         *     always applies
          * @throws IllegalArgumentException if {@code name} isn't a tag name
          */
         public Tag {
             checkArgument(isName(name, false), "Not a tag name: %s", name);
+            conditions = List.copyOf(conditions);
         }
     }
 
     /**
-     * The condition of a {@link Tag}: the value of the group, compared to an operand.
+     * One condition of a {@link Tag}: the value of the group, compared to an operand.
      *
      * @param relation how the value of the group is compared to the operand
      * @param operand the right operand of the comparison

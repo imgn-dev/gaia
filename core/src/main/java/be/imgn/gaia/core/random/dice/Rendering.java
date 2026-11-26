@@ -1,9 +1,7 @@
 package be.imgn.gaia.core.random.dice;
 
-import be.imgn.gaia.core.random.dice.DiceNode.Condition;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import java.util.StringJoiner;
-import org.jspecify.annotations.Nullable;
 
 /** Writes expressions and rolled expressions back as text, with the parentheses that the precedences require. */
 final class Rendering {
@@ -35,7 +33,11 @@ final class Rendering {
             case DiceNode.Group<Rendered> group -> {
                 var text = new StringBuilder("(").append(group.inner().text());
                 for (var tag : group.tags()) {
-                    text.append(':').append(tag.name()).append(condition(tag.condition()));
+                    text.append(':').append(tag.name());
+                    for (var condition : tag.conditions()) {
+                        text.append(condition.relation().symbol())
+                                .append(condition.operand().at(SUM));
+                    }
                 }
                 yield new Rendered(text.append(')').toString(), PRIMARY);
             }
@@ -89,12 +91,6 @@ final class Rendering {
             case ADD, SUBTRACT -> new Rendered(left.at(SUM) + operator.symbol() + right.at(PRODUCT), SUM);
             case MULTIPLY, DIVIDE -> new Rendered(left.at(PRODUCT) + operator.symbol() + right.at(UNARY), PRODUCT);
         };
-    }
-
-    private static String condition(@Nullable Condition<Rendered> condition) {
-        return condition == null
-                ? ""
-                : condition.relation().symbol() + condition.operand().at(UNARY);
     }
 
     /** A text and the precedence of its outermost operation. */

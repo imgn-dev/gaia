@@ -9,7 +9,6 @@ import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import org.jspecify.annotations.Nullable;
 
 /**
  * One node of a {@link RolledExpression}, whose children are of type {@code T}: a {@link DiceNode} together with what
@@ -285,17 +284,17 @@ public sealed interface RolledNode<T> {
         }
 
         /**
-         * Returns the inner value, then the operand of each tag that has a condition.
+         * Returns the inner value, then the operand of each condition of each tag.
          *
-         * @return the inner value, then the operand of each tag that has a condition
+         * @return the inner value, then the operand of each condition of each tag
          */
         @Override
         public List<T> children() {
             var children = new ArrayList<T>();
             children.add(inner);
             for (var tag : tags) {
-                if (tag.condition() != null) {
-                    children.add(tag.condition().operand());
+                for (var condition : tag.conditions()) {
+                    children.add(condition.operand());
                 }
             }
             return List.copyOf(children);
@@ -306,13 +305,11 @@ public sealed interface RolledNode<T> {
             U mappedInner = mapper.apply(inner);
             var mappedTags = new ArrayList<Tag<U>>();
             for (var tag : tags) {
-                var condition = tag.condition();
-                mappedTags.add(new Tag<>(
-                        tag.name(),
-                        condition == null
-                                ? null
-                                : new Condition<>(condition.relation(), mapper.apply(condition.operand())),
-                        tag.applied()));
+                var conditions = new ArrayList<Condition<U>>();
+                for (var condition : tag.conditions()) {
+                    conditions.add(new Condition<>(condition.relation(), mapper.apply(condition.operand())));
+                }
+                mappedTags.add(new Tag<>(tag.name(), conditions, tag.applied()));
             }
             return new Group<>(mappedInner, mappedTags, value);
         }
@@ -322,21 +319,22 @@ public sealed interface RolledNode<T> {
      * A tag on a {@link Group}, and whether it applies to this roll.
      *
      * @param name the name
-     * @param condition what the value of the group had to satisfy, or null if the tag always applies
+     * @param conditions what the value of the group had to satisfy, all at once: none if the tag always applies
      * @param applied whether the tag applies
      * @param <T> the type of the children
      */
-    record Tag<T>(String name, @Nullable Condition<T> condition, boolean applied) {
+    record Tag<T>(String name, List<Condition<T>> conditions, boolean applied) {
 
         /**
          * Creates a rolled tag.
          *
          * @param name the name
-         * @param condition what the value of the group had to satisfy, or null if the tag always applies
+         * @param conditions what the value of the group had to satisfy, all at once: none if the tag always applies
          * @param applied whether the tag applies
          */
         public Tag {
             requireNonNull(name, "name");
+            conditions = List.copyOf(conditions);
         }
     }
 

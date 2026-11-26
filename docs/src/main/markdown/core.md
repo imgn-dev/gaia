@@ -359,8 +359,8 @@ An expression is made of whole numbers, variables in upper case, `+ - * /` with 
 unary `-`, one comparison among `= != < <= > >=`, which evaluates to 1 or 0, and parentheses. Dice are a count, `d`
 and a number of sides, or `%` for 100, optionally followed by the dice that count in the sum: `2d20kh1` keeps the
 highest die, `2d20kl1` the lowest, and `4d6dl1` and `4d6dh1` drop the lowest and the highest. A group between
-parentheses may end with tags, such as `:fire`, which always applies, or `:critical>=20`, which applies when the
-value of the group satisfies the condition.
+parentheses may end with tags, such as `:fire`, which always applies, or `:critical>=20` and `:tier2>=12<=16`, which
+apply when the value of the group satisfies all their conditions.
 
 `roll` and `chances` throw
 [`UnresolvedVariableException`](api:be.imgn.gaia.core.random.dice.UnresolvedVariableException) until every variable has a

@@ -102,10 +102,10 @@ final class Rolls {
         int value = group.inner().value();
         var tags = new ArrayList<RolledNode.Tag<RolledExpression>>();
         for (var tag : group.tags()) {
-            var condition = tag.condition();
-            boolean applied = condition == null
-                    || condition.relation().test(value, condition.operand().value());
-            tags.add(new RolledNode.Tag<>(tag.name(), condition, applied));
+            boolean applied = tag.conditions().stream()
+                    .allMatch(condition ->
+                            condition.relation().test(value, condition.operand().value()));
+            tags.add(new RolledNode.Tag<>(tag.name(), tag.conditions(), applied));
         }
         return new RolledNode.Group<>(group.inner(), tags, value);
     }

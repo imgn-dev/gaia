@@ -43,9 +43,10 @@ import org.jspecify.annotations.Nullable;
  *       between parentheses.
  * </ul>
  *
- * <p>A group may end with tags, each made of a colon and a name, optionally followed by a comparison operator and a
- * value: {@code (1d20:attack:critical>=20)}. A tag with no condition always applies; the other ones apply when the
- * value of the group satisfies the condition. Spaces are allowed anywhere but inside dice.
+ * <p>A group may end with tags, each made of a colon and a name, optionally followed by conditions, each made of a
+ * comparison operator and a value: {@code (2d10:attack:tier1<=11:tier2>=12<=16:tier3>=17)}. A tag with no condition
+ * always applies; the other ones apply when the value of the group satisfies all their conditions. Spaces are allowed
+ * anywhere but inside dice.
  *
  * <h2>Inspection</h2>
  *

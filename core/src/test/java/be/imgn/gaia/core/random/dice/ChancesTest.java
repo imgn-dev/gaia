@@ -186,6 +186,23 @@ class ChancesTest {
     }
 
     @Test
+    void aTagAppliesWhenAllItsConditionsHold() {
+        var chances = chances("((2d10:critical>=19)+2:tier1<=11:tier2>=12<=16:tier3>=17)");
+
+        assertThat(chances.tagged("tier1")).isEqualTo(IntFraction.of(9, 25));
+        assertThat(chances.tagged("tier2")).isEqualTo(IntFraction.of(43, 100));
+        assertThat(chances.tagged("tier3")).isEqualTo(IntFraction.of(21, 100));
+        assertThat(chances.tagged("critical")).isEqualTo(IntFraction.of(3, 100));
+        // Every outcome has exactly one tier.
+        assertThat(chances.where(outcome -> Set.of("tier1", "tier2", "tier3").stream()
+                                .filter(outcome.tags()::contains)
+                                .count()
+                        == 1))
+                .isEqualTo(IntFraction.ONE);
+        assertThat(chances("(1d6:between>=1d6<=1d6)").tagged("between")).isEqualTo(IntFraction.of(7, 27));
+    }
+
+    @Test
     void tagsMayBeUnconditionalOrComparedToDice() {
         assertThat(chances("(1d6:fire)").tagged("fire")).isEqualTo(IntFraction.ONE);
         assertThat(chances("(1d6:wins>1d6)").tagged("wins")).isEqualTo(IntFraction.of(5, 12));

@@ -18,6 +18,10 @@ import java.util.function.UnaryOperator;
  */
 final class Distribution {
 
+    // Not a tag name, so that it never hides a tag.
+    private static final String FAILED_MARK = "!";
+    private static final Set<String> FAILED = Set.of(FAILED_MARK);
+
     private final Map<Outcome, BigInteger> cases;
     private final BigInteger total;
 
@@ -67,20 +71,25 @@ final class Distribution {
     private static Distribution group(DiceNode.Group<Distribution> group) {
         var result = group.inner();
         for (var tag : group.tags()) {
-            var name = Set.of(tag.name());
-            var condition = tag.condition();
-            if (condition == null) {
-                result = result.map(outcome -> new Outcome(outcome.value(), union(outcome.tags(), name)));
-            } else {
-                // The value stays that of the group, so that the next tags test it too.
-                result = result.combine(
-                        condition.operand(),
-                        (outcome, operand) -> new Outcome(
-                                outcome.value(),
-                                condition.relation().test(outcome.value(), operand.value())
-                                        ? union(union(outcome.tags(), operand.tags()), name)
-                                        : union(outcome.tags(), operand.tags())));
+            // The value stays that of the group, so that the next conditions and tags test it too. An outcome that
+            // fails a condition is marked until every condition of the tag is tested.
+            for (var condition : tag.conditions()) {
+                result = result.combine(condition.operand(), (outcome, operand) -> {
+                    var tags = union(outcome.tags(), operand.tags());
+                    return new Outcome(
+                            outcome.value(),
+                            condition.relation().test(outcome.value(), operand.value()) ? tags : union(tags, FAILED));
+                });
             }
+            var name = Set.of(tag.name());
+            result = result.map(outcome -> {
+                if (!outcome.tags().contains(FAILED_MARK)) {
+                    return new Outcome(outcome.value(), union(outcome.tags(), name));
+                }
+                var tags = new HashSet<>(outcome.tags());
+                tags.remove(FAILED_MARK);
+                return new Outcome(outcome.value(), tags);
+            });
         }
         return result;
     }

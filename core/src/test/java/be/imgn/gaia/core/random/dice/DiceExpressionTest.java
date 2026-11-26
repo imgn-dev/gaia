@@ -53,6 +53,9 @@ class DiceExpressionTest {
                 "(1d20:attack:critical>=20)",
                 "(1d20:low<=-1)",
                 "(1d20:hit>=AC)",
+                "(2d10:tier1<=11:tier2>=12<=16:tier3>=17)",
+                "(1d20:success>=DC<DC+10)",
+                "(1d20:odd>=(1d20>=10))",
                 "1d20>=15",
                 "1d20=20",
                 "1d20!=1",
@@ -94,15 +97,33 @@ class DiceExpressionTest {
 
     @Test
     void parseGivesTagsTheirConditions() {
-        var expression = DiceExpression.parse("(1d20:attack:critical>=20)");
+        var expression = DiceExpression.parse("(1d20:attack:critical>=20:middling>=8<=AC+2)");
 
         var group = (DiceNode.Group<DiceExpression>) expression.node();
         assertThat(group.tags())
                 .containsExactly(
-                        new DiceNode.Tag<>("attack", null),
+                        new DiceNode.Tag<>("attack", List.of()),
                         new DiceNode.Tag<>(
-                                "critical", new DiceNode.Condition<>(Relation.GREATER_OR_EQUAL, constant(20))));
-        assertThat(group.children()).containsExactly(DiceExpression.parse("1d20"), constant(20));
+                                "critical", List.of(new DiceNode.Condition<>(Relation.GREATER_OR_EQUAL, constant(20)))),
+                        new DiceNode.Tag<>(
+                                "middling",
+                                List.of(
+                                        new DiceNode.Condition<>(Relation.GREATER_OR_EQUAL, constant(8)),
+                                        new DiceNode.Condition<>(
+                                                Relation.LESS_OR_EQUAL, DiceExpression.parse("AC+2")))));
+        assertThat(group.children())
+                .containsExactly(DiceExpression.parse("1d20"), constant(20), constant(8), DiceExpression.parse("AC+2"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"11, tier1", "12, tier2", "16, tier2", "17, tier3"})
+    void aTagAppliesWhenAllItsConditionsHold(int roll, String tier) {
+        var expression = DiceExpression.parse("(1d20:tier1<=11:tier2>=12<=16:tier3>=17)");
+
+        var rolled = expression.roll(new FakeRandom(roll));
+
+        assertThat(rolled.tags()).containsExactly(tier);
+        assertThat(rolled).hasToString("(1d20[" + roll + "]:" + tier + ") = " + roll);
     }
 
     @Test
@@ -411,7 +432,7 @@ class DiceExpressionTest {
         assertThatIllegalArgumentException().isThrownBy(() -> new DiceNode.Variable<DiceExpression>("1A"));
         assertThatIllegalArgumentException().isThrownBy(() -> new DiceNode.Variable<DiceExpression>(""));
         assertThatIllegalArgumentException().isThrownBy(() -> new DiceNode.Bound<>("a", constant(1)));
-        assertThatIllegalArgumentException().isThrownBy(() -> new DiceNode.Tag<DiceExpression>("a-b", null));
+        assertThatIllegalArgumentException().isThrownBy(() -> new DiceNode.Tag<DiceExpression>("a-b", List.of()));
         assertThatIllegalArgumentException().isThrownBy(() -> new Keep(Keep.Mode.KEEP_HIGHEST, -1));
     }
 
