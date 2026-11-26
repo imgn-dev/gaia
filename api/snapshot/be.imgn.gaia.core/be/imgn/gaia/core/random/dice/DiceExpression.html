@@ -135,7 +135,7 @@ chances.tagged("critical");                   // 1/20
 <p>A group may end with tags, each made of a colon and a name, optionally followed by conditions, each made of a
 comparison operator and a value: <code>(2d10:attack:tier1&lt;=11:tier2&gt;=12&lt;=16:tier3&gt;=17)</code>. A tag with no condition
 always applies; the other ones apply when the value of the group satisfies all their conditions. Spaces are allowed
-anywhere but inside dice.
+between any two parts, and never change what a text means.
 
 <p>As a grammar:
 
@@ -156,9 +156,10 @@ variable   := [A-Z_] [A-Z0-9_]*
 name       := [A-Za-z_] [A-Za-z0-9_]*
 </code></pre>
 
-<p>A number is at most <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html#MAX_VALUE" title="class or interface in java.lang" class="external-link"><code>Integer.MAX_VALUE</code></a>. The parts of <code>dice</code> follow each other with no space in
-between, down to the condition of a reroll or of an explosion: <code>1d6x&gt;=5</code> explodes on 5 or more, while
-<code>1d6x &gt;=5</code> compares dice that explode on a 6 with 5.
+<p>A number is at most <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html#MAX_VALUE" title="class or interface in java.lang" class="external-link"><code>Integer.MAX_VALUE</code></a>. A comparison operator that follows <code>r</code>, <code>rr</code> or
+<code>x</code> is always the condition of that rule, and must be followed by a number: <code>1d6x&gt;=5</code> explodes on 5 or
+more. To compare the dice themselves, put them between parentheses, as in <code>(1d6x)&gt;=5</code>; <code>1d6x&gt;=AC</code> is
+rejected, not guessed.
 
 <h2 id="inspection-heading">Inspection</h2>
 
@@ -472,7 +473,8 @@ conditions of its tags. Nothing else uses the source of randomness.</div>
 
 <p>Dice that are kept or dropped aren't enumerated roll by roll: their faces are taken one at a time, counting
 the ways for each number of dice to show that face. A die that is rerolled is counted as a die whose faces aren't
-equally likely, and a die that explodes as the sum of the dice it may add.</div>
+equally likely. Dice that explode are counted as the sum of the dice they may add, or, when some dice are
+dropped, as two kinds of dice: those that show a face that explodes, and the other ones.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the chances of each outcome</dd>
@@ -481,7 +483,6 @@ equally likely, and a die that explodes as the sum of the dice it may add.</div>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArithmeticException.html" title="class or interface in java.lang" class="external-link">ArithmeticException</a></code> - if a value overflows an <code>int</code>, on a division by zero, if a number of dice is
     negative or more than 10,000, or a number of sides less than one, or if some dice have more than 1,000,000
     sides in total</dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - if some dice both explode and have dice kept or dropped</dd>
 </dl>
 </div>
 </section>
