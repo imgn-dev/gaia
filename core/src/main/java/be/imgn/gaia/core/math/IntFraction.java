@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
  * {@link ArithmeticException}.
  *
  * @since 0.2.0
+ * @see LongFraction
+ * @see BigFraction
  */
 public final class IntFraction extends Number implements Comparable<IntFraction> {
 
@@ -226,6 +228,24 @@ public final class IntFraction extends Number implements Comparable<IntFraction>
             throw new ArithmeticException("Division by zero");
         }
         return of(denominator, numerator);
+    }
+
+    /**
+     * Returns this fraction as a {@link LongFraction}.
+     *
+     * @return the same fraction
+     */
+    public LongFraction toLongFraction() {
+        return LongFraction.of(numerator, denominator);
+    }
+
+    /**
+     * Returns this fraction as a {@link BigFraction}.
+     *
+     * @return the same fraction
+     */
+    public BigFraction toBigFraction() {
+        return BigFraction.of(numerator, denominator);
     }
 
     /**
