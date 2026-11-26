@@ -65,7 +65,7 @@ loadScripts(document, 'script');</script>
 <div class="package-signature"><span class="annotations">@NullMarked
 </span>package <span class="element-name">be.imgn.gaia.core.math</span></div>
 <section class="package-description" id="package-description">
-<div class="block">Arithmetic on integers the JDK does not provide, and exact fractions.</div>
+<div class="block">Arithmetic on integers the JDK does not provide, and exact fractions of <code>int</code>, <code>long</code> and <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigInteger.html" title="class or interface in java.math" class="external-link"><code>BigInteger</code></a> values.</div>
 </section>
 </div>
 <section class="summary">
@@ -76,6 +76,15 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BigFraction.html" title="class in be.imgn.gaia.core.math">BigFraction</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">An exact fraction of two <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigInteger.html" title="class or interface in java.math" class="external-link"><code>BigInteger</code></a> values, always in lowest terms and with a positive denominator.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">An exact fraction, always in lowest terms and with a positive denominator: an <a href="IntFraction.html" title="class in be.imgn.gaia.core.math"><code>IntFraction</code></a>, a
+<a href="LongFraction.html" title="class in be.imgn.gaia.core.math"><code>LongFraction</code></a> or a <a href="BigFraction.html" title="class in be.imgn.gaia.core.math"><code>BigFraction</code></a>, which differ by the size of their terms.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">An exact fraction of two <code>int</code> values, always in lowest terms and with a positive denominator.</div>
@@ -85,8 +94,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Arithmetic on <code>int</code> values that <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Math.html" title="class or interface in java.lang" class="external-link"><code>Math</code></a> doesn't provide: divisors, powers, logarithms, square roots and
 divisions with a rounding mode, saturated arithmetic, combinatorics and primality.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="LongMath.html" title="class in be.imgn.gaia.core.math">LongMath</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="LongFraction.html" title="class in be.imgn.gaia.core.math">LongFraction</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">An exact fraction of two <code>long</code> values, always in lowest terms and with a positive denominator.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LongMath.html" title="class in be.imgn.gaia.core.math">LongMath</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Arithmetic on <code>long</code> values that <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Math.html" title="class or interface in java.lang" class="external-link"><code>Math</code></a> doesn't provide: divisors, powers, logarithms, square roots and
 divisions with a rounding mode, saturated arithmetic, combinatorics and primality.</div>
 </div>

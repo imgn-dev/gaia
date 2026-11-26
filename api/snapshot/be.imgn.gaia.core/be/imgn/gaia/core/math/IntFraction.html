@@ -78,11 +78,15 @@ loadScripts(document, 'script');</script>
 <li><a href="#negate()" tabindex="0">negate()</a></li>
 <li><a href="#abs()" tabindex="0">abs()</a></li>
 <li><a href="#reciprocal()" tabindex="0">reciprocal()</a></li>
+<li><a href="#toIntFractionExact()" tabindex="0">toIntFractionExact()</a></li>
+<li><a href="#toLongFractionExact()" tabindex="0">toLongFractionExact()</a></li>
+<li><a href="#toLongFraction()" tabindex="0">toLongFraction()</a></li>
+<li><a href="#toBigFraction()" tabindex="0">toBigFraction()</a></li>
 <li><a href="#intValue()" tabindex="0">intValue()</a></li>
 <li><a href="#longValue()" tabindex="0">longValue()</a></li>
 <li><a href="#floatValue()" tabindex="0">floatValue()</a></li>
 <li><a href="#doubleValue()" tabindex="0">doubleValue()</a></li>
-<li><a href="#compareTo(be.imgn.gaia.core.math.IntFraction)" tabindex="0">compareTo(IntFraction)</a></li>
+<li><a href="#compareTo(be.imgn.gaia.core.math.Fraction)" tabindex="0">compareTo(Fraction)</a></li>
 <li><a href="#equals(java.lang.Object)" tabindex="0">equals(Object)</a></li>
 <li><a href="#hashCode()" tabindex="0">hashCode()</a></li>
 <li><a href="#toString()" tabindex="0">toString()</a></li>
@@ -97,19 +101,20 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">java.lang.Number</a>
+<div class="inheritance"><a href="Fraction.html" title="class in be.imgn.gaia.core.math">be.imgn.gaia.core.math.Fraction</a>
 <div class="inheritance">be.imgn.gaia.core.math.IntFraction</div>
+</div>
 </div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a>&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a>&gt;</code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">IntFraction</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>
-implements <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a>&gt;</span></div>
+<span class="extends-implements">extends <a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></span></div>
 <div class="block">An exact fraction of two <code>int</code> values, always in lowest terms and with a positive denominator.
 
 <pre><code>var half = IntFraction.of(2, 4);            // 1/2
@@ -128,6 +133,9 @@ method whose result, once in lowest terms, has a numerator or a denominator that
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">
+<li><a href="Fraction.html" title="class in be.imgn.gaia.core.math"><code>Fraction</code></a></li>
+<li><a href="LongFraction.html" title="class in be.imgn.gaia.core.math"><code>LongFraction</code></a></li>
+<li><a href="BigFraction.html" title="class in be.imgn.gaia.core.math"><code>BigFraction</code></a></li>
 <li><a href="../../../../../../serialized-form.html#be.imgn.gaia.core.math.IntFraction">Serialized Form</a></li>
 </ul>
 </dd>
@@ -175,8 +183,10 @@ method whose result, once in lowest terms, has a numerator or a denominator that
 <div class="block">Returns the absolute value of this fraction.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#compareTo(be.imgn.gaia.core.math.IntFraction)" class="member-name-link">compareTo</a><wbr>(<a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a>&nbsp;other)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#compareTo(be.imgn.gaia.core.math.Fraction)" class="member-name-link">compareTo</a><wbr>(<a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a>&nbsp;other)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Compares this fraction with another one of any class, by value.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#denominator()" class="member-name-link">denominator</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -269,6 +279,26 @@ method whose result, once in lowest terms, has a numerator or a denominator that
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#times(be.imgn.gaia.core.math.IntFraction)" class="member-name-link">times</a><wbr>(<a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a>&nbsp;other)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the product of this fraction and another one.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="BigFraction.html" title="class in be.imgn.gaia.core.math">BigFraction</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toBigFraction()" class="member-name-link">toBigFraction</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns this fraction as a <a href="BigFraction.html" title="class in be.imgn.gaia.core.math"><code>BigFraction</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toIntFractionExact()" class="member-name-link">toIntFractionExact</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns this fraction as an <a href="IntFraction.html" title="class in be.imgn.gaia.core.math"><code>IntFraction</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LongFraction.html" title="class in be.imgn.gaia.core.math">LongFraction</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toLongFraction()" class="member-name-link">toLongFraction</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns this fraction as a <a href="LongFraction.html" title="class in be.imgn.gaia.core.math"><code>LongFraction</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LongFraction.html" title="class in be.imgn.gaia.core.math">LongFraction</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toLongFractionExact()" class="member-name-link">toLongFractionExact</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns this fraction as a <a href="LongFraction.html" title="class in be.imgn.gaia.core.math"><code>LongFraction</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
@@ -407,6 +437,8 @@ method whose result, once in lowest terms, has a numerator or a denominator that
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">signum</span>()</div>
 <div class="block">Returns -1, 0 or 1 as this fraction is negative, zero or positive.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Fraction.html#signum()">signum</a></code>&nbsp;in class&nbsp;<code><a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></code></dd>
 <dt>Returns:</dt>
 <dd>-1, 0 or 1 as this fraction is negative, zero or positive</dd>
 </dl>
@@ -420,6 +452,8 @@ method whose result, once in lowest terms, has a numerator or a denominator that
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isInteger</span>()</div>
 <div class="block">Returns whether this fraction is a whole number.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Fraction.html#isInteger()">isInteger</a></code>&nbsp;in class&nbsp;<code><a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></code></dd>
 <dt>Returns:</dt>
 <dd>whether this fraction is a whole number</dd>
 </dl>
@@ -540,6 +574,66 @@ method whose result, once in lowest terms, has a numerator or a denominator that
 </section>
 </li>
 <li>
+<section class="detail" id="toIntFractionExact()">
+<h3>toIntFractionExact</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></span>&nbsp;<span class="element-name">toIntFractionExact</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from class:&nbsp;<code><a href="Fraction.html#toIntFractionExact()">Fraction</a></code></span></div>
+<div class="block">Returns this fraction as an <a href="IntFraction.html" title="class in be.imgn.gaia.core.math"><code>IntFraction</code></a>.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Fraction.html#toIntFractionExact()">toIntFractionExact</a></code>&nbsp;in class&nbsp;<code><a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></code></dd>
+<dt>Returns:</dt>
+<dd>the same fraction</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="toLongFractionExact()">
+<h3>toLongFractionExact</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="LongFraction.html" title="class in be.imgn.gaia.core.math">LongFraction</a></span>&nbsp;<span class="element-name">toLongFractionExact</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from class:&nbsp;<code><a href="Fraction.html#toLongFractionExact()">Fraction</a></code></span></div>
+<div class="block">Returns this fraction as a <a href="LongFraction.html" title="class in be.imgn.gaia.core.math"><code>LongFraction</code></a>.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Fraction.html#toLongFractionExact()">toLongFractionExact</a></code>&nbsp;in class&nbsp;<code><a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></code></dd>
+<dt>Returns:</dt>
+<dd>the same fraction</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="toLongFraction()">
+<h3>toLongFraction</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="LongFraction.html" title="class in be.imgn.gaia.core.math">LongFraction</a></span>&nbsp;<span class="element-name">toLongFraction</span>()</div>
+<div class="block">Returns this fraction as a <a href="LongFraction.html" title="class in be.imgn.gaia.core.math"><code>LongFraction</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the same fraction</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="toBigFraction()">
+<h3>toBigFraction</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="BigFraction.html" title="class in be.imgn.gaia.core.math">BigFraction</a></span>&nbsp;<span class="element-name">toBigFraction</span>()</div>
+<div class="block">Returns this fraction as a <a href="BigFraction.html" title="class in be.imgn.gaia.core.math"><code>BigFraction</code></a>.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Fraction.html#toBigFraction()">toBigFraction</a></code>&nbsp;in class&nbsp;<code><a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></code></dd>
+<dt>Returns:</dt>
+<dd>the same fraction</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="intValue()">
 <h3>intValue</h3>
 <div class="horizontal-scroll">
@@ -600,13 +694,22 @@ method whose result, once in lowest terms, has a numerator or a denominator that
 </section>
 </li>
 <li>
-<section class="detail" id="compareTo(be.imgn.gaia.core.math.IntFraction)">
+<section class="detail" id="compareTo(be.imgn.gaia.core.math.Fraction)">
 <h3>compareTo</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">compareTo</span><wbr><span class="parameters">(<a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a>&nbsp;other)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">compareTo</span><wbr><span class="parameters">(<a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a>&nbsp;other)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from class:&nbsp;<code><a href="Fraction.html#compareTo(be.imgn.gaia.core.math.Fraction)">Fraction</a></code></span></div>
+<div class="block">Compares this fraction with another one of any class, by value.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html#compareTo(T)" title="class or interface in java.lang" class="external-link">compareTo</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a>&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html#compareTo(T)" title="class or interface in java.lang" class="external-link">compareTo</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a>&gt;</code></dd>
+<dt>Specified by:</dt>
+<dd><code><a href="Fraction.html#compareTo(be.imgn.gaia.core.math.Fraction)">compareTo</a></code>&nbsp;in class&nbsp;<code><a href="Fraction.html" title="class in be.imgn.gaia.core.math">Fraction</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>other</code> - the fraction to compare with</dd>
+<dt>Returns:</dt>
+<dd>a negative number, zero or a positive number as this fraction is less than, equal to or greater than the
+    other one</dd>
 </dl>
 </div>
 </section>

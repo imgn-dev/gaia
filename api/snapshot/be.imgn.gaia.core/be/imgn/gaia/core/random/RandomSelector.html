@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#next(java.util.random.RandomGenerator)" tabindex="0">next(RandomGenerator)</a></li>
 <li><a href="#stream(java.util.random.RandomGenerator)" tabindex="0">stream(RandomGenerator)</a></li>
+<li><a href="#chances()" tabindex="0">chances()</a></li>
 <li><a href="#map(java.util.function.Function)" tabindex="0">map(Function)</a></li>
 <li><a href="#constant(T)" tabindex="0">constant(T)</a></li>
 <li><a href="#uniform(java.util.Collection)" tabindex="0">uniform(Collection)</a></li>
@@ -142,46 +143,51 @@ may be shared between threads if the source of randomness given to them may.</di
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#constant(T)" class="member-name-link">constant</a><wbr>(T&nbsp;element)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Returns a selector that always selects the same element, and uses no randomness.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Chances.html" title="class in be.imgn.gaia.core.random">Chances</a><wbr>&lt;<a href="#type-param-T" title="type parameter in RandomSelector">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#chances()" class="member-name-link">chances</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Returns the exact chance of each element that this selector selects.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#flatten(be.imgn.gaia.core.random.RandomSelector)" class="member-name-link">flatten</a><wbr>(<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a>&lt;? extends <a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a>&lt;? extends T&gt;&gt;&nbsp;selectors)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#constant(T)" class="member-name-link">constant</a><wbr>(T&nbsp;element)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a selector that always selects the same element, and uses no randomness.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#flatten(be.imgn.gaia.core.random.RandomSelector)" class="member-name-link">flatten</a><wbr>(<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a>&lt;? extends <a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a>&lt;? extends T&gt;&gt;&nbsp;selectors)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns a selector that selects a selector, then an element from it.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="#type-param-T" title="type parameter in RandomSelector">T</a>, ? extends R&gt;&nbsp;mapper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;R&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="#type-param-T" title="type parameter in RandomSelector">T</a>, ? extends R&gt;&nbsp;mapper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns a selector of what a function returns for the elements that this selector selects.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type-param-T" title="type parameter in RandomSelector">T</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#next(java.util.random.RandomGenerator)" class="member-name-link">next</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type-param-T" title="type parameter in RandomSelector">T</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#next(java.util.random.RandomGenerator)" class="member-name-link">next</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Selects an element.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a><wbr>&lt;<a href="#type-param-T" title="type parameter in RandomSelector">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#stream(java.util.random.RandomGenerator)" class="member-name-link">stream</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a><wbr>&lt;<a href="#type-param-T" title="type parameter in RandomSelector">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#stream(java.util.random.RandomGenerator)" class="member-name-link">stream</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns an infinite stream of elements, each selected with <a href="#next(java.util.random.RandomGenerator)"><code>next(RandomGenerator)</code></a> when the stream asks
 for it.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#uniform(java.util.Collection)" class="member-name-link">uniform</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;elements)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#uniform(java.util.Collection)" class="member-name-link">uniform</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;elements)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns a selector that selects each element of a collection with the same chance.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#weighted(java.util.Collection,java.util.function.ToDoubleFunction)" class="member-name-link">weighted</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;elements,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#weighted(java.util.Collection,java.util.function.ToDoubleFunction)" class="member-name-link">weighted</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;elements,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/ToDoubleFunction.html" title="class or interface in java.util.function" class="external-link">ToDoubleFunction</a>&lt;? super T&gt;&nbsp;weight)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns a selector that selects each element of a collection with a chance proportional to its weight.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#weighted(java.util.Map)" class="member-name-link">weighted</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends T, ? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;weights)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#weighted(java.util.Map)" class="member-name-link">weighted</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends T, ? extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;&nbsp;weights)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns a selector that selects each key of a map with a chance proportional to its value.</div>
 </div>
 </div>
@@ -225,6 +231,25 @@ for it.</div>
 <dd><code>random</code> - the source of randomness</dd>
 <dt>Returns:</dt>
 <dd>an infinite stream of selected elements</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="chances()">
+<h3>chances</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Chances.html" title="class in be.imgn.gaia.core.random">Chances</a>&lt;<a href="#type-param-T" title="type parameter in RandomSelector">T</a>&gt;</span>&nbsp;<span class="element-name">chances</span>()</div>
+<div class="block">Returns the exact chance of each element that this selector selects.
+
+<p>The selectors that this interface creates know their chances, and so do those made from them with
+<a href="#map(java.util.function.Function)"><code>map(Function)</code></a> and <a href="#flatten(be.imgn.gaia.core.random.RandomSelector)"><code>flatten(RandomSelector)</code></a>. A selector that is a function of a
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link"><code>RandomGenerator</code></a> doesn't, unless it overrides this method.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the chances of the elements</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - if this selector doesn't know its chances</dd>
 </dl>
 </div>
 </section>

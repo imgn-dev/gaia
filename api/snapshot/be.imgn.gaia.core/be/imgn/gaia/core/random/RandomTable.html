@@ -60,6 +60,7 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#builder()" tabindex="0">builder()</a></li>
 <li><a href="#draw(java.util.random.RandomGenerator)" tabindex="0">draw(RandomGenerator)</a></li>
+<li><a href="#chances()" tabindex="0">chances()</a></li>
 </ol>
 </li>
 </ol>
@@ -151,9 +152,14 @@ in a circle.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a builder of tables.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../collect/Multiset.html" title="interface in be.imgn.gaia.core.collect">Multiset</a><wbr>&lt;<a href="#type-param-T" title="type parameter in RandomTable">T</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#draw(java.util.random.RandomGenerator)" class="member-name-link">draw</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Chances.html" title="class in be.imgn.gaia.core.random">Chances</a><wbr>&lt;<a href="../collect/Multiset.html" title="interface in be.imgn.gaia.core.collect">Multiset</a>&lt;<a href="#type-param-T" title="type parameter in RandomTable">T</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#chances()" class="member-name-link">chances</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the exact chance of each multiset of elements that a draw may give.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../collect/Multiset.html" title="interface in be.imgn.gaia.core.collect">Multiset</a><wbr>&lt;<a href="#type-param-T" title="type parameter in RandomTable">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#draw(java.util.random.RandomGenerator)" class="member-name-link">draw</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Draws from this table: first the entries that are always given, in the order they were added, then as many
 weighted entries as the number of draws, which is selected before them.</div>
 </div>
@@ -211,6 +217,25 @@ only one. The quantity or the table of the selected entry comes right after it.<
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if a selector gives a negative quantity or number of draws</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if an element is drawn more than <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html#MAX_VALUE" title="class or interface in java.lang" class="external-link"><code>Integer.MAX_VALUE</code></a> times</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="chances()">
+<h3>chances</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Chances.html" title="class in be.imgn.gaia.core.random">Chances</a>&lt;<a href="../collect/Multiset.html" title="interface in be.imgn.gaia.core.collect">Multiset</a>&lt;<a href="#type-param-T" title="type parameter in RandomTable">T</a>&gt;&gt;</span>&nbsp;<span class="element-name">chances</span>()</div>
+<div class="block">Returns the exact chance of each multiset of elements that a draw may give.
+
+<p>Every quantity and number of draws must be fixed, or a selector that knows its chances. The outcomes are
+counted one by one, so a table with many entries that is drawn from many times takes long.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the chances of the draws, each an unmodifiable multiset</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - if a selector doesn't know its chances</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if a selector may give a negative quantity or number of draws</dd>
 </dl>
 </div>
 </section>

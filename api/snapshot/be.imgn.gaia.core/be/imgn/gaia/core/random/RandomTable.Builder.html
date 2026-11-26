@@ -69,6 +69,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#addNothing(double)" tabindex="0">addNothing(double)</a></li>
 <li><a href="#draws(int)" tabindex="0">draws(int)</a></li>
 <li><a href="#draws(be.imgn.gaia.core.random.RandomSelector)" tabindex="0">draws(RandomSelector)</a></li>
+<li><a href="#withoutRepeats()" tabindex="0">withoutRepeats()</a></li>
 <li><a href="#build()" tabindex="0">build()</a></li>
 </ol>
 </li>
@@ -182,6 +183,12 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#draws(be.imgn.gaia.core.random.RandomSelector)" class="member-name-link">draws</a><wbr>(<a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;count)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets how many weighted entries a draw selects, with a number selected for each draw.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="RandomTable.Builder.html" title="class in be.imgn.gaia.core.random">RandomTable.Builder</a><wbr>&lt;<a href="#type-param-T" title="type parameter in RandomTable.Builder">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withoutRepeats()" class="member-name-link">withoutRepeats</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Makes a draw select each weighted entry at most once: the entries are selected one after the other, each time
+by weight among those that are left, as <a href="RandomSamples.html#weightedSample(java.util.Collection,java.util.function.ToDoubleFunction,int,java.util.random.RandomGenerator)"><code>RandomSamples.weightedSample(Collection, ToDoubleFunction, int, RandomGenerator)</code></a> does.</div>
 </div>
 </div>
 </div>
@@ -391,6 +398,24 @@ times.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>count</code> - the selector of the number of entries</dd>
+<dt>Returns:</dt>
+<dd>this builder</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="withoutRepeats()">
+<h3>withoutRepeats</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="RandomTable.Builder.html" title="class in be.imgn.gaia.core.random">RandomTable.Builder</a>&lt;<a href="#type-param-T" title="type parameter in RandomTable.Builder">T</a>&gt;</span>&nbsp;<span class="element-name">withoutRepeats</span>()</div>
+<div class="block">Makes a draw select each weighted entry at most once: the entries are selected one after the other, each time
+by weight among those that are left, as <a href="RandomSamples.html#weightedSample(java.util.Collection,java.util.function.ToDoubleFunction,int,java.util.random.RandomGenerator)"><code>RandomSamples.weightedSample(Collection, ToDoubleFunction, int, RandomGenerator)</code></a> does. A draw that asks for more
+entries than have a positive weight selects them all.
+
+<p>The same element may still come up several times, from entries that give the same element or from another
+table.</div>
+<dl class="notes">
 <dt>Returns:</dt>
 <dd>this builder</dd>
 </dl>
