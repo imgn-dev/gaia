@@ -29,6 +29,32 @@ ticker.advance(Duration.ofSeconds(2));
 assertThat(stopwatch.elapsed()).isEqualTo(Duration.ofSeconds(2));
 ```
 
+### Randomness
+
+[`FakeRandom`](api:be.imgn.gaia.core.testing.FakeRandom) is a `RandomGenerator` that gives the numbers a test
+scripted, in order, so that tests of code that uses [dice](core.md#dice) or [random selection](core.md#random-selection)
+are exact:
+
+```java
+var random = new FakeRandom().addFaces(6, 1, 4, 4);
+var rolled = DiceExpression.parse("4d6dl1").roll(random);
+assertThat(rolled.value()).isEqualTo(14);
+assertThat(random.isExhausted()).isTrue();
+```
+
+`add` scripts exact values, each for the calls that return its type: `int` values for `nextInt`, `long` values for
+`nextLong`, `double` values for `nextDouble()` and `boolean` values for `nextBoolean()`. `addFaces` scripts the faces
+that dice show. `addFractions` scripts numbers that fit any call, as the value at that fraction of what the call may
+return, which is how to drive a weighted `RandomSelector`:
+
+```java
+var rarity = RandomSelector.weighted(Maps.map("rare", 1, "common", 3));
+assertThat(rarity.next(new FakeRandom().addFractions(0.1))).isEqualTo("rare");
+```
+
+A call fails with `IllegalStateException` when no number is left, when the next one is of another type, or when it's
+out of the bounds of the call: the code under test doesn't use randomness as the test expects.
+
 ### Platforms
 
 Code that receives a [`Platform`](core.md#platform) can be tested on any operating system, whatever the one the tests run
