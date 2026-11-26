@@ -1,0 +1,249 @@
+package be.imgn.gaia.core.random;
+
+import static java.util.Objects.requireNonNull;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.random.RandomGenerator;
+import org.jspecify.annotations.Nullable;
+
+/**
+ * A dice expression, such as {@code 4d6dl1} or {@code (1d20:critical>=20:miss=1)+STR+BONUS>=AC}: a tree of
+ * {@link DiceNode}s that is parsed from a text, inspected, rolled, and whose chances are computed exactly.
+ *
+ * <pre>{@code
+ * var attack = DiceExpression.parse("(1d20:critical>=20:miss=1)+STR+BONUS>=AC");
+ * attack.variables();                           // [STR, BONUS, AC]
+ *
+ * var bound = attack.bind(Map.of("STR", 3, "BONUS", 2, "AC", 15));
+ * var rolled = bound.roll(random);
+ * rolled.value();                               // 1 if the attack hits, 0 if it misses
+ * rolled.tags();                                // [critical] if the die shows 20
+ *
+ * var chances = bound.chances();
+ * chances.of(1);                                // 11/20
+ * chances.tagged("critical");                   // 1/20
+ * }</pre>
+ *
+ * <h2>Syntax</h2>
+ *
+ * <p>From the lowest precedence to the highest:
+ *
+ * <ul>
+ *   <li>one comparison, {@code = != < <= > >=}, which evaluates to 1 if it holds and to 0 if not;
+ *   <li>{@code + -}, then {@code * /}, from left to right; a division is rounded down;
+ *   <li>a unary {@code -};
+ *   <li>dice, {@code 3d6}: a count, which is 1 if omitted, {@code d}, a number of sides or {@code %} for 100, then
+ *       optionally which dice count in the sum: {@code kh2} keeps the two highest, {@code kl2} the two lowest,
+ *       {@code dh2} drops the two highest and {@code dl2} the two lowest;
+ *   <li>a whole number, a variable, whose name is made of upper-case letters, digits and underscores, or a group
+ *       between parentheses.
+ * </ul>
+ *
+ * <p>A group may end with tags, each made of a colon and a name, optionally followed by a comparison operator and a
+ * value: {@code (1d20:attack:critical>=20)}. A tag with no condition always applies; the other ones apply when the
+ * value of the group satisfies the condition. Spaces are allowed anywhere but inside dice.
+ *
+ * <h2>Inspection</h2>
+ *
+ * <p>{@link #node()} is the root of the tree, to walk from the top with a {@code switch} over the records of
+ * {@link DiceNode}. {@link #fold(Function)} walks it from the bottom instead: the function is given each node with its
+ * children already replaced by what it returned for them. Everything else this class does is built on it.
+ *
+ * <pre>{@code
+ * int dice = expression.<Integer>fold(node -> switch (node) {
+ *     case DiceNode.Dice<Integer> d -> 1;
+ *     default -> node.children().stream().mapToInt(Integer::intValue).sum();
+ * });
+ * }</pre>
+ *
+ * <p>Expressions are immutable, and equal when their trees are.
+ *
+ * @since 0.2.0
+ */
+public final class DiceExpression {
+
+    private final DiceNode<DiceExpression> node;
+
+    private DiceExpression(DiceNode<DiceExpression> node) {
+        this.node = requireNonNull(node, "node");
+    }
+
+    /**
+     * Parses a dice expression.
+     *
+     * @param text the text to parse
+     * @return the expression
+     * @throws DiceParseException if {@code text} isn't a dice expression
+     */
+    public static DiceExpression parse(String text) {
+        return new DiceParser(text).parse();
+    }
+
+    /**
+     * Returns the expression whose root is a given node.
+     *
+     * @param node the root of the expression
+     * @return the expression whose root is a given node
+     */
+    public static DiceExpression of(DiceNode<DiceExpression> node) {
+        return new DiceExpression(node);
+    }
+
+    /**
+     * Returns the root of this expression, whose children are expressions.
+     *
+     * @return the root of this expression, whose children are expressions
+     */
+    public DiceNode<DiceExpression> node() {
+        return node;
+    }
+
+    /**
+     * Reduces this expression to one value, from the leaves to the root: the function is applied to each node, whose
+     * children are what the function returned for them.
+     *
+     * @param function the function to apply to each node
+     * @param <R> the type of the result
+     * @return what the function returned for the root
+     */
+    public <R> R fold(Function<? super DiceNode<R>, ? extends R> function) {
+        requireNonNull(function, "function");
+        return function.apply(node.<R>map(child -> child.fold(function)));
+    }
+
+    /**
+     * Returns the names of the variables that have no value, in the order they first appear.
+     *
+     * @return the names of the variables that have no value, in the order they first appear
+     */
+    public Set<String> variables() {
+        Set<String> variables = this.<Set<String>>fold(node -> {
+            var names = new LinkedHashSet<String>();
+            if (node instanceof DiceNode.Variable<Set<String>> variable) {
+                names.add(variable.name());
+            }
+            node.children().forEach(names::addAll);
+            return names;
+        });
+        return Collections.unmodifiableSet(variables);
+    }
+
+    /**
+     * Returns this expression with a value given to a variable. Other variables are left as they are, and so is this
+     * expression if it doesn't have that variable.
+     *
+     * @param name the name of the variable
+     * @param value the value of the variable
+     * @return this expression with a value given to a variable
+     */
+    public DiceExpression bind(String name, int value) {
+        return bind(name, of(new DiceNode.Constant<>(value)));
+    }
+
+    /**
+     * Returns this expression with a variable standing for another expression, which is evaluated again for each
+     * occurrence of the variable: dice in it are rolled once per occurrence.
+     *
+     * @param name the name of the variable
+     * @param value what the variable stands for
+     * @return this expression with a variable standing for another expression, which is evaluated again for each
+     *     occurrence of the variable: dice in it are rolled once per occurrence
+     */
+    public DiceExpression bind(String name, DiceExpression value) {
+        requireNonNull(name, "name");
+        requireNonNull(value, "value");
+        return bind(variable -> variable.equals(name) ? value : null);
+    }
+
+    /**
+     * Returns this expression with values given to variables. Other variables are left as they are, and names that
+     * aren't variables of this expression are ignored.
+     *
+     * @param values the values of the variables, by name
+     * @return this expression with values given to variables
+     */
+    public DiceExpression bind(Map<String, Integer> values) {
+        var copy = Map.copyOf(values);
+        return bind(variable -> {
+            var value = copy.get(variable);
+            return value == null ? null : of(new DiceNode.Constant<>(value));
+        });
+    }
+
+    private DiceExpression bind(Function<String, @Nullable DiceExpression> values) {
+        return this.<DiceExpression>fold(node -> {
+            if (node instanceof DiceNode.Variable<DiceExpression> variable) {
+                var value = values.apply(variable.name());
+                if (value != null) {
+                    return of(new DiceNode.Bound<>(variable.name(), value));
+                }
+            }
+            return of(node);
+        });
+    }
+
+    /**
+     * Rolls the dice of this expression, from left to right, and evaluates it.
+     *
+     * @param random the source of randomness
+     * @return the tree of what each node evaluated to
+     * @throws UnresolvedVariableException if a variable has no value
+     * @throws ArithmeticException if a value overflows an {@code int}, on a division by zero, or if a number of dice is
+     *     negative or more than 10,000, or a number of sides less than one
+     */
+    public RolledExpression roll(RandomGenerator random) {
+        requireNonNull(random, "random");
+        checkResolved();
+        return this.<RolledExpression>fold(node -> Rolls.roll(node, random));
+    }
+
+    /**
+     * Computes the exact chances of each outcome of this expression, without rolling.
+     *
+     * <p>Dice that are kept or dropped aren't enumerated roll by roll: their faces are taken one at a time, counting
+     * the ways for each number of dice to show that face.
+     *
+     * @return the chances of each outcome
+     * @throws UnresolvedVariableException if a variable has no value
+     * @throws ArithmeticException if a value overflows an {@code int}, on a division by zero, if a number of dice is
+     *     negative or more than 10,000, or a number of sides less than one, or if some dice have more than 1,000,000
+     *     sides in total
+     */
+    public Chances chances() {
+        checkResolved();
+        return new Chances(this.<Distribution>fold(Distribution::of));
+    }
+
+    private void checkResolved() {
+        var variables = variables();
+        if (!variables.isEmpty()) {
+            throw new UnresolvedVariableException(variables);
+        }
+    }
+
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return object instanceof DiceExpression other && node.equals(other.node);
+    }
+
+    @Override
+    public int hashCode() {
+        return node.hashCode();
+    }
+
+    /**
+     * Returns this expression as a text that {@link #parse(String)} reads back to an expression with the same meaning.
+     * Spaces are lost, an omitted count is written as {@code 1}, {@code d%} as {@code d100}, and a variable that was
+     * given a value is written as its name.
+     *
+     * @return this expression as a text that {@link #parse(String)} reads back to an expression with the same meaning
+     */
+    @Override
+    public String toString() {
+        return this.<Rendering.Rendered>fold(Rendering::render).text();
+    }
+}

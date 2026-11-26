@@ -1,8 +1,8 @@
 # Core
 
 `gaia-core` extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
-system properties, the [platform](#platform) the JVM runs on, text, [versions](#versions) and time. It also has an
-[event bus](event-bus.md).
+system properties, the [platform](#platform) the JVM runs on, text, math, [dice](#dice), [versions](#versions) and
+time. It also has an [event bus](event-bus.md).
 
 ```xml
 <dependency>
@@ -320,6 +320,91 @@ LongMath.isPrime(Long.MAX_VALUE - 24);          // true
 
 A result that doesn't fit throws `ArithmeticException`, except from `pow`, which wraps around, and the `saturated`
 methods, which return the closest value that fits.
+
+[`IntFraction`](api:be.imgn.gaia.core.math.IntFraction) is an exact fraction of two `int` values, kept in lowest terms
+with a positive denominator, so that equal values are equal objects:
+
+```java
+var half = IntFraction.of(2, 4);            // 1/2
+half.plus(IntFraction.of(1, 3));            // 5/6
+half.times(IntFraction.of(-4));             // -2
+half.compareTo(IntFraction.of(3, 5)) < 0;   // true
+half.doubleValue();                         // 0.5
+```
+
+Intermediate results are computed on `long` values; a result that doesn't fit once reduced throws
+`ArithmeticException`.
+
+## Dice
+
+[`DiceExpression`](api:be.imgn.gaia.core.random.DiceExpression) parses dice expressions, rolls them, and computes
+the exact chances of their outcomes:
+
+```java
+var attack = DiceExpression.parse("(1d20:critical>=20:miss=1)+STR+BONUS>=AC");
+attack.variables();                             // [STR, BONUS, AC]
+
+var bound = attack.bind(Map.of("STR", 3, "BONUS", 2, "AC", 15));
+var rolled = bound.roll(random);
+rolled.value();                                 // 1 if the attack hits, 0 if it misses
+rolled.tags();                                  // [critical] if the die shows 20
+rolled.toString();                              // "(1d20[20]:critical)+STR[3]+BONUS[2]>=AC[15] = 1"
+
+var chances = bound.chances();
+chances.of(1);                                  // 11/20
+chances.tagged("critical");                     // 1/20
+```
+
+An expression is made of whole numbers, variables in upper case, `+ - * /` with a division that rounds down, a
+unary `-`, one comparison among `= != < <= > >=`, which evaluates to 1 or 0, and parentheses. Dice are a count, `d`
+and a number of sides, or `%` for 100, optionally followed by the dice that count in the sum: `2d20kh1` keeps the
+highest die, `2d20kl1` the lowest, and `4d6dl1` and `4d6dh1` drop the lowest and the highest. A group between
+parentheses may end with tags, such as `:fire`, which always applies, or `:critical>=20`, which applies when the
+value of the group satisfies the condition.
+
+`roll` and `chances` throw
+[`UnresolvedVariableException`](api:be.imgn.gaia.core.random.UnresolvedVariableException) until every variable has a
+value. `bind` returns a new expression, in which the variable is still written as its name, and may give a variable
+another expression as its value.
+
+An expression is a tree of [`DiceNode`](api:be.imgn.gaia.core.random.DiceNode) records. `node()` returns its root,
+and `fold` reduces the tree from its leaves: the function is given each node with its children already replaced by
+what it returned for them, and tells the nodes apart with a `switch`:
+
+```java
+int dice = expression.<Integer>fold(node -> switch (node) {
+    case DiceNode.Dice<Integer> d -> 1;
+    default -> node.children().stream().mapToInt(Integer::intValue).sum();
+});
+```
+
+`toString`, `variables`, `bind`, `roll` and `chances` are all folds.
+[`RolledExpression`](api:be.imgn.gaia.core.random.RolledExpression), which `roll` returns, is inspected the same
+way, as a tree of [`RolledNode`](api:be.imgn.gaia.core.random.RolledNode) records that hold the value of each node,
+the face of each die and whether it was kept, and the tags that apply:
+
+```java
+List<Integer> faces = rolled.<List<Integer>>fold(node -> switch (node) {
+    case RolledNode.Dice<List<Integer>> d -> d.dice().stream().map(RolledNode.Die::face).toList();
+    default -> node.children().stream().flatMap(List::stream).toList();
+});
+```
+
+[`Chances`](api:be.imgn.gaia.core.random.Chances) counts the outcomes exactly, values and tags together, and returns
+`IntFraction`s:
+
+```java
+var chances = DiceExpression.parse("(2d20kh1:critical>=20)+5").chances();
+chances.of(25);                                 // 39/400
+chances.atLeast(15);                            // 319/400
+chances.mean();                                 // 753/40
+chances.where(outcome -> outcome.value() >= 15 && !outcome.tags().contains("critical"));   // 7/10
+```
+
+Dice that are kept or dropped aren't enumerated roll by roll: their faces are taken one at a time, counting the ways
+for each number of dice to show that face, so `30d20kh3` is counted at once. The counts are whole numbers of any
+size, but a chance is an `IntFraction`: asking for one that doesn't fit once reduced, such as a single outcome of
+`15d20`, throws `ArithmeticException`.
 
 ## Versions
 
