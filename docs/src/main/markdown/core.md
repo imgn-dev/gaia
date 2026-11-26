@@ -338,6 +338,11 @@ Intermediate results are computed on `long` values; a result that doesn't fit on
 to the other ones, with `toBigFraction()` or `toIntFractionExact()` for instance, and `BigFraction.of(0.1)` is the
 fraction that a `double` is exactly.
 
+The three extend [`Fraction`](api:be.imgn.gaia.core.math.Fraction), a sealed `Number` with what they have in common
+whatever their size: fractions of any class compare by value and convert to one another. Arithmetic stays on each
+class, between fractions of that class, and fractions of different classes are never equal, as an `Integer` never
+equals a `Long`.
+
 ## Random selection
 
 [`RandomSelector`](api:be.imgn.gaia.core.random.RandomSelector) selects an element at random, uniformly or by weight,
@@ -390,7 +395,8 @@ Multiset<Item> drawn = chest.draw(random);      // such as [key, gold x 57, ruby
 ```
 
 A quantity or a number of draws is fixed, or a `RandomSelector<Integer>`, such as a [dice expression](#dice) with
-`DiceExpression.parse("2d6").selector()`. Tables are immutable and only refer to tables built before them, so they
+`DiceExpression.parse("2d6").selector()`. With `withoutRepeats()`, a draw selects each weighted entry at most once,
+as for the ten different commons of a booster of cards: `.draws(10).withoutRepeats()`. Tables are immutable and only refer to tables built before them, so they
 never refer to each other in a circle.
 
 ### Chances

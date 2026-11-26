@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.random.RandomGenerator;
+import java.util.stream.IntStream;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -54,11 +56,18 @@ public final class RandomTable<T> {
     private final @Nullable RandomSelector<Entry<T>> selector;
     private final RandomSelector<Integer> draws;
 
-    private RandomTable(
-            List<Entry<T>> always, @Nullable RandomSelector<Entry<T>> selector, RandomSelector<Integer> draws) {
-        this.always = always;
+    // The weighted entries and their weights, for draws without repeats.
+    private final List<Entry<T>> entries;
+    private final double[] weights;
+    private final boolean withoutRepeats;
+
+    private RandomTable(Builder<T> builder, @Nullable RandomSelector<Entry<T>> selector) {
+        this.always = List.copyOf(builder.always);
         this.selector = selector;
-        this.draws = draws;
+        this.draws = builder.draws;
+        this.entries = List.copyOf(builder.entries);
+        this.weights = builder.weights.stream().mapToDouble(Double::doubleValue).toArray();
+        this.withoutRepeats = builder.withoutRepeats;
     }
 
     /**
@@ -111,19 +120,22 @@ public final class RandomTable<T> {
     private Map<Multiset<T>, BigFraction> distribution() {
         Map<Multiset<T>, BigFraction> result = Map.of(Multisets.multiset(), BigFraction.ONE);
         for (var entry : always) {
-            result = sum(result, distribution(entry));
+            result = sum(result, entryDistribution(entry));
         }
         if (selector == null) {
             return result;
+        }
+        var counts = new TreeMap<>(counts(draws, "number of draws"));
+        if (withoutRepeats) {
+            return sum(result, withoutRepeats(counts));
         }
         // What one weighted entry gives.
         var once = new LinkedHashMap<Multiset<T>, BigFraction>();
         selector.chances()
                 .exactOutcomes()
-                .forEach((entry, chance) -> distribution(entry)
+                .forEach((entry, chance) -> entryDistribution(entry)
                         .forEach((drawn, share) -> once.merge(drawn, chance.times(share), BigFraction::plus)));
         // What each number of them gives, weighted by the chance of that number.
-        var counts = new TreeMap<>(counts(draws, "number of draws"));
         var weighted = new LinkedHashMap<Multiset<T>, BigFraction>();
         Map<Multiset<T>, BigFraction> drawn = Map.of(Multisets.multiset(), BigFraction.ONE);
         for (int count = 0; count <= counts.lastKey(); count++) {
@@ -138,7 +150,78 @@ public final class RandomTable<T> {
         return sum(result, weighted);
     }
 
-    private Map<Multiset<T>, BigFraction> distribution(Entry<T> entry) {
+    /**
+     * What the weighted entries give when none is selected twice: the chance of each set of entries, from the chances
+     * of the sets with one entry less, then what the entries of each set give together.
+     */
+    private Map<Multiset<T>, BigFraction> withoutRepeats(SortedMap<Integer, BigFraction> counts) {
+        var selectable = new ArrayList<Map<Multiset<T>, BigFraction>>();
+        var shares = new ArrayList<BigFraction>();
+        for (int i = 0; i < weights.length; i++) {
+            if (weights[i] > 0) {
+                selectable.add(entryDistribution(entries.get(i)));
+                shares.add(BigFraction.of(weights[i]));
+            }
+        }
+        if (selectable.size() >= Long.SIZE) {
+            throw new UnsupportedOperationException("Too many entries to count the draws without repeats");
+        }
+        int last = Math.min(counts.lastKey(), selectable.size());
+        var result = new LinkedHashMap<Multiset<T>, BigFraction>();
+        // The sets of selected entries, each a bit per entry, with their chances.
+        Map<Long, BigFraction> sets = Map.of(0L, BigFraction.ONE);
+        for (int selected = 0; selected <= last; selected++) {
+            // A number of draws past the number of entries selects them all.
+            var chance = BigFraction.ZERO;
+            for (var count : counts.entrySet()) {
+                if (Math.min(count.getKey(), selectable.size()) == selected) {
+                    chance = chance.plus(count.getValue());
+                }
+            }
+            if (chance.signum() > 0) {
+                for (var set : sets.entrySet()) {
+                    var setChance = chance.times(set.getValue());
+                    together(set.getKey(), selectable)
+                            .forEach((drawn, share) -> result.merge(drawn, setChance.times(share), BigFraction::plus));
+                }
+            }
+            sets = withOneMore(sets, shares);
+        }
+        return result;
+    }
+
+    /** What the entries of a set give together. */
+    private static <T> Map<Multiset<T>, BigFraction> together(
+            long set, List<Map<Multiset<T>, BigFraction>> selectable) {
+        Map<Multiset<T>, BigFraction> drawn = Map.of(Multisets.multiset(), BigFraction.ONE);
+        for (int i = 0; i < selectable.size(); i++) {
+            if ((set >> i & 1) != 0) {
+                drawn = sum(drawn, selectable.get(i));
+            }
+        }
+        return drawn;
+    }
+
+    /** The chances of the sets made by selecting one more entry, by weight among those that aren't in a set. */
+    private static Map<Long, BigFraction> withOneMore(Map<Long, BigFraction> sets, List<BigFraction> shares) {
+        var next = new LinkedHashMap<Long, BigFraction>();
+        sets.forEach((set, chance) -> {
+            var left = BigFraction.ZERO;
+            for (int i = 0; i < shares.size(); i++) {
+                if ((set >> i & 1) == 0) {
+                    left = left.plus(shares.get(i));
+                }
+            }
+            for (int i = 0; i < shares.size(); i++) {
+                if ((set >> i & 1) == 0) {
+                    next.merge(set | 1L << i, chance.times(shares.get(i)).dividedBy(left), BigFraction::plus);
+                }
+            }
+        });
+        return next;
+    }
+
+    private Map<Multiset<T>, BigFraction> entryDistribution(Entry<T> entry) {
         return switch (entry) {
             case Entry.Element<T> element -> {
                 var result = new LinkedHashMap<Multiset<T>, BigFraction>();
@@ -184,8 +267,15 @@ public final class RandomTable<T> {
         }
         if (selector != null) {
             int count = count(draws, random, "number of draws");
-            for (int i = 0; i < count; i++) {
-                add(selector.next(random), drawn, random);
+            if (withoutRepeats) {
+                var indexes = IntStream.range(0, weights.length).boxed().toList();
+                for (int index : RandomSamples.weightedSample(indexes, i -> weights[i], count, random)) {
+                    add(entries.get(index), drawn, random);
+                }
+            } else {
+                for (int i = 0; i < count; i++) {
+                    add(selector.next(random), drawn, random);
+                }
             }
         }
     }
@@ -219,6 +309,7 @@ public final class RandomTable<T> {
         private final List<Entry<T>> entries = new ArrayList<>();
         private final List<Double> weights = new ArrayList<>();
         private RandomSelector<Integer> draws = ONCE;
+        private boolean withoutRepeats;
 
         private Builder() {}
 
@@ -355,6 +446,21 @@ public final class RandomTable<T> {
         }
 
         /**
+         * Makes a draw select each weighted entry at most once: the entries are selected one after the other, each time
+         * by weight among those that are left, as {@link RandomSamples#weightedSample} does. A draw that asks for more
+         * entries than have a positive weight selects them all.
+         *
+         * <p>The same element may still come up several times, from entries that give the same element or from another
+         * table.
+         *
+         * @return this builder
+         */
+        public Builder<T> withoutRepeats() {
+            withoutRepeats = true;
+            return this;
+        }
+
+        /**
          * Builds the table. Entries added to this builder afterwards don't change it.
          *
          * @return the table
@@ -366,7 +472,7 @@ public final class RandomTable<T> {
                     : Selectors.weighted(
                             List.copyOf(entries),
                             weights.stream().mapToDouble(Double::doubleValue).toArray());
-            return new RandomTable<>(List.copyOf(always), selector, draws);
+            return new RandomTable<>(this, selector);
         }
 
         private Builder<T> addEntry(double weight, Entry<T> entry) {

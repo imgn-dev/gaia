@@ -214,6 +214,52 @@ class ChancesTest {
     }
 
     @Test
+    void tablesCountDrawsWithoutRepeats() {
+        var table = RandomTable.<String>builder()
+                .add(2, "a")
+                .add(1, "b")
+                .add(1, "c")
+                .add(0, "never")
+                .draws(2)
+                .withoutRepeats()
+                .build();
+
+        var chances = table.chances();
+
+        assertThat(chances.of(Multisets.multiset("a", "b"))).isEqualTo(IntFraction.of(5, 12));
+        assertThat(chances.of(Multisets.multiset("a", "c"))).isEqualTo(IntFraction.of(5, 12));
+        assertThat(chances.of(Multisets.multiset("b", "c"))).isEqualTo(IntFraction.of(1, 6));
+        assertThat(chances.outcomes()).hasSize(3);
+    }
+
+    @Test
+    void tablesCountDrawsWithoutRepeatsOfAnyNumber() {
+        var table = RandomTable.<String>builder()
+                .add(3, "a", DiceExpression.parse("1d2").selector())
+                .add(1, "b")
+                .addNothing(1)
+                .draws(DiceExpression.parse("1d4-1").selector())
+                .withoutRepeats()
+                .build();
+        var chances = table.chances();
+        var random = new SplittableRandom(5);
+        var counts = new HashMap<Multiset<String>, Integer>();
+        int draws = 300_000;
+
+        for (int i = 0; i < draws; i++) {
+            counts.merge(table.draw(random), 1, Integer::sum);
+        }
+
+        assertThat(chances.where(drawn -> true)).isEqualTo(IntFraction.ONE);
+        // No draw a quarter of the time, and nothing one time in five of the quarter with one draw.
+        assertThat(chances.of(Multisets.multiset()))
+                .isEqualTo(IntFraction.of(1, 4).plus(IntFraction.of(1, 20)));
+        assertThat(counts.keySet()).isEqualTo(chances.outcomes().keySet());
+        counts.forEach((drawn, count) ->
+                assertThat((double) count / draws).isCloseTo(chances.of(drawn).doubleValue(), within(0.005)));
+    }
+
+    @Test
     void tablesNeedSelectorsThatKnowTheirChances() {
         var table = RandomTable.<String>builder()
                 .add(1, "gold", random -> random.nextInt(10))

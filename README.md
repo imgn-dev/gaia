@@ -96,7 +96,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`random.RandomSelector`**: selects an element at random with a `RandomGenerator`, uniformly or by weight, in
   constant time whatever the number of elements. Selectors combine with `map` and `flatten`.
 - **`random.RandomTable`**: draws a `Multiset` of elements at once, from entries that are always given and from
-  weighted entries, each an element in a fixed or random quantity, another table, or nothing.
+  weighted entries, each an element in a fixed or random quantity, another table, or nothing. A draw may select
+  each entry at most once.
 - **`random.MutableRandomSelector`**: a weighted selector whose elements and weights change, in logarithmic time.
 - **`random.RandomBag`** and **`random.RandomSamples`**: elements drawn without being put back, from a bag that can
   be refilled, or as a sample of a collection or of a stream of any length, uniformly or by weight.

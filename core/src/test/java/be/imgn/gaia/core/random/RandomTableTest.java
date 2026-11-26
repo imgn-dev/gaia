@@ -117,6 +117,60 @@ class RandomTableTest {
     }
 
     @Test
+    void drawsWithoutRepeatsSelectEachEntryOnce() {
+        var table = RandomTable.<String>builder()
+                .add(5, "a")
+                .add(3, "b")
+                .add(1, "c")
+                .add(1, "d")
+                .add(0, "never")
+                .draws(3)
+                .withoutRepeats()
+                .build();
+        var random = new SplittableRandom(2);
+
+        for (int i = 0; i < 1_000; i++) {
+            var drawn = table.draw(random);
+            assertThat(drawn).hasSize(3).doesNotContain("never");
+            assertThat(drawn.elementSet()).hasSize(3);
+        }
+    }
+
+    @Test
+    void drawsWithoutRepeatsStopWhenEveryEntryIsSelected() {
+        var table = RandomTable.<String>builder()
+                .add(2, "a")
+                .add(1, "b", 2)
+                .add(0, "never")
+                .draws(5)
+                .withoutRepeats()
+                .build();
+
+        assertThat(table.draw(new SplittableRandom(3))).isEqualTo(Multisets.multiset("a", "b", "b"));
+    }
+
+    @Test
+    void drawsWithoutRepeatsSelectByWeightAmongTheEntriesLeft() {
+        var table = RandomTable.<String>builder()
+                .add(2, "a")
+                .add(1, "b")
+                .add(1, "c")
+                .draws(2)
+                .withoutRepeats()
+                .build();
+        var random = new SplittableRandom(4);
+        int draws = 200_000;
+        int withoutA = 0;
+
+        for (int i = 0; i < draws; i++) {
+            withoutA += table.draw(random).contains("a") ? 0 : 1;
+        }
+
+        // "b" then "c", or "c" then "b": twice a quarter, then one in three.
+        assertThat((double) withoutA / draws).isCloseTo(1.0 / 6, within(0.005));
+    }
+
+    @Test
     void aBuiltTableDoesNotChangeWithItsBuilder() {
         var builder = RandomTable.<String>builder().always("a");
         var table = builder.build();
