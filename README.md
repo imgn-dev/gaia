@@ -410,6 +410,13 @@ The same module measures the `gaia-fast` collections: `IntIntMapBenchmark` runs 
 ./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="IntIntMapBenchmark|HashMapBenchmark"
 ```
 
+`RandomSelectorBenchmark` measures uniform and weighted selections of `RandomSelector`, among 4, 1,000 and 1,000,000
+elements:
+
+```sh
+./mvnw -pl benchmarks -am package exec:exec -DskipTests -Djmh.args="RandomSelectorBenchmark"
+```
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).
