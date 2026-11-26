@@ -119,8 +119,15 @@ chances.tagged("critical");                   // 1/20
   <li><code>+ -</code>, then <code>* /</code>, from left to right; a division is rounded down;
   <li>a unary <code>-</code>;
   <li>dice, <code>3d6</code>: a count, which is 1 if omitted, <code>d</code>, a number of sides or <code>%</code> for 100, then
-      optionally which dice count in the sum: <code>kh2</code> keeps the two highest, <code>kl2</code> the two lowest,
-      <code>dh2</code> drops the two highest and <code>dl2</code> the two lowest;
+      optionally, in this order:
+      <ul>
+        <li>which dice are rolled again: <code>r&lt;=2</code> rerolls once a die that shows 2 or less, and keeps its new face
+            whatever it is; <code>rr&lt;=2</code> rerolls it until it shows more; <code>r</code> alone is <code>r=1</code>;
+        <li>which dice explode, that is, add another die that may explode too, up to ten times for one die: <code>x</code>
+            on the highest face, <code>x&gt;=5</code> on 5 or more;
+        <li>which dice count in the sum: <code>kh2</code> keeps the two highest, <code>kl2</code> the two lowest, <code>dh2</code>
+            drops the two highest and <code>dl2</code> the two lowest;
+      </ul>
   <li>a whole number, a variable, whose name is made of upper-case letters, digits and underscores, or a group
       between parentheses.
 </ul>
@@ -137,7 +144,9 @@ relation   := '=' | '!=' | '&lt;' | '&lt;=' | '&gt;' | '&gt;='
 sum        := product (('+' | '-') product)*
 product    := unary (('*' | '/') unary)*
 unary      := '-' unary | dice
-dice       := primary? 'd' (primary | '%') keep? | primary
+dice       := primary? 'd' (primary | '%') reroll? explode? keep? | primary
+reroll     := ('r' | 'rr') (relation number)?
+explode    := 'x' (relation number)?
 keep       := ('kh' | 'kl' | 'dh' | 'dl') number
 primary    := number | variable | group
 group      := '(' expression tag* ')'
@@ -147,8 +156,9 @@ variable   := [A-Z_] [A-Z0-9_]*
 name       := [A-Za-z_] [A-Za-z0-9_]*
 </code></pre>
 
-<p>A number is at most <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html#MAX_VALUE" title="class or interface in java.lang" class="external-link"><code>Integer.MAX_VALUE</code></a>. The parts of <code>dice</code> and of <code>keep</code> follow each other
-with no space in between.
+<p>A number is at most <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html#MAX_VALUE" title="class or interface in java.lang" class="external-link"><code>Integer.MAX_VALUE</code></a>. The parts of <code>dice</code> follow each other with no space in
+between, down to the condition of a reroll or of an explosion: <code>1d6x&gt;=5</code> explodes on 5 or more, while
+<code>1d6x &gt;=5</code> compares dice that explode on a 6 with 5.
 
 <h2 id="inspection-heading">Inspection</h2>
 
@@ -436,9 +446,10 @@ evaluated again for each of them: dice in it are rolled once per occurrence.
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="RolledExpression.html" title="class in be.imgn.gaia.core.random.dice">RolledExpression</a></span>&nbsp;<span class="element-name">roll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</span></div>
 <div class="block">Rolls the dice of this expression, from left to right, and evaluates it.
 
-<p>Each die calls <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html#nextInt(int)" title="class or interface in java.util.random" class="external-link"><code>nextInt(sides)</code></a> once, and shows that number plus one. The
-dice of a count and of a number of sides are rolled before the dice they count, and those of a group before those
-of the conditions of its tags. Nothing else uses the source of randomness.</div>
+<p>Each die calls <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html#nextInt(int)" title="class or interface in java.util.random" class="external-link"><code>nextInt(sides)</code></a> once, and shows that number plus one. A die
+that is rerolled calls it again right away, and a die that explodes is followed by the one it adds. The dice of a
+count and of a number of sides are rolled before the dice they count, and those of a group before those of the
+conditions of its tags. Nothing else uses the source of randomness.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>random</code> - the source of randomness</dd>
@@ -460,7 +471,8 @@ of the conditions of its tags. Nothing else uses the source of randomness.</div>
 <div class="block">Computes the exact chances of each outcome of this expression, without rolling.
 
 <p>Dice that are kept or dropped aren't enumerated roll by roll: their faces are taken one at a time, counting
-the ways for each number of dice to show that face.</div>
+the ways for each number of dice to show that face. A die that is rerolled is counted as a die whose faces aren't
+equally likely, and a die that explodes as the sum of the dice it may add.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the chances of each outcome</dd>
@@ -469,6 +481,7 @@ the ways for each number of dice to show that face.</div>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArithmeticException.html" title="class or interface in java.lang" class="external-link">ArithmeticException</a></code> - if a value overflows an <code>int</code>, on a division by zero, if a number of dice is
     negative or more than 10,000, or a number of sides less than one, or if some dice have more than 1,000,000
     sides in total</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - if some dice both explode and have dice kept or dropped</dd>
 </dl>
 </div>
 </section>

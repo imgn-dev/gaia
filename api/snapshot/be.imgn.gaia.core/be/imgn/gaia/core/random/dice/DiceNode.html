@@ -139,32 +139,44 @@ over the permitted records tells the nodes apart:
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="DiceNode.Dice.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;<a href="DiceNode.Dice.html#type-param-T" title="type parameter in DiceNode.Dice">T</a>&gt;</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>.</div>
+<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code> or <code>2d8r&lt;=2x</code>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="DiceNode.Group.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>&lt;<a href="DiceNode.Group.html#type-param-T" title="type parameter in DiceNode.Group">T</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Explode.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">A value between parentheses, with the tags it's given, such as <code>(1d20:critical&gt;=20:miss=1)</code>.</div>
+<div class="block">Which dice explode, that is, add another die that may explode too: <a href="DiceNode.Explode.html#NONE"><code>DiceNode.Explode.NONE</code></a>, those that show their
+<a href="DiceNode.Explode.html#HIGHEST"><code>DiceNode.Explode.HIGHEST</code></a> face, or those whose face satisfies a condition.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="DiceNode.Keep.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a></code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Group.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>&lt;<a href="DiceNode.Group.html#type-param-T" title="type parameter in DiceNode.Group">T</a>&gt;</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Which of the rolled dice count in the sum: <a href="DiceNode.Keep.html#ALL"><code>DiceNode.Keep.ALL</code></a> of them, or the highest or the lowest ones.</div>
+<div class="block">A value between parentheses, with the tags it's given, such as <code>(1d20:critical&gt;=20:miss=1)</code>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="DiceNode.Negate.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>&lt;<a href="DiceNode.Negate.html#type-param-T" title="type parameter in DiceNode.Negate">T</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Keep.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Which of the rolled dice count in the sum: <a href="DiceNode.Keep.html#ALL"><code>DiceNode.Keep.ALL</code></a> of them, or the highest or the lowest ones.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Negate.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>&lt;<a href="DiceNode.Negate.html#type-param-T" title="type parameter in DiceNode.Negate">T</a>&gt;</code></div>
+<div class="col-last odd-row-color">
 <div class="block">The opposite of a value, such as <code>-STR</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static enum&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="DiceNode.Operator.html" class="type-name-link" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Operator</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Operator.html" class="type-name-link" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Operator</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">An arithmetic operation.</div>
 </div>
-<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="DiceNode.Relation.html" class="type-name-link" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Relation.html" class="type-name-link" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">How two values are compared.</div>
+</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Reroll.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Which dice are rolled again: <a href="DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, or those whose face satisfies a condition, either once or until the
+face no longer does.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="DiceNode.Tag.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;<a href="DiceNode.Tag.html#type-param-T" title="type parameter in DiceNode.Tag">T</a>&gt;</code></div>

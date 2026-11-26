@@ -60,6 +60,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
 <li><a href="#%3Cinit%3E(int,boolean)" tabindex="0">Die(int, boolean)</a></li>
+<li><a href="#%3Cinit%3E(int,boolean,boolean,boolean)" tabindex="0">Die(int, boolean, boolean, boolean)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
@@ -69,6 +70,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#equals(java.lang.Object)" tabindex="0">equals(Object)</a></li>
 <li><a href="#face()" tabindex="0">face()</a></li>
 <li><a href="#kept()" tabindex="0">kept()</a></li>
+<li><a href="#rerolled()" tabindex="0">rerolled()</a></li>
+<li><a href="#exploded()" tabindex="0">exploded()</a></li>
 </ol>
 </li>
 </ol>
@@ -87,7 +90,9 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-face">face</span></code> - the face it shows</dd>
-<dd><code><span id="param-kept">kept</span></code> - whether it counts in the sum</dd>
+<dd><code><span id="param-kept">kept</span></code> - whether it counts in the sum: neither rerolled nor dropped</dd>
+<dd><code><span id="param-rerolled">rerolled</span></code> - whether it was rolled again, so that the next die replaces it</dd>
+<dd><code><span id="param-exploded">exploded</span></code> - whether it exploded, so that the next die that isn't rerolled was added by it</dd>
 </dl>
 <dl class="notes">
 <dt>Enclosing interface:</dt>
@@ -95,7 +100,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">RolledNode.Die</span>(int&nbsp;face, boolean&nbsp;kept)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">RolledNode.Die</span>(int&nbsp;face, boolean&nbsp;kept, boolean&nbsp;rerolled, boolean&nbsp;exploded)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
 <div class="block">One die that was rolled.</div>
 <dl class="notes">
@@ -117,6 +122,13 @@ loadScripts(document, 'script');</script>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,boolean)" class="member-name-link">Die</a><wbr>(int&nbsp;face,
  boolean&nbsp;kept)</code></div>
 <div class="col-last even-row-color">
+<div class="block">Creates a die that was neither rerolled nor exploded.</div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(int,boolean,boolean,boolean)" class="member-name-link">Die</a><wbr>(int&nbsp;face,
+ boolean&nbsp;kept,
+ boolean&nbsp;rerolled,
+ boolean&nbsp;exploded)</code></div>
+<div class="col-last odd-row-color">
 <div class="block">Creates an instance of a <code>Die</code> record class.</div>
 </div>
 </div>
@@ -138,20 +150,30 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#face()" class="member-name-link">face</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#exploded()" class="member-name-link">exploded</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <a href="#param-exploded"><code>exploded</code></a> record component.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#face()" class="member-name-link">face</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-face"><code>face</code></a> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#kept()" class="member-name-link">kept</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#kept()" class="member-name-link">kept</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-kept"><code>kept</code></a> record component.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#rerolled()" class="member-name-link">rerolled</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <a href="#param-rerolled"><code>rerolled</code></a> record component.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
@@ -181,11 +203,30 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Die</span><wbr><span class="parameters">(int&nbsp;face,
  boolean&nbsp;kept)</span></div>
+<div class="block">Creates a die that was neither rerolled nor exploded.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>face</code> - the face it shows</dd>
+<dd><code>kept</code> - whether it counts in the sum</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(int,boolean,boolean,boolean)">
+<h3>Die</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Die</span><wbr><span class="parameters">(int&nbsp;face,
+ boolean&nbsp;kept,
+ boolean&nbsp;rerolled,
+ boolean&nbsp;exploded)</span></div>
 <div class="block">Creates an instance of a <code>Die</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>face</code> - the value for the <a href="#param-face"><code>face</code></a> record component</dd>
 <dd><code>kept</code> - the value for the <a href="#param-kept"><code>kept</code></a> record component</dd>
+<dd><code>rerolled</code> - the value for the <a href="#param-rerolled"><code>rerolled</code></a> record component</dd>
+<dd><code>exploded</code> - the value for the <a href="#param-exploded"><code>exploded</code></a> record component</dd>
 </dl>
 </div>
 </section>
@@ -267,6 +308,32 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value of the <a href="#param-kept"><code>kept</code></a> record component</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="rerolled()">
+<h3>rerolled</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">rerolled</span>()</div>
+<div class="block">Returns the value of the <a href="#param-rerolled"><code>rerolled</code></a> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-rerolled"><code>rerolled</code></a> record component</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="exploded()">
+<h3>exploded</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">exploded</span>()</div>
+<div class="block">Returns the value of the <a href="#param-exploded"><code>exploded</code></a> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-exploded"><code>exploded</code></a> record component</dd>
 </dl>
 </div>
 </section>
