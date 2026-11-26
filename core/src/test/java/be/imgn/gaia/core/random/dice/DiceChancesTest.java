@@ -176,6 +176,11 @@ class DiceChancesTest {
                 "2d6r=1x",
                 "2d6rr<=3x>=6",
                 "(1d2)d6r=6x=5",
+                "4d6xkh3",
+                "3d6x>=5dl1",
+                "2d4r=1xkl1",
+                "3d6rr<=2xdh1",
+                "2d4x<=2kh1",
             })
     void chancesAgreeWithRolls(String text) {
         var expression = DiceExpression.parse(text);
@@ -195,9 +200,18 @@ class DiceChancesTest {
     }
 
     @Test
-    void explodingDiceOfWhichSomeAreDroppedAreNotCounted() {
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> chances("4d6xkh3"));
-        assertThat(chances("4d6x").min()).isEqualTo(4);
+    void explodingDiceOfWhichSomeAreDroppedAreCounted() {
+        var chances = chances("2d6xkh1");
+
+        // Neither die shows a six: the highest of two dice of five faces.
+        assertThat(chances.of(1)).isEqualTo(IntFraction.of(1, 36));
+        assertThat(chances.of(5)).isEqualTo(IntFraction.of(9, 36));
+        // A six comes with another die: the highest is always a six then.
+        assertThat(chances.of(6)).isEqualTo(IntFraction.of(11, 36));
+        assertThat(chances.max()).isEqualTo(6);
+        assertThat(chances.atLeast(1)).isEqualTo(IntFraction.ONE);
+        assertThat(chances("4d6xkh3").atLeast(3)).isEqualTo(IntFraction.ONE);
+        assertThat(chances("3d6xdl1").min()).isEqualTo(2);
     }
 
     @Test

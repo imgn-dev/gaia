@@ -55,7 +55,7 @@ import org.jspecify.annotations.Nullable;
  * <p>A group may end with tags, each made of a colon and a name, optionally followed by conditions, each made of a
  * comparison operator and a value: {@code (2d10:attack:tier1<=11:tier2>=12<=16:tier3>=17)}. A tag with no condition
  * always applies; the other ones apply when the value of the group satisfies all their conditions. Spaces are allowed
- * anywhere but inside dice.
+ * between any two parts, and never change what a text means.
  *
  * <p>As a grammar:
  *
@@ -77,9 +77,10 @@ import org.jspecify.annotations.Nullable;
  * name       := [A-Za-z_] [A-Za-z0-9_]*
  * }</pre>
  *
- * <p>A number is at most {@link Integer#MAX_VALUE}. The parts of {@code dice} follow each other with no space in
- * between, down to the condition of a reroll or of an explosion: {@code 1d6x>=5} explodes on 5 or more, while
- * {@code 1d6x >=5} compares dice that explode on a 6 with 5.
+ * <p>A number is at most {@link Integer#MAX_VALUE}. A comparison operator that follows {@code r}, {@code rr} or
+ * {@code x} is always the condition of that rule, and must be followed by a number: {@code 1d6x>=5} explodes on 5 or
+ * more. To compare the dice themselves, put them between parentheses, as in {@code (1d6x)>=5}; {@code 1d6x>=AC} is
+ * rejected, not guessed.
  *
  * <h2>Inspection</h2>
  *
@@ -262,14 +263,14 @@ public final class DiceExpression {
      *
      * <p>Dice that are kept or dropped aren't enumerated roll by roll: their faces are taken one at a time, counting
      * the ways for each number of dice to show that face. A die that is rerolled is counted as a die whose faces aren't
-     * equally likely, and a die that explodes as the sum of the dice it may add.
+     * equally likely. Dice that explode are counted as the sum of the dice they may add, or, when some dice are
+     * dropped, as two kinds of dice: those that show a face that explodes, and the other ones.
      *
      * @return the chances of each outcome
      * @throws UnresolvedVariableException if a variable has no value
      * @throws ArithmeticException if a value overflows an {@code int}, on a division by zero, if a number of dice is
      *     negative or more than 10,000, or a number of sides less than one, or if some dice have more than 1,000,000
      *     sides in total
-     * @throws UnsupportedOperationException if some dice both explode and have dice kept or dropped
      */
     public DiceChances chances() {
         checkResolved();

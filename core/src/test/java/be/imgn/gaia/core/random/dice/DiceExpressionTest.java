@@ -153,7 +153,6 @@ class DiceExpressionTest {
         "1d20>=10>=5, 8",
         "(1d20:), 6",
         "(1d20:9a), 6",
-        "1 d6, 2",
         "99999999999, 0",
         "1d20!5, 4",
     })
@@ -380,18 +379,46 @@ class DiceExpressionTest {
         assertThat(DiceExpression.parse("2d8rr")).hasToString("2d8rr=1");
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "4 d 6 rr <= 2 x >= 6 dl 1, 4d6rr<=2x>=6dl1",
+        "2 d6, 2d6",
+        "STR d 6 kh 1, STRd6kh1",
+        "1d6 x >= 5, 1d6x>=5",
+        "1d6x >=5, 1d6x>=5",
+        "2d8 r, 2d8r=1",
+        "2d8r < 3, 2d8r<3",
+        "d %, 1d100",
+        "( 1d6 x ) >= 5, (1d6x)>=5",
+    })
+    void spacesDoNotMatter(String text, String expected) {
+        assertThat(DiceExpression.parse(text)).hasToString(expected).isEqualTo(DiceExpression.parse(expected));
+    }
+
     @Test
-    void aConditionFollowsItsRuleWithNoSpace() {
+    void aComparisonOperatorAfterARuleIsItsCondition() {
         var exploding =
                 (DiceNode.Dice<DiceExpression>) DiceExpression.parse("1d6x>=5").node();
-        var compared = DiceExpression.parse("1d6x >=5");
 
         assertThat(exploding.explode()).isEqualTo(new Explode(Explode.Faces.MATCHING, Relation.GREATER_OR_EQUAL, 5));
+        assertThat(DiceExpression.parse("1d6x>=5>=10").node()).isInstanceOf(DiceNode.Comparison.class);
+        assertThat(DiceExpression.parse("1d6x+1>=5")).hasToString("1d6x+1>=5");
+    }
+
+    @Test
+    void comparingDiceWithABareRuleTakesParentheses() {
+        var compared = DiceExpression.parse("(1d6x)>=5");
+
         assertThat(compared.node()).isInstanceOf(DiceNode.Comparison.class);
         assertThat(compared).hasToString("(1d6x)>=5");
-        assertThat(DiceExpression.parse(compared.toString())).isEqualTo(DiceExpression.parse("(1d6x)>=5"));
-        assertThat(DiceExpression.parse("(1d20:low<=1d4x :high>=18)")).hasToString("(1d20:low<=(1d4x):high>=18)");
-        assertThat(DiceExpression.parse("1d6x+1>=5")).hasToString("1d6x+1>=5");
+        assertThat(DiceExpression.parse("(1d20:low<=(1d4x):high>=18)")).hasToString("(1d20:low<=(1d4x):high>=18)");
+        // Without them, what follows the operator must be the number of a condition.
+        assertThatExceptionOfType(DiceParseException.class)
+                .isThrownBy(() -> DiceExpression.parse("1d6x>=AC"))
+                .withMessageContaining("between parentheses");
+        assertThatExceptionOfType(DiceParseException.class)
+                .isThrownBy(() -> DiceExpression.parse("2d8r>=(1+1)"))
+                .withMessageContaining("between parentheses");
     }
 
     @Test

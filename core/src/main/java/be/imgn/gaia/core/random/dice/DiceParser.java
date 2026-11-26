@@ -43,10 +43,6 @@ final class DiceParser {
 
     private @Nullable Relation relation() {
         skipSpaces();
-        return relationHere();
-    }
-
-    private @Nullable Relation relationHere() {
         char next = index + 1 < text.length() ? text.charAt(index + 1) : END;
         Relation relation = switch (peek()) {
             case '=' -> Relation.EQUAL;
@@ -106,10 +102,12 @@ final class DiceParser {
 
     private DiceExpression dice() {
         var count = peek() == 'd' ? constant(1) : primary();
+        skipSpaces();
         if (peek() != 'd') {
             return count;
         }
         index++;
+        skipSpaces();
         DiceExpression sides;
         if (peek() == '%') {
             index++;
@@ -123,6 +121,7 @@ final class DiceParser {
     }
 
     private Reroll reroll() {
+        skipSpaces();
         if (peek() != 'r') {
             return Reroll.NONE;
         }
@@ -132,28 +131,32 @@ final class DiceParser {
             index++;
             times = Reroll.Times.ALWAYS;
         }
-        // A condition follows with no space: after a space, a comparison is of the whole dice.
-        var relation = relationHere();
+        // A comparison operator after a rule is always its condition: comparing the dice takes parentheses.
+        var relation = relation();
         return relation == null ? new Reroll(times, Relation.EQUAL, 1) : new Reroll(times, relation, conditionValue());
     }
 
     private Explode explode() {
+        skipSpaces();
         if (peek() != 'x') {
             return Explode.NONE;
         }
         index++;
-        var relation = relationHere();
+        var relation = relation();
         return relation == null ? Explode.HIGHEST : new Explode(Explode.Faces.MATCHING, relation, conditionValue());
     }
 
     private int conditionValue() {
+        skipSpaces();
         if (!isDigit(peek())) {
-            throw error("Expected a number");
+            throw error("Expected the number of the condition of a reroll or of an explosion;"
+                    + " to compare the dice instead, put them between parentheses");
         }
         return number();
     }
 
     private Keep keep() {
+        skipSpaces();
         char end = index + 1 < text.length() ? text.charAt(index + 1) : END;
         Keep.Mode mode;
         if (peek() == 'k') {
@@ -167,6 +170,7 @@ final class DiceParser {
             throw error("Expected kh, kl, dh or dl");
         }
         index += 2;
+        skipSpaces();
         if (!isDigit(peek())) {
             throw error("Expected a number");
         }

@@ -5,6 +5,9 @@ import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -35,12 +38,10 @@ final class Pools {
         var weights = weights(sides, reroll);
         var weight = Arrays.stream(weights).reduce(BigInteger.ZERO, BigInteger::add);
         if (!explode.equals(Explode.NONE)) {
-            if (!keep.equals(Keep.ALL)) {
-                throw new UnsupportedOperationException(
-                        "The chances of dice that explode and of which some are kept or dropped aren't supported");
-            }
-            return new Pool(
-                    power(chain(weights, weight, explode), count), weight.pow((Explode.MAX_EXPLOSIONS + 1) * count));
+            var ways = keep.equals(Keep.ALL)
+                    ? power(chain(weights, weight, explode), count)
+                    : new ExplodingPool(count, weights, explode, keep).ways();
+            return new Pool(ways, weight.pow((Explode.MAX_EXPLOSIONS + 1) * count));
         }
         int kept = keep.kept(count);
         if (kept == 0) {
@@ -233,6 +234,136 @@ final class Pools {
             }
         }
         return rows;
+    }
+
+    /**
+     * Counts the sums of the kept dice of a pool whose dice explode.
+     *
+     * <p>Whatever the order they were rolled in, the dice of such a pool are of two kinds: those that show a face that
+     * explodes, and those that show another face. Each die that was rolled at first brings from none to ten dice of the
+     * first kind and one of the second, or eleven of the first kind if its last added die shows a face that would have
+     * exploded. So the pool is counted for each number of dice of both kinds, as dice that only have the faces of their
+     * kind, times the number of ways for the dice rolled at first to bring those numbers.
+     */
+    private static final class ExplodingPool {
+
+        private final int count;
+        private final BigInteger[] weights;
+        private final Explode explode;
+        private final Keep keep;
+        private final int sides;
+        private final BigInteger[][] binomials;
+
+        // The faces in the order they are taken, from the end that is kept, and the weight of the faces of each
+        // kind from each position on.
+        private final int[] faces;
+        private final BigInteger[] explodingLeft;
+        private final BigInteger[] othersLeft;
+        private final Map<List<Integer>, @Nullable BigInteger[]> counted = new HashMap<>();
+
+        ExplodingPool(int count, BigInteger[] weights, Explode explode, Keep keep) {
+            this.count = count;
+            this.weights = weights;
+            this.explode = explode;
+            this.keep = keep;
+            this.sides = weights.length;
+            this.binomials = binomials((Explode.MAX_EXPLOSIONS + 1) * count);
+            this.faces = new int[sides];
+            this.explodingLeft = new BigInteger[sides + 1];
+            this.othersLeft = new BigInteger[sides + 1];
+            explodingLeft[sides] = BigInteger.ZERO;
+            othersLeft[sides] = BigInteger.ZERO;
+            for (int position = sides - 1; position >= 0; position--) {
+                int face = keep.highest() ? sides - position : position + 1;
+                boolean explodes = explode.matches(face, sides);
+                faces[position] = face;
+                explodingLeft[position] =
+                        explodingLeft[position + 1].add(explodes ? weights[face - 1] : BigInteger.ZERO);
+                othersLeft[position] = othersLeft[position + 1].add(explodes ? BigInteger.ZERO : weights[face - 1]);
+            }
+        }
+
+        /** The ways to reach each sum, among the weight of a die to the power of the most dice there may be. */
+        @Nullable
+        BigInteger[] ways() {
+            int most = Explode.MAX_EXPLOSIONS;
+            var weight = explodingLeft[0].add(othersLeft[0]);
+            // The ways for some dice to add a number of dice in all, none of them eleven.
+            var adding = new BigInteger[count + 1][];
+            adding[0] = new BigInteger[] {BigInteger.ONE};
+            for (int dice = 1; dice <= count; dice++) {
+                adding[dice] = new BigInteger[most * dice + 1];
+                Arrays.fill(adding[dice], BigInteger.ZERO);
+                for (int added = 0; added < adding[dice - 1].length; added++) {
+                    for (int more = 0; more <= most; more++) {
+                        adding[dice][added + more] = adding[dice][added + more].add(adding[dice - 1][added]);
+                    }
+                }
+            }
+            var result = new @Nullable BigInteger[(most + 1) * count * sides + 1];
+            // Some dice bring eleven exploding faces and no other one.
+            for (int full = 0; full <= count; full++) {
+                int others = count - full;
+                for (int added = 0; added <= most * others; added++) {
+                    int exploding = (most + 1) * full + added;
+                    // Each die that stops early stands for as many cases as the dice it didn't add would have.
+                    var cases = binomials[count][full]
+                            .multiply(adding[others][added])
+                            .multiply(weight.pow(most * others - added));
+                    addAll(result, count(0, exploding, others, keep.kept(exploding + others)), 0, cases);
+                }
+            }
+            return result;
+        }
+
+        /** Adds ways to reach sums, each moved by a number and counted a number of times. */
+        private static void addAll(
+                @Nullable BigInteger[] sums, @Nullable BigInteger[] added, int moved, BigInteger times) {
+            for (int sum = 0; sum < added.length; sum++) {
+                if (added[sum] != null && added[sum].signum() != 0) {
+                    add(sums, sum + moved, added[sum].multiply(times));
+                }
+            }
+        }
+
+        /**
+         * The ways for dice of both kinds to reach each sum of the dice still to keep, with the faces from a position
+         * on.
+         */
+        private @Nullable BigInteger[] count(int position, int exploding, int others, int toKeep) {
+            if (toKeep == 0) {
+                // The dice that are left show any face of their kind, if there is one: zero to the power zero is one.
+                return new BigInteger[] {
+                    explodingLeft[position].pow(exploding).multiply(othersLeft[position].pow(others))
+                };
+            }
+            if (position == sides) {
+                return new BigInteger[] {BigInteger.ZERO};
+            }
+            var key = List.of(position, exploding, others, toKeep);
+            var known = counted.get(key);
+            if (known != null) {
+                return known;
+            }
+            int face = faces[position];
+            var weight = weights[face - 1];
+            boolean explodes = explode.matches(face, sides);
+            int dice = explodes ? exploding : others;
+            var sums = new @Nullable BigInteger[toKeep * sides + 1];
+            var showing = BigInteger.ONE;
+            for (int shown = 0; shown <= (weight.signum() == 0 ? 0 : dice); shown++) {
+                int taken = Math.min(shown, toKeep);
+                var rest = count(
+                        position + 1,
+                        explodes ? exploding - shown : exploding,
+                        explodes ? others : others - shown,
+                        toKeep - taken);
+                addAll(sums, rest, taken * face, binomials[dice][shown].multiply(showing));
+                showing = showing.multiply(weight);
+            }
+            counted.put(key, sums);
+            return sums;
+        }
     }
 
     /** The number of rolls, among {@code total} equally likely ones, that reach each sum. */
