@@ -66,9 +66,11 @@ loadScripts(document, 'script');</script>
 <div class="package-signature"><span class="annotations">@NullMarked
 </span>package <span class="element-name">be.imgn.gaia.core.random</span></div>
 <section class="package-description" id="package-description">
-<div class="block">Random selection: <a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random"><code>RandomSelector</code></a> selects one element at a time, uniformly or by
-weight, and <a href="RandomTable.html" title="class in be.imgn.gaia.core.random"><code>RandomTable</code></a> draws several elements at once, some of them from other
-tables. Both take the source of randomness as an argument.</div>
+<div class="block">Randomness, with the source of it always given as an argument. <a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random"><code>RandomSelector</code></a>
+selects one element at a time, uniformly or by weight, and <a href="MutableRandomSelector.html" title="class in be.imgn.gaia.core.random"><code>MutableRandomSelector</code></a>
+does when the weights change. <a href="RandomTable.html" title="class in be.imgn.gaia.core.random"><code>RandomTable</code></a> draws several elements at once, some of
+them from other tables. <a href="RandomBag.html" title="class in be.imgn.gaia.core.random"><code>RandomBag</code></a> and <a href="RandomSamples.html" title="class in be.imgn.gaia.core.random"><code>RandomSamples</code></a> take elements without putting them back. <a href="Seed.html" title="class in be.imgn.gaia.core.random"><code>Seed</code></a> derives reproducible seeds, and <a href="RandomStrings.html" title="class in be.imgn.gaia.core.random"><code>RandomStrings</code></a> makes
+identifiers and tokens.</div>
 </section>
 </div>
 <section class="summary">
@@ -88,14 +90,32 @@ tables. Both take the source of randomness as an argument.</div>
 </li>
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
 <div id="class-summary.tabpanel" role="tabpanel" aria-labelledby="class-summary-tab0">
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="MutableRandomSelector.html" title="class in be.imgn.gaia.core.random">MutableRandomSelector</a>&lt;T&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A weighted <a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random"><code>RandomSelector</code></a> whose elements and weights change: an element is added, removed or given another
+weight, and selected, in a time that grows with the logarithm of the number of elements.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RandomBag.html" title="class in be.imgn.gaia.core.random">RandomBag</a>&lt;T&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">A bag to draw elements from at random, without putting them back: a deck of cards, or a list of options that must
+each come up once before any comes up again.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="RandomSamples.html" title="class in be.imgn.gaia.core.random">RandomSamples</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Samples: several different elements taken at random among other ones, without taking any twice.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a>&lt;T&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">Selects an element at random, each time it's asked to, with the source of randomness it's given.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="RandomStrings.html" title="class in be.imgn.gaia.core.random">RandomStrings</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Random strings: identifiers, tokens and codes made of characters taken at random in an alphabet.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RandomTable.html" title="class in be.imgn.gaia.core.random">RandomTable</a>&lt;T&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -105,6 +125,11 @@ of entries selected by weight, each of which is an element in some quantity, ano
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="RandomTable.Builder.html" title="class in be.imgn.gaia.core.random">RandomTable.Builder</a>&lt;T&gt;</div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Builds a <a href="RandomTable.html" title="class in be.imgn.gaia.core.random"><code>RandomTable</code></a>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="Seed.html" title="class in be.imgn.gaia.core.random">Seed</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">A seed from which other seeds are derived by name or by number, so that each part of a program has a random sequence
+of its own that only depends on the seed and on what the part is, not on what was generated before it.</div>
 </div>
 </div>
 </div>
