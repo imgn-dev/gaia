@@ -55,6 +55,29 @@ assertThat(rarity.next(new FakeRandom().addFractions(0.1))).isEqualTo("rare");
 A call fails with `IllegalStateException` when no number is left, when the next one is of another type, or when it's
 out of the bounds of the call: the code under test doesn't use randomness as the test expects.
 
+[`RecordingRandom`](api:be.imgn.gaia.core.testing.RecordingRandom) wraps a real generator and remembers the numbers
+it gives, to turn something that came up once into a test that always has it. `replay()` returns a `FakeRandom` with
+those numbers, and `toString()` the expression of one, to paste in a test:
+
+```java
+var recording = new RecordingRandom(new SplittableRandom());
+var rolled = expression.roll(recording);        // something odd happens
+System.out.println(recording);                  // new FakeRandom().add(5, 0, 3, 3)
+assertThat(expression.roll(recording.replay())).isEqualTo(rolled);
+```
+
+[`RandomSelectorAssert`](api:be.imgn.gaia.core.testing.RandomSelectorAssert) checks how often a selector selects each
+element, with a chi-squared test over many selections:
+
+```java
+assertThat(rarity).selectsInProportion(Map.of("common", 70, "rare", 25, "legendary", 5));
+assertThat(rarity).selectsWithItsChances();
+assertThat(loot).usingRandom(new SplittableRandom(42)).inSelections(1_000_000).selectsWith(expected);
+```
+
+An assertion fails when the counts are further from the expected chances than chance alone explains about once in a
+million tests. The selections use a fixed seed by default, so a test passes or fails the same way each time.
+
 ### Platforms
 
 Code that receives a [`Platform`](core.md#platform) can be tested on any operating system, whatever the one the tests run
