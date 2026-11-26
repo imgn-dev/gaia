@@ -390,6 +390,76 @@ A quantity or a number of draws is fixed, or a `RandomSelector<Integer>`. A [dic
 one with a lambda: `random -> expression.roll(random).value()`. Tables are immutable and only refer to tables built
 before them, so they never refer to each other in a circle.
 
+### Changing weights
+
+[`MutableRandomSelector`](api:be.imgn.gaia.core.random.MutableRandomSelector) is a weighted selector whose elements
+and weights change. Adding, removing, reweighting and selecting each take a time that grows with the logarithm of the
+number of elements; for weights that don't change, `RandomSelector.weighted` selects faster:
+
+```java
+var spawns = new MutableRandomSelector<Monster>();
+spawns.put(goblin, 10);
+spawns.put(dragon, 1);
+spawns.next(random);                            // a goblin, ten times out of eleven
+spawns.put(dragon, 5);
+spawns.remove(goblin);
+```
+
+### Without putting back
+
+[`RandomBag`](api:be.imgn.gaia.core.random.RandomBag) draws elements without putting them back, like cards from a
+deck. `refill` puts the drawn elements back, and `refilling` is a selector that refills the bag when it's empty, so
+that every element comes up once before any comes up again:
+
+```java
+var deck = RandomBag.of(cards);
+var hand = deck.draw(5, random);                // five different cards
+deck.refill();
+
+var track = RandomBag.of(playlist).refilling();
+track.next(random);                             // every track once, then all of them again
+```
+
+[`RandomSamples`](api:be.imgn.gaia.core.random.RandomSamples) takes several different elements in one call: from a
+collection, uniformly or by weight, or from a stream of any length, of which it keeps only the sample in memory:
+
+```java
+RandomSamples.sample(players, 3, random);
+RandomSamples.weightedSample(prizes, Prize::tickets, 3, random);
+lines.collect(RandomSamples.toSample(100, random));
+```
+
+### Seeds
+
+[`Seed`](api:be.imgn.gaia.core.random.Seed) derives seeds from a seed, by name or by number, so that each part of a
+program has a random sequence of its own, which depends on the seed and on what the part is, not on what was generated
+before it:
+
+```java
+var world = Seed.of("my world");
+var chunk = world.derive("terrain").derive(x).derive(y).generator();    // the same chunk, whenever it's generated
+var loot = world.derive("loot").derive(chestId).generator();
+```
+
+Deriving is part of the contract of `Seed`: a seed derives the same seeds in every version and on every JVM.
+`generator()` returns a `SplittableRandom`, and `generator("L64X128MixRandom")` a generator of another algorithm.
+
+### Random strings
+
+[`RandomStrings`](api:be.imgn.gaia.core.random.RandomStrings) makes identifiers, tokens and codes from the characters
+of an alphabet, each with the same chance:
+
+```java
+var secure = new SecureRandom();
+RandomStrings.token(128, secure);                               // 22 URL-safe characters, 128 bits
+RandomStrings.string(8, RandomStrings.UNAMBIGUOUS, secure);     // a code to read aloud, such as "K7WQ4MZX"
+RandomStrings.length(128, RandomStrings.HEXADECIMAL);           // 32
+```
+
+A string that must not be guessed needs a `SecureRandom`, not a seeded generator.
+
+In tests, a [`FakeRandom`](testing.md#randomness) gives the numbers that the test scripted.
+
 ## Dice
 
 [`DiceExpression`](api:be.imgn.gaia.core.random.dice.DiceExpression) parses dice expressions, rolls them, and computes

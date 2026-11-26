@@ -97,6 +97,12 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   constant time whatever the number of elements. Selectors combine with `map` and `flatten`.
 - **`random.RandomTable`**: draws a `Multiset` of elements at once, from entries that are always given and from
   weighted entries, each an element in a fixed or random quantity, another table, or nothing.
+- **`random.MutableRandomSelector`**: a weighted selector whose elements and weights change, in logarithmic time.
+- **`random.RandomBag`** and **`random.RandomSamples`**: elements drawn without being put back, from a bag that can
+  be refilled, or as a sample of a collection or of a stream of any length, uniformly or by weight.
+- **`random.Seed`**: derives seeds by name or by number, the same in every version and on every JVM, so that each
+  part of a program has a reproducible random sequence of its own.
+- **`random.RandomStrings`**: identifiers, tokens and codes from an alphabet, sized by bits of randomness.
 - **`random.dice.DiceExpression`**: parses dice expressions such as `4d6dl1` or
   `(1d20:critical>=20)+STR>=AC`, with variables and conditional tags, rolls them into a tree that keeps every die,
   and computes the exact chances of their outcomes without enumerating the rolls. Expressions and rolls are trees of
@@ -117,6 +123,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 ### `gaia-core-testing`
 
 - **`FakeTicker`**: a `Ticker` that tests advance by hand, for exact and instant tests of timing code.
+- **`FakeRandom`**: a `RandomGenerator` that gives the numbers a test scripted, such as the faces of dice, and fails
+  when the code under test asks for something else.
 - **`FakePlatform`** and **`FakeDirectories`**: a `Platform` with the operating system of your choice and its
   directories under a test's temporary directory, so that code that receives a `Platform` can be tested on any
   operating system.
