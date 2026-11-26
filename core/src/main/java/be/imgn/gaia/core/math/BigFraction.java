@@ -228,6 +228,7 @@ public final class BigFraction extends Fraction {
      *
      * @return the opposite
      */
+    @Override
     public BigFraction negate() {
         return numerator.signum() == 0 ? this : new BigFraction(numerator.negate(), denominator);
     }
@@ -237,6 +238,7 @@ public final class BigFraction extends Fraction {
      *
      * @return the absolute value
      */
+    @Override
     public BigFraction abs() {
         return numerator.signum() < 0 ? negate() : this;
     }
@@ -247,6 +249,7 @@ public final class BigFraction extends Fraction {
      * @return the reciprocal
      * @throws ArithmeticException if this fraction is zero
      */
+    @Override
     public BigFraction reciprocal() {
         if (numerator.signum() == 0) {
             throw new ArithmeticException("Division by zero");

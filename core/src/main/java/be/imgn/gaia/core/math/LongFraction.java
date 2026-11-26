@@ -196,6 +196,7 @@ public final class LongFraction extends Fraction {
      * @return the opposite
      * @throws ArithmeticException if the numerator is {@link Long#MIN_VALUE}
      */
+    @Override
     public LongFraction negate() {
         return new LongFraction(Math.negateExact(numerator), denominator);
     }
@@ -206,6 +207,7 @@ public final class LongFraction extends Fraction {
      * @return the absolute value
      * @throws ArithmeticException if the numerator is {@link Long#MIN_VALUE}
      */
+    @Override
     public LongFraction abs() {
         return numerator < 0 ? negate() : this;
     }
@@ -216,6 +218,7 @@ public final class LongFraction extends Fraction {
      * @return the reciprocal
      * @throws ArithmeticException if this fraction is zero, or if the numerator is {@link Long#MIN_VALUE}
      */
+    @Override
     public LongFraction reciprocal() {
         if (numerator == 0) {
             throw new ArithmeticException("Division by zero");

@@ -206,6 +206,7 @@ public final class IntFraction extends Fraction {
      * @return the opposite of this fraction
      * @throws ArithmeticException if the numerator is {@link Integer#MIN_VALUE}
      */
+    @Override
     public IntFraction negate() {
         return of(-(long) numerator, denominator);
     }
@@ -216,6 +217,7 @@ public final class IntFraction extends Fraction {
      * @return the absolute value of this fraction
      * @throws ArithmeticException if the numerator is {@link Integer#MIN_VALUE}
      */
+    @Override
     public IntFraction abs() {
         return numerator < 0 ? negate() : this;
     }
@@ -226,6 +228,7 @@ public final class IntFraction extends Fraction {
      * @return the fraction that this one multiplies to one with
      * @throws ArithmeticException if this fraction is zero, or if the numerator is {@link Integer#MIN_VALUE}
      */
+    @Override
     public IntFraction reciprocal() {
         if (numerator == 0) {
             throw new ArithmeticException("Division by zero");

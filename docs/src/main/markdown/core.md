@@ -339,9 +339,11 @@ to the other ones, with `toBigFraction()` or `toIntFractionExact()` for instance
 fraction that a `double` is exactly.
 
 The three extend [`Fraction`](api:be.imgn.gaia.core.math.Fraction), a sealed `Number` with what they have in common
-whatever their size: fractions of any class compare by value and convert to one another. Arithmetic stays on each
-class, between fractions of that class, and fractions of different classes are never equal, as an `Integer` never
-equals a `Long`.
+whatever their size: fractions of any class compare by value and convert to one another. An operation on two
+`Fraction`s returns one of the larger of their two classes, while the operations of each class on its own fractions
+return that class, so `IntFraction.plus(IntFraction)` is an `IntFraction`. A result that doesn't fit throws
+`ArithmeticException` instead of getting a larger class. Fractions of different classes are never equal, as an
+`Integer` never equals a `Long`.
 
 ## Random selection
 
