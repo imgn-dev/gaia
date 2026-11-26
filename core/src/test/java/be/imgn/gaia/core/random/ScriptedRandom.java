@@ -2,6 +2,8 @@ package be.imgn.gaia.core.random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.random.RandomGenerator;
@@ -36,9 +38,13 @@ final class ScriptedRandom implements RandomGenerator {
         return numbers.remove();
     }
 
+    /** Gives the next number, a fraction, as the same fraction of all the {@code long} values. */
     @Override
     public long nextLong() {
-        throw new UnsupportedOperationException();
+        return new BigDecimal(numbers.remove())
+                .multiply(new BigDecimal(BigInteger.ONE.shiftLeft(Long.SIZE)))
+                .toBigInteger()
+                .longValue();
     }
 
     boolean isExhausted() {

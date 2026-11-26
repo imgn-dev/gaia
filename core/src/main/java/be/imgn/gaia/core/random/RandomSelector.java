@@ -25,7 +25,7 @@ import java.util.stream.Stream;
  *
  * <p>A weighted selection takes the same time whatever the number of elements: the weights are turned once into a table
  * of as many slots as there are elements, each shared between at most two of them, and a selection takes a slot, then
- * one of its two elements.
+ * one of its two elements, with a single call to {@link RandomGenerator#nextLong()}.
  *
  * <p>Selectors are combined into other selectors. {@link #flatten(RandomSelector)} selects a selector, then an element
  * from it, which is how a table of elements refers to other tables:

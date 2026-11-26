@@ -350,7 +350,7 @@ var card = RandomSelector.uniform(deck);
 ```
 
 A weighted selection takes the same time whatever the number of elements, since the weights are turned into an alias
-table when the selector is created. A weight of zero is allowed, and its element is never selected. With a seeded
+table when the selector is created, and takes a single `nextLong()` from the generator. A weight of zero is allowed, and its element is never selected. With a seeded
 generator, the selections depend on the order of the elements, so give `weighted` a map with a defined order, such as
 one from `Maps.map`.
 

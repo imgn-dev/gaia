@@ -72,12 +72,22 @@ class RandomSelectorTest {
             default -> 4;
         });
 
-        assertThat(selector.next(new ScriptedRandom(3))).isEqualTo("d");
-        assertThat(selector.next(new ScriptedRandom(2))).isEqualTo("c");
-        assertThat(selector.next(new ScriptedRandom(0, 0.25))).isEqualTo("a");
-        assertThat(selector.next(new ScriptedRandom(0, 0.75))).isEqualTo("d");
-        assertThat(selector.next(new ScriptedRandom(1, 0.49))).isEqualTo("b");
-        assertThat(selector.next(new ScriptedRandom(1, 0.5))).isEqualTo("d");
+        // A fraction of the whole table: the slot, then how far into it.
+        assertThat(selector.next(new ScriptedRandom(3.5 / 4))).isEqualTo("d");
+        assertThat(selector.next(new ScriptedRandom(2.99 / 4))).isEqualTo("c");
+        assertThat(selector.next(new ScriptedRandom(0.25 / 4))).isEqualTo("a");
+        assertThat(selector.next(new ScriptedRandom(0.75 / 4))).isEqualTo("d");
+        assertThat(selector.next(new ScriptedRandom(1.49 / 4))).isEqualTo("b");
+        assertThat(selector.next(new ScriptedRandom(1.5 / 4))).isEqualTo("d");
+    }
+
+    @Test
+    void weightedUsesOneRandomNumber() {
+        var random = new ScriptedRandom(0.1, 0.9);
+        var selector = RandomSelector.weighted(Maps.map("a", 1, "b", 3));
+
+        assertThat(selector.stream(random).limit(2)).containsExactly("a", "b");
+        assertThat(random.isExhausted()).isTrue();
     }
 
     @ParameterizedTest

@@ -1,7 +1,6 @@
 package be.imgn.gaia.core.random;
 
 import static be.imgn.gaia.core.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,10 @@ final class Selectors {
         if (elements.size() == 1) {
             return RandomSelector.constant(elements.getFirst());
         }
-        return random -> elements.get(random.nextInt(elements.size()));
+        var array = elements.toArray();
+        @SuppressWarnings("unchecked")
+        RandomSelector<T> selector = random -> (T) array[random.nextInt(array.length)];
+        return selector;
     }
 
     /** Creates the selector of the elements that have a positive weight. */
@@ -47,17 +49,24 @@ final class Selectors {
      * <p>The table has one slot per element. Each slot has the same chance, and is shared between its own element,
      * selected below a threshold, and another one, its alias. An element whose weight is below the average gives the
      * rest of its slot to a heavier one, which makes the heavier one lighter, until every slot is full.
+     *
+     * <p>A selection takes one random {@code long}. Multiplied by the number of slots, as a number of 128 bits, its
+     * high half is the slot and its low half is how far into the slot it falls, so that no second number is needed. A
+     * slot is off by less than its number over 2^64, which no amount of selections can show.
      */
     static final class AliasSelector<T> implements RandomSelector<T> {
 
-        private final List<T> elements;
-        private final double[] thresholds;
-        private final int[] aliases;
+        // The thresholds are fractions of this many bits, as many as a double has.
+        private static final int FRACTION_BITS = 53;
 
-        private AliasSelector(List<T> elements, double[] thresholds, int[] aliases) {
+        private final Object[] elements;
+
+        // For each slot, its threshold then its alias, next to each other so that a selection reads them together.
+        private final long[] table;
+
+        private AliasSelector(Object[] elements, long[] table) {
             this.elements = elements;
-            this.thresholds = thresholds;
-            this.aliases = aliases;
+            this.table = table;
         }
 
         static <T> AliasSelector<T> of(List<T> elements, double[] weights, double total) {
@@ -76,13 +85,11 @@ final class Selectors {
                     pending[--heavy] = i;
                 }
             }
-            var thresholds = new double[size];
-            var aliases = new int[size];
+            var table = new long[2 * size];
             while (light > 0 && heavy < size) {
                 int lighter = pending[--light];
                 int heavier = pending[heavy++];
-                thresholds[lighter] = shares[lighter];
-                aliases[lighter] = heavier;
+                set(table, lighter, shares[lighter], heavier);
                 shares[heavier] = shares[heavier] + shares[lighter] - 1;
                 if (shares[heavier] < 1) {
                     pending[light++] = heavier;
@@ -93,31 +100,40 @@ final class Selectors {
             // What is left is one slot each, but for rounding errors.
             while (light > 0) {
                 int index = pending[--light];
-                thresholds[index] = 1;
-                aliases[index] = index;
+                set(table, index, 1, index);
             }
             while (heavy < size) {
                 int index = pending[heavy++];
-                thresholds[index] = 1;
-                aliases[index] = index;
+                set(table, index, 1, index);
             }
-            return new AliasSelector<>(elements, thresholds, aliases);
+            return new AliasSelector<>(elements.toArray(), table);
+        }
+
+        private static void set(long[] table, int slot, double threshold, int alias) {
+            table[2 * slot] = (long) (threshold * (1L << FRACTION_BITS));
+            table[2 * slot + 1] = alias;
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public T next(RandomGenerator random) {
-            requireNonNull(random, "random");
-            int slot = random.nextInt(thresholds.length);
-            double threshold = thresholds[slot];
-            return elements.get(threshold >= 1 || random.nextDouble() < threshold ? slot : aliases[slot]);
+            long number = random.nextLong();
+            int size = elements.length;
+            int slot = (int) Math.unsignedMultiplyHigh(number, size);
+            long fraction = (number * size) >>> (Long.SIZE - FRACTION_BITS);
+            long[] table = this.table;
+            int index = fraction < table[2 * slot] ? slot : (int) table[2 * slot + 1];
+            return (T) elements[index];
         }
 
         /** The chance of each element, as the table gives it. */
         double[] chances() {
-            var chances = new double[thresholds.length];
-            for (int slot = 0; slot < thresholds.length; slot++) {
-                chances[slot] += thresholds[slot] / thresholds.length;
-                chances[aliases[slot]] += (1 - thresholds[slot]) / thresholds.length;
+            int size = elements.length;
+            var chances = new double[size];
+            for (int slot = 0; slot < size; slot++) {
+                double threshold = (double) table[2 * slot] / (1L << FRACTION_BITS);
+                chances[slot] += threshold / size;
+                chances[(int) table[2 * slot + 1]] += (1 - threshold) / size;
             }
             return chances;
         }
