@@ -1,5 +1,5 @@
 /**
- * Arithmetic on integers the JDK does not provide.
+ * Arithmetic on integers the JDK does not provide, and exact fractions.
  */
 @NullMarked
 package be.imgn.gaia.core.math;
