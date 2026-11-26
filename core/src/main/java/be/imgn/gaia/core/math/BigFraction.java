@@ -21,10 +21,11 @@ import org.jspecify.annotations.Nullable;
  * <p>Two fractions are equal if and only if they have the same value, since each value has only one representation.
  *
  * @since 0.2.0
+ * @see Fraction
  * @see IntFraction
  * @see LongFraction
  */
-public final class BigFraction extends Number implements Comparable<BigFraction> {
+public final class BigFraction extends Fraction {
 
     /** The fraction 0/1. */
     public static final BigFraction ZERO = new BigFraction(BigInteger.ZERO, BigInteger.ONE);
@@ -137,6 +138,7 @@ public final class BigFraction extends Number implements Comparable<BigFraction>
      *
      * @return the sign of this fraction
      */
+    @Override
     public int signum() {
         return numerator.signum();
     }
@@ -146,6 +148,7 @@ public final class BigFraction extends Number implements Comparable<BigFraction>
      *
      * @return whether the denominator is one
      */
+    @Override
     public boolean isInteger() {
         return denominator.equals(BigInteger.ONE);
     }
@@ -251,12 +254,18 @@ public final class BigFraction extends Number implements Comparable<BigFraction>
         return of(denominator, numerator);
     }
 
+    @Override
+    public BigFraction toBigFraction() {
+        return this;
+    }
+
     /**
      * Returns this fraction as an {@link IntFraction}.
      *
      * @return the same fraction
      * @throws ArithmeticException if the numerator or the denominator doesn't fit in an {@code int}
      */
+    @Override
     public IntFraction toIntFractionExact() {
         return IntFraction.of(numerator, denominator);
     }
@@ -267,6 +276,7 @@ public final class BigFraction extends Number implements Comparable<BigFraction>
      * @return the same fraction
      * @throws ArithmeticException if the numerator or the denominator doesn't fit in a {@code long}
      */
+    @Override
     public LongFraction toLongFractionExact() {
         return LongFraction.of(numerator, denominator);
     }
@@ -314,8 +324,9 @@ public final class BigFraction extends Number implements Comparable<BigFraction>
     }
 
     @Override
-    public int compareTo(BigFraction other) {
-        return numerator.multiply(other.denominator).compareTo(other.numerator.multiply(denominator));
+    public int compareTo(Fraction other) {
+        var big = other.toBigFraction();
+        return numerator.multiply(big.denominator).compareTo(big.numerator.multiply(denominator));
     }
 
     @Override

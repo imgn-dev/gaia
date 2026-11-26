@@ -20,10 +20,11 @@ import org.jspecify.annotations.Nullable;
  * {@link ArithmeticException}; intermediate results are as large as they need to be.
  *
  * @since 0.2.0
+ * @see Fraction
  * @see IntFraction
  * @see BigFraction
  */
-public final class LongFraction extends Number implements Comparable<LongFraction> {
+public final class LongFraction extends Fraction {
 
     /** The fraction 0/1. */
     public static final LongFraction ZERO = new LongFraction(0, 1);
@@ -130,6 +131,7 @@ public final class LongFraction extends Number implements Comparable<LongFractio
      *
      * @return the sign of this fraction
      */
+    @Override
     public int signum() {
         return Long.signum(numerator);
     }
@@ -139,6 +141,7 @@ public final class LongFraction extends Number implements Comparable<LongFractio
      *
      * @return whether the denominator is one
      */
+    @Override
     public boolean isInteger() {
         return denominator == 1;
     }
@@ -226,8 +229,14 @@ public final class LongFraction extends Number implements Comparable<LongFractio
      * @return the same fraction
      * @throws ArithmeticException if the numerator or the denominator doesn't fit in an {@code int}
      */
+    @Override
     public IntFraction toIntFractionExact() {
         return IntFraction.of(numerator, denominator);
+    }
+
+    @Override
+    public LongFraction toLongFractionExact() {
+        return this;
     }
 
     /**
@@ -235,6 +244,7 @@ public final class LongFraction extends Number implements Comparable<LongFractio
      *
      * @return the same fraction
      */
+    @Override
     public BigFraction toBigFraction() {
         return BigFraction.of(numerator, denominator);
     }
@@ -283,13 +293,16 @@ public final class LongFraction extends Number implements Comparable<LongFractio
     }
 
     @Override
-    public int compareTo(LongFraction other) {
+    public int compareTo(Fraction other) {
+        if (!(other instanceof LongFraction same)) {
+            return toBigFraction().compareTo(other);
+        }
         // The products are of 128 bits: their high halves, then their low halves as unsigned numbers.
-        long thisHigh = Math.multiplyHigh(numerator, other.denominator);
-        long otherHigh = Math.multiplyHigh(other.numerator, denominator);
+        long thisHigh = Math.multiplyHigh(numerator, same.denominator);
+        long otherHigh = Math.multiplyHigh(same.numerator, denominator);
         return thisHigh != otherHigh
                 ? Long.compare(thisHigh, otherHigh)
-                : Long.compareUnsigned(numerator * other.denominator, other.numerator * denominator);
+                : Long.compareUnsigned(numerator * same.denominator, same.numerator * denominator);
     }
 
     @Override

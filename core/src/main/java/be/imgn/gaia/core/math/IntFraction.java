@@ -21,10 +21,11 @@ import org.jspecify.annotations.Nullable;
  * {@link ArithmeticException}.
  *
  * @since 0.2.0
+ * @see Fraction
  * @see LongFraction
  * @see BigFraction
  */
-public final class IntFraction extends Number implements Comparable<IntFraction> {
+public final class IntFraction extends Fraction {
 
     /** The fraction 0/1. */
     public static final IntFraction ZERO = new IntFraction(0, 1);
@@ -133,6 +134,7 @@ public final class IntFraction extends Number implements Comparable<IntFraction>
      *
      * @return -1, 0 or 1 as this fraction is negative, zero or positive
      */
+    @Override
     public int signum() {
         return Integer.signum(numerator);
     }
@@ -142,6 +144,7 @@ public final class IntFraction extends Number implements Comparable<IntFraction>
      *
      * @return whether this fraction is a whole number
      */
+    @Override
     public boolean isInteger() {
         return denominator == 1;
     }
@@ -230,6 +233,16 @@ public final class IntFraction extends Number implements Comparable<IntFraction>
         return of(denominator, numerator);
     }
 
+    @Override
+    public IntFraction toIntFractionExact() {
+        return this;
+    }
+
+    @Override
+    public LongFraction toLongFractionExact() {
+        return toLongFraction();
+    }
+
     /**
      * Returns this fraction as a {@link LongFraction}.
      *
@@ -244,6 +257,7 @@ public final class IntFraction extends Number implements Comparable<IntFraction>
      *
      * @return the same fraction
      */
+    @Override
     public BigFraction toBigFraction() {
         return BigFraction.of(numerator, denominator);
     }
@@ -290,8 +304,10 @@ public final class IntFraction extends Number implements Comparable<IntFraction>
     }
 
     @Override
-    public int compareTo(IntFraction other) {
-        return Long.compare((long) numerator * other.denominator, (long) other.numerator * denominator);
+    public int compareTo(Fraction other) {
+        return other instanceof IntFraction same
+                ? Long.compare((long) numerator * same.denominator, (long) same.numerator * denominator)
+                : toBigFraction().compareTo(other);
     }
 
     @Override
