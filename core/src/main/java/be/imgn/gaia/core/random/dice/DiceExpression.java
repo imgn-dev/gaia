@@ -48,6 +48,27 @@ import org.jspecify.annotations.Nullable;
  * always applies; the other ones apply when the value of the group satisfies all their conditions. Spaces are allowed
  * anywhere but inside dice.
  *
+ * <p>As a grammar:
+ *
+ * <pre>{@code
+ * expression := sum (relation sum)?
+ * relation   := '=' | '!=' | '<' | '<=' | '>' | '>='
+ * sum        := product (('+' | '-') product)*
+ * product    := unary (('*' | '/') unary)*
+ * unary      := '-' unary | dice
+ * dice       := primary? 'd' (primary | '%') keep? | primary
+ * keep       := ('kh' | 'kl' | 'dh' | 'dl') number
+ * primary    := number | variable | group
+ * group      := '(' expression tag* ')'
+ * tag        := ':' name (relation sum)*
+ * number     := [0-9]+
+ * variable   := [A-Z_] [A-Z0-9_]*
+ * name       := [A-Za-z_] [A-Za-z0-9_]*
+ * }</pre>
+ *
+ * <p>A number is at most {@link Integer#MAX_VALUE}. The parts of {@code dice} and of {@code keep} follow each other
+ * with no space in between.
+ *
  * <h2>Inspection</h2>
  *
  * <p>{@link #node()} is the root of the tree, to walk from the top with a {@code switch} over the records of
