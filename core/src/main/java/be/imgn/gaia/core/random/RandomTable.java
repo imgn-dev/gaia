@@ -70,6 +70,13 @@ public final class RandomTable<T> {
      * Draws from this table: first the entries that are always given, in the order they were added, then as many
      * weighted entries as the number of draws, which is selected before them.
      *
+     * <p>The source of randomness is used in that order. A quantity or a number of draws uses what its selector does,
+     * and none if it's fixed. An entry that draws from another table uses what that table does. Selecting a weighted
+     * entry uses what {@link RandomSelector#weighted(java.util.Collection, java.util.function.ToDoubleFunction) a
+     * weighted selector} of the entries with a positive weight does: one {@code nextLong()}, or one
+     * {@code nextInt(size)} that gives the index of the entry if their weights are all equal, or nothing if there is
+     * only one. The quantity or the table of the selected entry comes right after it.
+     *
      * @param random the source of randomness
      * @return the drawn elements with their quantities, in a new multiset that the caller may modify
      * @throws IllegalStateException if a selector gives a negative quantity or number of draws

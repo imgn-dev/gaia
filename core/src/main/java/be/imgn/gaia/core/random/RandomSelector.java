@@ -57,7 +57,8 @@ public interface RandomSelector<T> {
     T next(RandomGenerator random);
 
     /**
-     * Returns an infinite stream of elements, each selected when the stream asks for it.
+     * Returns an infinite stream of elements, each selected with {@link #next(RandomGenerator)} when the stream asks
+     * for it.
      *
      * @param random the source of randomness
      * @return an infinite stream of selected elements
@@ -68,7 +69,8 @@ public interface RandomSelector<T> {
     }
 
     /**
-     * Returns a selector of what a function returns for the elements that this selector selects.
+     * Returns a selector of what a function returns for the elements that this selector selects. It uses the same
+     * randomness as this selector.
      *
      * @param <R> the type of the new elements
      * @param mapper the function to apply to each selected element
@@ -98,6 +100,9 @@ public interface RandomSelector<T> {
      * Returns a selector that selects each element of a collection with the same chance. An element that occurs several
      * times in the collection has as many chances to be selected.
      *
+     * <p>Each selection calls {@link RandomGenerator#nextInt(int) nextInt(size)} once, and selects the element at that
+     * index in the iteration order of the collection. A selector of one element uses no randomness.
+     *
      * @param <T> the type of the elements
      * @param elements the elements to select from
      * @return a selector of the elements
@@ -110,6 +115,10 @@ public interface RandomSelector<T> {
     /**
      * Returns a selector that selects each element of a collection with a chance proportional to its weight. An element
      * whose weight is zero is never selected.
+     *
+     * <p>Each selection calls {@link RandomGenerator#nextLong()} once. Which element a given number selects isn't
+     * specified, only how often each element is selected. When the positive weights are all equal, the selector is the
+     * {@linkplain #uniform(Collection) uniform} one of their elements, and calls what it calls.
      *
      * @param <T> the type of the elements
      * @param elements the elements to select from
@@ -131,6 +140,10 @@ public interface RandomSelector<T> {
      * <p>Which element a given source of randomness selects depends on the order of the map: for selections that are
      * the same from one run to the next, with a seeded source, use a map with a defined order.
      *
+     * <p>Each selection calls {@link RandomGenerator#nextLong()} once. Which element a given number selects isn't
+     * specified, only how often each element is selected. When the positive weights are all equal, the selector is the
+     * {@linkplain #uniform(Collection) uniform} one of their elements, and calls what it calls.
+     *
      * @param <T> the type of the elements
      * @param weights the weights of the elements to select from
      * @return a selector of the elements
@@ -148,7 +161,8 @@ public interface RandomSelector<T> {
     }
 
     /**
-     * Returns a selector that selects a selector, then an element from it.
+     * Returns a selector that selects a selector, then an element from it. Each selection uses the randomness of both,
+     * in that order.
      *
      * @param <T> the type of the elements
      * @param selectors the selector of selectors

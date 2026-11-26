@@ -207,6 +207,10 @@ public final class DiceExpression {
     /**
      * Rolls the dice of this expression, from left to right, and evaluates it.
      *
+     * <p>Each die calls {@link RandomGenerator#nextInt(int) nextInt(sides)} once, and shows that number plus one. The
+     * dice of a count and of a number of sides are rolled before the dice they count, and those of a group before those
+     * of the conditions of its tags. Nothing else uses the source of randomness.
+     *
      * @param random the source of randomness
      * @return the tree of what each node evaluated to
      * @throws UnresolvedVariableException if a variable has no value
