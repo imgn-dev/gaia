@@ -129,6 +129,26 @@ comparison operator and a value: <code>(2d10:attack:tier1&lt;=11:tier2&gt;=12&lt
 always applies; the other ones apply when the value of the group satisfies all their conditions. Spaces are allowed
 anywhere but inside dice.
 
+<p>As a grammar:
+
+<pre><code>expression := sum (relation sum)?
+relation   := '=' | '!=' | '&lt;' | '&lt;=' | '&gt;' | '&gt;='
+sum        := product (('+' | '-') product)*
+product    := unary (('*' | '/') unary)*
+unary      := '-' unary | dice
+dice       := primary? 'd' (primary | '%') keep? | primary
+keep       := ('kh' | 'kl' | 'dh' | 'dl') number
+primary    := number | variable | group
+group      := '(' expression tag* ')'
+tag        := ':' name (relation sum)*
+number     := [0-9]+
+variable   := [A-Z_] [A-Z0-9_]*
+name       := [A-Za-z_] [A-Za-z0-9_]*
+</code></pre>
+
+<p>A number is at most <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html#MAX_VALUE" title="class or interface in java.lang" class="external-link"><code>Integer.MAX_VALUE</code></a>. The parts of <code>dice</code> and of <code>keep</code> follow each other
+with no space in between.
+
 <h2 id="inspection-heading">Inspection</h2>
 
 <p><a href="#node()"><code>node()</code></a> is the root of the tree, to walk from the top with a <code>switch</code> over the records of
