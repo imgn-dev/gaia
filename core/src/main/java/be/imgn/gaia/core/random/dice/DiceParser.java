@@ -8,6 +8,7 @@ import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
+import be.imgn.gaia.core.random.dice.DiceNode.Sides;
 import be.imgn.gaia.core.random.dice.DiceNode.Tag;
 import java.util.ArrayList;
 import org.jspecify.annotations.Nullable;
@@ -108,16 +109,67 @@ final class DiceParser {
         }
         index++;
         skipSpaces();
-        DiceExpression sides;
+        Sides<DiceExpression> sides;
         if (peek() == '%') {
             index++;
-            sides = constant(PERCENT_SIDES);
+            sides = new Sides.Standard<>(constant(PERCENT_SIDES));
+        } else if (peek() == '[') {
+            sides = faces();
         } else {
-            sides = primary();
+            sides = new Sides.Standard<>(primary());
         }
         var reroll = reroll();
         var explode = explode();
         return DiceExpression.of(new DiceNode.Dice<>(count, sides, reroll, explode, keep()));
+    }
+
+    private Sides<DiceExpression> faces() {
+        int start = index;
+        index++;
+        var faces = new ArrayList<Integer>();
+        do {
+            int first = face();
+            int last = first;
+            skipSpaces();
+            if (text.startsWith("..", index)) {
+                index += 2;
+                last = face();
+                if (last < first) {
+                    throw error("A range of faces goes up");
+                }
+            }
+            if ((long) last - first + faces.size() >= Sides.MAX_FACES) {
+                throw new DiceParseException("Too many faces", text, start);
+            }
+            for (int face = first; face <= last; face++) {
+                faces.add(face);
+            }
+            skipSpaces();
+        } while (next(','));
+        if (!next(']')) {
+            throw error(peek() == END ? "Missing ']'" : "Unexpected '" + peek() + "'");
+        }
+        return new Sides.Custom<>(faces);
+    }
+
+    /** A face of a die: a whole number, which may be negative. */
+    private int face() {
+        skipSpaces();
+        boolean negative = next('-');
+        skipSpaces();
+        if (!isDigit(peek())) {
+            throw error("Expected the number of a face");
+        }
+        int number = number();
+        return negative ? -number : number;
+    }
+
+    private boolean next(char expected) {
+        if (peek() != expected) {
+            return false;
+        }
+        index++;
+        return true;
     }
 
     private Reroll reroll() {
@@ -133,7 +185,9 @@ final class DiceParser {
         }
         // A comparison operator after a rule is always its condition: comparing the dice takes parentheses.
         var relation = relation();
-        return relation == null ? new Reroll(times, Relation.EQUAL, 1) : new Reroll(times, relation, conditionValue());
+        return relation == null
+                ? new Reroll(times, Reroll.Target.LOWEST, Relation.EQUAL, 0)
+                : new Reroll(times, Reroll.Target.MATCHING, relation, conditionValue());
     }
 
     private Explode explode() {
@@ -148,11 +202,14 @@ final class DiceParser {
 
     private int conditionValue() {
         skipSpaces();
+        boolean negative = next('-');
+        skipSpaces();
         if (!isDigit(peek())) {
             throw error("Expected the number of the condition of a reroll or of an explosion;"
                     + " to compare the dice instead, put them between parentheses");
         }
-        return number();
+        int number = number();
+        return negative ? -number : number;
     }
 
     private Keep keep() {

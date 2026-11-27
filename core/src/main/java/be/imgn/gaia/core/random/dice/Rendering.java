@@ -1,6 +1,7 @@
 package be.imgn.gaia.core.random.dice;
 
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
+import be.imgn.gaia.core.random.dice.DiceNode.Sides;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -87,20 +88,25 @@ final class Rendering {
     }
 
     /**
-     * The text of a sum that a comparison operator may follow: dice that end with a bare {@code x} get parentheses, or
-     * the operator would read as the condition of their explosions.
+     * The text of a sum that a comparison operator may follow: dice that end with a bare {@code x} or {@code r} get
+     * parentheses, or the operator would read as the condition of their explosions.
      */
     private static String beforeRelation(Rendered sum) {
         var text = sum.at(SUM);
-        return text.endsWith("x") ? "(" + text + ")" : text;
+        return text.endsWith("x") || text.endsWith("r") ? "(" + text + ")" : text;
     }
 
     private static Rendered constant(int value) {
         return new Rendered(Integer.toString(value), value < 0 ? UNARY : PRIMARY);
     }
 
-    private static String dice(Rendered count, Rendered sides) {
-        return count.at(PRIMARY) + "d" + sides.at(PRIMARY);
+    private static String dice(Rendered count, Sides<Rendered> sides) {
+        return count.at(PRIMARY)
+                + "d"
+                + switch (sides) {
+                    case Sides.Standard<Rendered> standard -> standard.number().at(PRIMARY);
+                    case Sides.Custom<Rendered> custom -> custom.toString();
+                };
     }
 
     private static Rendered negate(Rendered operand) {

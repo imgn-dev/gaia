@@ -532,9 +532,9 @@ chances.tagged("critical");                     // 1/20
 
 An expression is made of whole numbers, variables in upper case, `+ - * /` with a division that rounds down, a
 unary `-`, one comparison among `= != < <= > >=`, which evaluates to 1 or 0, and parentheses. Dice are a count, `d`
-and a number of sides, or `%` for 100, optionally followed by the dice that count in the sum: `2d20kh1` keeps the
+and a number of sides, `%` for 100, or a list of faces such as `4d[-1..1]` or `6d[0,0,0,0,1,1]`, optionally followed by the dice that count in the sum: `2d20kh1` keeps the
 highest die, `2d20kl1` the lowest, and `4d6dl1` and `4d6dh1` drop the lowest and the highest. Before that, `2d6r<=2`
-rerolls once a die that shows 2 or less, `2d6rr<=2` rerolls it until it shows more, and `3d6x` or `3d6x>=5` makes a
+rerolls once a die that shows 2 or less, `2d6rr<=2` rerolls it until it shows more, `r` alone rerolls the lowest face, and `3d6x` or `3d6x>=5` makes a
 die that shows its highest face, or 5 or more, add another die that may explode too. A comparison operator after
 `r`, `rr` or `x` is always the condition of that rule: comparing such dice takes parentheses, as in `(3d6x)>=10`.
 Spaces are allowed between any two parts and never change the meaning. A group between
@@ -587,6 +587,15 @@ size, but a chance is an `IntFraction`: asking for one that doesn't fit once red
 
 A die that is rerolled is counted as a die whose faces aren't equally likely, and dice that explode by the number of
 dice they add, ten at most for each, whether some are then dropped or not.
+
+Custom dice list their faces between brackets, where `..` stands for the faces in between and a face listed twice
+comes up twice as often. They roll, reroll, explode and are counted like any other dice:
+
+```java
+DiceExpression.parse("4d[-1..1]").chances().of(0);                  // 19/81, four Fudge dice
+DiceExpression.parse("6d[0,0,0,0,1,1]").chances().mean();           // 2, six dice that count successes on 5 or 6
+DiceExpression.parse("1d[1,2,2,3,3,4]+1d[1,3,4,5,6,8]").chances();  // Sicherman dice: the chances of 2d6
+```
 
 An expression is also a selector: `expression.selector()` rolls it on each selection, and
 `expression.chances().selector()` selects a value with its chance without rolling any die. Both know their

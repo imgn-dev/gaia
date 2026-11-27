@@ -181,6 +181,11 @@ class DiceChancesTest {
                 "2d4r=1xkl1",
                 "3d6rr<=2xdh1",
                 "2d4x<=2kh1",
+                "3d[1..6,6]kh2",
+                "4d[-1..1]r",
+                "3d[0,0,1,2]xkh2",
+                "2d[-2..2]rr<=-1x",
+                "(1d3)d[-5,0,5,5]dl1",
             })
     void chancesAgreeWithRolls(String text) {
         var expression = DiceExpression.parse(text);
@@ -212,6 +217,35 @@ class DiceChancesTest {
         assertThat(chances.atLeast(1)).isEqualTo(IntFraction.ONE);
         assertThat(chances("4d6xkh3").atLeast(3)).isEqualTo(IntFraction.ONE);
         assertThat(chances("3d6xdl1").min()).isEqualTo(2);
+    }
+
+    @Test
+    void customDiceCountTheirFaces() {
+        var fudge = chances("4d[-1..1]");
+        var successes = chances("6d[0,0,0,0,1,1]");
+
+        assertThat(fudge.of(0)).isEqualTo(IntFraction.of(19, 81));
+        assertThat(fudge.of(4)).isEqualTo(IntFraction.of(1, 81));
+        assertThat(fudge.min()).isEqualTo(-4);
+        assertThat(fudge.mean()).isEqualTo(IntFraction.ZERO);
+        assertThat(successes.of(0)).isEqualTo(IntFraction.of(64, 729));
+        assertThat(successes.mean()).isEqualTo(IntFraction.of(2));
+        assertThat(chances("1d[0..9]").outcomes().keySet()).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    }
+
+    @Test
+    void sichermanDiceSumLikeTwoOrdinaryDice() {
+        assertThat(chances("1d[1,2,2,3,3,4]+1d[1,3,4,5,6,8]").outcomes())
+                .isEqualTo(chances("2d6").outcomes());
+    }
+
+    @Test
+    void customDiceMayHaveFacesFarApart() {
+        var chances = chances("2d[1,1000000]");
+
+        assertThat(chances.of(1_000_001)).isEqualTo(IntFraction.of(1, 2));
+        assertThat(chances.outcomes()).hasSize(3);
+        assertThat(chances("3d[-1000000,7]kh1").of(7)).isEqualTo(IntFraction.of(7, 8));
     }
 
     @Test

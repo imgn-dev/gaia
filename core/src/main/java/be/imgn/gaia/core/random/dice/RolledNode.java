@@ -8,6 +8,7 @@ import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
+import be.imgn.gaia.core.random.dice.DiceNode.Sides;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -105,7 +106,7 @@ public sealed interface RolledNode<T> {
      * Dice that were rolled.
      *
      * @param count how many dice were rolled at first
-     * @param sides how many sides each die has
+     * @param sides the faces of each die
      * @param reroll which dice were rolled again
      * @param explode which dice added another die
      * @param keep which dice count in the sum
@@ -114,14 +115,14 @@ public sealed interface RolledNode<T> {
      * @param value the sum of the dice that were kept
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, T sides, Reroll reroll, Explode explode, Keep keep, List<Die> dice, int value)
+    record Dice<T>(T count, Sides<T> sides, Reroll reroll, Explode explode, Keep keep, List<Die> dice, int value)
             implements RolledNode<T> {
 
         /**
          * Creates rolled dice.
          *
          * @param count how many dice were rolled at first
-         * @param sides how many sides each die has
+         * @param sides the faces of each die
          * @param reroll which dice were rolled again
          * @param explode which dice added another die
          * @param keep which dice count in the sum
@@ -139,13 +140,13 @@ public sealed interface RolledNode<T> {
 
         @Override
         public List<T> children() {
-            return List.of(count, sides);
+            return sides instanceof Sides.Standard<T>(T number) ? List.of(count, number) : List.of(count);
         }
 
         @Override
         public <U> Dice<U> map(Function<? super T, ? extends U> mapper) {
             U mappedCount = mapper.apply(count);
-            return new Dice<>(mappedCount, mapper.apply(sides), reroll, explode, keep, dice, value);
+            return new Dice<>(mappedCount, sides.map(mapper), reroll, explode, keep, dice, value);
         }
     }
 

@@ -1,11 +1,11 @@
 package be.imgn.gaia.core.random.dice;
 
 import be.imgn.gaia.core.random.dice.DiceChances.Outcome;
+import be.imgn.gaia.core.random.dice.DiceNode.Sides;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -94,23 +94,31 @@ final class Distribution {
     }
 
     private static Distribution dice(DiceNode.Dice<Distribution> node) {
-        var count = node.count();
-        var sides = node.sides();
-        // One pool for each number of dice and of sides, weighted by the cases that lead to those numbers.
+        // The faces of the die, for each number of sides that it may have, with the cases that lead to it.
+        record Die(DieFaces faces, Set<String> tags, BigInteger cases) {}
+        var dice = new ArrayList<Die>();
+        var sidesTotal = BigInteger.ONE;
+        switch (node.sides()) {
+            case Sides.Standard<Distribution> standard -> {
+                sidesTotal = standard.number().total;
+                standard.number().cases.forEach((sides, cases) -> {
+                    Rolls.checkDice(0, sides.value());
+                    dice.add(new Die(DieFaces.numbered(sides.value()), sides.tags(), cases));
+                });
+            }
+            case Sides.Custom<Distribution> custom ->
+                dice.add(new Die(DieFaces.listed(custom.faces()), Set.of(), BigInteger.ONE));
+        }
+        // One pool for each number of dice and each die, weighted by the cases that lead to them.
         record Part(BigInteger weight, Set<String> tags, Pools.Pool pool) {}
         var parts = new ArrayList<Part>();
-        var pools = new HashMap<List<Integer>, Pools.Pool>();
         var scale = BigInteger.ONE;
-        for (var countCase : count.cases.entrySet()) {
-            for (var sidesCase : sides.cases.entrySet()) {
-                int dice = countCase.getKey().value();
-                int faces = sidesCase.getKey().value();
-                var pool = pools.computeIfAbsent(
-                        List.of(dice, faces),
-                        key -> Pools.pool(dice, faces, node.reroll(), node.explode(), node.keep()));
+        for (var count : node.count().cases.entrySet()) {
+            for (var die : dice) {
+                var pool = Pools.pool(count.getKey().value(), die.faces, node.reroll(), node.explode(), node.keep());
                 parts.add(new Part(
-                        countCase.getValue().multiply(sidesCase.getValue()),
-                        union(countCase.getKey().tags(), sidesCase.getKey().tags()),
+                        count.getValue().multiply(die.cases),
+                        union(count.getKey().tags(), die.tags),
                         pool));
                 scale = scale.multiply(pool.total()).divide(scale.gcd(pool.total()));
             }
@@ -119,16 +127,12 @@ final class Distribution {
         for (var part : parts) {
             // Brings every pool to the same number of cases.
             var weight = part.weight.multiply(scale.divide(part.pool.total()));
-            var ways = part.pool.ways();
-            for (int sum = 0; sum < ways.length; sum++) {
-                if (ways[sum] != null) {
-                    if (ways[sum].signum() != 0) {
-                        cases.merge(new Outcome(sum, part.tags), ways[sum].multiply(weight), BigInteger::add);
-                    }
-                }
-            }
+            part.pool
+                    .ways()
+                    .forEach((sum, ways) ->
+                            cases.merge(new Outcome(sum, part.tags), ways.multiply(weight), BigInteger::add));
         }
-        return new Distribution(cases, count.total.multiply(sides.total).multiply(scale));
+        return new Distribution(cases, node.count().total.multiply(sidesTotal).multiply(scale));
     }
 
     private Distribution map(UnaryOperator<Outcome> function) {

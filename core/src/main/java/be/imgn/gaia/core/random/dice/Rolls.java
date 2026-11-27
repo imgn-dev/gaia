@@ -3,6 +3,7 @@ package be.imgn.gaia.core.random.dice;
 import be.imgn.gaia.core.random.dice.DiceNode.Explode;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
+import be.imgn.gaia.core.random.dice.DiceNode.Sides;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.random.RandomGenerator;
@@ -70,9 +71,9 @@ final class Rolls {
 
     private static RolledNode<RolledExpression> dice(DiceNode.Dice<RolledExpression> node, RandomGenerator random) {
         int count = node.count().value();
-        int sides = node.sides().value();
-        checkDice(count, sides);
-        checkRules(node.reroll(), node.explode(), sides);
+        var die = faces(node.sides());
+        checkDice(count, die.size());
+        checkRules(node.reroll(), node.explode(), die);
         var faces = new ArrayList<Integer>();
         var rerolled = new ArrayList<Boolean>();
         var exploded = new ArrayList<Boolean>();
@@ -80,17 +81,17 @@ final class Rolls {
             // One die, then the dice it adds one after the other.
             boolean explodes = true;
             for (int added = 0; explodes; added++) {
-                int face = random.nextInt(sides) + 1;
+                int face = die.face(random.nextInt(die.size()));
                 // Rolled again once, or for as long as its face asks for it.
-                for (boolean again = node.reroll().matches(face); again; ) {
+                for (boolean again = node.reroll().matches(face, die.lowest()); again; ) {
                     faces.add(face);
                     rerolled.add(true);
                     exploded.add(false);
-                    face = random.nextInt(sides) + 1;
+                    face = die.face(random.nextInt(die.size()));
                     again = node.reroll().times() == Reroll.Times.ALWAYS
-                            && node.reroll().matches(face);
+                            && node.reroll().matches(face, die.lowest());
                 }
-                explodes = added < Explode.MAX_EXPLOSIONS && node.explode().matches(face, sides);
+                explodes = added < Explode.MAX_EXPLOSIONS && node.explode().matches(face, die.highest());
                 faces.add(face);
                 rerolled.add(false);
                 exploded.add(explodes);
@@ -117,34 +118,41 @@ final class Rolls {
         return new RolledNode.Dice<>(node.count(), node.sides(), node.reroll(), node.explode(), node.keep(), dice, sum);
     }
 
+    /** The faces of a die whose number of sides was rolled, if it has one. */
+    private static DieFaces faces(Sides<RolledExpression> sides) {
+        return switch (sides) {
+            case Sides.Standard<RolledExpression> standard -> {
+                checkDice(0, standard.number().value());
+                yield DieFaces.numbered(standard.number().value());
+            }
+            case Sides.Custom<RolledExpression> custom -> DieFaces.listed(custom.faces());
+        };
+    }
+
     /** Checks that some face ends the rerolls, and that some face doesn't explode. */
-    static void checkRules(Reroll reroll, Explode explode, int sides) {
-        if (reroll.times() == Reroll.Times.ALWAYS && matching(reroll.relation(), reroll.value(), sides) == sides) {
-            throw new ArithmeticException("Every face of a d" + sides + " is rerolled: " + reroll);
+    static void checkRules(Reroll reroll, Explode explode, DieFaces die) {
+        if (reroll.times() == Reroll.Times.ALWAYS && rerolled(reroll, die) == die.size()) {
+            throw new ArithmeticException("Every face is rerolled: " + reroll);
         }
         boolean always = switch (explode.faces()) {
             case NONE -> false;
-            case HIGHEST -> sides == 1;
-            case MATCHING -> matching(explode.relation(), explode.value(), sides) == sides;
+            case HIGHEST -> die.lowest() == die.highest();
+            case MATCHING -> die.matching(explode.relation(), explode.value()) == die.size();
         };
         if (always) {
-            throw new ArithmeticException("Every face of a d" + sides + " explodes: " + explode);
+            throw new ArithmeticException("Every face explodes: " + explode);
         }
     }
 
-    /** How many of the faces from one to a number of sides satisfy a condition. */
-    static int matching(Relation relation, int value, int sides) {
-        long below = Math.clamp((long) value - 1, 0, sides);
-        long upTo = Math.clamp((long) value, 0, sides);
-        return (int)
-                switch (relation) {
-                    case EQUAL -> upTo - below;
-                    case NOT_EQUAL -> sides - (upTo - below);
-                    case LESS -> below;
-                    case LESS_OR_EQUAL -> upTo;
-                    case GREATER -> sides - upTo;
-                    case GREATER_OR_EQUAL -> sides - below;
-                };
+    /** How many faces of a die a rule rerolls. */
+    static int rerolled(Reroll reroll, DieFaces die) {
+        return switch (reroll.times()) {
+            case NEVER -> 0;
+            case ONCE, ALWAYS ->
+                reroll.target() == Reroll.Target.LOWEST
+                        ? die.matching(Relation.EQUAL, die.lowest())
+                        : die.matching(reroll.relation(), reroll.value());
+        };
     }
 
     private static RolledNode<RolledExpression> group(DiceNode.Group<RolledExpression> group) {

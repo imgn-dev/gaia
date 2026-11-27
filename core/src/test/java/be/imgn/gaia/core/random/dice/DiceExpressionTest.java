@@ -10,6 +10,7 @@ import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
+import be.imgn.gaia.core.random.dice.DiceNode.Sides;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +95,11 @@ class DiceExpressionTest {
         var expression = DiceExpression.parse("4d6dl1+STR");
 
         var dice = DiceExpression.of(new DiceNode.Dice<>(
-                constant(4), constant(6), Reroll.NONE, Explode.NONE, new Keep(Keep.Mode.DROP_LOWEST, 1)));
+                constant(4),
+                new Sides.Standard<>(constant(6)),
+                Reroll.NONE,
+                Explode.NONE,
+                new Keep(Keep.Mode.DROP_LOWEST, 1)));
         var variable = DiceExpression.of(new DiceNode.Variable<DiceExpression>("STR"));
         assertThat(expression.node()).isEqualTo(new DiceNode.Arithmetic<>(Operator.ADD, dice, variable));
     }
@@ -180,7 +185,8 @@ class DiceExpressionTest {
             case DiceNode.Constant<String>(var value) -> Integer.toString(value);
             case DiceNode.Variable<String>(var name) -> name;
             case DiceNode.Bound<String>(var name, var value) -> name;
-            case DiceNode.Dice<String> rolled -> "(d " + rolled.count() + " " + rolled.sides() + ")";
+            case DiceNode.Dice<String> rolled ->
+                "(d " + rolled.count() + " " + rolled.children().getLast() + ")";
             case DiceNode.Negate<String>(var operand) -> "(- " + operand + ")";
             case DiceNode.Arithmetic<String>(var operator, var left, var right) ->
                 "(" + operator.symbol() + " " + left + " " + right + ")";
@@ -374,9 +380,81 @@ class DiceExpressionTest {
     }
 
     @Test
-    void aBareRerollIsOfOnes() {
-        assertThat(DiceExpression.parse("2d8r")).hasToString("2d8r=1").isEqualTo(DiceExpression.parse("2d8r=1"));
-        assertThat(DiceExpression.parse("2d8rr")).hasToString("2d8rr=1");
+    void aBareRerollIsOfTheLowestFace() {
+        var bare = DiceExpression.parse("2d8r");
+
+        assertThat(bare).hasToString("2d8r").isNotEqualTo(DiceExpression.parse("2d8r=1"));
+        assertThat(DiceExpression.parse("2d8rr")).hasToString("2d8rr");
+        assertThat(bare.roll(new FakeRandom(1, 8, 2))).hasToString("2d8r[1r, 8, 2] = 10");
+        assertThat(bare.chances().outcomes())
+                .isEqualTo(DiceExpression.parse("2d8r=1").chances().outcomes());
+        assertThat(DiceExpression.parse("(2d8r)>=10").node()).isInstanceOf(DiceNode.Comparison.class);
+        assertThat(DiceExpression.parse("(2d8r)>=10")).hasToString("(2d8r)>=10");
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "4d[-1..1]",
+                "1d[0..9]",
+                "1d[1,2,2,3,3,4]+1d[1,3..6,8]",
+                "6d[0,0,0,0,1,1]",
+                "3d[1..6,6]kh2",
+                "2d[-2,5]r=-2",
+                "2d[-3..-1,1..3]x>=-1",
+                "1d[7]",
+                "STRd[1..3,5..7]rr",
+            })
+    void customDiceAreWrittenBack(String text) {
+        assertThat(DiceExpression.parse(text)).hasToString(text);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'d[ 1 , 2 , 3 ]', '1d[1..3]'",
+        "'d[1,2]', '1d[1,2]'",
+        "'d[3..3]', '1d[3]'",
+        "'2 d [ -1 .. 1 ] kh 1', '2d[-1..1]kh1'",
+        "'d[1..3,3..5]', '1d[1..3,3..5]'",
+        "'d[1,3,4,5,6,8]', '1d[1,3..6,8]'",
+    })
+    void customDiceAreNormalized(String text, String expected) {
+        assertThat(DiceExpression.parse(text)).hasToString(expected).isEqualTo(DiceExpression.parse(expected));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"d[]", "d[1", "d[3..1]", "d[1,,2]", "d[A]", "d[1..20000]", "d[1..]", "d[1.5]"})
+    void facesThatAreNotAListOfNumbersAreRejected(String text) {
+        assertThatExceptionOfType(DiceParseException.class).isThrownBy(() -> DiceExpression.parse(text));
+    }
+
+    @Test
+    void customDiceAreInspectable() {
+        var dice = (DiceNode.Dice<DiceExpression>)
+                DiceExpression.parse("2d[0,0,1]").node();
+
+        assertThat(dice.sides()).isEqualTo(new Sides.Custom<DiceExpression>(List.of(0, 0, 1)));
+        assertThat(dice.children()).containsExactly(constant(2));
+        assertThat(((DiceNode.Dice<DiceExpression>) DiceExpression.parse("2d6").node()).children())
+                .containsExactly(constant(2), constant(6));
+        assertThatIllegalArgumentException().isThrownBy(() -> new Sides.Custom<DiceExpression>(List.of()));
+    }
+
+    @Test
+    void customDiceShowTheFaceAtTheRandomIndex() {
+        var rolled = DiceExpression.parse("4d[-1..1]").roll(new FakeRandom(1, 3, 2, 3));
+
+        assertThat(rolled.value()).isEqualTo(1);
+        assertThat(rolled).hasToString("4d[-1..1][-1, 1, 0, 1] = 1");
+    }
+
+    @Test
+    void customDiceExplodeOnTheirHighestFaceAndRerollTheirLowest() {
+        var exploding = DiceExpression.parse("2d[0,0,1]x").roll(new FakeRandom(3, 3, 1, 2));
+        var rerolled = DiceExpression.parse("2d[2..5]r").roll(new FakeRandom(1, 4, 3));
+
+        assertThat(exploding).hasToString("2d[0,0,1]x[1x, 1x, 0, 0] = 2");
+        assertThat(rerolled).hasToString("2d[2..5]r[2r, 5, 4] = 9");
     }
 
     @ParameterizedTest
@@ -386,7 +464,7 @@ class DiceExpressionTest {
         "STR d 6 kh 1, STRd6kh1",
         "1d6 x >= 5, 1d6x>=5",
         "1d6x >=5, 1d6x>=5",
-        "2d8 r, 2d8r=1",
+        "2d8 r, 2d8r",
         "2d8r < 3, 2d8r<3",
         "d %, 1d100",
         "( 1d6 x ) >= 5, (1d6x)>=5",
@@ -426,7 +504,8 @@ class DiceExpressionTest {
         var dice = (DiceNode.Dice<DiceExpression>)
                 DiceExpression.parse("4d6rr<=2x>=6dl1").node();
 
-        assertThat(dice.reroll()).isEqualTo(new Reroll(Reroll.Times.ALWAYS, Relation.LESS_OR_EQUAL, 2));
+        assertThat(dice.reroll())
+                .isEqualTo(new Reroll(Reroll.Times.ALWAYS, Reroll.Target.MATCHING, Relation.LESS_OR_EQUAL, 2));
         assertThat(dice.explode()).isEqualTo(new Explode(Explode.Faces.MATCHING, Relation.GREATER_OR_EQUAL, 6));
         assertThat(dice.keep()).isEqualTo(new Keep(Keep.Mode.DROP_LOWEST, 1));
         assertThat(dice.isPlain()).isFalse();
@@ -491,7 +570,18 @@ class DiceExpressionTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1d6rr<=6", "1d6rr>=1", "1d6rr!=7", "1d1x", "1d6x<=6", "1d6x!=0"})
+    @ValueSource(
+            strings = {
+                "1d6rr<=6",
+                "1d6rr>=1",
+                "1d6rr!=7",
+                "1d1x",
+                "1d6x<=6",
+                "1d6x!=0",
+                "1d[2,2]rr",
+                "1d[3,3,3]x",
+                "1d1rr"
+            })
     void rulesThatNeverEndAreRejected(String text) {
         var expression = DiceExpression.parse(text);
 
@@ -501,7 +591,8 @@ class DiceExpressionTest {
 
     @Test
     void rulesAreChecked() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Reroll(Reroll.Times.NEVER, Relation.LESS, 3));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> new Reroll(Reroll.Times.NEVER, Reroll.Target.MATCHING, Relation.LESS, 3));
         assertThatIllegalArgumentException().isThrownBy(() -> new Explode(Explode.Faces.HIGHEST, Relation.EQUAL, 6));
         assertThat(Reroll.NONE).hasToString("");
         assertThat(Explode.NONE).hasToString("");

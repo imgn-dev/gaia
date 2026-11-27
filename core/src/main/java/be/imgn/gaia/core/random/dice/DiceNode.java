@@ -150,23 +150,23 @@ public sealed interface DiceNode<T> {
     }
 
     /**
-     * Dice that are rolled and summed, such as {@code 4d6dl1} or {@code 2d8r<=2x}. Dice are rerolled first, then
-     * explode, then some are kept.
+     * Dice that are rolled and summed, such as {@code 4d6dl1}, {@code 2d8r<=2x} or {@code 4d[-1..1]}. Dice are rerolled
+     * first, then explode, then some are kept.
      *
      * @param count how many dice are rolled
-     * @param sides how many sides each die has, numbered from one
+     * @param sides the faces of each die
      * @param reroll which dice are rolled again
      * @param explode which dice add another die
      * @param keep which dice count in the sum
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, T sides, Reroll reroll, Explode explode, Keep keep) implements DiceNode<T> {
+    record Dice<T>(T count, Sides<T> sides, Reroll reroll, Explode explode, Keep keep) implements DiceNode<T> {
 
         /**
          * Creates dice.
          *
          * @param count how many dice are rolled
-         * @param sides how many sides each die has, numbered from one
+         * @param sides the faces of each die
          * @param reroll which dice are rolled again
          * @param explode which dice add another die
          * @param keep which dice count in the sum
@@ -180,13 +180,13 @@ public sealed interface DiceNode<T> {
         }
 
         /**
-         * Creates dice that are rolled once and all count.
+         * Creates dice with faces numbered from one, that are rolled once and all count.
          *
          * @param count how many dice are rolled
-         * @param sides how many sides each die has, numbered from one
+         * @param sides how many sides each die has
          */
         public Dice(T count, T sides) {
-            this(count, sides, Reroll.NONE, Explode.NONE, Keep.ALL);
+            this(count, new Sides.Standard<>(sides), Reroll.NONE, Explode.NONE, Keep.ALL);
         }
 
         /**
@@ -198,15 +198,117 @@ public sealed interface DiceNode<T> {
             return reroll.equals(Reroll.NONE) && explode.equals(Explode.NONE) && keep.equals(Keep.ALL);
         }
 
+        /**
+         * Returns the count, then the number of sides if the faces are numbered from one.
+         *
+         * @return the children of these dice
+         */
         @Override
         public List<T> children() {
-            return List.of(count, sides);
+            return sides instanceof Sides.Standard<T>(T number) ? List.of(count, number) : List.of(count);
         }
 
         @Override
         public <U> Dice<U> map(Function<? super T, ? extends U> mapper) {
             U mappedCount = mapper.apply(count);
-            return new Dice<>(mappedCount, mapper.apply(sides), reroll, explode, keep);
+            return new Dice<>(mappedCount, sides.map(mapper), reroll, explode, keep);
+        }
+    }
+
+    /**
+     * The faces of a die: numbered from one to a number of sides, or listed one by one.
+     *
+     * @param <T> the type of the children
+     */
+    sealed interface Sides<T> {
+
+        /** The most faces that may be listed for one die. */
+        int MAX_FACES = 10_000;
+
+        /**
+         * Returns these sides with each child replaced by what a function returns for it.
+         *
+         * @param mapper the function to apply to each child
+         * @param <U> the type of the new children
+         * @return the mapped sides
+         */
+        <U> Sides<U> map(Function<? super T, ? extends U> mapper);
+
+        /**
+         * Faces numbered from one to a number of sides, such as the {@code 6} of {@code 3d6}.
+         *
+         * @param number how many sides the die has
+         * @param <T> the type of the children
+         */
+        record Standard<T>(T number) implements Sides<T> {
+
+            /**
+             * Creates standard sides.
+             *
+             * @param number how many sides the die has
+             */
+            public Standard {
+                requireNonNull(number, "number");
+            }
+
+            @Override
+            public <U> Standard<U> map(Function<? super T, ? extends U> mapper) {
+                return new Standard<>(mapper.apply(number));
+            }
+        }
+
+        /**
+         * Faces listed one by one, such as the {@code [-1..1]} of {@code 4d[-1..1]} or the {@code [0,0,0,0,1,1]} of a
+         * die that counts a success two times out of six. A face that is listed twice comes up twice as often.
+         *
+         * @param faces the value of each face, in the order they are written
+         * @param <T> the type of the children
+         */
+        record Custom<T>(List<Integer> faces) implements Sides<T> {
+
+            /**
+             * Creates custom sides.
+             *
+             * @param faces the value of each face, in the order they are written
+             * @throws IllegalArgumentException if there is no face, or more than {@link #MAX_FACES}
+             */
+            public Custom {
+                faces = List.copyOf(faces);
+                checkArgument(!faces.isEmpty(), "A die has at least one face");
+                checkArgument(faces.size() <= MAX_FACES, "Too many faces: %d", faces.size());
+            }
+
+            @Override
+            public <U> Custom<U> map(Function<? super T, ? extends U> mapper) {
+                requireNonNull(mapper, "mapper");
+                return new Custom<>(faces);
+            }
+
+            /**
+             * Returns the faces as they are written, with faces that follow each other as a range: {@code [1..6,6]}.
+             *
+             * @return the faces between brackets
+             */
+            @Override
+            public String toString() {
+                var text = new StringBuilder("[");
+                for (int start = 0; start < faces.size(); ) {
+                    int end = start;
+                    while (end + 1 < faces.size() && faces.get(end + 1) == (long) faces.get(end) + 1) {
+                        end++;
+                    }
+                    text.append(start == 0 ? "" : ",");
+                    if (end - start >= 2) {
+                        text.append(faces.get(start)).append("..").append(faces.get(end));
+                    } else {
+                        // Two faces are shorter as a list, and one face is itself.
+                        end = start;
+                        text.append(faces.get(start));
+                    }
+                    start = end + 1;
+                }
+                return text.append(']').toString();
+            }
         }
     }
 
@@ -406,55 +508,64 @@ public sealed interface DiceNode<T> {
     }
 
     /**
-     * Which dice are rolled again: {@link #NONE}, or those whose face satisfies a condition, either once or until the
-     * face no longer does.
+     * Which dice are rolled again: {@link #NONE}, those that show their lowest face, or those whose face satisfies a
+     * condition, either once or until the face no longer does.
      *
      * @param times whether dice are rerolled, and how many times
+     * @param target on which faces dice are rerolled
      * @param relation how the face of a die is compared to {@code value}
      * @param value the right operand of the comparison
      */
-    record Reroll(Times times, Relation relation, int value) {
+    record Reroll(Times times, Target target, Relation relation, int value) {
 
         /** No die is rerolled: nothing is written after the dice. */
-        public static final Reroll NONE = new Reroll(Times.NEVER, Relation.EQUAL, 0);
+        public static final Reroll NONE = new Reroll(Times.NEVER, Target.LOWEST, Relation.EQUAL, 0);
 
         /**
          * Creates a rule.
          *
          * @param times whether dice are rerolled, and how many times
+         * @param target on which faces dice are rerolled
          * @param relation how the face of a die is compared to {@code value}
          * @param value the right operand of the comparison
-         * @throws IllegalArgumentException if {@code times} is {@link Times#NEVER} with another condition than that of
-         *     {@link #NONE}
+         * @throws IllegalArgumentException if {@code target} isn't {@link Target#MATCHING} and the condition isn't that
+         *     of {@link #NONE}, or if {@code times} is {@link Times#NEVER} and the rule isn't {@link #NONE}
          */
         public Reroll {
             requireNonNull(times, "times");
+            requireNonNull(target, "target");
             requireNonNull(relation, "relation");
             checkArgument(
-                    times != Times.NEVER || (relation == Relation.EQUAL && value == 0),
-                    "No reroll has no condition: %s%d",
+                    target == Target.MATCHING || (relation == Relation.EQUAL && value == 0),
+                    "Only matching faces have a condition: %s%d",
                     relation.symbol(),
                     value);
+            checkArgument(times != Times.NEVER || target == Target.LOWEST, "No reroll has no condition");
         }
 
         /**
          * Returns whether a die that shows a face is rolled again.
          *
          * @param face the face
-         * @return whether the face satisfies the condition
+         * @param lowest the lowest face of the die
+         * @return whether the die is rerolled
          */
-        public boolean matches(int face) {
-            return times != Times.NEVER && relation.test(face, value);
+        public boolean matches(int face, int lowest) {
+            if (times == Times.NEVER) {
+                return false;
+            }
+            return target == Target.LOWEST ? face == lowest : relation.test(face, value);
         }
 
         /**
-         * Returns this rule as it's written, such as {@code r<=2}, which is empty when no die is rerolled.
+         * Returns this rule as it's written, such as {@code r} or {@code rr<=2}, which is empty when no die is
+         * rerolled.
          *
          * @return this rule as it's written
          */
         @Override
         public String toString() {
-            return times == Times.NEVER ? "" : times.symbol + relation.symbol() + value;
+            return times.symbol + (target == Target.LOWEST ? "" : relation.symbol() + value);
         }
 
         /** Whether dice are rerolled, and how many times. */
@@ -463,7 +574,7 @@ public sealed interface DiceNode<T> {
             NEVER(""),
             /** Rerolls a die once, and keeps its new face whatever it is: {@code r}. */
             ONCE("r"),
-            /** Rerolls a die until its face no longer satisfies the condition: {@code rr}. */
+            /** Rerolls a die until its face no longer asks for it: {@code rr}. */
             ALWAYS("rr");
 
             private final String symbol;
@@ -480,6 +591,14 @@ public sealed interface DiceNode<T> {
             public String symbol() {
                 return symbol;
             }
+        }
+
+        /** On which faces dice are rerolled. */
+        public enum Target {
+            /** A die is rerolled on its lowest face. */
+            LOWEST,
+            /** A die is rerolled on the faces that satisfy the condition. */
+            MATCHING
         }
     }
 
@@ -525,13 +644,13 @@ public sealed interface DiceNode<T> {
          * Returns whether a die that shows a face explodes.
          *
          * @param face the face
-         * @param sides how many sides the die has
+         * @param highest the highest face of the die
          * @return whether the die adds another die
          */
-        public boolean matches(int face, int sides) {
+        public boolean matches(int face, int highest) {
             return switch (faces) {
                 case NONE -> false;
-                case HIGHEST -> face == sides;
+                case HIGHEST -> face == highest;
                 case MATCHING -> relation.test(face, value);
             };
         }

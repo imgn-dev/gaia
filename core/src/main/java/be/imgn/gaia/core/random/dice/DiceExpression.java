@@ -38,11 +38,13 @@ import org.jspecify.annotations.Nullable;
  *   <li>one comparison, {@code = != < <= > >=}, which evaluates to 1 if it holds and to 0 if not;
  *   <li>{@code + -}, then {@code * /}, from left to right; a division is rounded down;
  *   <li>a unary {@code -};
- *   <li>dice, {@code 3d6}: a count, which is 1 if omitted, {@code d}, a number of sides or {@code %} for 100, then
- *       optionally, in this order:
+ *   <li>dice, {@code 3d6}: a count, which is 1 if omitted, {@code d}, then the faces: a number of sides, {@code %} for
+ *       100, or a list of faces between brackets, in which {@code ..} stands for the faces in between and a face that
+ *       is listed twice comes up twice as often: {@code 4d[-1..1]}, {@code 6d[0,0,0,0,1,1]}. Then optionally, in this
+ *       order:
  *       <ul>
  *         <li>which dice are rolled again: {@code r<=2} rerolls once a die that shows 2 or less, and keeps its new face
- *             whatever it is; {@code rr<=2} rerolls it until it shows more; {@code r} alone is {@code r=1};
+ *             whatever it is; {@code rr<=2} rerolls it until it shows more; {@code r} alone rerolls the lowest face;
  *         <li>which dice explode, that is, add another die that may explode too, up to ten times for one die: {@code x}
  *             on the highest face, {@code x>=5} on 5 or more;
  *         <li>which dice count in the sum: {@code kh2} keeps the two highest, {@code kl2} the two lowest, {@code dh2}
@@ -65,13 +67,16 @@ import org.jspecify.annotations.Nullable;
  * sum        := product (('+' | '-') product)*
  * product    := unary (('*' | '/') unary)*
  * unary      := '-' unary | dice
- * dice       := primary? 'd' (primary | '%') reroll? explode? keep? | primary
- * reroll     := ('r' | 'rr') (relation number)?
- * explode    := 'x' (relation number)?
+ * dice       := primary? 'd' (primary | '%' | faces) reroll? explode? keep? | primary
+ * faces      := '[' face (',' face)* ']'
+ * face       := integer ('..' integer)?
+ * reroll     := ('r' | 'rr') (relation integer)?
+ * explode    := 'x' (relation integer)?
  * keep       := ('kh' | 'kl' | 'dh' | 'dl') number
  * primary    := number | variable | group
  * group      := '(' expression tag* ')'
  * tag        := ':' name (relation sum)*
+ * integer    := '-'? number
  * number     := [0-9]+
  * variable   := [A-Z_] [A-Z0-9_]*
  * name       := [A-Za-z_] [A-Za-z0-9_]*
@@ -241,10 +246,11 @@ public final class DiceExpression {
     /**
      * Rolls the dice of this expression, from left to right, and evaluates it.
      *
-     * <p>Each die calls {@link RandomGenerator#nextInt(int) nextInt(sides)} once, and shows that number plus one. A die
-     * that is rerolled calls it again right away, and a die that explodes is followed by the one it adds. The dice of a
-     * count and of a number of sides are rolled before the dice they count, and those of a group before those of the
-     * conditions of its tags. Nothing else uses the source of randomness.
+     * <p>Each die calls {@link RandomGenerator#nextInt(int) nextInt(sides)} once, and shows that number plus one, or
+     * the face at that index of its list of faces. A die that is rerolled calls it again right away, and a die that
+     * explodes is followed by the one it adds. The dice of a count and of a number of sides are rolled before the dice
+     * they count, and those of a group before those of the conditions of its tags. Nothing else uses the source of
+     * randomness.
      *
      * @param random the source of randomness
      * @return the tree of what each node evaluated to
