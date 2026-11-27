@@ -12,6 +12,34 @@ The libraries require Java 25 or later and are released together under one versi
 - [API documentation](https://imgn-dev.github.io/gaia/api/latest/): the Javadoc of the latest release, or of
   [every released version](https://imgn-dev.github.io/gaia/api/).
 
+## Maven coordinates
+
+The artifacts have the group `be.imgn.gaia`: `gaia-core`, `gaia-core-testing`, `gaia-fast`, `gaia-memfs`,
+`gaia-processing`, `gaia-processing-testing`, `gaia-processor`, the `gaia-maven-plugin` and the `gaia-bom`.
+
+Import the BOM, then declare the libraries you use without versions:
+
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>be.imgn.gaia</groupId>
+      <artifactId>gaia-bom</artifactId>
+      <version>${gaia.version}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
+<dependencies>
+  <dependency>
+    <groupId>be.imgn.gaia</groupId>
+    <artifactId>gaia-core</artifactId>
+  </dependency>
+</dependencies>
+```
+
 ## Benchmarks
 
 JMH benchmarks of `gaia-core`'s I/O against the JDK's: reading files whole and by lines, and copying them; encoding
