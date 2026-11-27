@@ -128,7 +128,12 @@ final class DiceParser {
         index++;
         var faces = new ArrayList<Integer>();
         do {
+            skipSpaces();
+            int position = index;
             int first = face();
+            if (!faces.isEmpty() && first < faces.getLast()) {
+                throw new DiceParseException("The faces of a die are listed in ascending order", text, position);
+            }
             int last = first;
             skipSpaces();
             if (text.startsWith("..", index)) {

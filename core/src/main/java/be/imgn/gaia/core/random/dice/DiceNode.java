@@ -258,11 +258,9 @@ public sealed interface DiceNode<T> {
         }
 
         /**
-         * Faces listed one by one, such as the {@code [-1..1]} of {@code 4d[-1..1]} or the {@code [0,0,0,0,1,1]} of a
-         * die that counts a success two times out of six. A face that is listed twice comes up twice as often.
-         *
-         * <p>The faces are kept in ascending order, whatever the order they are given in: {@code d[3,1,2]} is
-         * {@code d[1..3]}.
+         * Faces listed one by one, in ascending order, such as the {@code [-1..1]} of {@code 4d[-1..1]} or the
+         * {@code [0,0,0,0,1,1]} of a die that counts a success two times out of six. A face that is listed twice comes
+         * up twice as often.
          *
          * @param faces the value of each face, in ascending order
          * @param <T> the type of the children
@@ -272,13 +270,21 @@ public sealed interface DiceNode<T> {
             /**
              * Creates custom sides.
              *
-             * @param faces the value of each face, in any order
-             * @throws IllegalArgumentException if there is no face, or more than {@link #MAX_FACES}
+             * @param faces the value of each face, in ascending order
+             * @throws IllegalArgumentException if there is no face, if there are more than {@link #MAX_FACES}, or if a
+             *     face is lower than the one before it
              */
             public Custom {
-                faces = faces.stream().sorted().toList();
+                faces = List.copyOf(faces);
                 checkArgument(!faces.isEmpty(), "A die has at least one face");
                 checkArgument(faces.size() <= MAX_FACES, "Too many faces: %d", faces.size());
+                for (int i = 1; i < faces.size(); i++) {
+                    checkArgument(
+                            faces.get(i - 1) <= faces.get(i),
+                            "The faces of a die are in ascending order: %d is before %d",
+                            faces.get(i - 1),
+                            faces.get(i));
+                }
             }
 
             @Override

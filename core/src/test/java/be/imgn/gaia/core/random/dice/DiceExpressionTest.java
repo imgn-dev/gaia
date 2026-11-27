@@ -417,10 +417,6 @@ class DiceExpressionTest {
         "'2 d [ -1 .. 1 ] kh 1', '2d[-1..1]kh1'",
         "'d[1..3,3..5]', '1d[1..3,3..5]'",
         "'d[1,3,4,5,6,8]', '1d[1,3..6,8]'",
-        "'d[3,1,2]', '1d[1..3]'",
-        "'d[6,1..6]', '1d[1..6,6]'",
-        "'d[1,0,1,0,0,0]', '1d[0,0,0,0,1,1]'",
-        "'d[5,-2]', '1d[-2,5]'",
     })
     void customDiceAreNormalized(String text, String expected) {
         assertThat(DiceExpression.parse(text)).hasToString(expected).isEqualTo(DiceExpression.parse(expected));
@@ -444,15 +440,14 @@ class DiceExpressionTest {
         assertThatIllegalArgumentException().isThrownBy(() -> new Sides.Custom<DiceExpression>(List.of()));
     }
 
-    @Test
-    void customFacesAreKeptInAscendingOrder() {
-        var dice = (DiceNode.Dice<DiceExpression>)
-                DiceExpression.parse("2d[5,1,3,1]").node();
-
-        assertThat(dice.sides()).isEqualTo(new Sides.Custom<DiceExpression>(List.of(1, 1, 3, 5)));
-        assertThat(new Sides.Custom<DiceExpression>(List.of(3, 1, 2)).faces()).containsExactly(1, 2, 3);
-        assertThat(DiceExpression.parse("2d[5,1,3,1]").roll(new FakeRandom(1, 4)))
-                .hasToString("2d[1,1,3,5][1, 5] = 6");
+    @ParameterizedTest
+    @CsvSource({"'d[3,1,2]', 4", "'d[6,1..6]', 4", "'d[1,0,1,0,0,0]', 4", "'d[5,-2]', 4", "'d[1..3, 2..4]', 8"})
+    void customFacesAreListedInAscendingOrder(String text, int position) {
+        assertThatExceptionOfType(DiceParseException.class)
+                .isThrownBy(() -> DiceExpression.parse(text))
+                .withMessageContaining("ascending order")
+                .satisfies(e -> assertThat(e.position()).isEqualTo(position));
+        assertThatIllegalArgumentException().isThrownBy(() -> new Sides.Custom<DiceExpression>(List.of(3, 1, 2)));
     }
 
     @Test

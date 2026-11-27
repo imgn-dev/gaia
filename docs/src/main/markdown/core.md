@@ -588,8 +588,8 @@ size, but a chance is an `IntFraction`: asking for one that doesn't fit once red
 A die that is rerolled is counted as a die whose faces aren't equally likely, and dice that explode by the number of
 dice they add, ten at most for each, whether some are then dropped or not.
 
-Custom dice list their faces between brackets, where `..` stands for the faces in between and a face listed twice
-comes up twice as often. They roll, reroll, explode and are counted like any other dice:
+Custom dice list their faces between brackets, in ascending order, where `..` stands for the faces in between and a
+face listed twice comes up twice as often. They roll, reroll, explode and are counted like any other dice:
 
 ```java
 DiceExpression.parse("4d[-1..1]").chances().of(0);                  // 19/81, four Fudge dice

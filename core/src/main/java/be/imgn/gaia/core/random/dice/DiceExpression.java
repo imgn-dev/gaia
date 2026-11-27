@@ -39,9 +39,9 @@ import org.jspecify.annotations.Nullable;
  *   <li>{@code + -}, then {@code * /}, from left to right; a division is rounded down;
  *   <li>a unary {@code -};
  *   <li>dice, {@code 3d6}: a count, which is 1 if omitted, {@code d}, then the faces: a number of sides, {@code %} for
- *       100, or a list of faces between brackets, in which {@code ..} stands for the faces in between and a face that
- *       is listed twice comes up twice as often: {@code 4d[-1..1]}, {@code 6d[0,0,0,0,1,1]}. Then optionally, in this
- *       order:
+ *       100, or a list of faces in ascending order between brackets, in which {@code ..} stands for the faces in
+ *       between and a face that is listed twice comes up twice as often: {@code 4d[-1..1]}, {@code 6d[0,0,0,0,1,1]}.
+ *       Then optionally, in this order:
  *       <ul>
  *         <li>which dice are rolled again: {@code r<=2} rerolls once a die that shows 2 or less, and keeps its new face
  *             whatever it is; {@code rr<=2} rerolls it until it shows more; {@code r} alone rerolls the lowest face;
@@ -247,10 +247,10 @@ public final class DiceExpression {
      * Rolls the dice of this expression, from left to right, and evaluates it.
      *
      * <p>Each die calls {@link RandomGenerator#nextInt(int) nextInt(sides)} once, and shows that number plus one, or
-     * the face at that index of its faces in ascending order. A die that is rerolled calls it again right away, and a
-     * die that explodes is followed by the one it adds. The dice of a count and of a number of sides are rolled before
-     * the dice they count, and those of a group before those of the conditions of its tags. Nothing else uses the
-     * source of randomness.
+     * the face at that index of its list of faces. A die that is rerolled calls it again right away, and a die that
+     * explodes is followed by the one it adds. The dice of a count and of a number of sides are rolled before the dice
+     * they count, and those of a group before those of the conditions of its tags. Nothing else uses the source of
+     * randomness.
      *
      * @param random the source of randomness
      * @return the tree of what each node evaluated to
