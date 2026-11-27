@@ -60,7 +60,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
-<li><a href="#%3Cinit%3E(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep)" tabindex="0">Dice(T, DiceNode.Sides, DiceNode.Reroll, DiceNode.Explode, DiceNode.Keep)</a></li>
+<li><a href="#%3Cinit%3E(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep,be.imgn.gaia.core.random.dice.DiceNode.Tally)" tabindex="0">Dice(T, DiceNode.Sides, DiceNode.Reroll, DiceNode.Explode, DiceNode.Keep, DiceNode.Tally)</a></li>
 <li><a href="#%3Cinit%3E(T,T)" tabindex="0">Dice(T, T)</a></li>
 </ol>
 </li>
@@ -77,6 +77,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#reroll()" tabindex="0">reroll()</a></li>
 <li><a href="#explode()" tabindex="0">explode()</a></li>
 <li><a href="#keep()" tabindex="0">keep()</a></li>
+<li><a href="#tally()" tabindex="0">tally()</a></li>
 </ol>
 </li>
 </ol>
@@ -100,7 +101,8 @@ loadScripts(document, 'script');</script>
 <dd><code><span id="param-sides">sides</span></code> - the faces of each die</dd>
 <dd><code><span id="param-reroll">reroll</span></code> - which dice are rolled again</dd>
 <dd><code><span id="param-explode">explode</span></code> - which dice add another die</dd>
-<dd><code><span id="param-keep">keep</span></code> - which dice count in the sum</dd>
+<dd><code><span id="param-keep">keep</span></code> - which dice count</dd>
+<dd><code><span id="param-tally">tally</span></code> - what the dice that count add up to: their faces, or how many of them succeed</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
@@ -112,11 +114,11 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">DiceNode.Dice&lt;T&gt;</span>(<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&nbsp;count, <a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&gt;&nbsp;sides, <a href="DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a>&nbsp;reroll, <a href="DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a>&nbsp;explode, <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>&nbsp;keep)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">DiceNode.Dice&lt;T&gt;</span>(<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&nbsp;count, <a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&gt;&nbsp;sides, <a href="DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a>&nbsp;reroll, <a href="DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a>&nbsp;explode, <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>&nbsp;keep, <a href="DiceNode.Tally.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tally</a>&nbsp;tally)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a>&lt;T&gt;</span></div>
-<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>, <code>2d8r&lt;=2x</code> or <code>4d[-1..1]</code>. Dice are rerolled
-first, then explode, then some are kept.</div>
+<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>, <code>2d8r&lt;=2x</code> or <code>4d[-1..1]</code>, or whose
+successes are counted, such as <code>6d6c&gt;=5</code>. Dice are rerolled first, then explode, then some are kept.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.2.0</dd>
@@ -131,7 +133,7 @@ first, then explode, then some are kept.</div>
 <h2>Nested Class Summary</h2>
 <div class="inherited-list">
 <h3 id="nested-classes-inherited-from-class-be.imgn.gaia.core.random.dice.DiceNode">Nested classes/interfaces inherited from interface&nbsp;<a href="DiceNode.html#nested-class-summary" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a></h3>
-<code><a href="DiceNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Arithmetic</a>&lt;T&gt;, <a href="DiceNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Bound</a>&lt;T&gt;, <a href="DiceNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Comparison</a>&lt;T&gt;, <a href="DiceNode.Condition.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Condition</a>&lt;T&gt;, <a href="DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant</a>&lt;T&gt;, <a href="DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;T&gt;, <a href="DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a>, <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>&lt;T&gt;, <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>, <a href="DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>&lt;T&gt;, <a href="DiceNode.Operator.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Operator</a>, <a href="DiceNode.Relation.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a>, <a href="DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a>, <a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;T&gt;, <a href="DiceNode.Tag.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;T&gt;, <a href="DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a>&lt;T&gt;</code></div>
+<code><a href="DiceNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Arithmetic</a>&lt;T&gt;, <a href="DiceNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Bound</a>&lt;T&gt;, <a href="DiceNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Comparison</a>&lt;T&gt;, <a href="DiceNode.Condition.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Condition</a>&lt;T&gt;, <a href="DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant</a>&lt;T&gt;, <a href="DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;T&gt;, <a href="DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a>, <a href="DiceNode.Extreme.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Extreme</a>, <a href="DiceNode.Extremum.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Extremum</a>&lt;T&gt;, <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>&lt;T&gt;, <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>, <a href="DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>&lt;T&gt;, <a href="DiceNode.Operator.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Operator</a>, <a href="DiceNode.Relation.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a>, <a href="DiceNode.Repeat.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Repeat</a>&lt;T&gt;, <a href="DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a>, <a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;T&gt;, <a href="DiceNode.Tag.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;T&gt;, <a href="DiceNode.Tally.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tally</a>, <a href="DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a>&lt;T&gt;</code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -142,11 +144,12 @@ first, then explode, then some are kept.</div>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep)" class="member-name-link">Dice</a><wbr>(<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&nbsp;count,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep,be.imgn.gaia.core.random.dice.DiceNode.Tally)" class="member-name-link">Dice</a><wbr>(<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&nbsp;count,
  <a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&gt;&nbsp;sides,
  <a href="DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a>&nbsp;reroll,
  <a href="DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a>&nbsp;explode,
- <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>&nbsp;keep)</code></div>
+ <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>&nbsp;keep,
+ <a href="DiceNode.Tally.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tally</a>&nbsp;tally)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates dice.</div>
 </div>
@@ -219,9 +222,14 @@ first, then explode, then some are kept.</div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-sides"><code>sides</code></a> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DiceNode.Tally.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tally</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tally()" class="member-name-link">tally</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <a href="#param-tally"><code>tally</code></a> record component.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
 </div>
 </div>
@@ -242,14 +250,15 @@ first, then explode, then some are kept.</div>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep)">
-<h3 id="&lt;init&gt;(java.lang.Object,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep)">Dice</h3>
+<section class="detail" id="&lt;init&gt;(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep,be.imgn.gaia.core.random.dice.DiceNode.Tally)">
+<h3 id="&lt;init&gt;(java.lang.Object,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep,be.imgn.gaia.core.random.dice.DiceNode.Tally)">Dice</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Dice</span><wbr><span class="parameters">(<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&nbsp;count,
  <a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;<a href="#type-param-T" title="type parameter in DiceNode.Dice">T</a>&gt;&nbsp;sides,
  <a href="DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a>&nbsp;reroll,
  <a href="DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a>&nbsp;explode,
- <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>&nbsp;keep)</span></div>
+ <a href="DiceNode.Keep.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Keep</a>&nbsp;keep,
+ <a href="DiceNode.Tally.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tally</a>&nbsp;tally)</span></div>
 <div class="block">Creates dice.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -257,7 +266,8 @@ first, then explode, then some are kept.</div>
 <dd><code>sides</code> - the faces of each die</dd>
 <dd><code>reroll</code> - which dice are rolled again</dd>
 <dd><code>explode</code> - which dice add another die</dd>
-<dd><code>keep</code> - which dice count in the sum</dd>
+<dd><code>keep</code> - which dice count</dd>
+<dd><code>tally</code> - what the dice that count add up to</dd>
 </dl>
 </div>
 </section>
@@ -442,6 +452,19 @@ children in the order they are written.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value of the <a href="#param-keep"><code>keep</code></a> record component</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="tally()">
+<h3>tally</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DiceNode.Tally.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tally</a></span>&nbsp;<span class="element-name">tally</span>()</div>
+<div class="block">Returns the value of the <a href="#param-tally"><code>tally</code></a> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-tally"><code>tally</code></a> record component</dd>
 </dl>
 </div>
 </section>

@@ -59,7 +59,13 @@ loadScripts(document, 'script');</script>
 <li><a href="#inspection-heading" tabindex="0">Inspection</a></li>
 </ol>
 </li>
+<li><a href="#field-summary" tabindex="0">Field Summary</a></li>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
+<li><a href="#field-detail" tabindex="0">Field Details</a>
+<ol class="toc-list">
+<li><a href="#DEFAULT_CHANCES_STEPS" tabindex="0">DEFAULT_CHANCES_STEPS</a></li>
+</ol>
+</li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#parse(java.lang.String)" tabindex="0">parse(String)</a></li>
@@ -73,6 +79,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#bind(java.util.function.Function)" tabindex="0">bind(Function)</a></li>
 <li><a href="#roll(java.util.random.RandomGenerator)" tabindex="0">roll(RandomGenerator)</a></li>
 <li><a href="#chances()" tabindex="0">chances()</a></li>
+<li><a href="#chances(long)" tabindex="0">chances(long)</a></li>
 <li><a href="#selector()" tabindex="0">selector()</a></li>
 <li><a href="#equals(java.lang.Object)" tabindex="0">equals(Object)</a></li>
 <li><a href="#hashCode()" tabindex="0">hashCode()</a></li>
@@ -118,6 +125,8 @@ chances.tagged("critical");                   // 1/20
   <li>one comparison, <code>= != &lt; &lt;= &gt; &gt;=</code>, which evaluates to 1 if it holds and to 0 if not;
   <li><code>+ -</code>, then <code>* /</code>, from left to right; a division is rounded down;
   <li>a unary <code>-</code>;
+  <li>a repeat, <code>6x(4d6dl1)</code>: a number of times, <code>x</code>, and a value that is evaluated that many times and
+      summed, with its dice rolled again each time, unlike a product;
   <li>dice, <code>3d6</code>: a count, which is 1 if omitted, <code>d</code>, then the faces: a number of sides, <code>%</code> for
       100, or a list of faces in ascending order between brackets, in which <code>..</code> stands for the faces in
       between and a face that is listed twice comes up twice as often: <code>4d[-1..1]</code>, <code>6d[0,0,0,0,1,1]</code>.
@@ -127,11 +136,13 @@ chances.tagged("critical");                   // 1/20
             whatever it is; <code>rr&lt;=2</code> rerolls it until it shows more; <code>r</code> alone rerolls the lowest face;
         <li>which dice explode, that is, add another die that may explode too, up to ten times for one die: <code>x</code>
             on the highest face, <code>x&gt;=5</code> on 5 or more;
-        <li>which dice count in the sum: <code>kh2</code> keeps the two highest, <code>kl2</code> the two lowest, <code>dh2</code>
-            drops the two highest and <code>dl2</code> the two lowest;
+        <li>which dice count: <code>kh2</code> keeps the two highest, <code>kl2</code> the two lowest, <code>dh2</code> drops the
+            two highest and <code>dl2</code> the two lowest;
+        <li>whether the dice that count are counted instead of summed: <code>6d6c&gt;=5</code> is how many of six dice show 5
+            or more;
       </ul>
-  <li>a whole number, a variable, whose name is made of upper-case letters, digits and underscores, or a group
-      between parentheses.
+  <li>a whole number, a variable, whose name is made of upper-case letters, digits and underscores, a group between
+      parentheses, or the lowest or the highest of several values: <code>min(1d20,1d20)</code>, <code>max(1d4-1,1)</code>.
 </ul>
 
 <p>A group may end with tags, each made of a colon and a name, optionally followed by conditions, each made of a
@@ -145,14 +156,16 @@ between any two parts, and never change what a text means.
 relation   := '=' | '!=' | '&lt;' | '&lt;=' | '&gt;' | '&gt;='
 sum        := product (('+' | '-') product)*
 product    := unary (('*' | '/') unary)*
-unary      := '-' unary | dice
-dice       := primary? 'd' (primary | '%' | faces) reroll? explode? keep? | primary
+unary      := '-' unary | dice ('x' unary)?
+dice       := primary? 'd' (primary | '%' | faces) reroll? explode? keep? count? | primary
 faces      := '[' face (',' face)* ']'
 face       := integer ('..' integer)?
 reroll     := ('r' | 'rr') (relation integer)?
 explode    := 'x' (relation integer)?
 keep       := ('kh' | 'kl' | 'dh' | 'dl') number
-primary    := number | variable | group
+count      := 'c' relation integer
+primary    := number | variable | group | extremum
+extremum   := ('min' | 'max') '(' expression (',' expression)* ')'
 group      := '(' expression tag* ')'
 tag        := ':' name (relation sum)*
 integer    := '-'? number
@@ -164,13 +177,15 @@ name       := [A-Za-z_] [A-Za-z0-9_]*
 <p>A number is at most <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html#MAX_VALUE" title="class or interface in java.lang" class="external-link"><code>Integer.MAX_VALUE</code></a>. A comparison operator that follows <code>r</code>, <code>rr</code> or
 <code>x</code> is always the condition of that rule, and must be followed by a number: <code>1d6x&gt;=5</code> explodes on 5 or
 more. To compare the dice themselves, put them between parentheses, as in <code>(1d6x)&gt;=5</code>; <code>1d6x&gt;=AC</code> is
-rejected, not guessed.
+rejected, not guessed. Likewise, an <code>x</code> after dice is their explosion: to repeat dice that have no rule after
+it, put them between parentheses, as in <code>(2d6)x(1d4)</code>. A text nests its parts at most 100 deep.
 
 <h2 id="inspection-heading">Inspection</h2>
 
 <p><a href="#node()"><code>node()</code></a> is the root of the tree, to walk from the top with a <code>switch</code> over the records of
 <a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice"><code>DiceNode</code></a>. <a href="#fold(java.util.function.Function)"><code>fold(Function)</code></a> walks it from the bottom instead: the function is given each node with its
-children already replaced by what it returned for them. Everything else this class does is built on it.
+children already replaced by what it returned for them. Everything else this class does is built on it, but for
+rolling a repeat, whose value is rolled several times.
 
 <pre><code>int dice = expression.&lt;Integer&gt;fold(node -&gt; switch (node) {
     case DiceNode.Dice&lt;Integer&gt; d -&gt; 1;
@@ -187,6 +202,23 @@ children already replaced by what it returned for them. Everything else this cla
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- =========== FIELD SUMMARY =========== -->
+<li>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="caption"><span>Fields</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Field</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final long</code></div>
+<div class="col-second even-row-color"><code><a href="#DEFAULT_CHANCES_STEPS" class="member-name-link">DEFAULT_CHANCES_STEPS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The most steps that <a href="#chances()"><code>chances()</code></a> takes: about a second of work.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -227,52 +259,57 @@ the function returns null.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Computes the exact chances of each outcome of this expression, without rolling.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;R&gt;&nbsp;R</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fold(java.util.function.Function)" class="member-name-link">fold</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a>&lt;R&gt;, ? extends R&gt;&nbsp;function)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DiceChances.html" title="class in be.imgn.gaia.core.random.dice">DiceChances</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#chances(long)" class="member-name-link">chances</a><wbr>(long&nbsp;maxSteps)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Computes the exact chances of each outcome of this expression, without rolling, within a limit of work.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;R&gt;&nbsp;R</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fold(java.util.function.Function)" class="member-name-link">fold</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super <a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a>&lt;R&gt;, ? extends R&gt;&nbsp;function)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Reduces this expression to one value, from the leaves to the root: the function is applied to each node, whose
 children are what the function returned for them.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a><wbr>&lt;<a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#node()" class="member-name-link">node</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a><wbr>&lt;<a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#node()" class="member-name-link">node</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the root of this expression, whose children are expressions.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(be.imgn.gaia.core.random.dice.DiceNode)" class="member-name-link">of</a><wbr>(<a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a>&lt;<a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a>&gt;&nbsp;node)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(be.imgn.gaia.core.random.dice.DiceNode)" class="member-name-link">of</a><wbr>(<a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode</a>&lt;<a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a>&gt;&nbsp;node)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the expression whose root is a given node.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parse(java.lang.String)" class="member-name-link">parse</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice">DiceExpression</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parse(java.lang.String)" class="member-name-link">parse</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Parses a dice expression.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="RolledExpression.html" title="class in be.imgn.gaia.core.random.dice">RolledExpression</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#roll(java.util.random.RandomGenerator)" class="member-name-link">roll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="RolledExpression.html" title="class in be.imgn.gaia.core.random.dice">RolledExpression</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#roll(java.util.random.RandomGenerator)" class="member-name-link">roll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/random/RandomGenerator.html" title="class or interface in java.util.random" class="external-link">RandomGenerator</a>&nbsp;random)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Rolls the dice of this expression, from left to right, and evaluates it.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#selector()" class="member-name-link">selector</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#selector()" class="member-name-link">selector</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns this expression as a selector of the values it evaluates to: each selection rolls the dice, and the
 chances of the selector are those of <a href="#chances()"><code>chances()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns this expression as a text that <a href="#parse(java.lang.String)"><code>parse(String)</code></a> reads back to an expression with the same meaning.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variables()" class="member-name-link">variables</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variables()" class="member-name-link">variables</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the names of the variables that have no value, in the order they first appear.</div>
 </div>
 </div>
@@ -287,6 +324,31 @@ chances of the selector are those of <a href="#chances()"><code>chances()</code>
 </section>
 <section class="details">
 <ul class="details-list">
+<!-- ============ FIELD DETAIL =========== -->
+<li>
+<section class="field-details" id="field-detail">
+<h2>Field Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="DEFAULT_CHANCES_STEPS">
+<h3>DEFAULT_CHANCES_STEPS</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">DEFAULT_CHANCES_STEPS</span></div>
+<div class="block">The most steps that <a href="#chances()"><code>chances()</code></a> takes: about a second of work.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../../../constant-values.html#be.imgn.gaia.core.random.dice.DiceExpression.DEFAULT_CHANCES_STEPS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
@@ -489,6 +551,28 @@ dropped, as two kinds of dice: those that show a face that explodes, and the oth
 <dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArithmeticException.html" title="class or interface in java.lang" class="external-link">ArithmeticException</a></code> - if a value overflows an <code>int</code>, on a division by zero, if a number of dice is
     negative or more than 10,000, or a number of sides less than one, or if some dice have more than 1,000,000
     sides in total</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="chances(long)">
+<h3>chances</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DiceChances.html" title="class in be.imgn.gaia.core.random.dice">DiceChances</a></span>&nbsp;<span class="element-name">chances</span><wbr><span class="parameters">(long&nbsp;maxSteps)</span></div>
+<div class="block">Computes the exact chances of each outcome of this expression, without rolling, within a limit of work. The work
+is counted in steps of about the same cost, such as adding the chances of two outcomes: a limit bounds the time
+and the memory that an expression from an unknown source may take.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>maxSteps</code> - the most steps that the computation may take</dd>
+<dt>Returns:</dt>
+<dd>the chances of each outcome</dd>
+<dt>Throws:</dt>
+<dd><code><a href="UnresolvedVariableException.html" title="class in be.imgn.gaia.core.random.dice">UnresolvedVariableException</a></code> - if a variable has no value</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArithmeticException.html" title="class or interface in java.lang" class="external-link">ArithmeticException</a></code> - if the computation takes more than <code>maxSteps</code> steps, or in the cases of
+    <a href="#chances()"><code>chances()</code></a></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>maxSteps</code> is negative</dd>
 </dl>
 </div>
 </section>

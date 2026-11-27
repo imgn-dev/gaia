@@ -77,12 +77,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="RolledNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Arithmetic</a>, <a href="RolledNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Bound</a>, <a href="RolledNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Comparison</a>, <a href="RolledNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Constant</a>, <a href="RolledNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Dice</a>, <a href="RolledNode.Group.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Group</a>, <a href="RolledNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Negate</a></code></dd>
+<dd><code><a href="RolledNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Arithmetic</a>, <a href="RolledNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Bound</a>, <a href="RolledNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Comparison</a>, <a href="RolledNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Constant</a>, <a href="RolledNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Dice</a>, <a href="RolledNode.Extremum.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Extremum</a>, <a href="RolledNode.Group.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Group</a>, <a href="RolledNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Negate</a>, <a href="RolledNode.Repeat.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Repeat</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">RolledNode&lt;T&gt;</span>
-<span class="permits">permits <a href="RolledNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Constant</a>&lt;T&gt;, <a href="RolledNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Bound</a>&lt;T&gt;, <a href="RolledNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Dice</a>&lt;T&gt;, <a href="RolledNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Negate</a>&lt;T&gt;, <a href="RolledNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Arithmetic</a>&lt;T&gt;, <a href="RolledNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Comparison</a>&lt;T&gt;, <a href="RolledNode.Group.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Group</a>&lt;T&gt;</span></div>
+<span class="permits">permits <a href="RolledNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Constant</a>&lt;T&gt;, <a href="RolledNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Bound</a>&lt;T&gt;, <a href="RolledNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Dice</a>&lt;T&gt;, <a href="RolledNode.Extremum.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Extremum</a>&lt;T&gt;, <a href="RolledNode.Repeat.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Repeat</a>&lt;T&gt;, <a href="RolledNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Negate</a>&lt;T&gt;, <a href="RolledNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Arithmetic</a>&lt;T&gt;, <a href="RolledNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Comparison</a>&lt;T&gt;, <a href="RolledNode.Group.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Group</a>&lt;T&gt;</span></div>
 <div class="block">One node of a <a href="RolledExpression.html" title="class in be.imgn.gaia.core.random.dice"><code>RolledExpression</code></a>, whose children are of type <code>T</code>: a <a href="DiceNode.html" title="interface in be.imgn.gaia.core.random.dice"><code>DiceNode</code></a> together with what
 it evaluated to.
 
@@ -136,14 +136,24 @@ it evaluated to.
 <div class="block">One die that was rolled.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="RolledNode.Group.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">RolledNode.Group</a>&lt;<a href="RolledNode.Group.html#type-param-T" title="type parameter in RolledNode.Group">T</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="RolledNode.Extremum.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">RolledNode.Extremum</a>&lt;<a href="RolledNode.Extremum.html#type-param-T" title="type parameter in RolledNode.Extremum">T</a>&gt;</code></div>
 <div class="col-last even-row-color">
-<div class="block">A value between parentheses, with its tags.</div>
+<div class="block">The lowest or the highest of several values.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="RolledNode.Negate.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">RolledNode.Negate</a>&lt;<a href="RolledNode.Negate.html#type-param-T" title="type parameter in RolledNode.Negate">T</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="RolledNode.Group.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">RolledNode.Group</a>&lt;<a href="RolledNode.Group.html#type-param-T" title="type parameter in RolledNode.Group">T</a>&gt;</code></div>
 <div class="col-last odd-row-color">
+<div class="block">A value between parentheses, with its tags.</div>
+</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="RolledNode.Negate.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">RolledNode.Negate</a>&lt;<a href="RolledNode.Negate.html#type-param-T" title="type parameter in RolledNode.Negate">T</a>&gt;</code></div>
+<div class="col-last even-row-color">
 <div class="block">The opposite of a value.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="RolledNode.Repeat.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">RolledNode.Repeat</a>&lt;<a href="RolledNode.Repeat.html#type-param-T" title="type parameter in RolledNode.Repeat">T</a>&gt;</code></div>
+<div class="col-last odd-row-color">
+<div class="block">A value that was evaluated several times.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="RolledNode.Tag.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">RolledNode.Tag</a>&lt;<a href="RolledNode.Tag.html#type-param-T" title="type parameter in RolledNode.Tag">T</a>&gt;</code></div>

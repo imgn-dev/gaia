@@ -76,12 +76,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="DiceNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Arithmetic</a>, <a href="DiceNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Bound</a>, <a href="DiceNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Comparison</a>, <a href="DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant</a>, <a href="DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>, <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>, <a href="DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>, <a href="DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a></code></dd>
+<dd><code><a href="DiceNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Arithmetic</a>, <a href="DiceNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Bound</a>, <a href="DiceNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Comparison</a>, <a href="DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant</a>, <a href="DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>, <a href="DiceNode.Extremum.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Extremum</a>, <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>, <a href="DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>, <a href="DiceNode.Repeat.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Repeat</a>, <a href="DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a></code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">DiceNode&lt;T&gt;</span>
-<span class="permits">permits <a href="DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant</a>&lt;T&gt;, <a href="DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a>&lt;T&gt;, <a href="DiceNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Bound</a>&lt;T&gt;, <a href="DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;T&gt;, <a href="DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>&lt;T&gt;, <a href="DiceNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Arithmetic</a>&lt;T&gt;, <a href="DiceNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Comparison</a>&lt;T&gt;, <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>&lt;T&gt;</span></div>
+<span class="permits">permits <a href="DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant</a>&lt;T&gt;, <a href="DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a>&lt;T&gt;, <a href="DiceNode.Bound.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Bound</a>&lt;T&gt;, <a href="DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;T&gt;, <a href="DiceNode.Extremum.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Extremum</a>&lt;T&gt;, <a href="DiceNode.Repeat.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Repeat</a>&lt;T&gt;, <a href="DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a>&lt;T&gt;, <a href="DiceNode.Arithmetic.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Arithmetic</a>&lt;T&gt;, <a href="DiceNode.Comparison.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Comparison</a>&lt;T&gt;, <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>&lt;T&gt;</span></div>
 <div class="block">One node of a <a href="DiceExpression.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceExpression</code></a>, whose children are of type <code>T</code>.
 
 <p>In <a href="DiceExpression.html#node()"><code>DiceExpression.node()</code></a>, the children are expressions themselves. In the function passed to
@@ -139,13 +139,24 @@ over the permitted records tells the nodes apart:
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="DiceNode.Dice.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;<a href="DiceNode.Dice.html#type-param-T" title="type parameter in DiceNode.Dice">T</a>&gt;</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>, <code>2d8r&lt;=2x</code> or <code>4d[-1..1]</code>.</div>
+<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>, <code>2d8r&lt;=2x</code> or <code>4d[-1..1]</code>, or whose
+successes are counted, such as <code>6d6c&gt;=5</code>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="DiceNode.Explode.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Which dice explode, that is, add another die that may explode too: <a href="DiceNode.Explode.html#NONE"><code>DiceNode.Explode.NONE</code></a>, those that show their
 <a href="DiceNode.Explode.html#HIGHEST"><code>DiceNode.Explode.HIGHEST</code></a> face, or those whose face satisfies a condition.</div>
+</div>
+<div class="col-first odd-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Extreme.html" class="type-name-link" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Extreme</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Which of several values is taken.</div>
+</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Extremum.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Extremum</a>&lt;<a href="DiceNode.Extremum.html#type-param-T" title="type parameter in DiceNode.Extremum">T</a>&gt;</code></div>
+<div class="col-last even-row-color">
+<div class="block">The lowest or the highest of several values, such as <code>max(1d6,1d8)</code>.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="DiceNode.Group.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a>&lt;<a href="DiceNode.Group.html#type-param-T" title="type parameter in DiceNode.Group">T</a>&gt;</code></div>
@@ -173,20 +184,32 @@ over the permitted records tells the nodes apart:
 <div class="block">How two values are compared.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="DiceNode.Reroll.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Repeat.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Repeat</a>&lt;<a href="DiceNode.Repeat.html#type-param-T" title="type parameter in DiceNode.Repeat">T</a>&gt;</code></div>
 <div class="col-last even-row-color">
+<div class="block">A value that is evaluated several times, each time on its own, and summed, such as <code>6x(4d6dl1)</code>: unlike a
+product, its dice are rolled again each time.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Reroll.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Which dice are rolled again: <a href="DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, those that show their lowest face, or those whose face satisfies a
 condition, either once or until the face no longer does.</div>
 </div>
-<div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="DiceNode.Sides.html" class="type-name-link" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;<a href="DiceNode.Sides.html#type-param-T" title="type parameter in DiceNode.Sides">T</a>&gt;</code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Sides.html" class="type-name-link" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;<a href="DiceNode.Sides.html#type-param-T" title="type parameter in DiceNode.Sides">T</a>&gt;</code></div>
+<div class="col-last even-row-color">
 <div class="block">The faces of a die: numbered from one to a number of sides, or listed one by one.</div>
 </div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="DiceNode.Tag.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;<a href="DiceNode.Tag.html#type-param-T" title="type parameter in DiceNode.Tag">T</a>&gt;</code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Tag.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;<a href="DiceNode.Tag.html#type-param-T" title="type parameter in DiceNode.Tag">T</a>&gt;</code></div>
+<div class="col-last odd-row-color">
 <div class="block">A tag on a <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceNode.Group</code></a>, such as <code>:critical&gt;=20</code> or <code>:tier2&gt;=12&lt;=16</code>.</div>
+</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Tally.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tally</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">What the dice that count add up to: the <a href="DiceNode.Tally.html#SUM"><code>DiceNode.Tally.SUM</code></a> of their faces, or how many of them show a face that
+satisfies a condition.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="DiceNode.Variable.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a>&lt;<a href="DiceNode.Variable.html#type-param-T" title="type parameter in DiceNode.Variable">T</a>&gt;</code></div>

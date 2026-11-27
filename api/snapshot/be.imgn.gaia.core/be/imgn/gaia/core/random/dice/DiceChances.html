@@ -67,6 +67,11 @@ loadScripts(document, 'script');</script>
 <li><a href="#max()" tabindex="0">max()</a></li>
 <li><a href="#mean()" tabindex="0">mean()</a></li>
 <li><a href="#outcomes()" tabindex="0">outcomes()</a></li>
+<li><a href="#variance()" tabindex="0">variance()</a></li>
+<li><a href="#standardDeviation()" tabindex="0">standardDeviation()</a></li>
+<li><a href="#median()" tabindex="0">median()</a></li>
+<li><a href="#quantile(double)" tabindex="0">quantile(double)</a></li>
+<li><a href="#mode()" tabindex="0">mode()</a></li>
 <li><a href="#values()" tabindex="0">values()</a></li>
 <li><a href="#all()" tabindex="0">all()</a></li>
 <li><a href="#selector()" tabindex="0">selector()</a></li>
@@ -170,9 +175,19 @@ a denominator that doesn't fit in an <code>int</code>.</div>
 <div class="block">Returns the average of the values that the expression evaluates to, weighted by their chances.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#min()" class="member-name-link">min</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#median()" class="member-name-link">median</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the median of the values: the least value that the expression is at most half the time or more.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#min()" class="member-name-link">min</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the least value that the expression may evaluate to.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#mode()" class="member-name-link">mode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value that the expression evaluates to most often, or the least of them if there are several.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../math/IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#of(int)" class="member-name-link">of</a><wbr>(int&nbsp;value)</code></div>
@@ -184,11 +199,23 @@ a denominator that doesn't fit in an <code>int</code>.</div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the chance of each value that the expression may evaluate to, from the least value to the greatest.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#selector()" class="member-name-link">selector</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#quantile(double)" class="member-name-link">quantile</a><wbr>(double&nbsp;fraction)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the least value that the expression is at most a given fraction of the time or more:
+<code>quantile(0.9)</code> is the value that nine evaluations in ten don't exceed.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../RandomSelector.html" title="interface in be.imgn.gaia.core.random">RandomSelector</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#selector()" class="member-name-link">selector</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a selector that selects each value with its chance, without rolling any die: one selection takes the same
 time whatever the expression.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#standardDeviation()" class="member-name-link">standardDeviation</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the standard deviation of the values: the square root of their <a href="#variance()"><code>variance()</code></a>, which is how far from
+the mean the values typically are.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../math/IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tagged(java.lang.String)" class="member-name-link">tagged</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tag)</code></div>
@@ -206,8 +233,13 @@ time whatever the expression.</div>
 <div class="block">Returns the chance of each value, as chances that the rest of the <code>random</code> package works with.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../math/IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#where(java.util.function.Predicate)" class="member-name-link">where</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super <a href="DiceChances.Outcome.html" title="class in be.imgn.gaia.core.random.dice">DiceChances.Outcome</a>&gt;&nbsp;predicate)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variance()" class="member-name-link">variance</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the variance of the values: the average of the squares of their distances to the <a href="#mean()"><code>mean()</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../math/IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#where(java.util.function.Predicate)" class="member-name-link">where</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;? super <a href="DiceChances.Outcome.html" title="class in be.imgn.gaia.core.random.dice">DiceChances.Outcome</a>&gt;&nbsp;predicate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the chance of the outcomes that satisfy a predicate.</div>
 </div>
 </div>
@@ -350,6 +382,79 @@ time whatever the expression.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the chance of each value that the expression may evaluate to, from the least value to the greatest</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="variance()">
+<h3>variance</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../math/IntFraction.html" title="class in be.imgn.gaia.core.math">IntFraction</a></span>&nbsp;<span class="element-name">variance</span>()</div>
+<div class="block">Returns the variance of the values: the average of the squares of their distances to the <a href="#mean()"><code>mean()</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the variance</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArithmeticException.html" title="class or interface in java.lang" class="external-link">ArithmeticException</a></code> - if the variance doesn't fit</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="standardDeviation()">
+<h3>standardDeviation</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">standardDeviation</span>()</div>
+<div class="block">Returns the standard deviation of the values: the square root of their <a href="#variance()"><code>variance()</code></a>, which is how far from
+the mean the values typically are.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the standard deviation</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="median()">
+<h3>median</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">median</span>()</div>
+<div class="block">Returns the median of the values: the least value that the expression is at most half the time or more.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the median</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="quantile(double)">
+<h3>quantile</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">quantile</span><wbr><span class="parameters">(double&nbsp;fraction)</span></div>
+<div class="block">Returns the least value that the expression is at most a given fraction of the time or more:
+<code>quantile(0.9)</code> is the value that nine evaluations in ten don't exceed.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>fraction</code> - the fraction of the time, from zero to one</dd>
+<dt>Returns:</dt>
+<dd>the least value <code>v</code> such that <code>atMost(v)</code> is at least <code>fraction</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>fraction</code> isn't between zero and one</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="mode()">
+<h3>mode</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">mode</span>()</div>
+<div class="block">Returns the value that the expression evaluates to most often, or the least of them if there are several.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the most likely value</dd>
 </dl>
 </div>
 </section>
