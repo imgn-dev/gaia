@@ -139,7 +139,7 @@ over the permitted records tells the nodes apart:
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="DiceNode.Dice.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;<a href="DiceNode.Dice.html#type-param-T" title="type parameter in DiceNode.Dice">T</a>&gt;</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code> or <code>2d8r&lt;=2x</code>.</div>
+<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>, <code>2d8r&lt;=2x</code> or <code>4d[-1..1]</code>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="DiceNode.Explode.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a></code></div>
@@ -175,17 +175,22 @@ over the permitted records tells the nodes apart:
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="DiceNode.Reroll.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Which dice are rolled again: <a href="DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, or those whose face satisfies a condition, either once or until the
-face no longer does.</div>
+<div class="block">Which dice are rolled again: <a href="DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, those that show their lowest face, or those whose face satisfies a
+condition, either once or until the face no longer does.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="DiceNode.Tag.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;<a href="DiceNode.Tag.html#type-param-T" title="type parameter in DiceNode.Tag">T</a>&gt;</code></div>
+<div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Sides.html" class="type-name-link" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;<a href="DiceNode.Sides.html#type-param-T" title="type parameter in DiceNode.Sides">T</a>&gt;</code></div>
 <div class="col-last odd-row-color">
-<div class="block">A tag on a <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceNode.Group</code></a>, such as <code>:critical&gt;=20</code> or <code>:tier2&gt;=12&lt;=16</code>.</div>
+<div class="block">The faces of a die: numbered from one to a number of sides, or listed one by one.</div>
 </div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="DiceNode.Variable.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a>&lt;<a href="DiceNode.Variable.html#type-param-T" title="type parameter in DiceNode.Variable">T</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="DiceNode.Tag.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;<a href="DiceNode.Tag.html#type-param-T" title="type parameter in DiceNode.Tag">T</a>&gt;</code></div>
 <div class="col-last even-row-color">
+<div class="block">A tag on a <a href="DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice"><code>DiceNode.Group</code></a>, such as <code>:critical&gt;=20</code> or <code>:tier2&gt;=12&lt;=16</code>.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DiceNode.Variable.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a>&lt;<a href="DiceNode.Variable.html#type-param-T" title="type parameter in DiceNode.Variable">T</a>&gt;</code></div>
+<div class="col-last odd-row-color">
 <div class="block">A variable that has no value yet, such as <code>STR</code>.</div>
 </div>
 </div>

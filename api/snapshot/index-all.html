@@ -542,7 +542,7 @@ types it brings.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Times.html#ALWAYS" class="member-name-link">ALWAYS</a> - Enum constant in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Times.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Times</a></dt>
 <dd>
-<div class="block">Rerolls a die until its face no longer satisfies the condition: <code>rr</code>.</div>
+<div class="block">Rerolls a die until its face no longer asks for it: <code>rr</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html#alwaysQualifiedNames()" class="member-name-link">alwaysQualifiedNames()</a> - Method in class be.imgn.gaia.processing.source.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/JavaFile.html" title="class in be.imgn.gaia.processing.source">JavaFile</a></dt>
 <dd>
@@ -1451,7 +1451,9 @@ of its vendor, or of its vendor's qualifier.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Constant.html#children()" class="member-name-link">children()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Constant.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Constant</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html#children()" class="member-name-link">children()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the count, then the number of sides if the faces are numbered from one.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Group.html#children()" class="member-name-link">children()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Group.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Group</a></dt>
 <dd>
 <div class="block">Returns the inner value, then the operand of each condition of each tag.</div>
@@ -1913,6 +1915,10 @@ it exists.</div>
 <dd>
 <div class="block">Returns a cursor over the entries, positioned before the first one.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html#%3Cinit%3E(java.util.List)" class="member-name-link">Custom(List)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom</a></dt>
+<dd>
+<div class="block">Creates custom sides.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
@@ -2034,17 +2040,17 @@ attribute of that annotation.</div>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Dice.html#param-dice"><code>dice</code></a> record component.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html#%3Cinit%3E(T,T)" class="member-name-link">Dice(T, T)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a></dt>
-<dd>
-<div class="block">Creates dice that are rolled once and all count.</div>
-</dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html#%3Cinit%3E(T,T,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep)" class="member-name-link">Dice(T, T, DiceNode.Reroll, DiceNode.Explode, DiceNode.Keep)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html#%3Cinit%3E(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep)" class="member-name-link">Dice(T, DiceNode.Sides, DiceNode.Reroll, DiceNode.Explode, DiceNode.Keep)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a></dt>
 <dd>
 <div class="block">Creates dice.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Dice.html#%3Cinit%3E(T,T,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep,java.util.List,int)" class="member-name-link">Dice(T, T, DiceNode.Reroll, DiceNode.Explode, DiceNode.Keep, List, int)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Dice</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Dice.html#%3Cinit%3E(T,be.imgn.gaia.core.random.dice.DiceNode.Sides,be.imgn.gaia.core.random.dice.DiceNode.Reroll,be.imgn.gaia.core.random.dice.DiceNode.Explode,be.imgn.gaia.core.random.dice.DiceNode.Keep,java.util.List,int)" class="member-name-link">Dice(T, DiceNode.Sides, DiceNode.Reroll, DiceNode.Explode, DiceNode.Keep, List, int)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">RolledNode.Dice</a></dt>
 <dd>
 <div class="block">Creates rolled dice.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html#%3Cinit%3E(T,T)" class="member-name-link">Dice(T, T)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a></dt>
+<dd>
+<div class="block">Creates dice with faces numbered from one, that are rolled once and all count.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceChances.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceChances</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
 <dd>
@@ -2086,7 +2092,7 @@ apply.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Dice.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice&lt;T&gt;</a> - Record Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
 <dd>
-<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code> or <code>2d8r&lt;=2x</code>.</div>
+<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>, <code>2d8r&lt;=2x</code> or <code>4d[-1..1]</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a> - Record Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
 <dd>
@@ -2123,12 +2129,29 @@ apply.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a> - Record Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
 <dd>
-<div class="block">Which dice are rolled again: <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, or those whose face satisfies a condition, either once or until the
-face no longer does.</div>
+<div class="block">Which dice are rolled again: <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, those that show their lowest face, or those whose face satisfies a
+condition, either once or until the face no longer does.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html" class="type-name-link" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Target</a> - Enum Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
+<dd>
+<div class="block">On which faces dice are rerolled.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Times.html" class="type-name-link" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Times</a> - Enum Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
 <dd>
 <div class="block">Whether dice are rerolled, and how many times.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.html" class="type-name-link" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides&lt;T&gt;</a> - Interface in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
+<dd>
+<div class="block">The faces of a die: numbered from one to a number of sides, or listed one by one.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom&lt;T&gt;</a> - Record Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
+<dd>
+<div class="block">Faces listed one by one, such as the <code>[-1..1]</code> of <code>4d[-1..1]</code> or the <code>[0,0,0,0,1,1]</code> of a
+die that counts a success two times out of six.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard&lt;T&gt;</a> - Record Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
+<dd>
+<div class="block">Faces numbered from one to a number of sides, such as the <code>6</code> of <code>3d6</code>.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Tag.html" class="type-name-link" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag&lt;T&gt;</a> - Record Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/package-summary.html">be.imgn.gaia.core.random.dice</a></dt>
 <dd>
@@ -2591,6 +2614,14 @@ of <a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/Multiset.html#elementSet
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Tag.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Tag.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
@@ -2781,6 +2812,10 @@ creates: to deliver them right away in tests, for instance.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html#faces()" class="member-name-link">faces()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html#param-faces"><code>faces</code></a> record component.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html#faces()" class="member-name-link">faces()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html#param-faces"><code>faces</code></a> record component.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntMath.html#factorial(int)" class="member-name-link">factorial(int)</a> - Static method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/IntMath.html" title="class in be.imgn.gaia.core.math">IntMath</a></dt>
 <dd>
@@ -3318,6 +3353,14 @@ its entries.</div>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
@@ -4372,6 +4415,10 @@ divisions with a rounding mode, saturated arithmetic, combinatorics and primalit
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html#lowerEntry(E)" class="member-name-link">lowerEntry(E)</a> - Method in class be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/TreeMultiset.html" title="class in be.imgn.gaia.core.collect">TreeMultiset</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html#LOWEST" class="member-name-link">LOWEST</a> - Enum constant in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Target</a></dt>
+<dd>
+<div class="block">A die is rerolled on its lowest face.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
@@ -4418,6 +4465,14 @@ name the same file.</div>
 <div class="block">Returns this node with each child replaced by what a function returns for it.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Negate.html#map(java.util.function.Function)" class="member-name-link">map(Function)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Negate.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Negate</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html#map(java.util.function.Function)" class="member-name-link">map(Function)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.html#map(java.util.function.Function)" class="member-name-link">map(Function)</a> - Method in interface be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a></dt>
+<dd>
+<div class="block">Returns these sides with each child replaced by what a function returns for it.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html#map(java.util.function.Function)" class="member-name-link">map(Function)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Variable.html#map(java.util.function.Function)" class="member-name-link">map(Function)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Variable.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Variable</a></dt>
 <dd>&nbsp;</dd>
@@ -4495,17 +4550,21 @@ name the same file.</div>
 <dd>
 <div class="block">Returns a gatherer that maps each element with its index in the stream, counted from 0.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#matches(int)" class="member-name-link">matches(int)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></dt>
-<dd>
-<div class="block">Returns whether a die that shows a face is rolled again.</div>
-</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html#matches(int,int)" class="member-name-link">matches(int, int)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a></dt>
 <dd>
 <div class="block">Returns whether a die that shows a face explodes.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#matches(int,int)" class="member-name-link">matches(int, int)</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></dt>
+<dd>
+<div class="block">Returns whether a die that shows a face is rolled again.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.Faces.html#MATCHING" class="member-name-link">MATCHING</a> - Enum constant in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.Faces.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Explode.Faces</a></dt>
 <dd>
 <div class="block">A die explodes on the faces that satisfy the condition.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html#MATCHING" class="member-name-link">MATCHING</a> - Enum constant in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Target</a></dt>
+<dd>
+<div class="block">A die is rerolled on the faces that satisfy the condition.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceChances.html#max()" class="member-name-link">max()</a> - Method in class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceChances.html" title="class in be.imgn.gaia.core.random.dice">DiceChances</a></dt>
 <dd>
@@ -4519,6 +4578,10 @@ are fewer.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html#MAX_EXPLOSIONS" class="member-name-link">MAX_EXPLOSIONS</a> - Static variable in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a></dt>
 <dd>
 <div class="block">How many dice one die may add, one explosion after the other.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.html#MAX_FACES" class="member-name-link">MAX_FACES</a> - Static variable in interface be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a></dt>
+<dd>
+<div class="block">The most faces that may be listed for one die.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#maxNameLength()" class="member-name-link">maxNameLength()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
@@ -5107,6 +5170,10 @@ before the components are assigned.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html#notPrecededBy(java.lang.String)" class="member-name-link">notPrecededBy(String)</a> - Method in interface be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Text.Pattern.html" title="interface in be.imgn.gaia.core.base">Text.Pattern</a></dt>
 <dd>
 <div class="block">Returns a pattern like this one that selects only an occurrence not immediately preceded by <code>literal</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html#number()" class="member-name-link">number()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html#param-number"><code>number</code></a> record component.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/BigFraction.html#numerator()" class="member-name-link">numerator()</a> - Method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/BigFraction.html" title="class in be.imgn.gaia.core.math">BigFraction</a></dt>
 <dd>
@@ -6342,7 +6409,7 @@ creating it or replacing its content on each write.</div>
 <dd>
 <div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/random/dice/RolledNode.Dice.html#param-reroll"><code>reroll</code></a> record component.</div>
 </dd>
-<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#%3Cinit%3E(be.imgn.gaia.core.random.dice.DiceNode.Reroll.Times,be.imgn.gaia.core.random.dice.DiceNode.Relation,int)" class="member-name-link">Reroll(DiceNode.Reroll.Times, DiceNode.Relation, int)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></dt>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#%3Cinit%3E(be.imgn.gaia.core.random.dice.DiceNode.Reroll.Times,be.imgn.gaia.core.random.dice.DiceNode.Reroll.Target,be.imgn.gaia.core.random.dice.DiceNode.Relation,int)" class="member-name-link">Reroll(DiceNode.Reroll.Times, DiceNode.Reroll.Target, DiceNode.Relation, int)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></dt>
 <dd>
 <div class="block">Creates a rule.</div>
 </dd>
@@ -6809,6 +6876,10 @@ connected.</div>
 <dd>
 <div class="block">Returns the square root of a value, rounded to an integer.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html#%3Cinit%3E(T)" class="member-name-link">Standard(T)</a> - Constructor for record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard</a></dt>
+<dd>
+<div class="block">Creates standard sides.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html#start()" class="member-name-link">start()</a> - Method in class be.imgn.gaia.core.base.<a href="be.imgn.gaia.core/be/imgn/gaia/core/base/Stopwatch.html" title="class in be.imgn.gaia.core.base">Stopwatch</a></dt>
 <dd>
 <div class="block">Starts this stopwatch, resuming from its elapsed time.</div>
@@ -7147,6 +7218,10 @@ superclass: <code>AbstractList&lt;String&gt;</code> for <code>ArrayList&lt;Strin
 <dd>
 <div class="block">Returns a gatherer that keeps the elements while a predicate holds, and the first element that fails it, then
 stops.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#target()" class="member-name-link">target()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#param-target"><code>target</code></a> record component.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Relation.html#test(int,int)" class="member-name-link">test(int, int)</a> - Method in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Relation.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a></dt>
 <dd>
@@ -7518,7 +7593,16 @@ abbreviation: <code>ns</code>, <code>μs</code>, <code>ms</code>, <code>s</code>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html#toString()" class="member-name-link">toString()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></dt>
 <dd>
-<div class="block">Returns this rule as it's written, such as <code>r&lt;=2</code>, which is empty when no die is rerolled.</div>
+<div class="block">Returns this rule as it's written, such as <code>r</code> or <code>rr&lt;=2</code>, which is empty when no die is
+rerolled.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html#toString()" class="member-name-link">toString()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Custom.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom</a></dt>
+<dd>
+<div class="block">Returns the faces as they are written, with faces that follow each other as a range: <code>[1..6,6]</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html#toString()" class="member-name-link">toString()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Sides.Standard.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Tag.html#toString()" class="member-name-link">toString()</a> - Method in record class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Tag.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a></dt>
 <dd>
@@ -7984,6 +8068,10 @@ names matched exactly, and the <code>basic</code>, <code>owner</code>, <code>pos
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Target</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Times.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Times.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Times</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -8045,6 +8133,11 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Relation.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Relation.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html#values()" class="member-name-link">values()</a> - Static method in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Reroll.Target.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Target</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>

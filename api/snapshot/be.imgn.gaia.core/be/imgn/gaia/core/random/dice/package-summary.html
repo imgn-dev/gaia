@@ -318,7 +318,7 @@ apply.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab4"><a href="DiceNode.Dice.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Dice</a>&lt;T&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab4">
-<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code> or <code>2d8r&lt;=2x</code>.</div>
+<div class="block">Dice that are rolled and summed, such as <code>4d6dl1</code>, <code>2d8r&lt;=2x</code> or <code>4d[-1..1]</code>.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab4"><a href="DiceNode.Explode.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Explode</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab4">
@@ -355,12 +355,29 @@ apply.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab4"><a href="DiceNode.Reroll.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Reroll</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab4">
-<div class="block">Which dice are rolled again: <a href="DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, or those whose face satisfies a condition, either once or until the
-face no longer does.</div>
+<div class="block">Which dice are rolled again: <a href="DiceNode.Reroll.html#NONE"><code>DiceNode.Reroll.NONE</code></a>, those that show their lowest face, or those whose face satisfies a
+condition, either once or until the face no longer does.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="DiceNode.Reroll.Times.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Times</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="DiceNode.Reroll.Target.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Target</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">On which faces dice are rerolled.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab3"><a href="DiceNode.Reroll.Times.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Reroll.Times</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab3">
 <div class="block">Whether dice are rerolled, and how many times.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;T&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">The faces of a die: numbered from one to a number of sides, or listed one by one.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="DiceNode.Sides.Custom.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Custom</a>&lt;T&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">Faces listed one by one, such as the <code>[-1..1]</code> of <code>4d[-1..1]</code> or the <code>[0,0,0,0,1,1]</code> of a
+die that counts a success two times out of six.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="DiceNode.Sides.Standard.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Sides.Standard</a>&lt;T&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">Faces numbered from one to a number of sides, such as the <code>6</code> of <code>3d6</code>.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab4"><a href="DiceNode.Tag.html" title="class in be.imgn.gaia.core.random.dice">DiceNode.Tag</a>&lt;T&gt;</div>
 <div class="col-last even-row-color class-summary class-summary-tab4">
