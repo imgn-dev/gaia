@@ -784,6 +784,10 @@ one for each kind of file, never shared with another kind.</div>
 <dd>
 <div class="block">Applies this operation.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html#apply(long)" class="member-name-link">apply(long)</a> - Method in class be.imgn.gaia.core.hash.<a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html" title="class in be.imgn.gaia.core.hash">Feistel</a></dt>
+<dd>
+<div class="block">Scrambles a number.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedFunction.html#apply(long,T)" class="member-name-link">apply(long, T)</a> - Method in interface be.imgn.gaia.core.collect.<a href="be.imgn.gaia.core/be/imgn/gaia/core/collect/MoreGatherers.IndexedFunction.html" title="interface in be.imgn.gaia.core.collect">MoreGatherers.IndexedFunction</a></dt>
 <dd>
 <div class="block">Applies this function.</div>
@@ -1078,6 +1082,11 @@ that <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/SubscribingAnnotation.ht
 <dd>
 <div class="block">The interface between <a href="be.imgn.gaia.core/be/imgn/gaia/core/event/EventBus.html" title="class in be.imgn.gaia.core.event"><code>EventBus</code></a> and the code <code>gaia-processor</code> generates.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/package-summary.html">be.imgn.gaia.core.hash</a> - package be.imgn.gaia.core.hash</dt>
+<dd>
+<div class="block">Mixing of bits, for code that needs numbers to look unrelated to the ones they come from: <a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Mixers.html" title="class in be.imgn.gaia.core.hash"><code>Mixers</code></a> scrambles a number, and <a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html" title="class in be.imgn.gaia.core.hash"><code>Feistel</code></a> scrambles the numbers
+of a range among themselves, in a way that can be undone.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/io/package-summary.html">be.imgn.gaia.core.io</a> - package be.imgn.gaia.core.io</dt>
 <dd>
 <div class="block">Reading and writing files and streams.</div>
@@ -1208,6 +1217,10 @@ the function returns null.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongMath.html#binomial(long,long)" class="member-name-link">binomial(long, long)</a> - Static method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongMath.html" title="class in be.imgn.gaia.core.math">LongMath</a></dt>
 <dd>
 <div class="block">Returns a binomial coefficient: the number of ways to choose <code>k</code> elements among <code>n</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html#bits()" class="member-name-link">bits()</a> - Method in class be.imgn.gaia.core.hash.<a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html" title="class in be.imgn.gaia.core.hash">Feistel</a></dt>
+<dd>
+<div class="block">Returns the number of bits of the numbers that this network scrambles.</div>
 </dd>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html#blockSize()" class="member-name-link">blockSize()</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.html" title="class in be.imgn.gaia.memfs">Configuration</a></dt>
 <dd>
@@ -2965,6 +2978,10 @@ randomness are exact.</div>
 <dd>
 <div class="block">Sets the optional features the file system has; it lacks the others.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html" class="type-name-link" title="class in be.imgn.gaia.core.hash">Feistel</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/package-summary.html">be.imgn.gaia.core.hash</a></dt>
+<dd>
+<div class="block">A Feistel network: a way to scramble the numbers of a given number of bits among themselves, that can be undone.</div>
+</dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/Field.html" class="type-name-link" title="class in be.imgn.gaia.processing.source">Field</a> - Class in <a href="be.imgn.gaia.processing/be/imgn/gaia/processing/source/package-summary.html">be.imgn.gaia.processing.source</a></dt>
 <dd>
 <div class="block">A field, such as <code>private static final int LIMIT = 10;</code>.</div>
@@ -3280,6 +3297,10 @@ to the processors that support <code>*</code> when none is annotated.</div>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/StepProcessor.html#getSupportedSourceVersion()" class="member-name-link">getSupportedSourceVersion()</a> - Method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/StepProcessor.html" title="class in be.imgn.gaia.processing">StepProcessor</a></dt>
 <dd>
 <div class="block">Returns the latest source version, so that the processor never warns about newer sources.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Mixers.html#GOLDEN_GAMMA" class="member-name-link">GOLDEN_GAMMA</a> - Static variable in class be.imgn.gaia.core.hash.<a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Mixers.html" title="class in be.imgn.gaia.core.hash">Mixers</a></dt>
+<dd>
+<div class="block">The odd number closest to 2^64 divided by the golden ratio.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Relation.html#GREATER" class="member-name-link">GREATER</a> - Enum constant in enum class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceNode.Relation.html" title="enum class in be.imgn.gaia.core.random.dice">DiceNode.Relation</a></dt>
 <dd>
@@ -3822,6 +3843,10 @@ divisions with a rounding mode, saturated arithmetic, combinatorics and primalit
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongFraction.html#intValue()" class="member-name-link">intValue()</a> - Method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/LongFraction.html" title="class in be.imgn.gaia.core.math">LongFraction</a></dt>
 <dd>
 <div class="block">Returns this fraction rounded toward zero, then narrowed to an <code>int</code>.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html#invert(long)" class="member-name-link">invert(long)</a> - Method in class be.imgn.gaia.core.hash.<a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html" title="class in be.imgn.gaia.core.hash">Feistel</a></dt>
+<dd>
+<div class="block">Returns the number that <a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html#apply(long)"><code>Feistel.apply(long)</code></a> scrambles to a given one.</div>
 </dd>
 <dt><a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html#isAccessible(javax.lang.model.element.Element,java.lang.String)" class="member-name-link">isAccessible(Element, String)</a> - Static method in class be.imgn.gaia.processing.<a href="be.imgn.gaia.processing/be/imgn/gaia/processing/MoreElements.html" title="class in be.imgn.gaia.processing">MoreElements</a></dt>
 <dd>
@@ -4812,6 +4837,16 @@ fewer.</div>
 <dd>
 <div class="block">Returns the value returned for keys the map does not contain.</div>
 </dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Mixers.html#mix64(long)" class="member-name-link">mix64(long)</a> - Static method in class be.imgn.gaia.core.hash.<a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Mixers.html" title="class in be.imgn.gaia.core.hash">Mixers</a></dt>
+<dd>
+<div class="block">Mixes the 64 bits of a number: each bit of the result depends on every bit of the number, and changing one bit of
+the number changes about half of the bits of the result.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Mixers.html" class="type-name-link" title="class in be.imgn.gaia.core.hash">Mixers</a> - Class in <a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/package-summary.html">be.imgn.gaia.core.hash</a></dt>
+<dd>
+<div class="block">Functions that mix the bits of a number, so that numbers that are close, such as the ones of a counter, give numbers
+that look unrelated.</div>
+</dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceChances.html#mode()" class="member-name-link">mode()</a> - Method in class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceChances.html" title="class in be.imgn.gaia.core.random.dice">DiceChances</a></dt>
 <dd>
 <div class="block">Returns the value that the expression evaluates to most often, or the least of them if there are several.</div>
@@ -5347,6 +5382,10 @@ of two.</div>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceChances.html#of(int)" class="member-name-link">of(int)</a> - Method in class be.imgn.gaia.core.random.dice.<a href="be.imgn.gaia.core/be/imgn/gaia/core/random/dice/DiceChances.html" title="class in be.imgn.gaia.core.random.dice">DiceChances</a></dt>
 <dd>
 <div class="block">Returns the chance that the expression evaluates to a value.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html#of(int,long...)" class="member-name-link">of(int, long...)</a> - Static method in class be.imgn.gaia.core.hash.<a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html" title="class in be.imgn.gaia.core.hash">Feistel</a></dt>
+<dd>
+<div class="block">Returns a network on the numbers of a given number of bits, with one round per key.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/math/BigFraction.html#of(long)" class="member-name-link">of(long)</a> - Static method in class be.imgn.gaia.core.math.<a href="be.imgn.gaia.core/be/imgn/gaia/core/math/BigFraction.html" title="class in be.imgn.gaia.core.math">BigFraction</a></dt>
 <dd>
@@ -6704,6 +6743,10 @@ it evaluated to.</div>
 <dt><a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html#roots(java.lang.String,java.lang.String...)" class="member-name-link">roots(String, String...)</a> - Method in class be.imgn.gaia.memfs.<a href="be.imgn.gaia.memfs/be/imgn/gaia/memfs/Configuration.Builder.html" title="class in be.imgn.gaia.memfs">Configuration.Builder</a></dt>
 <dd>
 <div class="block">Sets the root directories.</div>
+</dd>
+<dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html#rounds()" class="member-name-link">rounds()</a> - Method in class be.imgn.gaia.core.hash.<a href="be.imgn.gaia.core/be/imgn/gaia/core/hash/Feistel.html" title="class in be.imgn.gaia.core.hash">Feistel</a></dt>
+<dd>
+<div class="block">Returns the number of rounds of this network.</div>
 </dd>
 <dt><a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html#runtime()" class="member-name-link">runtime()</a> - Method in class be.imgn.gaia.core.platform.<a href="be.imgn.gaia.core/be/imgn/gaia/core/platform/ApplicationDirectories.html" title="class in be.imgn.gaia.core.platform">ApplicationDirectories</a></dt>
 <dd>
