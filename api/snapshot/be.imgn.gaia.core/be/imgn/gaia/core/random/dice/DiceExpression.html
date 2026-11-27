@@ -119,9 +119,9 @@ chances.tagged("critical");                   // 1/20
   <li><code>+ -</code>, then <code>* /</code>, from left to right; a division is rounded down;
   <li>a unary <code>-</code>;
   <li>dice, <code>3d6</code>: a count, which is 1 if omitted, <code>d</code>, then the faces: a number of sides, <code>%</code> for
-      100, or a list of faces between brackets, in which <code>..</code> stands for the faces in between and a face that
-      is listed twice comes up twice as often: <code>4d[-1..1]</code>, <code>6d[0,0,0,0,1,1]</code>. Then optionally, in this
-      order:
+      100, or a list of faces in ascending order between brackets, in which <code>..</code> stands for the faces in
+      between and a face that is listed twice comes up twice as often: <code>4d[-1..1]</code>, <code>6d[0,0,0,0,1,1]</code>.
+      Then optionally, in this order:
       <ul>
         <li>which dice are rolled again: <code>r&lt;=2</code> rerolls once a die that shows 2 or less, and keeps its new face
             whatever it is; <code>rr&lt;=2</code> rerolls it until it shows more; <code>r</code> alone rerolls the lowest face;

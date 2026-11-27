@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <dt>Type Parameters:</dt>
 <dd><span id="type-param-T"><code>T</code> - the type of the children</span></dd>
 <dt>Record Components:</dt>
-<dd><code><span id="param-faces">faces</span></code> - the value of each face, in the order they are written</dd>
+<dd><code><span id="param-faces">faces</span></code> - the value of each face, in ascending order</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
@@ -106,8 +106,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">DiceNode.Sides.Custom&lt;T&gt;</span>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;faces)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="DiceNode.Sides.html" title="interface in be.imgn.gaia.core.random.dice">DiceNode.Sides</a>&lt;T&gt;</span></div>
-<div class="block">Faces listed one by one, such as the <code>[-1..1]</code> of <code>4d[-1..1]</code> or the <code>[0,0,0,0,1,1]</code> of a
-die that counts a success two times out of six. A face that is listed twice comes up twice as often.</div>
+<div class="block">Faces listed one by one, in ascending order, such as the <code>[-1..1]</code> of <code>4d[-1..1]</code> or the
+<code>[0,0,0,0,1,1]</code> of a die that counts a success two times out of six. A face that is listed twice comes
+up twice as often.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.2.0</dd>
@@ -210,9 +211,10 @@ die that counts a success two times out of six. A face that is listed twice come
 <div class="block">Creates custom sides.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>faces</code> - the value of each face, in the order they are written</dd>
+<dd><code>faces</code> - the value of each face, in ascending order</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if there is no face, or more than <a href="DiceNode.Sides.html#MAX_FACES"><code>DiceNode.Sides.MAX_FACES</code></a></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if there is no face, if there are more than <a href="DiceNode.Sides.html#MAX_FACES"><code>DiceNode.Sides.MAX_FACES</code></a>, or if a
+    face is lower than the one before it</dd>
 </dl>
 </div>
 </section>
