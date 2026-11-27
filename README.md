@@ -73,6 +73,8 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
   `newBuilder().executor(OnEdt.class, ...)` replaces it.
 - **`@event.OnVirtualThread`**: a subscribing annotation that delivers each event on a new virtual thread, with
   `VirtualThreadExecutor`.
+- **`hash.Mixers`** and **`hash.Feistel`**: a function that mixes the bits of a number, and a network that scrambles
+  the numbers of a range among themselves and gives them back. Fast, not cryptographic.
 - **`io.AtomicFiles`**: writes a file so that readers, or the next run after a crash, see either its old content or
   its new one, never a part of it: `write(file, bytes)`, `writeString(file, text)`, or
   `write(file, out -> ImageIO.write(image, "png", out))`. The file keeps its permissions.

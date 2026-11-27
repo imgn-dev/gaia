@@ -4,6 +4,7 @@ import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.checkIndex;
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.hash.Feistel;
 import java.util.random.RandomGenerator;
 import java.util.stream.LongStream;
 import org.jspecify.annotations.Nullable;
@@ -39,29 +40,19 @@ public final class RandomPermutation {
     private static final int MAX_SHUFFLED_SIZE = 4096;
     private static final long MAX_SIZE = 1L << 62;
 
-    // The multipliers and shifts of a mixing function of 64 bits (the variant 13 of David Stafford).
-    private static final long MIX_1 = 0xBF58476D1CE4E5B9L;
-    private static final long MIX_2 = 0x94D049BB133111EBL;
-    private static final int SHIFT_1 = 30;
-    private static final int SHIFT_2 = 27;
-    private static final int SHIFT_3 = 31;
-
     private final long size;
 
-    // For a small permutation, the numbers by position and the positions by number; for a large one, the keys.
+    // For a small permutation, the numbers by position and the positions by number. For a large one, a network that
+    // scrambles the numbers of as many bits as the size takes: fewer than twice the size, so that a result past the
+    // size, which is scrambled again until it falls within, is so less than half the time.
     private final int @Nullable [] numbers;
     private final int @Nullable [] indexes;
-    private final long[] keys;
+    private final @Nullable Feistel network;
 
-    // The numbers are split in two halves of this many bits, which a Feistel network scrambles: each round swaps the
-    // halves and mixes one into the other, which can be undone, so no two numbers get the same result. The halves
-    // cover up to four times the size; a result past the size is scrambled again until it falls within.
-    private final int halfBits;
-
-    private RandomPermutation(long size, int @Nullable [] numbers, long[] keys) {
+    private RandomPermutation(long size, int @Nullable [] numbers, @Nullable Feistel network) {
         this.size = size;
         this.numbers = numbers;
-        this.keys = keys;
+        this.network = network;
         if (numbers == null) {
             this.indexes = null;
         } else {
@@ -70,8 +61,6 @@ public final class RandomPermutation {
                 indexes[numbers[index]] = index;
             }
         }
-        int bits = Long.SIZE - Long.numberOfLeadingZeros(Math.max(size - 1, 1));
-        this.halfBits = (bits + 1) / 2;
     }
 
     /**
@@ -97,13 +86,14 @@ public final class RandomPermutation {
                 numbers[taken] = numbers[index];
                 numbers[index] = number;
             }
-            return new RandomPermutation(size, numbers, new long[0]);
+            return new RandomPermutation(size, numbers, null);
         }
         var keys = new long[ROUNDS];
         for (int round = 0; round < ROUNDS; round++) {
             keys[round] = random.nextLong();
         }
-        return new RandomPermutation(size, null, keys);
+        int bits = Long.SIZE - Long.numberOfLeadingZeros(size - 1);
+        return new RandomPermutation(size, null, Feistel.of(bits, keys));
     }
 
     /**
@@ -129,7 +119,7 @@ public final class RandomPermutation {
         }
         long number = index;
         do {
-            number = scramble(number);
+            number = network().apply(number);
         } while (number >= size);
         return number;
     }
@@ -148,7 +138,7 @@ public final class RandomPermutation {
         }
         long index = number;
         do {
-            index = unscramble(index);
+            index = network().invert(index);
         } while (index >= size);
         return index;
     }
@@ -162,33 +152,7 @@ public final class RandomPermutation {
         return LongStream.range(0, size).map(this::get);
     }
 
-    private long scramble(long number) {
-        long mask = (1L << halfBits) - 1;
-        long left = number >>> halfBits;
-        long right = number & mask;
-        for (long key : keys) {
-            long mixed = left ^ (mix(right + key) & mask);
-            left = right;
-            right = mixed;
-        }
-        return left << halfBits | right;
-    }
-
-    private long unscramble(long number) {
-        long mask = (1L << halfBits) - 1;
-        long left = number >>> halfBits;
-        long right = number & mask;
-        for (int round = keys.length - 1; round >= 0; round--) {
-            long mixed = right ^ (mix(left + keys[round]) & mask);
-            right = left;
-            left = mixed;
-        }
-        return left << halfBits | right;
-    }
-
-    private static long mix(long z) {
-        z = (z ^ (z >>> SHIFT_1)) * MIX_1;
-        z = (z ^ (z >>> SHIFT_2)) * MIX_2;
-        return z ^ (z >>> SHIFT_3);
+    private Feistel network() {
+        return requireNonNull(network);
     }
 }

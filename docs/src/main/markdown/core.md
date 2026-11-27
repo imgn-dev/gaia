@@ -1,8 +1,9 @@
 # Core
 
 `gaia-core` extends the JDK with what many projects end up writing themselves: preconditions, collections, file I/O,
-system properties, the [platform](#platform) the JVM runs on, text, math, [random selection](#random-selection),
-[dice](#dice), [versions](#versions) and time. It also has an [event bus](event-bus.md).
+system properties, the [platform](#platform) the JVM runs on, text, math, [mixing](#mixing),
+[random selection](#random-selection), [dice](#dice), [versions](#versions) and time. It also has an
+[event bus](event-bus.md).
 
 ```xml
 <dependency>
@@ -344,6 +345,23 @@ whatever their size: fractions of any class compare by value and convert to one 
 return that class, so `IntFraction.plus(IntFraction)` is an `IntFraction`. A result that doesn't fit throws
 `ArithmeticException` instead of getting a larger class. Fractions of different classes are never equal, as an
 `Integer` never equals a `Long`.
+
+## Mixing
+
+[`Mixers.mix64`](api:be.imgn.gaia.core.hash.Mixers) mixes the bits of a number, so that numbers that are close give
+numbers that look unrelated. Different numbers give different results, the same in every version.
+
+[`Feistel`](api:be.imgn.gaia.core.hash.Feistel) scrambles the numbers of a given number of bits among themselves, in
+a way that can be undone: consecutive identifiers come out scattered, and are found back.
+
+```java
+var network = Feistel.of(32, key1, key2, key3, key4, key5, key6);
+long scrambled = network.apply(42);             // some number below 2^32, that no other number gives
+network.invert(scrambled);                      // 42
+```
+
+Six rounds or more are advised, one per key. With very few bits, eight or so, the result doesn't look random whatever
+the number of rounds. Neither is cryptographic: what was mixed is easily found back.
 
 ## Random selection
 

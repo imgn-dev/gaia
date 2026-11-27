@@ -2,6 +2,7 @@ package be.imgn.gaia.core.random;
 
 import static java.util.Objects.requireNonNull;
 
+import be.imgn.gaia.core.hash.Mixers;
 import java.util.SplittableRandom;
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
@@ -24,15 +25,6 @@ import java.util.random.RandomGeneratorFactory;
  * @since 0.2.0
  */
 public record Seed(long value) {
-
-    // Odd constants close to 2^64 divided by the golden ratio, and the multipliers of a mixing function of 64 bits
-    // (the variant 13 of David Stafford, which SplittableRandom uses too).
-    private static final long GOLDEN_GAMMA = 0x9E3779B97F4A7C15L;
-    private static final long MIX_1 = 0xBF58476D1CE4E5B9L;
-    private static final long MIX_2 = 0x94D049BB133111EBL;
-    private static final int SHIFT_1 = 30;
-    private static final int SHIFT_2 = 27;
-    private static final int SHIFT_3 = 31;
 
     /**
      * Returns the seed of a number.
@@ -71,7 +63,7 @@ public record Seed(long value) {
      * @return the derived seed
      */
     public Seed derive(long key) {
-        return new Seed(mix(mix(value + GOLDEN_GAMMA) + key * GOLDEN_GAMMA));
+        return new Seed(Mixers.mix64(Mixers.mix64(value + Mixers.GOLDEN_GAMMA) + key * Mixers.GOLDEN_GAMMA));
     }
 
     /**
@@ -109,11 +101,5 @@ public record Seed(long value) {
      */
     public RandomGenerator generator(String algorithm) {
         return RandomGeneratorFactory.of(algorithm).create(value);
-    }
-
-    private static long mix(long z) {
-        z = (z ^ (z >>> SHIFT_1)) * MIX_1;
-        z = (z ^ (z >>> SHIFT_2)) * MIX_2;
-        return z ^ (z >>> SHIFT_3);
     }
 }
