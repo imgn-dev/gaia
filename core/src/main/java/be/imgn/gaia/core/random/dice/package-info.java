@@ -159,7 +159,7 @@
  *     return switch (damage.node()) {
  *         case DiceNode.Dice<DiceExpression> dice when dice.keep().equals(Keep.ALL) ->
  *             DiceExpression.of(new DiceNode.Dice<>(
- *                     twice(dice.count()), dice.sides(), dice.reroll(), dice.explode(), dice.keep()));
+ *                     twice(dice.count()), dice.sides(), dice.reroll(), dice.explode(), dice.keep(), dice.tally()));
  *         case DiceNode.Dice<DiceExpression> dice ->
  *             DiceExpression.of(new DiceNode.Arithmetic<>(Operator.ADD, damage, damage));
  *         case DiceNode<DiceExpression> node -> DiceExpression.of(node.map(child -> critical(child)));

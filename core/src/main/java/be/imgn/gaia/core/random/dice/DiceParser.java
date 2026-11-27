@@ -4,12 +4,14 @@ import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.random.dice.DiceNode.Condition;
 import be.imgn.gaia.core.random.dice.DiceNode.Explode;
+import be.imgn.gaia.core.random.dice.DiceNode.Extreme;
 import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import be.imgn.gaia.core.random.dice.DiceNode.Sides;
 import be.imgn.gaia.core.random.dice.DiceNode.Tag;
+import be.imgn.gaia.core.random.dice.DiceNode.Tally;
 import java.util.ArrayList;
 import org.jspecify.annotations.Nullable;
 
@@ -19,9 +21,11 @@ final class DiceParser {
     private static final char END = '\0';
     private static final int PERCENT_SIDES = 100;
     private static final int RADIX = 10;
+    private static final int MAX_DEPTH = 100;
 
     private final String text;
     private int index;
+    private int depth;
 
     DiceParser(String text) {
         this.text = requireNonNull(text, "text");
@@ -94,11 +98,21 @@ final class DiceParser {
 
     private DiceExpression unary() {
         skipSpaces();
-        if (peek() == '-') {
-            index++;
-            return DiceExpression.of(new DiceNode.Negate<>(unary()));
+        // Every nested part goes through here: a text nested too deeply would overflow the stack.
+        if (++depth > MAX_DEPTH) {
+            throw error("Nested more than " + MAX_DEPTH + " deep");
         }
-        return dice();
+        try {
+            if (next('-')) {
+                return DiceExpression.of(new DiceNode.Negate<>(unary()));
+            }
+            var value = dice();
+            skipSpaces();
+            // After dice, an x is their explosion, and is already taken.
+            return next('x') ? DiceExpression.of(new DiceNode.Repeat<>(value, unary())) : value;
+        } finally {
+            depth--;
+        }
     }
 
     private DiceExpression dice() {
@@ -120,7 +134,8 @@ final class DiceParser {
         }
         var reroll = reroll();
         var explode = explode();
-        return DiceExpression.of(new DiceNode.Dice<>(count, sides, reroll, explode, keep()));
+        var keep = keep();
+        return DiceExpression.of(new DiceNode.Dice<>(count, sides, reroll, explode, keep, tally()));
     }
 
     private Sides<DiceExpression> faces() {
@@ -239,6 +254,45 @@ final class DiceParser {
         return new Keep(mode, number());
     }
 
+    private Tally tally() {
+        skipSpaces();
+        if (!next('c')) {
+            return Tally.SUM;
+        }
+        var relation = relation();
+        if (relation == null) {
+            throw error("Expected the condition of the dice to count, as in c>=5");
+        }
+        return new Tally(true, relation, conditionValue());
+    }
+
+    private DiceExpression extremum() {
+        int start = index;
+        while (isLowerCase(peek())) {
+            index++;
+        }
+        var name = text.substring(start, index);
+        @Nullable Extreme extreme = null;
+        for (var candidate : Extreme.values()) {
+            if (candidate.symbol().equals(name)) {
+                extreme = candidate;
+            }
+        }
+        skipSpaces();
+        if (extreme == null || !next('(')) {
+            throw new DiceParseException("Expected min( or max(", text, start);
+        }
+        var operands = new ArrayList<DiceExpression>();
+        do {
+            operands.add(expression());
+            skipSpaces();
+        } while (next(','));
+        if (!next(')')) {
+            throw error(peek() == END ? "Missing ')'" : "Unexpected '" + peek() + "'");
+        }
+        return DiceExpression.of(new DiceNode.Extremum<>(extreme, operands));
+    }
+
     private DiceExpression primary() {
         char c = peek();
         if (isDigit(c)) {
@@ -253,6 +307,9 @@ final class DiceParser {
         }
         if (c == '(') {
             return group();
+        }
+        if (c == 'm') {
+            return extremum();
         }
         throw error(c == END ? "Unexpected end" : "Unexpected '" + c + "'");
     }

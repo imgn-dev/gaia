@@ -1,5 +1,6 @@
 package be.imgn.gaia.core.random.dice;
 
+import static be.imgn.gaia.core.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.random.Chances;
@@ -38,6 +39,8 @@ import org.jspecify.annotations.Nullable;
  *   <li>one comparison, {@code = != < <= > >=}, which evaluates to 1 if it holds and to 0 if not;
  *   <li>{@code + -}, then {@code * /}, from left to right; a division is rounded down;
  *   <li>a unary {@code -};
+ *   <li>a repeat, {@code 6x(4d6dl1)}: a number of times, {@code x}, and a value that is evaluated that many times and
+ *       summed, with its dice rolled again each time, unlike a product;
  *   <li>dice, {@code 3d6}: a count, which is 1 if omitted, {@code d}, then the faces: a number of sides, {@code %} for
  *       100, or a list of faces in ascending order between brackets, in which {@code ..} stands for the faces in
  *       between and a face that is listed twice comes up twice as often: {@code 4d[-1..1]}, {@code 6d[0,0,0,0,1,1]}.
@@ -47,11 +50,13 @@ import org.jspecify.annotations.Nullable;
  *             whatever it is; {@code rr<=2} rerolls it until it shows more; {@code r} alone rerolls the lowest face;
  *         <li>which dice explode, that is, add another die that may explode too, up to ten times for one die: {@code x}
  *             on the highest face, {@code x>=5} on 5 or more;
- *         <li>which dice count in the sum: {@code kh2} keeps the two highest, {@code kl2} the two lowest, {@code dh2}
- *             drops the two highest and {@code dl2} the two lowest;
+ *         <li>which dice count: {@code kh2} keeps the two highest, {@code kl2} the two lowest, {@code dh2} drops the
+ *             two highest and {@code dl2} the two lowest;
+ *         <li>whether the dice that count are counted instead of summed: {@code 6d6c>=5} is how many of six dice show 5
+ *             or more;
  *       </ul>
- *   <li>a whole number, a variable, whose name is made of upper-case letters, digits and underscores, or a group
- *       between parentheses.
+ *   <li>a whole number, a variable, whose name is made of upper-case letters, digits and underscores, a group between
+ *       parentheses, or the lowest or the highest of several values: {@code min(1d20,1d20)}, {@code max(1d4-1,1)}.
  * </ul>
  *
  * <p>A group may end with tags, each made of a colon and a name, optionally followed by conditions, each made of a
@@ -66,14 +71,16 @@ import org.jspecify.annotations.Nullable;
  * relation   := '=' | '!=' | '<' | '<=' | '>' | '>='
  * sum        := product (('+' | '-') product)*
  * product    := unary (('*' | '/') unary)*
- * unary      := '-' unary | dice
- * dice       := primary? 'd' (primary | '%' | faces) reroll? explode? keep? | primary
+ * unary      := '-' unary | dice ('x' unary)?
+ * dice       := primary? 'd' (primary | '%' | faces) reroll? explode? keep? count? | primary
  * faces      := '[' face (',' face)* ']'
  * face       := integer ('..' integer)?
  * reroll     := ('r' | 'rr') (relation integer)?
  * explode    := 'x' (relation integer)?
  * keep       := ('kh' | 'kl' | 'dh' | 'dl') number
- * primary    := number | variable | group
+ * count      := 'c' relation integer
+ * primary    := number | variable | group | extremum
+ * extremum   := ('min' | 'max') '(' expression (',' expression)* ')'
  * group      := '(' expression tag* ')'
  * tag        := ':' name (relation sum)*
  * integer    := '-'? number
@@ -85,13 +92,15 @@ import org.jspecify.annotations.Nullable;
  * <p>A number is at most {@link Integer#MAX_VALUE}. A comparison operator that follows {@code r}, {@code rr} or
  * {@code x} is always the condition of that rule, and must be followed by a number: {@code 1d6x>=5} explodes on 5 or
  * more. To compare the dice themselves, put them between parentheses, as in {@code (1d6x)>=5}; {@code 1d6x>=AC} is
- * rejected, not guessed.
+ * rejected, not guessed. Likewise, an {@code x} after dice is their explosion: to repeat dice that have no rule after
+ * it, put them between parentheses, as in {@code (2d6)x(1d4)}. A text nests its parts at most 100 deep.
  *
  * <h2>Inspection</h2>
  *
  * <p>{@link #node()} is the root of the tree, to walk from the top with a {@code switch} over the records of
  * {@link DiceNode}. {@link #fold(Function)} walks it from the bottom instead: the function is given each node with its
- * children already replaced by what it returned for them. Everything else this class does is built on it.
+ * children already replaced by what it returned for them. Everything else this class does is built on it, but for
+ * rolling a repeat, whose value is rolled several times.
  *
  * <pre>{@code
  * int dice = expression.<Integer>fold(node -> switch (node) {
@@ -105,6 +114,9 @@ import org.jspecify.annotations.Nullable;
  * @since 0.2.0
  */
 public final class DiceExpression {
+
+    /** The most steps that {@link #chances()} takes: about a second of work. */
+    public static final long DEFAULT_CHANCES_STEPS = 10_000_000;
 
     private final DiceNode<DiceExpression> node;
 
@@ -261,7 +273,7 @@ public final class DiceExpression {
     public RolledExpression roll(RandomGenerator random) {
         requireNonNull(random, "random");
         checkResolved();
-        return this.<RolledExpression>fold(node -> Rolls.roll(node, random));
+        return Rolls.roll(this, random);
     }
 
     /**
@@ -279,8 +291,26 @@ public final class DiceExpression {
      *     sides in total
      */
     public DiceChances chances() {
+        return chances(DEFAULT_CHANCES_STEPS);
+    }
+
+    /**
+     * Computes the exact chances of each outcome of this expression, without rolling, within a limit of work. The work
+     * is counted in steps of about the same cost, such as adding the chances of two outcomes: a limit bounds the time
+     * and the memory that an expression from an unknown source may take.
+     *
+     * @param maxSteps the most steps that the computation may take
+     * @return the chances of each outcome
+     * @throws UnresolvedVariableException if a variable has no value
+     * @throws ArithmeticException if the computation takes more than {@code maxSteps} steps, or in the cases of
+     *     {@link #chances()}
+     * @throws IllegalArgumentException if {@code maxSteps} is negative
+     */
+    public DiceChances chances(long maxSteps) {
+        checkArgument(maxSteps >= 0, "maxSteps must not be negative: %d", maxSteps);
         checkResolved();
-        return new DiceChances(this.<Distribution>fold(Distribution::of));
+        var budget = new Budget(maxSteps);
+        return new DiceChances(this.<Distribution>fold(node -> Distribution.of(node, budget)));
     }
 
     /**

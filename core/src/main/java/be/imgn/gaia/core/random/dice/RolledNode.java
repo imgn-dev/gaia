@@ -4,11 +4,13 @@ import static java.util.Objects.requireNonNull;
 
 import be.imgn.gaia.core.random.dice.DiceNode.Condition;
 import be.imgn.gaia.core.random.dice.DiceNode.Explode;
+import be.imgn.gaia.core.random.dice.DiceNode.Extreme;
 import be.imgn.gaia.core.random.dice.DiceNode.Keep;
 import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import be.imgn.gaia.core.random.dice.DiceNode.Sides;
+import be.imgn.gaia.core.random.dice.DiceNode.Tally;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -109,13 +111,15 @@ public sealed interface RolledNode<T> {
      * @param sides the faces of each die
      * @param reroll which dice were rolled again
      * @param explode which dice added another die
-     * @param keep which dice count in the sum
+     * @param keep which dice count
+     * @param tally what the dice that count add up to
      * @param dice every die that was rolled, in order: a die that was rerolled is followed by the one that replaces it,
      *     and a die that exploded by the one it adds
      * @param value the sum of the dice that were kept
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, Sides<T> sides, Reroll reroll, Explode explode, Keep keep, List<Die> dice, int value)
+    record Dice<T>(
+            T count, Sides<T> sides, Reroll reroll, Explode explode, Keep keep, Tally tally, List<Die> dice, int value)
             implements RolledNode<T> {
 
         /**
@@ -125,7 +129,8 @@ public sealed interface RolledNode<T> {
          * @param sides the faces of each die
          * @param reroll which dice were rolled again
          * @param explode which dice added another die
-         * @param keep which dice count in the sum
+         * @param keep which dice count
+         * @param tally what the dice that count add up to
          * @param dice every die that was rolled, in order
          * @param value the sum of the dice that were kept
          */
@@ -135,6 +140,7 @@ public sealed interface RolledNode<T> {
             requireNonNull(reroll, "reroll");
             requireNonNull(explode, "explode");
             requireNonNull(keep, "keep");
+            requireNonNull(tally, "tally");
             dice = List.copyOf(dice);
         }
 
@@ -146,7 +152,90 @@ public sealed interface RolledNode<T> {
         @Override
         public <U> Dice<U> map(Function<? super T, ? extends U> mapper) {
             U mappedCount = mapper.apply(count);
-            return new Dice<>(mappedCount, sides.map(mapper), reroll, explode, keep, dice, value);
+            return new Dice<>(mappedCount, sides.map(mapper), reroll, explode, keep, tally, dice, value);
+        }
+    }
+
+    /**
+     * The lowest or the highest of several values.
+     *
+     * @param extreme whether the lowest or the highest value was taken
+     * @param operands the values
+     * @param value the value that was taken
+     * @param <T> the type of the children
+     */
+    record Extremum<T>(Extreme extreme, List<T> operands, int value) implements RolledNode<T> {
+
+        /**
+         * Creates a rolled extremum.
+         *
+         * @param extreme whether the lowest or the highest value was taken
+         * @param operands the values
+         * @param value the value that was taken
+         */
+        public Extremum {
+            requireNonNull(extreme, "extreme");
+            operands = List.copyOf(operands);
+        }
+
+        @Override
+        public List<T> children() {
+            return operands;
+        }
+
+        @Override
+        public <U> Extremum<U> map(Function<? super T, ? extends U> mapper) {
+            var mapped = new ArrayList<U>();
+            for (var operand : operands) {
+                mapped.add(mapper.apply(operand));
+            }
+            return new Extremum<>(extreme, mapped, value);
+        }
+    }
+
+    /**
+     * A value that was evaluated several times.
+     *
+     * @param count how many times the value was evaluated
+     * @param rolls what each evaluation gave, in order
+     * @param value the sum of the evaluations
+     * @param <T> the type of the children
+     */
+    record Repeat<T>(T count, List<T> rolls, int value) implements RolledNode<T> {
+
+        /**
+         * Creates a rolled repeat.
+         *
+         * @param count how many times the value was evaluated
+         * @param rolls what each evaluation gave, in order
+         * @param value the sum of the evaluations
+         */
+        public Repeat {
+            requireNonNull(count, "count");
+            rolls = List.copyOf(rolls);
+        }
+
+        /**
+         * Returns the count, then each evaluation.
+         *
+         * @return the children of this repeat
+         */
+        @Override
+        public List<T> children() {
+            var children = new ArrayList<T>();
+            children.add(count);
+            children.addAll(rolls);
+            return List.copyOf(children);
+        }
+
+        @Override
+        public <U> Repeat<U> map(Function<? super T, ? extends U> mapper) {
+            U mappedCount = mapper.apply(count);
+            var mapped = new ArrayList<U>();
+            for (var roll : rolls) {
+                mapped.add(mapper.apply(roll));
+            }
+            return new Repeat<>(mappedCount, mapped, value);
         }
     }
 

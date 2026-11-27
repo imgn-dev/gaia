@@ -557,7 +557,8 @@ int dice = expression.<Integer>fold(node -> switch (node) {
 });
 ```
 
-`toString`, `variables`, `bind`, `roll` and `chances` are all folds.
+`toString`, `variables`, `bind` and `chances` are all folds, and so is `roll` but for a repeat, whose value is rolled
+several times.
 [`RolledExpression`](api:be.imgn.gaia.core.random.dice.RolledExpression), which `roll` returns, is inspected the same
 way, as a tree of [`RolledNode`](api:be.imgn.gaia.core.random.dice.RolledNode) records that hold the value of each node,
 the face of each die and whether it was kept, and the tags that apply:
@@ -588,6 +589,18 @@ size, but a chance is an `IntFraction`: asking for one that doesn't fit once red
 A die that is rerolled is counted as a die whose faces aren't equally likely, and dice that explode by the number of
 dice they add, ten at most for each, whether some are then dropped or not.
 
+Other notations build on dice:
+
+```java
+DiceExpression.parse("6d6c>=5").chances().atLeast(3);       // 233/729: three successes or more on six dice
+DiceExpression.parse("max(1d4-1,1)").chances().of(1);       // 1/2: damage that is at least 1
+DiceExpression.parse("6x(4d6dl1)").roll(random);            // six ability scores, each rolled on its own, and summed
+```
+
+`c` and a condition counts the dice that satisfy it instead of summing them. `min(...)` and `max(...)` take the
+lowest or the highest of their values. `6x(...)` evaluates a value six times, rolling its dice again each time, and
+sums the results, each of which is in the rolled tree; a product, `6*(...)`, rolls once.
+
 Custom dice list their faces between brackets, in ascending order, where `..` stands for the faces in between and a
 face listed twice comes up twice as often. They roll, reroll, explode and are counted like any other dice:
 
@@ -596,6 +609,12 @@ DiceExpression.parse("4d[-1..1]").chances().of(0);                  // 19/81, fo
 DiceExpression.parse("6d[0,0,0,0,1,1]").chances().mean();           // 2, six dice that count successes on 5 or 6
 DiceExpression.parse("1d[1,2,2,3,3,4]+1d[1,3,4,5,6,8]").chances();  // Sicherman dice: the chances of 2d6
 ```
+
+The chances have statistics on the values, `variance()`, `standardDeviation()`, `median()`, `quantile(0.9)` and
+`mode()` beside `mean()`.
+
+An expression may come from anyone: a text nests at most 100 deep, and `chances()` stops with an
+`ArithmeticException` after about a second of work, as on `1000d1000kh500`. `chances(maxSteps)` sets another limit.
 
 An expression is also a selector: `expression.selector()` rolls it on each selection, and
 `expression.chances().selector()` selects a value with its chance without rolling any die. Both know their

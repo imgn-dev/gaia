@@ -2,7 +2,6 @@ package be.imgn.gaia.core.random.dice;
 
 import be.imgn.gaia.core.random.dice.DiceNode.Explode;
 import be.imgn.gaia.core.random.dice.DiceNode.Keep;
-import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,16 +28,20 @@ final class Pools {
 
     private Pools() {}
 
-    static Pool pool(int count, DieFaces die, Reroll reroll, Explode explode, Keep keep) {
+    static Pool pool(DiceNode.Dice<?> dice, int count, DieFaces die, Budget budget) {
+        var reroll = dice.reroll();
+        var explode = dice.explode();
+        var keep = dice.keep();
         Rolls.checkDice(count, die.size());
         if ((long) count * die.size() > MAX_TOTAL_SIDES) {
             throw new ArithmeticException("Too many outcomes: " + count + " dice of " + die.size() + " faces");
         }
         Rolls.checkRules(reroll, explode, die);
-        var faces = new Faces(die, reroll, explode);
+        var faces = new Faces(die, dice, count, budget);
         if (!explode.equals(Explode.NONE)) {
-            var ways =
-                    keep.equals(Keep.ALL) ? power(chain(faces), count) : new ExplodingPool(count, faces, keep).ways();
+            var ways = keep.equals(Keep.ALL)
+                    ? power(chain(faces), count, budget)
+                    : new ExplodingPool(count, faces, keep).ways();
             return new Pool(ways, faces.weight.pow((Explode.MAX_EXPLOSIONS + 1) * count));
         }
         int kept = keep.kept(count);
@@ -48,10 +51,10 @@ final class Pools {
         Map<Integer, BigInteger> ways;
         if (kept < count) {
             ways = keptSums(count, faces, kept, keep.highest());
-        } else if (reroll.equals(Reroll.NONE) && die.lowest() == 1 && die.highest() == die.size()) {
-            ways = sums(count, die.size());
+        } else if (dice.isPlain() && die.lowest() == 1 && die.highest() == die.size()) {
+            ways = sums(count, die.size(), budget);
         } else {
-            ways = power(faces.byValue(), count);
+            ways = power(faces.byAmount(), count, budget);
         }
         return new Pool(ways, faces.weight.pow(count));
     }
@@ -62,13 +65,14 @@ final class Pools {
      */
     private static Map<Integer, BigInteger> chain(Faces faces) {
         // The last die that may be added doesn't explode.
-        var chain = faces.byValue();
+        var chain = faces.byAmount();
         var scale = BigInteger.ONE;
         for (int added = 1; added <= Explode.MAX_EXPLOSIONS; added++) {
             scale = scale.multiply(faces.weight);
             var longer = new HashMap<Integer, BigInteger>();
+            faces.budget.spend((long) faces.values.length * (chain.size() + 1));
             for (int face = 0; face < faces.values.length; face++) {
-                int value = faces.values[face];
+                int value = faces.amounts[face];
                 var weight = faces.weights[face];
                 if (weight.signum() == 0) {
                     continue;
@@ -86,9 +90,10 @@ final class Pools {
     }
 
     /** The ways for a number of independent copies of something to reach each sum. */
-    private static Map<Integer, BigInteger> power(Map<Integer, BigInteger> ways, int count) {
+    private static Map<Integer, BigInteger> power(Map<Integer, BigInteger> ways, int count, Budget budget) {
         Map<Integer, BigInteger> result = Map.of(0, BigInteger.ONE);
         for (int copy = 0; copy < count; copy++) {
+            budget.spend((long) result.size() * ways.size());
             var next = new HashMap<Integer, BigInteger>();
             result.forEach((sum, sumWays) -> ways.forEach(
                     (value, valueWays) -> add(next, Math.addExact(sum, value), sumWays.multiply(valueWays))));
@@ -101,9 +106,10 @@ final class Pools {
      * The ways to reach each sum with all the dice, when their faces are numbered from one: each die turns the counts
      * into their sums over a window.
      */
-    private static Map<Integer, BigInteger> sums(int count, int sides) {
+    private static Map<Integer, BigInteger> sums(int count, int sides, Budget budget) {
         BigInteger[] current = {BigInteger.ONE};
         for (int dice = 1; dice <= count; dice++) {
+            budget.spend((long) dice * sides);
             var next = new BigInteger[dice * sides + 1];
             // The ways to reach the sums from sum - sides to sum - 1 with one die less.
             var window = BigInteger.ZERO;
@@ -130,7 +136,7 @@ final class Pools {
 
     /** The ways to reach each sum of the {@code kept} highest or lowest dice, where {@code 0 < kept < count}. */
     private static Map<Integer, BigInteger> keptSums(int count, Faces faces, int kept, boolean highest) {
-        var binomials = binomials(count);
+        var binomials = binomials(count, faces.budget);
         var result = new HashMap<Integer, BigInteger>();
         // By number of remaining dice, then by sum of the dice kept so far. Dice remain to be kept in every state.
         List<Map<Integer, BigInteger>> current = states(count);
@@ -138,18 +144,19 @@ final class Pools {
         var weightLeft = faces.weight;
         for (int taken = 0; taken < faces.values.length; taken++) {
             int face = highest ? faces.values.length - 1 - taken : taken;
-            int value = faces.values[face];
+            int value = faces.amounts[face];
             var weight = faces.weights[face];
             weightLeft = weightLeft.subtract(weight);
             // The ways for some dice to show this face, and to show any of the faces that are left, by number of dice.
-            var showingThis = powers(weight, count);
-            var showingLeft = powers(weightLeft, count);
+            var showingThis = powers(weight, count, faces);
+            var showingLeft = powers(weightLeft, count, faces);
             List<Map<Integer, BigInteger>> next = states(count);
             for (int remaining = count - kept + 1; remaining <= count; remaining++) {
                 int toKeep = kept - (count - remaining);
                 // Every remaining die shows this face if no other one is left; none does if it has no weight.
                 int least = weightLeft.signum() == 0 ? remaining : 0;
                 int most = weight.signum() == 0 ? 0 : remaining;
+                faces.budget.spend((long) current.get(remaining).size() * (most - least + 1) * faces.cost);
                 for (var state : current.get(remaining).entrySet()) {
                     for (int showing = least; showing <= most; showing++) {
                         var ways = state.getValue()
@@ -178,7 +185,8 @@ final class Pools {
         return states;
     }
 
-    private static BigInteger[] powers(BigInteger base, int most) {
+    private static BigInteger[] powers(BigInteger base, int most, Faces faces) {
+        faces.budget.spend(most * faces.cost);
         var powers = new BigInteger[most + 1];
         powers[0] = BigInteger.ONE;
         for (int exponent = 1; exponent <= most; exponent++) {
@@ -193,7 +201,9 @@ final class Pools {
         }
     }
 
-    private static BigInteger[][] binomials(int n) {
+    private static BigInteger[][] binomials(int n, Budget budget) {
+        // The numbers of the last rows are about as many bits long as the row they are in.
+        budget.spend((long) n * n / 2 * (1 + n / Long.SIZE));
         var rows = new BigInteger[n + 1][];
         for (int row = 0; row <= n; row++) {
             rows[row] = new BigInteger[row + 1];
@@ -214,13 +224,25 @@ final class Pools {
         private final boolean[] explodes;
         private final BigInteger weight;
 
-        Faces(DieFaces die, Reroll reroll, Explode explode) {
+        // What a die that counts adds to the sum when it shows each face: the face, or whether it's a success.
+        private final int[] amounts;
+        private final Budget budget;
+
+        // How many steps a multiplication of the ways of a pool is worth: they grow with the number of dice.
+        private final long cost;
+
+        Faces(DieFaces die, DiceNode.Dice<?> dice, int diceCount, Budget budget) {
+            var reroll = dice.reroll();
+            var explode = dice.explode();
+            this.budget = budget;
+            budget.spend(die.size());
             var counts = die.counts();
             var size = BigInteger.valueOf(die.size());
             var rerolled = BigInteger.valueOf(Rolls.rerolled(reroll, die));
             values = new int[counts.size()];
             weights = new BigInteger[counts.size()];
             explodes = new boolean[counts.size()];
+            amounts = new int[counts.size()];
             int face = 0;
             for (var count : counts.entrySet()) {
                 boolean again = reroll.matches(count.getKey(), die.lowest());
@@ -233,17 +255,21 @@ final class Pools {
                     case ALWAYS -> again ? BigInteger.ZERO : times;
                 };
                 explodes[face] = explode.matches(count.getKey(), die.highest());
+                amounts[face] = dice.tally().amount(count.getKey());
                 face++;
             }
             weight = Arrays.stream(weights).reduce(BigInteger.ZERO, BigInteger::add);
+            int most = dice.explode().equals(Explode.NONE) ? diceCount : (Explode.MAX_EXPLOSIONS + 1) * diceCount;
+            cost = 1 + (long) most * weight.bitLength() / Long.SIZE;
         }
 
-        Map<Integer, BigInteger> byValue() {
-            var byValue = new HashMap<Integer, BigInteger>();
+        /** The weight of each amount that a die may add. */
+        Map<Integer, BigInteger> byAmount() {
+            var byAmount = new HashMap<Integer, BigInteger>();
             for (int face = 0; face < values.length; face++) {
-                add(byValue, values[face], weights[face]);
+                add(byAmount, amounts[face], weights[face]);
             }
-            return byValue;
+            return byAmount;
         }
     }
 
@@ -274,7 +300,7 @@ final class Pools {
             this.count = count;
             this.faces = faces;
             this.keep = keep;
-            this.binomials = binomials((Explode.MAX_EXPLOSIONS + 1) * count);
+            this.binomials = binomials((Explode.MAX_EXPLOSIONS + 1) * count, faces.budget);
             int size = faces.values.length;
             this.order = new int[size];
             this.explodingLeft = new BigInteger[size + 1];
@@ -359,10 +385,11 @@ final class Pools {
                         explodes ? exploding - shown : exploding,
                         explodes ? others : others - shown,
                         toKeep - taken);
+                faces.budget.spend((rest.size() + 1) * faces.cost);
                 addAll(
                         sums,
                         rest,
-                        Math.multiplyExact(taken, faces.values[face]),
+                        Math.multiplyExact(taken, faces.amounts[face]),
                         binomials[dice][shown].multiply(showing));
                 showing = showing.multiply(weight);
             }

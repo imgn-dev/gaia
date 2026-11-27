@@ -11,6 +11,7 @@ import be.imgn.gaia.core.random.dice.DiceNode.Operator;
 import be.imgn.gaia.core.random.dice.DiceNode.Relation;
 import be.imgn.gaia.core.random.dice.DiceNode.Reroll;
 import be.imgn.gaia.core.random.dice.DiceNode.Sides;
+import be.imgn.gaia.core.random.dice.DiceNode.Tally;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -99,7 +100,8 @@ class DiceExpressionTest {
                 new Sides.Standard<>(constant(6)),
                 Reroll.NONE,
                 Explode.NONE,
-                new Keep(Keep.Mode.DROP_LOWEST, 1)));
+                new Keep(Keep.Mode.DROP_LOWEST, 1),
+                Tally.SUM));
         var variable = DiceExpression.of(new DiceNode.Variable<DiceExpression>("STR"));
         assertThat(expression.node()).isEqualTo(new DiceNode.Arithmetic<>(Operator.ADD, dice, variable));
     }
@@ -181,23 +183,37 @@ class DiceExpressionTest {
             case DiceNode.Variable<Integer> variable -> 1;
             default -> 1 + Collections.max(node.children());
         });
-        String prefix = expression.<String>fold(node -> switch (node) {
+        String prefix = expression.<String>fold(DiceExpressionTest::prefix);
+
+        assertThat(dice).isEqualTo(1);
+        assertThat(depth).isEqualTo(6);
+        assertThat(prefix).isEqualTo("(>= (+ (+ (d 1 20) STR) BONUS) AC)");
+    }
+
+    private static String prefix(DiceNode<String> node) {
+        return switch (node) {
             case DiceNode.Constant<String>(var value) -> Integer.toString(value);
             case DiceNode.Variable<String>(var name) -> name;
             case DiceNode.Bound<String>(var name, var value) -> name;
-            case DiceNode.Dice<String> rolled ->
-                "(d " + rolled.count() + " " + rolled.children().getLast() + ")";
+            case DiceNode.Dice<String> dice ->
+                "(d " + dice.count() + " " + dice.children().getLast() + ")";
             case DiceNode.Negate<String>(var operand) -> "(- " + operand + ")";
             case DiceNode.Arithmetic<String>(var operator, var left, var right) ->
                 "(" + operator.symbol() + " " + left + " " + right + ")";
             case DiceNode.Comparison<String>(var relation, var left, var right) ->
                 "(" + relation.symbol() + " " + left + " " + right + ")";
             case DiceNode.Group<String>(var inner, var tags) -> inner;
-        });
+            case DiceNode.Extremum<String>(var extreme, var operands) ->
+                "(" + extreme.symbol() + " " + String.join(" ", operands) + ")";
+            case DiceNode.Repeat<String>(var count, var operand) -> "(x " + count + " " + operand + ")";
+        };
+    }
 
-        assertThat(dice).isEqualTo(1);
-        assertThat(depth).isEqualTo(6);
-        assertThat(prefix).isEqualTo("(>= (+ (+ (d 1 20) STR) BONUS) AC)");
+    @Test
+    void foldCoversEveryKindOfNode() {
+        var expression = DiceExpression.parse("max(2x(1d6), -STR) >= 3");
+
+        assertThat(expression.<String>fold(DiceExpressionTest::prefix)).isEqualTo("(>= (max (x 2 (d 1 6)) (- STR)) 3)");
     }
 
     @Test
@@ -205,13 +221,14 @@ class DiceExpressionTest {
         var expression = DiceExpression.parse("1d6+2d6");
 
         var doubled = expression.<DiceExpression>fold(node -> switch (node) {
-            case DiceNode.Dice<DiceExpression>(var count, var sides, var reroll, var explode, var keep) ->
+            case DiceNode.Dice<DiceExpression>(var count, var sides, var reroll, var explode, var keep, var tally) ->
                 DiceExpression.of(new DiceNode.Dice<>(
                         DiceExpression.of(new DiceNode.Arithmetic<>(Operator.MULTIPLY, count, constant(2))),
                         sides,
                         reroll,
                         explode,
-                        keep));
+                        keep,
+                        tally));
             default -> DiceExpression.of(node);
         });
 
@@ -500,6 +517,9 @@ class DiceExpressionTest {
         assertThat(compared.node()).isInstanceOf(DiceNode.Comparison.class);
         assertThat(compared).hasToString("(1d6x)>=5");
         assertThat(DiceExpression.parse("(1d20:low<=(1d4x):high>=18)")).hasToString("(1d20:low<=(1d4x):high>=18)");
+        assertThat(DiceExpression.parse("(1d20:low<=1d4x:high>=18)")).hasToString("(1d20:low<=1d4x:high>=18)");
+        assertThat(DiceExpression.parse("(1d20:between>=(1d4r)<=(1d4x))"))
+                .hasToString("(1d20:between>=(1d4r)<=(1d4x))");
         // Without them, what follows the operator must be the number of a condition.
         assertThatExceptionOfType(DiceParseException.class)
                 .isThrownBy(() -> DiceExpression.parse("1d6x>=AC"))
@@ -607,6 +627,140 @@ class DiceExpressionTest {
         assertThat(Reroll.NONE).hasToString("");
         assertThat(Explode.NONE).hasToString("");
         assertThat(Explode.HIGHEST).hasToString("x");
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "6d6c>=5",
+                "6d6kh3c>=5",
+                "6d10x=10c>=8",
+                "4d[-1..1]c=1",
+                "6d6c>=5>=3",
+                "max(1d6,1d8)",
+                "min(1d20,1d20)+5",
+                "max(1d4-1,1)",
+                "max(1d6)",
+                "6x(4d6dl1)",
+                "6x4d6dl1",
+                "(1d4)x(1d6+1)",
+                "max(3x1d6,10)",
+                "STRx1d6",
+                "2x3x1d4",
+                "-2x1d6",
+                "2x-1d6",
+                "(2d6x)x1d4",
+                "2d6xx1d4",
+                "2d6kh1x1d4",
+                "2d6x>=5x1d4",
+                "2d6c>=5x1d4",
+                "(2d6)x1d4",
+                "(2d6r)x1d4",
+            })
+    void countsExtremaAndRepeatsAreWrittenBack(String text) {
+        assertThat(DiceExpression.parse(text)).hasToString(text);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'6 x ( 4d6 dl 1 )', '6x(4d6dl1)'",
+        "'max ( 1d6 , 1d8 )', 'max(1d6,1d8)'",
+        "'6d6 c >= 5', '6d6c>=5'",
+        "'min( 1 , 2 , 3 )', 'min(1,2,3)'",
+    })
+    void countsExtremaAndRepeatsIgnoreSpaces(String text, String expected) {
+        assertThat(DiceExpression.parse(text)).hasToString(expected).isEqualTo(DiceExpression.parse(expected));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"6d6c", "6d6c5", "mox(1,2)", "max()", "max(1", "min 1", "6x", "max(1,)", "m", "6d6c>=5kh3"})
+    void malformedCountsExtremaAndRepeatsAreRejected(String text) {
+        assertThatExceptionOfType(DiceParseException.class).isThrownBy(() -> DiceExpression.parse(text));
+    }
+
+    @Test
+    void successesAreCountedAmongTheDiceThatCount() {
+        var all = DiceExpression.parse("6d6c>=5").roll(new FakeRandom(5, 6, 1, 2, 6, 4));
+        var kept = DiceExpression.parse("4d6kh2c>=5").roll(new FakeRandom(6, 4, 5, 5));
+
+        assertThat(all.value()).isEqualTo(3);
+        assertThat(all).hasToString("6d6c>=5[5, 6, 1, 2, 6, 4] = 3");
+        assertThat(kept.value()).isEqualTo(2);
+        assertThat(DiceExpression.parse("4d6kl2c>=5")
+                        .roll(new FakeRandom(6, 4, 5, 5))
+                        .value())
+                .isEqualTo(1);
+    }
+
+    @Test
+    void theLowestOrTheHighestValueIsTaken() {
+        var highest = DiceExpression.parse("max(1d6,1d8)").roll(new FakeRandom(3, 7));
+        var lowest = DiceExpression.parse("min(1d6,1d8,2)").roll(new FakeRandom(3, 7));
+
+        assertThat(highest.value()).isEqualTo(7);
+        assertThat(highest).hasToString("max(1d6[3],1d8[7]) = 7");
+        assertThat(lowest.value()).isEqualTo(2);
+        assertThat(DiceExpression.parse("max(1d4-1,1)").roll(new FakeRandom(1)).value())
+                .isEqualTo(1);
+    }
+
+    @Test
+    void aRepeatEvaluatesItsOperandEachTime() {
+        var rolled = DiceExpression.parse("3x2d6").roll(new FakeRandom(1, 2, 3, 4, 5, 6));
+
+        assertThat(rolled.value()).isEqualTo(21);
+        assertThat(rolled).hasToString("3x(2d6[1, 2]; 2d6[3, 4]; 2d6[5, 6]) = 21");
+        var repeat = (RolledNode.Repeat<RolledExpression>) rolled.node();
+        assertThat(repeat.rolls()).extracting(RolledExpression::value).containsExactly(3, 7, 11);
+        assertThat(repeat.children()).hasSize(4);
+        // A product evaluates its operand once.
+        assertThat(DiceExpression.parse("3*2d6").roll(new FakeRandom(1, 2)).value())
+                .isEqualTo(9);
+    }
+
+    @Test
+    void theNumberOfTimesMayBeRolled() {
+        var rolled = DiceExpression.parse("(1d2)x1d6").roll(new FakeRandom(2, 3, 4));
+
+        assertThat(rolled.value()).isEqualTo(7);
+        assertThat(DiceExpression.parse("0x1d6").roll(new FakeRandom()).value()).isZero();
+        assertThat(DiceExpression.parse("2x(1d6:six=6)")
+                        .roll(new FakeRandom(6, 2))
+                        .tags())
+                .containsExactly("six");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1001x1", "(0-1)x1"})
+    void aNumberOfTimesIsBounded(String text) {
+        var expression = DiceExpression.parse(text);
+
+        assertThatExceptionOfType(ArithmeticException.class).isThrownBy(() -> expression.roll(new SplittableRandom(1)));
+        assertThatExceptionOfType(ArithmeticException.class).isThrownBy(expression::chances);
+    }
+
+    @Test
+    void textNestedTooDeeplyIsRejected() {
+        var deep = "(".repeat(150) + "1" + ")".repeat(150);
+        var negated = "-".repeat(150) + "1";
+        var repeated = "2x".repeat(150) + "1";
+        var huge = "(".repeat(100_000) + "1";
+
+        assertThatExceptionOfType(DiceParseException.class)
+                .isThrownBy(() -> DiceExpression.parse(deep))
+                .withMessageContaining("Nested more than 100 deep");
+        assertThatExceptionOfType(DiceParseException.class).isThrownBy(() -> DiceExpression.parse(negated));
+        assertThatExceptionOfType(DiceParseException.class).isThrownBy(() -> DiceExpression.parse(repeated));
+        assertThatExceptionOfType(DiceParseException.class).isThrownBy(() -> DiceExpression.parse(huge));
+        assertThat(DiceExpression.parse("(".repeat(50) + "1d6" + ")".repeat(50))
+                        .roll(new FakeRandom(4))
+                        .value())
+                .isEqualTo(4);
+        // What follows a deep part isn't deep.
+        assertThat(DiceExpression.parse("((((1))))+((((2))))+((((3))))")
+                        .roll(new FakeRandom())
+                        .value())
+                .isEqualTo(6);
     }
 
     @Test

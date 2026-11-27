@@ -150,17 +150,19 @@ public sealed interface DiceNode<T> {
     }
 
     /**
-     * Dice that are rolled and summed, such as {@code 4d6dl1}, {@code 2d8r<=2x} or {@code 4d[-1..1]}. Dice are rerolled
-     * first, then explode, then some are kept.
+     * Dice that are rolled and summed, such as {@code 4d6dl1}, {@code 2d8r<=2x} or {@code 4d[-1..1]}, or whose
+     * successes are counted, such as {@code 6d6c>=5}. Dice are rerolled first, then explode, then some are kept.
      *
      * @param count how many dice are rolled
      * @param sides the faces of each die
      * @param reroll which dice are rolled again
      * @param explode which dice add another die
-     * @param keep which dice count in the sum
+     * @param keep which dice count
+     * @param tally what the dice that count add up to: their faces, or how many of them succeed
      * @param <T> the type of the children
      */
-    record Dice<T>(T count, Sides<T> sides, Reroll reroll, Explode explode, Keep keep) implements DiceNode<T> {
+    record Dice<T>(T count, Sides<T> sides, Reroll reroll, Explode explode, Keep keep, Tally tally)
+            implements DiceNode<T> {
 
         /**
          * Creates dice.
@@ -169,7 +171,8 @@ public sealed interface DiceNode<T> {
          * @param sides the faces of each die
          * @param reroll which dice are rolled again
          * @param explode which dice add another die
-         * @param keep which dice count in the sum
+         * @param keep which dice count
+         * @param tally what the dice that count add up to
          */
         public Dice {
             requireNonNull(count, "count");
@@ -177,6 +180,7 @@ public sealed interface DiceNode<T> {
             requireNonNull(reroll, "reroll");
             requireNonNull(explode, "explode");
             requireNonNull(keep, "keep");
+            requireNonNull(tally, "tally");
         }
 
         /**
@@ -186,7 +190,7 @@ public sealed interface DiceNode<T> {
          * @param sides how many sides each die has
          */
         public Dice(T count, T sides) {
-            this(count, new Sides.Standard<>(sides), Reroll.NONE, Explode.NONE, Keep.ALL);
+            this(count, new Sides.Standard<>(sides), Reroll.NONE, Explode.NONE, Keep.ALL, Tally.SUM);
         }
 
         /**
@@ -195,7 +199,10 @@ public sealed interface DiceNode<T> {
          * @return whether these dice have no rule
          */
         public boolean isPlain() {
-            return reroll.equals(Reroll.NONE) && explode.equals(Explode.NONE) && keep.equals(Keep.ALL);
+            return reroll.equals(Reroll.NONE)
+                    && explode.equals(Explode.NONE)
+                    && keep.equals(Keep.ALL)
+                    && tally.equals(Tally.SUM);
         }
 
         /**
@@ -211,7 +218,7 @@ public sealed interface DiceNode<T> {
         @Override
         public <U> Dice<U> map(Function<? super T, ? extends U> mapper) {
             U mappedCount = mapper.apply(count);
-            return new Dice<>(mappedCount, sides.map(mapper), reroll, explode, keep);
+            return new Dice<>(mappedCount, sides.map(mapper), reroll, explode, keep, tally);
         }
     }
 
@@ -318,6 +325,79 @@ public sealed interface DiceNode<T> {
                 }
                 return text.append(']').toString();
             }
+        }
+    }
+
+    /**
+     * The lowest or the highest of several values, such as {@code max(1d6,1d8)}.
+     *
+     * @param extreme whether the lowest or the highest value is taken
+     * @param operands the values, of which there is at least one
+     * @param <T> the type of the children
+     */
+    record Extremum<T>(Extreme extreme, List<T> operands) implements DiceNode<T> {
+
+        /**
+         * Creates an extremum.
+         *
+         * @param extreme whether the lowest or the highest value is taken
+         * @param operands the values
+         * @throws IllegalArgumentException if there is no operand
+         */
+        public Extremum {
+            requireNonNull(extreme, "extreme");
+            operands = List.copyOf(operands);
+            checkArgument(!operands.isEmpty(), "%s needs a value", extreme.symbol());
+        }
+
+        @Override
+        public List<T> children() {
+            return operands;
+        }
+
+        @Override
+        public <U> Extremum<U> map(Function<? super T, ? extends U> mapper) {
+            var mapped = new ArrayList<U>();
+            for (var operand : operands) {
+                mapped.add(mapper.apply(operand));
+            }
+            return new Extremum<>(extreme, mapped);
+        }
+    }
+
+    /**
+     * A value that is evaluated several times, each time on its own, and summed, such as {@code 6x(4d6dl1)}: unlike a
+     * product, its dice are rolled again each time.
+     *
+     * @param count how many times the operand is evaluated
+     * @param operand the value to evaluate each time
+     * @param <T> the type of the children
+     */
+    record Repeat<T>(T count, T operand) implements DiceNode<T> {
+
+        /** The most times that a value is evaluated. */
+        public static final int MAX_TIMES = 1_000;
+
+        /**
+         * Creates a repeat.
+         *
+         * @param count how many times the operand is evaluated
+         * @param operand the value to evaluate each time
+         */
+        public Repeat {
+            requireNonNull(count, "count");
+            requireNonNull(operand, "operand");
+        }
+
+        @Override
+        public List<T> children() {
+            return List.of(count, operand);
+        }
+
+        @Override
+        public <U> Repeat<U> map(Function<? super T, ? extends U> mapper) {
+            U mappedCount = mapper.apply(count);
+            return new Repeat<>(mappedCount, mapper.apply(operand));
         }
     }
 
@@ -775,6 +855,94 @@ public sealed interface DiceNode<T> {
             public String symbol() {
                 return symbol;
             }
+        }
+    }
+
+    /**
+     * What the dice that count add up to: the {@link #SUM} of their faces, or how many of them show a face that
+     * satisfies a condition.
+     *
+     * @param successes whether successes are counted, rather than faces summed
+     * @param relation how the face of a die is compared to {@code value}
+     * @param value the right operand of the comparison
+     */
+    record Tally(boolean successes, Relation relation, int value) {
+
+        /** The faces are summed: nothing is written after the dice. */
+        public static final Tally SUM = new Tally(false, Relation.EQUAL, 0);
+
+        /**
+         * Creates a tally.
+         *
+         * @param successes whether successes are counted, rather than faces summed
+         * @param relation how the face of a die is compared to {@code value}
+         * @param value the right operand of the comparison
+         * @throws IllegalArgumentException if faces are summed and the condition isn't that of {@link #SUM}
+         */
+        public Tally {
+            requireNonNull(relation, "relation");
+            checkArgument(
+                    successes || (relation == Relation.EQUAL && value == 0),
+                    "A sum has no condition: %s%d",
+                    relation.symbol(),
+                    value);
+        }
+
+        /**
+         * Returns what a die that counts adds: its face, or one if it's a success and zero if not.
+         *
+         * @param face the face of the die
+         * @return what the die adds to the value of the dice
+         */
+        public int amount(int face) {
+            if (!successes) {
+                return face;
+            }
+            return relation.test(face, value) ? 1 : 0;
+        }
+
+        /**
+         * Returns this tally as it's written, such as {@code c>=5}, which is empty when faces are summed.
+         *
+         * @return this tally as it's written
+         */
+        @Override
+        public String toString() {
+            return successes ? "c" + relation.symbol() + value : "";
+        }
+    }
+
+    /** Which of several values is taken. */
+    enum Extreme {
+        /** The lowest value: {@code min}. */
+        MIN("min"),
+        /** The highest value: {@code max}. */
+        MAX("max");
+
+        private final String symbol;
+
+        Extreme(String symbol) {
+            this.symbol = symbol;
+        }
+
+        /**
+         * Returns how this choice is written.
+         *
+         * @return the symbol
+         */
+        public String symbol() {
+            return symbol;
+        }
+
+        /**
+         * Returns the value to take among two.
+         *
+         * @param left a value
+         * @param right another value
+         * @return the lowest or the highest of the two
+         */
+        public int apply(int left, int right) {
+            return this == MIN ? Math.min(left, right) : Math.max(left, right);
         }
     }
 

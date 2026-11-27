@@ -109,7 +109,7 @@ API documentation: [latest](https://imgn-dev.github.io/gaia/api/latest/), or
 - **`random.RandomStrings`**: identifiers, tokens and codes from an alphabet, sized by bits of randomness.
 - **`random.dice.DiceExpression`**: parses dice expressions such as `4d6dl1` or
   `(1d20:critical>=20)+STR>=AC`, with variables, conditional tags, rerolls (`2d6r<=2`), exploding dice (`3d6x`)
-  and custom dice (`4d[-1..1]`),
+  custom dice (`4d[-1..1]`), counted successes (`6d6c>=5`), `min`/`max` and repeats (`6x(4d6dl1)`),
   rolls them into a tree that keeps every die,
   and computes the exact chances of their outcomes without enumerating the rolls. Expressions and rolls are trees of
   sealed records, reduced with `fold` and a `switch`.

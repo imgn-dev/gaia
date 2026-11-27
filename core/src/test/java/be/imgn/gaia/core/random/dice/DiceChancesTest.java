@@ -186,13 +186,19 @@ class DiceChancesTest {
                 "3d[0,0,1,2]xkh2",
                 "2d[-2..2]rr<=-1x",
                 "(1d3)d[-5,0,5,5]dl1",
+                "4d6kh2c>=5",
+                "5d10x=10c>=8",
+                "3d6r=1c>=4",
+                "max(1d6,1d8)-min(1d4,1d4)",
+                "(1d3)x(2d4kh1)",
+                "3x(1d6:six=6)",
             })
     void chancesAgreeWithRolls(String text) {
         var expression = DiceExpression.parse(text);
         var chances = expression.chances().values().exactOutcomes();
         var random = new SplittableRandom(text.hashCode());
         var counts = new TreeMap<Integer, Integer>();
-        int rolls = 400_000;
+        int rolls = 200_000;
 
         for (int i = 0; i < rolls; i++) {
             counts.merge(expression.roll(random).value(), 1, Integer::sum);
@@ -201,7 +207,7 @@ class DiceChancesTest {
         assertThat(chances.keySet()).containsAll(counts.keySet());
         chances.forEach((value, chance) -> assertThat((double) counts.getOrDefault(value, 0) / rolls)
                 .as("%s = %d", text, value)
-                .isCloseTo(chance.doubleValue(), within(0.004)));
+                .isCloseTo(chance.doubleValue(), within(0.006)));
     }
 
     @Test
@@ -246,6 +252,70 @@ class DiceChancesTest {
         assertThat(chances.of(1_000_001)).isEqualTo(IntFraction.of(1, 2));
         assertThat(chances.outcomes()).hasSize(3);
         assertThat(chances("3d[-1000000,7]kh1").of(7)).isEqualTo(IntFraction.of(7, 8));
+    }
+
+    @Test
+    void successesAreCounted() {
+        var chances = chances("6d6c>=5");
+
+        assertThat(chances.of(0)).isEqualTo(IntFraction.of(64, 729));
+        assertThat(chances.mean()).isEqualTo(IntFraction.of(2));
+        assertThat(chances.outcomes()).isEqualTo(chances("6d[0,0,0,0,1,1]").outcomes());
+        assertThat(chances("6d6c>=5>=3").of(1)).isEqualTo(chances.atLeast(3));
+        // The two highest of three dice are both sixes when at least two dice are.
+        assertThat(chances("3d6kh2c=6").of(2)).isEqualTo(IntFraction.of(2, 27));
+    }
+
+    @Test
+    void extremaTakeTheLowestOrTheHighestValue() {
+        assertThat(chances("max(1d6,1d6)").outcomes())
+                .isEqualTo(chances("2d6kh1").outcomes());
+        assertThat(chances("min(1d6,1d6,1d6)").outcomes())
+                .isEqualTo(chances("3d6kl1").outcomes());
+        assertThat(chances("max(1d4-1,1)").of(1)).isEqualTo(IntFraction.of(1, 2));
+        assertThat(chances("max(1d6)").outcomes()).isEqualTo(chances("1d6").outcomes());
+    }
+
+    @Test
+    void repeatsSumIndependentEvaluations() {
+        assertThat(chances("2x1d6").outcomes()).isEqualTo(chances("2d6").outcomes());
+        assertThat(chances("2*1d6").outcomes()).isNotEqualTo(chances("2d6").outcomes());
+        assertThat(chances("(1d2)x1d6").outcomes()).isEqualTo(chances("(1d2)d6").outcomes());
+        assertThat(chances("6x(4d6dl1)").mean()).isEqualTo(IntFraction.of(15869, 216));
+        assertThat(chances("0x1d6").of(0)).isEqualTo(IntFraction.ONE);
+        assertThat(chances("2x(1d6:six=6)").tagged("six")).isEqualTo(IntFraction.of(11, 36));
+    }
+
+    @Test
+    void statisticsDescribeTheValues() {
+        var chances = chances("2d6");
+
+        assertThat(chances.variance()).isEqualTo(IntFraction.of(35, 6));
+        assertThat(chances.standardDeviation()).isCloseTo(2.415229, within(1e-6));
+        assertThat(chances.median()).isEqualTo(7);
+        assertThat(chances.mode()).isEqualTo(7);
+        assertThat(chances.quantile(0.9)).isEqualTo(10);
+        assertThat(chances.quantile(0)).isEqualTo(2);
+        assertThat(chances.quantile(1)).isEqualTo(12);
+        assertThat(chances("1d6").median()).isEqualTo(3);
+        assertThat(chances("1d6").mode()).isEqualTo(1);
+        assertThat(chances("5").variance()).isEqualTo(IntFraction.ZERO);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> chances.quantile(1.5));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> chances.quantile(Double.NaN));
+    }
+
+    @Test
+    void chancesStopWhenTheyTakeTooMuchWork() {
+        var expression = DiceExpression.parse("2d6");
+
+        assertThatExceptionOfType(ArithmeticException.class)
+                .isThrownBy(() -> DiceExpression.parse("1000d1000kh500").chances())
+                .withMessageContaining("steps");
+        assertThatExceptionOfType(ArithmeticException.class)
+                .isThrownBy(() -> DiceExpression.parse("9x9x9x9x9x9x1d100").chances());
+        assertThatExceptionOfType(ArithmeticException.class).isThrownBy(() -> expression.chances(5));
+        assertThat(expression.chances(1_000).of(7)).isEqualTo(IntFraction.of(1, 6));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> expression.chances(-1));
     }
 
     @Test

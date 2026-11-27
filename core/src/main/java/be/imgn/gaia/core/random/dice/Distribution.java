@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BinaryOperator;
+import java.util.function.IntBinaryOperator;
 import java.util.function.UnaryOperator;
 
 /**
@@ -37,63 +38,103 @@ final class Distribution {
         return total;
     }
 
+    private static Distribution constant(int value) {
+        return new Distribution(Map.of(new Outcome(value, Set.of()), BigInteger.ONE), BigInteger.ONE);
+    }
+
     /** Computes the distribution of one node from those of its children. */
-    static Distribution of(DiceNode<Distribution> node) {
+    static Distribution of(DiceNode<Distribution> node, Budget budget) {
         return switch (node) {
-            case DiceNode.Constant<Distribution> constant ->
-                new Distribution(Map.of(new Outcome(constant.value(), Set.of()), BigInteger.ONE), BigInteger.ONE);
+            case DiceNode.Constant<Distribution> constant -> constant(constant.value());
             case DiceNode.Variable<Distribution> variable -> throw new AssertionError(variable.name());
             case DiceNode.Bound<Distribution> bound -> bound.value();
-            case DiceNode.Dice<Distribution> dice -> dice(dice);
+            case DiceNode.Dice<Distribution> dice -> dice(dice, budget);
             case DiceNode.Negate<Distribution> negate ->
-                negate.operand().map(outcome -> new Outcome(Math.negateExact(outcome.value()), outcome.tags()));
+                negate.operand().map(outcome -> new Outcome(Math.negateExact(outcome.value()), outcome.tags()), budget);
             case DiceNode.Arithmetic<Distribution> arithmetic ->
-                arithmetic
-                        .left()
-                        .combine(
-                                arithmetic.right(),
-                                (left, right) -> new Outcome(
-                                        arithmetic.operator().apply(left.value(), right.value()),
-                                        union(left.tags(), right.tags())));
+                arithmetic.left().combine(arithmetic.right(), arithmetic.operator()::apply, budget);
             case DiceNode.Comparison<Distribution> comparison ->
                 comparison
                         .left()
                         .combine(
                                 comparison.right(),
-                                (left, right) -> new Outcome(
-                                        comparison.relation().test(left.value(), right.value()) ? 1 : 0,
-                                        union(left.tags(), right.tags())));
-            case DiceNode.Group<Distribution> group -> group(group);
+                                (left, right) -> comparison.relation().test(left, right) ? 1 : 0,
+                                budget);
+            case DiceNode.Group<Distribution> group -> group(group, budget);
+            case DiceNode.Extremum<Distribution> extremum -> extremum(extremum, budget);
+            case DiceNode.Repeat<Distribution> repeat -> repeat(repeat.count(), repeat.operand(), budget);
         };
     }
 
-    private static Distribution group(DiceNode.Group<Distribution> group) {
+    private static Distribution extremum(DiceNode.Extremum<Distribution> extremum, Budget budget) {
+        var result = extremum.operands().getFirst();
+        for (var operand : extremum.operands().subList(1, extremum.operands().size())) {
+            result = result.combine(operand, extremum.extreme()::apply, budget);
+        }
+        return result;
+    }
+
+    /** The sum of a number of independent copies of an operand, for each number that the count may be. */
+    private static Distribution repeat(Distribution count, Distribution operand, Budget budget) {
+        int most = 0;
+        for (var times : count.cases.keySet()) {
+            Rolls.checkTimes(times.value());
+            most = Math.max(most, times.value());
+        }
+        // The sums of no copy, of one copy, and so on.
+        var sums = new ArrayList<Distribution>();
+        sums.add(constant(0));
+        for (int copies = 1; copies <= most; copies++) {
+            sums.add(sums.getLast().combine(operand, Math::addExact, budget));
+        }
+        var cases = new HashMap<Outcome, BigInteger>();
+        for (var times : count.cases.entrySet()) {
+            var sum = sums.get(times.getKey().value());
+            // Brings every number of copies to the same number of cases.
+            var weight = times.getValue()
+                    .multiply(operand.total.pow(most - times.getKey().value()));
+            budget.spend(sum.cases.size());
+            sum.cases.forEach((outcome, ways) -> cases.merge(
+                    new Outcome(
+                            outcome.value(),
+                            union(outcome.tags(), times.getKey().tags())),
+                    ways.multiply(weight),
+                    BigInteger::add));
+        }
+        return new Distribution(cases, count.total.multiply(operand.total.pow(most)));
+    }
+
+    private static Distribution group(DiceNode.Group<Distribution> group, Budget budget) {
         var result = group.inner();
         for (var tag : group.tags()) {
             // The value stays that of the group, so that the next conditions and tags test it too. An outcome that
             // fails a condition is marked until every condition of the tag is tested.
             for (var condition : tag.conditions()) {
-                result = result.combine(condition.operand(), (outcome, operand) -> {
-                    var tags = union(outcome.tags(), operand.tags());
-                    return new Outcome(
-                            outcome.value(),
-                            condition.relation().test(outcome.value(), operand.value()) ? tags : union(tags, FAILED));
-                });
+                result = result.combineOutcomes(
+                        condition.operand(),
+                        (outcome, operand) -> {
+                            var tags = union(outcome.tags(), operand.tags());
+                            boolean holds = condition.relation().test(outcome.value(), operand.value());
+                            return new Outcome(outcome.value(), holds ? tags : union(tags, FAILED));
+                        },
+                        budget);
             }
             var name = Set.of(tag.name());
-            result = result.map(outcome -> {
-                if (!outcome.tags().contains(FAILED_MARK)) {
-                    return new Outcome(outcome.value(), union(outcome.tags(), name));
-                }
-                var tags = new HashSet<>(outcome.tags());
-                tags.remove(FAILED_MARK);
-                return new Outcome(outcome.value(), tags);
-            });
+            result = result.map(
+                    outcome -> {
+                        if (!outcome.tags().contains(FAILED_MARK)) {
+                            return new Outcome(outcome.value(), union(outcome.tags(), name));
+                        }
+                        var tags = new HashSet<>(outcome.tags());
+                        tags.remove(FAILED_MARK);
+                        return new Outcome(outcome.value(), tags);
+                    },
+                    budget);
         }
         return result;
     }
 
-    private static Distribution dice(DiceNode.Dice<Distribution> node) {
+    private static Distribution dice(DiceNode.Dice<Distribution> node, Budget budget) {
         // The faces of the die, for each number of sides that it may have, with the cases that lead to it.
         record Die(DieFaces faces, Set<String> tags, BigInteger cases) {}
         var dice = new ArrayList<Die>();
@@ -115,7 +156,7 @@ final class Distribution {
         var scale = BigInteger.ONE;
         for (var count : node.count().cases.entrySet()) {
             for (var die : dice) {
-                var pool = Pools.pool(count.getKey().value(), die.faces, node.reroll(), node.explode(), node.keep());
+                var pool = Pools.pool(node, count.getKey().value(), die.faces, budget);
                 parts.add(new Part(
                         count.getValue().multiply(die.cases),
                         union(count.getKey().tags(), die.tags),
@@ -127,6 +168,7 @@ final class Distribution {
         for (var part : parts) {
             // Brings every pool to the same number of cases.
             var weight = part.weight.multiply(scale.divide(part.pool.total()));
+            budget.spend(part.pool.ways().size());
             part.pool
                     .ways()
                     .forEach((sum, ways) ->
@@ -135,14 +177,25 @@ final class Distribution {
         return new Distribution(cases, node.count().total.multiply(sidesTotal).multiply(scale));
     }
 
-    private Distribution map(UnaryOperator<Outcome> function) {
+    private Distribution map(UnaryOperator<Outcome> function, Budget budget) {
+        budget.spend(cases.size());
         var mapped = new HashMap<Outcome, BigInteger>();
         cases.forEach((outcome, count) -> mapped.merge(function.apply(outcome), count, BigInteger::add));
         return new Distribution(mapped, total);
     }
 
+    /** Combines the values of this distribution with those of another, independent one: the tags add up. */
+    private Distribution combine(Distribution other, IntBinaryOperator function, Budget budget) {
+        return combineOutcomes(
+                other,
+                (left, right) ->
+                        new Outcome(function.applyAsInt(left.value(), right.value()), union(left.tags(), right.tags())),
+                budget);
+    }
+
     /** Combines each outcome of this distribution with each one of another, independent one. */
-    private Distribution combine(Distribution other, BinaryOperator<Outcome> function) {
+    private Distribution combineOutcomes(Distribution other, BinaryOperator<Outcome> function, Budget budget) {
+        budget.spend((long) cases.size() * other.cases.size());
         var combined = new HashMap<Outcome, BigInteger>();
         for (var left : cases.entrySet()) {
             for (var right : other.cases.entrySet()) {

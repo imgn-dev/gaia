@@ -145,6 +145,85 @@ public final class DiceChances {
     }
 
     /**
+     * Returns the variance of the values: the average of the squares of their distances to the {@link #mean()}.
+     *
+     * @return the variance
+     * @throws ArithmeticException if the variance doesn't fit
+     */
+    public IntFraction variance() {
+        return exactVariance().toIntFractionExact();
+    }
+
+    /**
+     * Returns the standard deviation of the values: the square root of their {@link #variance()}, which is how far from
+     * the mean the values typically are.
+     *
+     * @return the standard deviation
+     */
+    public double standardDeviation() {
+        return Math.sqrt(exactVariance().doubleValue());
+    }
+
+    private BigFraction exactVariance() {
+        var sum = BigInteger.ZERO;
+        var squares = BigInteger.ZERO;
+        for (var entry : casesByValue.entrySet()) {
+            var value = BigInteger.valueOf(entry.getKey());
+            sum = sum.add(entry.getValue().multiply(value));
+            squares = squares.add(entry.getValue().multiply(value).multiply(value));
+        }
+        var mean = BigFraction.of(sum, distribution.total());
+        return BigFraction.of(squares, distribution.total()).minus(mean.times(mean));
+    }
+
+    /**
+     * Returns the median of the values: the least value that the expression is at most half the time or more.
+     *
+     * @return the median
+     */
+    public int median() {
+        return quantile(1.0 / 2);
+    }
+
+    /**
+     * Returns the least value that the expression is at most a given fraction of the time or more:
+     * {@code quantile(0.9)} is the value that nine evaluations in ten don't exceed.
+     *
+     * @param fraction the fraction of the time, from zero to one
+     * @return the least value {@code v} such that {@code atMost(v)} is at least {@code fraction}
+     * @throws IllegalArgumentException if {@code fraction} isn't between zero and one
+     */
+    public int quantile(double fraction) {
+        if (!(fraction >= 0 && fraction <= 1)) {
+            throw new IllegalArgumentException("Not between 0 and 1: " + fraction);
+        }
+        var threshold = BigFraction.of(fraction).times(BigFraction.of(distribution.total()));
+        var cases = BigInteger.ZERO;
+        for (var entry : casesByValue.entrySet()) {
+            cases = cases.add(entry.getValue());
+            if (BigFraction.of(cases).compareTo(threshold) >= 0) {
+                return entry.getKey();
+            }
+        }
+        return casesByValue.lastKey();
+    }
+
+    /**
+     * Returns the value that the expression evaluates to most often, or the least of them if there are several.
+     *
+     * @return the most likely value
+     */
+    public int mode() {
+        int mode = casesByValue.firstKey();
+        for (var entry : casesByValue.entrySet()) {
+            if (entry.getValue().compareTo(casesByValue.get(mode)) > 0) {
+                mode = entry.getKey();
+            }
+        }
+        return mode;
+    }
+
+    /**
      * Returns the chance of each value, as chances that the rest of the {@code random} package works with.
      *
      * @return the chances of the values, from the least value to the greatest

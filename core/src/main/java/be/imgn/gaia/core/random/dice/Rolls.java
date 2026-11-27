@@ -52,8 +52,44 @@ final class Rolls {
                                 ? 1
                                 : 0);
             case DiceNode.Group<RolledExpression> group -> group(group);
+            case DiceNode.Extremum<RolledExpression> extremum ->
+                new RolledNode.Extremum<>(
+                        extremum.extreme(),
+                        extremum.operands(),
+                        extremum.operands().stream()
+                                .mapToInt(RolledExpression::value)
+                                .reduce(extremum.extreme()::apply)
+                                .orElseThrow());
+            // A repeat rolls its operand several times: it's rolled from the expression, not from one rolled child.
+            case DiceNode.Repeat<RolledExpression> repeat -> throw new AssertionError(repeat);
         };
         return new RolledExpression(rolled);
+    }
+
+    /** Rolls an expression, from its leaves, each operand of a repeat as many times as it's repeated. */
+    static RolledExpression roll(DiceExpression expression, RandomGenerator random) {
+        if (!(expression.node() instanceof DiceNode.Repeat<DiceExpression>(var count, var operand))) {
+            return roll(expression.node().<RolledExpression>map(child -> roll(child, random)), random);
+        }
+        var times = roll(count, random);
+        checkTimes(times.value());
+        var rolls = new ArrayList<RolledExpression>();
+        int sum = 0;
+        for (int i = 0; i < times.value(); i++) {
+            rolls.add(roll(operand, random));
+            sum = Math.addExact(sum, rolls.getLast().value());
+        }
+        return new RolledExpression(new RolledNode.Repeat<>(times, rolls, sum));
+    }
+
+    /** Checks a number of times that a value is repeated. */
+    static void checkTimes(int times) {
+        if (times < 0) {
+            throw new ArithmeticException("Negative number of times: " + times);
+        }
+        if (times > DiceNode.Repeat.MAX_TIMES) {
+            throw new ArithmeticException("Too many times: " + times);
+        }
     }
 
     /** Checks a number of dice and a number of sides. */
@@ -112,10 +148,11 @@ final class Rolls {
         for (int i = 0; i < faces.size(); i++) {
             dice.add(new RolledNode.Die(faces.get(i), kept.contains(i), rerolled.get(i), exploded.get(i)));
             if (kept.contains(i)) {
-                sum = Math.addExact(sum, faces.get(i));
+                sum = Math.addExact(sum, node.tally().amount(faces.get(i)));
             }
         }
-        return new RolledNode.Dice<>(node.count(), node.sides(), node.reroll(), node.explode(), node.keep(), dice, sum);
+        return new RolledNode.Dice<>(
+                node.count(), node.sides(), node.reroll(), node.explode(), node.keep(), node.tally(), dice, sum);
     }
 
     /** The faces of a die whose number of sides was rolled, if it has one. */
