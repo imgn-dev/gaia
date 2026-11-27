@@ -261,7 +261,10 @@ public sealed interface DiceNode<T> {
          * Faces listed one by one, such as the {@code [-1..1]} of {@code 4d[-1..1]} or the {@code [0,0,0,0,1,1]} of a
          * die that counts a success two times out of six. A face that is listed twice comes up twice as often.
          *
-         * @param faces the value of each face, in the order they are written
+         * <p>The faces are kept in ascending order, whatever the order they are given in: {@code d[3,1,2]} is
+         * {@code d[1..3]}.
+         *
+         * @param faces the value of each face, in ascending order
          * @param <T> the type of the children
          */
         record Custom<T>(List<Integer> faces) implements Sides<T> {
@@ -269,11 +272,11 @@ public sealed interface DiceNode<T> {
             /**
              * Creates custom sides.
              *
-             * @param faces the value of each face, in the order they are written
+             * @param faces the value of each face, in any order
              * @throws IllegalArgumentException if there is no face, or more than {@link #MAX_FACES}
              */
             public Custom {
-                faces = List.copyOf(faces);
+                faces = faces.stream().sorted().toList();
                 checkArgument(!faces.isEmpty(), "A die has at least one face");
                 checkArgument(faces.size() <= MAX_FACES, "Too many faces: %d", faces.size());
             }
